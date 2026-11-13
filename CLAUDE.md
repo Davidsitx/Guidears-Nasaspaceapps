@@ -10,6 +10,20 @@ Este archivo lo leen los asistentes Claude de los dos integrantes del equipo. Ma
   - capa **terrestre / astronauta**: límites de pendiente del traje, tiempo de marcha, dosis de radiación y sombra del relieve.
 - Mensaje central: lo que a un rover le lleva semanas, una persona lo hace en una salida; pero la persona está limitada por radiación, oxígeno y pendiente. Cada parada tiene una justificación científica tomada de lo que el equipo de Curiosity investiga hoy (ver docs/ciencia.md).
 
+## Quién trabaja dónde (para no pisarnos)
+| Área | Dueño | Carpetas |
+| --- | --- | --- |
+| Ciencia, rutas y motor de cálculo | David + su Claude | `docs/ciencia.md`, `docs/rover-salud.md`, `data/curiosity/`, `data/rutas/`, `prototipo/planificador/` |
+| Capas satelitales, terreno y escena 3D | Compañero + su Claude | `data/terreno/`, `escena3d/` |
+| Compartido (cambiar solo avisando en docs/notas.md) | ambos | `CLAUDE.md`, `docs/contrato.md`, `data/parametros.json`, `docs/tareas.md` |
+
+Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/notas.md** (traspasos) y **docs/tareas.md**.
+
+## Cómo trabajamos con git
+- Cada uno en su rama (`david/...`, `companero/...`). PRs chicos, fusionar a `main` cada 1 o 2 horas.
+- Al terminar algo: nota arriba de todo en `docs/notas.md` (qué hizo, qué falta, qué decidió).
+- Un Claude puede revisar el PR del otro.
+
 ## Reglas que no se negocian
 1. Todo dato lleva fuente. Registrar cada fuente nueva en docs/fuentes.md (qué es, para qué sirve, cómo la usamos).
 2. Código propio o de licencia abierta y citado. No copiar código sin licencia (por ejemplo, el simulador "ER-6 Terrain Explorer" se usa solo como inspiración visual).

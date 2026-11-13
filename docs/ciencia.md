@@ -3,6 +3,7 @@
 Resumen en nuestras palabras. Cada punto enlaza a su fuente.
 
 ## La pregunta grande de la misión
+- Frase guía para el pitch (NASA, mapa "Where is Curiosity?", https://science.nasa.gov/mission/msl-curiosity/location-map/): aunque la ruta parezca sinuosa, el equipo nunca pierde de vista su objetivo, explorar lugares que respondan si el cráter Gale fue habitable en el pasado remoto. Nuestra ruta sigue la misma lógica: cada desvío tiene una razón científica.
 - El objetivo general de Curiosity es evaluar si los ambientes del cráter Gale fueron habitables en el pasado. Fuente: plan de misión extendida de MSL, 2014 (https://mars.nasa.gov/files/msl/2014-MSL-extended-mission-plan.pdf).
 - Al subir el Monte Sharp, el rover recorre capas cada vez más jóvenes: de lagos y ríos (arcillas) a un ambiente más seco y salino (sulfatos). La transición registra el cambio del clima de Marte. Fuentes: JPL, 2020 (https://www.jpl.nasa.gov/news/curiosity-mars-rovers-summer-road-trip-has-begun) y nota de 2022 sobre la zona de transición.
 - Desde 2024 el equipo sigue dos campañas largas: entender cómo se formó la unidad de sulfatos y qué dice del clima y la habitabilidad, y entender cómo se formó el canal Gediz Vallis, los "últimos rastros" de agua superficial en Gale (blog, sol 4099, febrero de 2024).
