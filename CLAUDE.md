@@ -14,7 +14,8 @@ Este archivo lo leen los asistentes Claude de los dos integrantes del equipo. Ma
 | Área | Dueño | Carpetas |
 | --- | --- | --- |
 | Ciencia, rutas y motor de cálculo | David + su Claude | `docs/ciencia.md`, `docs/rover-salud.md`, `data/curiosity/`, `data/rutas/`, `prototipo/planificador/` |
-| Capas satelitales, terreno y escena 3D | Compañero + su Claude | `data/terreno/`, `escena3d/` |
+| Motor 3D (`escena3d/`: rover a escala, rutas, cámara, panel) | David + su Claude (acordado el 13/11) | `escena3d/` |
+| Capas satelitales y terreno (alimentan la escena por el contrato) | Compañero + su Claude | `data/terreno/` |
 | Compartido (cambiar solo avisando en docs/notas.md) | ambos | `CLAUDE.md`, `docs/contrato.md`, `data/parametros.json`, `docs/tareas.md` |
 
 Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/notas.md** (traspasos) y **docs/tareas.md**.
@@ -41,11 +42,12 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 - prototipo/planificador/index.html: planificador 2D que funciona (A* sobre modelo de elevación PLACES de 2 m, rutas vehículo y astronauta, pendiente, cielo bloqueado, dosis, perfil, validación contra el recorrido real). Terreno: laderas del Monte Sharp, soles 3331–3958. NO cubre la posición actual.
 - data/rutas/ruta_sol5070_cualitativa.geojson: primera propuesta de rutas desde el sol 5070, trazada a ojo sobre imagen, sin elevación.
 - MMGIS (NASA-AMMOS/MMGIS) instalado y probado con la misión Gale_Boxwork (herramientas/mmgis_config_Gale_Boxwork.json).
-- Falta: modelo de elevación de la zona actual (USGS MSL_Gale_DEM_Mosaic_1m_v3.tif, recorte aprox. lat -4.820 a -4.848, lon 137.385 a 137.412) y la escena 3D.
+- escena3d/index.html: simulador 3D (three.js) que funciona: terreno real a escala 1:1, Curiosity con suspensión que se adapta, rutas vehículo/astronauta con A*, conducción automática, hora y estación, capas de pendiente y sombra de radiación. Carga la zona por `?zona=<carpeta de data/terreno>`.
+- Falta: terreno de la zona actual (USGS MSL_Gale_DEM_Mosaic_1m_v3.tif, recorte aprox. lat -4.820 a -4.848, lon 137.385 a 137.412) en el formato de docs/contrato.md; la escena lo toma sin cambios de código.
 
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).
-- Pendiente máxima astronauta: 25°. Velocidad astronauta en llano: 2,5 km/h. Velocidad rover: 100 m/h en conducción; 30–60 m por sol de manejo según el blog.
+- Pendiente máxima astronauta: 20° (requisito lunar Artemis, a validar). Velocidad astronauta en llano: 2,5 km/h. Velocidad rover: 100 m/h en conducción; 30–60 m por sol de manejo según el blog.
 - Dosis de rayos cósmicos en superficie: 0,67 mSv/día (RAD). Reducción por relieve: factor 0,25 sobre la fracción de cielo bloqueado (calibrado con Murray Buttes).
 
 ## Documentos

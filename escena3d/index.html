@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GALE-3D · Curiosity y astronauta sobre terreno real</title>
+<style>
+:root{--ink:#e9e2d6;--mut:#9d9384;--line:rgba(233,226,214,.18);--bg:rgba(16,13,11,.78);--rov:#3fb6ff;--per:#ff8a3d;--cur:#f2e14c;--ok:#7bd88f;--bad:#ff6b6b}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#120f0d;color:var(--ink);font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+.panel{position:fixed;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;backdrop-filter:blur(4px)}
+#title{top:12px;left:12px;max-width:360px}
+#title h1{margin:0;font-size:13px;letter-spacing:.12em;font-weight:700}
+#title p{margin:4px 0 0;color:var(--mut);font-size:11.5px}
+#hud{top:12px;right:12px;width:300px}
+#hud h2{margin:10px 0 4px;font-size:10.5px;letter-spacing:.14em;color:var(--mut);font-weight:600;border-top:1px solid var(--line);padding-top:8px}
+#hud h2:first-child{margin-top:0;border-top:0;padding-top:0}
+.row{display:flex;justify-content:space-between;gap:8px}
+.row b{font-weight:600}
+.bar{height:5px;background:rgba(255,255,255,.08);border-radius:3px;position:relative;margin:3px 0 5px}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--ok)}
+.bar u{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--bad)}
+#ctrl{bottom:12px;left:12px;right:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button,select{font:inherit;color:var(--ink);background:#241e19;border:1px solid var(--line);border-radius:4px;padding:5px 9px;cursor:pointer}
+button[aria-pressed=true]{border-color:var(--ink)}
+button.pri{background:#b4532a;border-color:#b4532a}
+label{display:flex;align-items:center;gap:6px;color:var(--mut)}
+input[type=range]{width:120px}
+input[type=number]{width:52px;font:inherit;background:#241e19;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:3px 4px}
+#msg{color:var(--mut);margin-left:auto}
+#keys{position:fixed;left:12px;top:104px;color:var(--mut);font-size:11px;line-height:1.6;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+#keys kbd{border:1px solid var(--line);border-radius:3px;padding:0 4px;color:var(--ink)}
+#src{pointer-events:none;position:fixed;left:12px;bottom:118px;max-width:520px;color:var(--mut);font-size:10.5px}
+#loading{position:fixed;inset:0;display:grid;place-items:center;color:var(--mut);font-size:13px}
+.sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:0}
+@media (max-width:760px){#hud{width:auto;left:12px;top:auto;bottom:120px;max-height:40vh;overflow:auto}#keys,#src{display:none}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="loading">Cargando terreno…</div>
+<div class="panel" id="title"><h1>GALE-3D · MONTE SHARP</h1><p id="zoneTxt">Terreno real de Marte a escala 1:1 (metros). Curiosity y un astronauta comparan rutas.</p></div>
+<div id="keys"><kbd>clic</kbd> paradas (modo Marcar) · <kbd>G</kbd> autonomía · <kbd>WASD</kbd> manejo · <kbd>Espacio</kbd> parar<br><kbd>1</kbd> libre <kbd>2</kbd> seguir rover <kbd>3</kbd> seguir astronauta <kbd>4</kbd> cenital · <kbd>C</kbd> capa</div>
+<div class="panel" id="hud">
+  <h2>CURIOSITY · VEHÍCULO</h2>
+  <div class="row"><span>Modo</span><b id="hMode">detenido</b></div>
+  <div class="row"><span>Recorrido</span><b id="hDist">0 m</b></div>
+  <div class="row"><span>Soles de manejo (30–60 m/sol)</span><b id="hSols">—</b></div>
+  <div class="row"><span>Inclinación del rover</span><b id="hTilt">0,0°</b></div>
+  <div class="bar"><i id="bTilt"></i><u style="left:66.6%"></u></div>
+  <div class="row"><span>Cabeceo / alabeo</span><b id="hPR">0° / 0°</b></div>
+  <h2>ASTRONAUTA · A PIE</h2>
+  <div class="row"><span>Recorrido</span><b id="pDist">0 m</b></div>
+  <div class="row"><span>Distancia al rover</span><b id="pRef">—</b></div>
+  <div class="bar"><i id="bRef"></i><u style="left:100%"></u></div>
+  <div class="row"><span>Tiempo afuera</span><b id="pTime">0 min</b></div>
+  <div class="row"><span>Dosis estimada</span><b id="pDose">0,0 µSv</b></div>
+  <div class="row"><span>Cielo tapado aquí</span><b id="pSky">—</b></div>
+  <h2>ENTORNO</h2>
+  <div class="row"><span>Hora solar local</span><b id="eHour">12:00</b></div>
+  <div class="row"><span>Elevación del Sol</span><b id="eSun">—</b></div>
+  <div class="row"><span>Estación</span><b id="eLs">Ls 21° · otoño austral</b></div>
+  <div class="row"><span>Cursor</span><b id="eCur">—</b></div>
+  <h2>RUTAS</h2>
+  <div class="row"><span><span class="sw" style="background:var(--rov)"></span>Vehículo</span><b id="rRov">—</b></div>
+  <div class="row"><span><span class="sw" style="background:var(--per)"></span>Astronauta</span><b id="rPer">—</b></div>
+  <div class="row"><span><span class="sw" style="background:var(--cur)"></span>Curiosity real</span><b id="rCur">—</b></div>
+</div>
+<div class="panel" id="ctrl">
+  <button id="bMark" aria-pressed="false">Marcar paradas</button>
+  <button class="pri" id="bPlan">Calcular rutas</button>
+  <button id="bGo" aria-pressed="false">Autonomía (G)</button>
+  <button id="bClear">Borrar</button>
+  <select id="sLayer" aria-label="Capa">
+    <option value="color">Capa: terreno</option>
+    <option value="slope">Capa: pendiente</option>
+    <option value="sky">Capa: sombra de radiación</option>
+    <option value="no">Capa: zonas prohibidas</option>
+  </select>
+  <select id="sCam" aria-label="Cámara">
+    <option value="free">Cámara: libre</option>
+    <option value="rover">Cámara: seguir rover</option>
+    <option value="astro">Cámara: seguir astronauta</option>
+    <option value="top">Cámara: cenital</option>
+  </select>
+  <label>Hora <input type="range" id="iHour" min="5.5" max="18.5" step="0.25" value="12"></label>
+  <label>Ls <input type="number" id="iLs" min="0" max="359" value="21"></label>
+  <label>Velocidad ×<select id="sWarp"><option>1</option><option>10</option><option selected>60</option><option>300</option></select></label>
+  <span id="msg">Marcá paradas sobre el terreno y calculá las rutas.</span>
+</div>
+<div id="src">Terreno: modelo de elevación MSL PLACES (PDS Geosciences), 2 m. Recorrido real: PLACES localized_interp. Dosis: RAD 0,67 mSv/día, blindaje del relieve calibrado en Murray Buttes. Límites de pendiente provisorios (docs/parametros). Modelo del rover aproximado, a escala.</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { Line2 } from "three/addons/lines/Line2.js";
+import { LineMaterial } from "three/addons/lines/LineMaterial.js";
+import { LineGeometry } from "three/addons/lines/LineGeometry.js";
+
+const ZONA = new URLSearchParams(location.search).get("zona") || "montesharp_s3331-3958";
+const PARAMS = { rMax: 20, pMax: 20, vWalk: 2.5 / 3.6, dose: 0.67, k: 0.25, refMax: 1380, perSol: [30, 60], wPer: 3 };
+const LAT = -4.8 * Math.PI / 180;
+const $ = (id) => document.getElementById(id);
+const fmt = (v, d = 1) => v.toLocaleString("es-AR", { minimumFractionDigits: d, maximumFractionDigits: d });
+
+async function fetchFirst(paths, type) {
+  for (const p of paths) { try { const r = await fetch(p); if (r.ok) return type === "json" ? r.json() : r.arrayBuffer(); } catch (e) {} }
+  throw new Error("No se encontró " + paths[0]);
+}
+const bases = location.pathname.includes("/escena3d/") ? [`../data/terreno/${ZONA}/`, `data/terreno/${ZONA}/`] : [`data/terreno/${ZONA}/`, `../data/terreno/${ZONA}/`];
+const files = (f) => bases.map((b) => b + f);
+const [meta, demBuf, skyBuf, trav] = await Promise.all([fetchFirst(files("meta.json"), "json"), fetchFirst(files("dem_2m.bin")), fetchFirst(files("cielo_bloqueado_u8.bin")).catch(() => null), fetchFirst(files("recorrido_curiosity.json"), "json").catch(() => null)]);
+const NX = meta.ancho, NY = meta.alto, CS = meta.tam_celda_m;
+const Z = new Float32Array(demBuf);
+const SKY = skyBuf ? new Uint8Array(skyBuf) : new Uint8Array(NX * NY);
+let zmin = Infinity, zmax = -Infinity; for (const v of Z) { if (v < zmin) zmin = v; if (v > zmax) zmax = v; }
+const Z0 = (zmin + zmax) / 2;
+$("zoneTxt").textContent = `Terreno real de Marte a escala 1:1: ${(NX * CS / 1000).toFixed(1)} × ${(NY * CS / 1000).toFixed(1)} km, celdas de ${CS} m, desnivel ${Math.round(zmax - zmin)} m.`;
+
+// pendiente por celda (grados)
+const S = new Float32Array(NX * NY);
+for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
+  const im = Math.max(0, i - 1), ip = Math.min(NX - 1, i + 1), jm = Math.max(0, j - 1), jp = Math.min(NY - 1, j + 1);
+  const gx = (Z[j * NX + ip] - Z[j * NX + im]) / ((ip - im) * CS), gy = (Z[jp * NX + i] - Z[jm * NX + i]) / ((jp - jm) * CS);
+  S[j * NX + i] = Math.atan(Math.hypot(gx, gy)) * 180 / Math.PI;
+}
+// mundo: x = este, z = sur, y = arriba (m)
+const toWorldX = (i) => (i - (NX - 1) / 2) * CS, toWorldZ = (j) => (j - (NY - 1) / 2) * CS;
+const toI = (x) => x / CS + (NX - 1) / 2, toJ = (z) => z / CS + (NY - 1) / 2;
+function heightAt(x, z) {
+  const fi = Math.min(NX - 1.001, Math.max(0, toI(x))), fj = Math.min(NY - 1.001, Math.max(0, toJ(z)));
+  const i = Math.floor(fi), j = Math.floor(fj), u = fi - i, v = fj - j, a = j * NX + i;
+  return (Z[a] * (1 - u) + Z[a + 1] * u) * (1 - v) + (Z[a + NX] * (1 - u) + Z[a + NX + 1] * u) * v - Z0;
+}
+const cellOf = (x, z) => [Math.round(toI(x)), Math.round(toJ(z))];
+const lonlat = (x, z) => [meta.lon_oeste + toI(x) * CS * meta.grados_por_m, meta.lat_norte - toJ(z) * CS * meta.grados_por_m];
+
+// ---------- escena ----------
+const canvas = $("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.9; renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xc9a27e, 900, 3600);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 6000);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.495;
+
+const sun = new THREE.DirectionalLight(0xfff1dc, 2.6);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+const sc = sun.shadow.camera; sc.left = -40; sc.right = 40; sc.top = 40; sc.bottom = -40; sc.near = 1; sc.far = 900; sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.04;
+scene.add(sun, sun.target);
+const hemi = new THREE.HemisphereLight(0xf3dcc2, 0x7a5038, 0.9); scene.add(hemi);
+
+// terreno
+const geo = new THREE.PlaneGeometry((NX - 1) * CS, (NY - 1) * CS, NX - 1, NY - 1);
+geo.rotateX(-Math.PI / 2);
+const pos = geo.attributes.position;
+for (let n = 0; n < NX * NY; n++) pos.setY(n, Z[n] - Z0);
+geo.computeVertexNormals();
+const colors = new Float32Array(NX * NY * 3);
+geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+const terrain = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, metalness: 0 }));
+terrain.receiveShadow = true; terrain.castShadow = true;
+scene.add(terrain);
+const hash = (n) => { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s); };
+const ramp = (t, st) => { t = Math.min(1, Math.max(0, t)); for (let q = 1; q < st.length; q++) if (t <= st[q][0]) { const a = st[q - 1], b = st[q], f = (t - a[0]) / (b[0] - a[0]); return [0, 1, 2].map((c) => a[1][c] + (b[1][c] - a[1][c]) * f); } return st[st.length - 1][1]; };
+function paint(mode) {
+  for (let n = 0; n < NX * NY; n++) {
+    let c;
+    if (mode === "slope") c = ramp(S[n] / 35, [[0, [0.18, 0.32, 0.22]], [0.3, [0.45, 0.62, 0.3]], [0.57, [0.85, 0.75, 0.32]], [0.75, [0.85, 0.42, 0.2]], [1, [0.6, 0.08, 0.12]]]);
+    else if (mode === "sky") c = ramp(SKY[n] / 255 / 0.45, [[0, [0.12, 0.1, 0.18]], [0.35, [0.2, 0.36, 0.55]], [0.7, [0.45, 0.72, 0.8]], [1, [0.92, 0.97, 0.95]]]);
+    else {
+      const e = (Z[n] - zmin) / (zmax - zmin), r = hash(n) * 0.06, sl = Math.min(1, S[n] / 30), concave = SKY[n] / 255;
+      c = [0.42 + 0.10 * e + r - 0.1 * concave, 0.22 + 0.05 * e + r * 0.6 - 0.06 * concave, 0.13 + 0.03 * e + r * 0.4 - 0.03 * concave];
+      c = c.map((v, q) => v * (1 - 0.18 * sl) + (q === 0 ? 0.05 : 0.02) * sl);
+      if (mode === "no") { if (S[n] > PARAMS.pMax) c = [0.55, 0.18, 0.62]; else if (S[n] > PARAMS.rMax) c = [0.85, 0.2, 0.25]; }
+    }
+    colors[n * 3] = c[0]; colors[n * 3 + 1] = c[1]; colors[n * 3 + 2] = c[2];
+  }
+  geo.attributes.color.needsUpdate = true;
+}
+paint("color");
+
+// recorrido real de Curiosity
+let curLen = 0;
+if (trav) {
+  const pts = trav.puntos.filter((_, n) => n % 2 === 0).map(([i, j]) => { const x = toWorldX(i), z = toWorldZ(j); return new THREE.Vector3(x, heightAt(x, z) + 0.6, z); });
+  for (let n = 1; n < pts.length; n++) curLen += pts[n].distanceTo(pts[n - 1]);
+  const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({ color: 0xf2e14c, dashSize: 6, gapSize: 4, transparent: true, opacity: 0.85 }));
+  line.computeLineDistances(); scene.add(line);
+  $("rCur").textContent = `soles ${trav.puntos[0][2]}–${trav.puntos[trav.puntos.length - 1][2]} · ${fmt(curLen / 1000, 2)} km`;
+}
+
+// ---------- Curiosity a escala (m) ----------
+const M = {
+  white: new THREE.MeshStandardMaterial({ color: 0xf2eee6, roughness: 0.6, metalness: 0.05, emissive: 0x2a2622 }),
+  grey: new THREE.MeshStandardMaterial({ color: 0x77736c, roughness: 0.5, metalness: 0.5 }),
+  dark: new THREE.MeshStandardMaterial({ color: 0x2b2926, roughness: 0.6, metalness: 0.3 }),
+  alu: new THREE.MeshStandardMaterial({ color: 0xb8b6b0, roughness: 0.35, metalness: 0.85 }),
+  gold: new THREE.MeshStandardMaterial({ color: 0xc8a050, roughness: 0.3, metalness: 0.9 }),
+  glass: new THREE.MeshStandardMaterial({ color: 0x0c1218, roughness: 0.05, metalness: 0.6 }),
+  rtg: new THREE.MeshStandardMaterial({ color: 0x55524d, roughness: 0.45, metalness: 0.7 }),
+};
+const mesh = (g, m, parent, p = [0, 0, 0], r = [0, 0, 0]) => { const o = new THREE.Mesh(g, m); o.position.set(...p); o.rotation.set(...r); o.castShadow = true; o.receiveShadow = true; parent.add(o); return o; };
+const WHEEL_R = 0.25, WHEEL_W = 0.4;
+const WX = [1.10, 0.06, -0.98];           // delantera, media, trasera (adelante = +x local)
+const WZ = 1.20;                          // centro de rueda a cada lado
+const rover = new THREE.Group(); scene.add(rover);       // posición/rumbo en el suelo
+const chassis = new THREE.Group(); rover.add(chassis);   // cuerpo con cabeceo y alabeo
+// cuerpo (WEB) y cubierta
+mesh(new THREE.BoxGeometry(1.88, 0.56, 1.56), M.white, chassis, [0, 0.94, 0]);
+mesh(new THREE.BoxGeometry(1.96, 0.04, 1.64), M.grey, chassis, [0, 1.24, 0]);
+mesh(new THREE.BoxGeometry(0.08, 0.05, 1.70), M.dark, chassis, [0.30, 1.285, 0]);          // barra diferencial
+mesh(new THREE.BoxGeometry(0.22, 0.12, 0.22), M.gold, chassis, [0.5, 1.32, 0.46]);          // RAD
+mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.02, 20), M.dark, chassis, [0.5, 1.39, 0.46]);
+// mástil y cabezal
+const MASTX = 0.74, MASTZ = -0.52;
+mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.06, 20), M.grey, chassis, [MASTX, 1.29, MASTZ]);
+mesh(new THREE.CylinderGeometry(0.055, 0.06, 0.66, 16), M.white, chassis, [MASTX, 1.6, MASTZ]);
+const head = new THREE.Group(); head.position.set(MASTX, 2.04, MASTZ); chassis.add(head);
+mesh(new THREE.BoxGeometry(0.30, 0.22, 0.42), M.white, head, [0, 0, 0]);
+mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.05, 24), M.glass, head, [0.17, 0.05, 0.02], [0, 0, Math.PI / 2]);   // ChemCam
+for (const z of [-0.16, -0.08]) mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.05, 16), M.glass, head, [0.17, -0.05, z], [0, 0, Math.PI / 2]); // Mastcam
+for (const z of [0.13, 0.17]) mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.04, 12), M.glass, head, [0.17, -0.06, z], [0, 0, Math.PI / 2]); // Navcam
+mesh(new THREE.BoxGeometry(0.18, 0.025, 0.03), M.dark, chassis, [MASTX - 0.12, 1.66, MASTZ]);   // REMS
+mesh(new THREE.BoxGeometry(0.03, 0.025, 0.18), M.dark, chassis, [MASTX, 1.68, MASTZ + 0.12]);
+// antenas
+mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.18, 12), M.grey, chassis, [-0.4, 1.35, 0.48]);
+const hga = mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.04, 6), M.white, chassis, [-0.4, 1.47, 0.48], [0.5, 0, 0.6]);
+mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.28, 10), M.grey, chassis, [-0.7, 1.4, -0.4]);
+// MMRTG con aletas, inclinado atrás
+const rtg = new THREE.Group(); rtg.position.set(-1.38, 1.18, 0); rtg.rotation.z = -0.95; chassis.add(rtg);
+mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.66, 28), M.rtg, rtg);
+for (let f = 0; f < 8; f++) { const a = f / 8 * Math.PI * 2; mesh(new THREE.BoxGeometry(0.2, 0.6, 0.012), M.rtg, rtg, [Math.cos(a) * 0.36, 0, Math.sin(a) * 0.36], [0, -a, 0]); }
+for (const z of [-0.28, 0.28]) mesh(new THREE.BoxGeometry(0.34, 0.03, 0.03), M.grey, chassis, [-1.1, 1.0, z]);
+// brazo plegado y torreta
+mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.12, 16), M.grey, chassis, [1.0, 1.08, 0.4], [0, 0, Math.PI / 2]);
+const arm1 = mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.9, 12), M.white, chassis, [1.32, 1.12, 0.04], [Math.PI / 2, 0, 0.15]);
+mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.18, 6), M.grey, chassis, [1.42, 0.92, -0.36]);
+mesh(new THREE.CylinderGeometry(0.03, 0.02, 0.16, 10), M.alu, chassis, [1.42, 0.76, -0.36]);
+// hazcams y DAN
+mesh(new THREE.BoxGeometry(0.06, 0.1, 0.5), M.dark, chassis, [0.97, 0.7, 0]);
+mesh(new THREE.BoxGeometry(0.3, 0.1, 0.36), M.dark, chassis, [-0.65, 0.62, -0.1]);
+// pivotes de suspensión (en el cuerpo)
+const PIV = (side) => new THREE.Vector3(0.2, 0.98, side * 0.96);
+for (const side of [1, -1]) mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.12, 16), M.grey, chassis, [0.2, 0.98, side * 0.96], [Math.PI / 2, 0, 0]);
+// ruedas (en el marco del rover, posicionadas por la suspensión)
+const wheels = [];
+const wheelGeo = new THREE.CylinderGeometry(WHEEL_R, WHEEL_R, WHEEL_W, 32, 1, true);
+const capGeo = new THREE.CircleGeometry(WHEEL_R - 0.01, 32);
+const grouserGeo = new THREE.BoxGeometry(0.012, WHEEL_W * 0.98, 0.018);
+for (let w = 0; w < 6; w++) {
+  const side = w < 3 ? 1 : -1, xi = WX[w % 3];
+  const g = new THREE.Group(); rover.add(g);
+  const spin = new THREE.Group(); g.add(spin);
+  const tyre = mesh(wheelGeo, M.alu, spin, [0, 0, 0], [Math.PI / 2, 0, 0]);
+  for (let q = 0; q < 24; q++) { const a = q / 24 * Math.PI * 2; const gr = mesh(grouserGeo, M.alu, spin, [Math.cos(a) * WHEEL_R, Math.sin(a) * WHEEL_R, 0], [Math.PI / 2, 0, a + Math.PI / 4]); gr.rotation.set(0, 0, a); gr.rotateX(Math.PI / 2); }
+  const cap = mesh(capGeo, M.grey, spin, [0, 0, side * WHEEL_W / 2], [0, side > 0 ? 0 : Math.PI, 0]);
+  for (let q = 0; q < 6; q++) mesh(new THREE.BoxGeometry(0.02, WHEEL_R * 0.86, 0.01), M.alu, spin, [0, 0, side * (WHEEL_W / 2 + 0.005)], [0, 0, q / 6 * Math.PI * 2]).geometry.translate(0, WHEEL_R * 0.43, 0);
+  mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.05, 16), M.dark, g, [0, 0, side * (WHEEL_W / 2 + 0.02)], [Math.PI / 2, 0, 0]);
+  mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.2, 14), M.grey, g, [0, 0.0, -side * (WHEEL_W / 2 + 0.08)], [Math.PI / 2, 0, 0]); // motor
+  wheels.push({ g, spin, side, xi, zi: side * WZ });
+}
+// brazos de suspensión: cilindros que se estiran entre puntos
+const armGeo = new THREE.CylinderGeometry(1, 1, 1, 10);
+const links = [];
+const link = (r) => { const m = mesh(armGeo, M.grey, rover); m.userData.r = r; links.push(m); return m; };
+function setLink(m, a, b) { const d = new THREE.Vector3().subVectors(b, a); const L = d.length(); m.position.copy(a).addScaledVector(d, 0.5); m.scale.set(m.userData.r, L, m.userData.r); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); }
+const susp = [1, -1].map((side) => ({ side, rFront: link(0.035), rBack: link(0.035), bMid: link(0.03), bRear: link(0.03), struts: [link(0.03), link(0.03), link(0.03)], bog: mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 14), M.grey, rover) }));
+// sombra de contacto
+const blob = new THREE.Mesh(new THREE.CircleGeometry(1.9, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18, depthWrite: false })); blob.rotation.x = -Math.PI / 2; rover.add(blob);
+
+// ---------- astronauta (1,8 m) ----------
+const astro = new THREE.Group(); scene.add(astro);
+const suit = new THREE.MeshStandardMaterial({ color: 0xeeeeea, roughness: 0.8 });
+mesh(new THREE.CapsuleGeometry(0.22, 0.75, 6, 14), suit, astro, [0, 1.0, 0]);
+mesh(new THREE.SphereGeometry(0.17, 20, 16), suit, astro, [0, 1.62, 0]);
+mesh(new THREE.SphereGeometry(0.13, 20, 12, 0, Math.PI), M.gold, astro, [0.06, 1.63, 0], [0, -Math.PI / 2, 0]);
+mesh(new THREE.BoxGeometry(0.22, 0.5, 0.4), suit, astro, [-0.25, 1.15, 0]);
+const legs = [-0.1, 0.1].map((z) => mesh(new THREE.CapsuleGeometry(0.08, 0.6, 4, 10), suit, astro, [0, 0.42, z]));
+astro.visible = false;
+
+// ---------- estado ----------
+const state = { x: 0, z: 0, yaw: 0, v: 0, dist: 0, tilt: 0, pitch: 0, roll: 0, auto: false, manual: { f: 0, t: 0 } };
+const person = { x: 0, z: 0, yaw: 0, dist: 0, time: 0, dose: 0, path: null, s: 0, active: false };
+let roverPath = null, roverS = 0, paths = { rover: null, person: null };
+// arranque: primer punto del recorrido real
+if (trav) { const p = trav.puntos[Math.floor(trav.puntos.length * 0.55)]; state.x = toWorldX(p[0]); state.z = toWorldZ(p[1]); state.yaw = (90 - p[5]) * Math.PI / 180; }
+person.x = state.x + 3; person.z = state.z + 3;
+
+const tmp = new THREE.Vector3();
+function worldOfLocal(lx, lz) { const c = Math.cos(state.yaw), s = Math.sin(state.yaw); return [state.x + lx * c + lz * s, state.z - lx * s + lz * c]; }
+// yaw: 0 = mirando a +x (este); rotación sobre y
+function placeRover() {
+  // altura de contacto bajo cada rueda (terreno)
+  const contacts = wheels.map((w) => { const [wx, wz] = worldOfLocal(w.xi, w.zi); return heightAt(wx, wz); });
+  // plano por mínimos cuadrados: h = a + b*x + c*z en marco local
+  let sx = 0, sz = 0, sxx = 0, szz = 0, sxz = 0, sh = 0, sxh = 0, szh = 0; const n = 6;
+  wheels.forEach((w, q) => { const x = w.xi, z = w.zi, h = contacts[q]; sx += x; sz += z; sxx += x * x; szz += z * z; sxz += x * z; sh += h; sxh += x * h; szh += z * h; });
+  const mx = sx / n, mz = sz / n, mh = sh / n;
+  const cxx = sxx / n - mx * mx, czz = szz / n - mz * mz, cxz = sxz / n - mx * mz, cxh = sxh / n - mx * mh, czh = szh / n - mz * mh;
+  const det = cxx * czz - cxz * cxz;
+  const b = (cxh * czz - czh * cxz) / det, c = (czh * cxx - cxh * cxz) / det, a = mh - b * mx - c * mz;
+  state.pitch = Math.atan(b); state.roll = Math.atan(c);
+  state.tilt = Math.acos(1 / Math.sqrt(1 + b * b + c * c)) * 180 / Math.PI;
+  rover.position.set(state.x, a, state.z); rover.rotation.set(0, state.yaw, 0);
+  chassis.rotation.set(state.roll * -1, 0, state.pitch, "YXZ"); chassis.rotation.order = "YXZ"; chassis.rotation.x = -state.roll; chassis.rotation.z = state.pitch;
+  blob.position.y = 0.03;
+  // ruedas en su contacto real (marco del rover)
+  wheels.forEach((w, q) => { w.g.position.set(w.xi, contacts[q] - a + WHEEL_R, w.zi); w.g.rotation.set(0, 0, 0); });
+  // suspensión
+  const L = (v) => { const p = v.clone(); chassis.updateMatrix(); return p.applyMatrix4(chassis.matrix); };
+  susp.forEach((sp) => {
+    const off = sp.side > 0 ? 0 : 3, wF = wheels[off].g.position, wM = wheels[off + 1].g.position, wR = wheels[off + 2].g.position;
+    const piv = L(PIV(sp.side));
+    const zIn = sp.side * (WZ - WHEEL_W / 2 - 0.16);
+    const top = (p, h) => new THREE.Vector3(p.x, p.y + h, zIn);
+    const fTop = top(wF, 0.32), mTop = top(wM, 0.16), rTop = top(wR, 0.32);
+    const bog = new THREE.Vector3((wM.x + wR.x) / 2 + 0.05, (mTop.y + rTop.y) / 2 + 0.06, zIn);
+    setLink(sp.rFront, piv, fTop); setLink(sp.rBack, piv, bog); setLink(sp.bMid, bog, mTop); setLink(sp.bRear, bog, rTop);
+    setLink(sp.struts[0], fTop, new THREE.Vector3(wF.x, wF.y, zIn)); setLink(sp.struts[1], mTop, new THREE.Vector3(wM.x, wM.y, zIn)); setLink(sp.struts[2], rTop, new THREE.Vector3(wR.x, wR.y, zIn));
+    sp.bog.position.copy(bog); sp.bog.rotation.set(Math.PI / 2, 0, 0);
+  });
+}
+
+// ---------- planificador A* ----------
+class Heap { constructor() { this.k = []; this.v = []; } get n() { return this.k.length; }
+  push(key, val) { const k = this.k, v = this.v; let i = k.length; k.push(key); v.push(val); while (i > 0) { const p = (i - 1) >> 1; if (k[p] <= k[i]) break; [k[p], k[i]] = [k[i], k[p]]; [v[p], v[i]] = [v[i], v[p]]; i = p; } }
+  pop() { const k = this.k, v = this.v, top = v[0], lk = k.pop(), lv = v.pop(); if (k.length) { k[0] = lk; v[0] = lv; let i = 0; for (;;) { const l = 2 * i + 1, r = l + 1; let m = i; if (l < k.length && k[l] < k[m]) m = l; if (r < k.length && k[r] < k[m]) m = r; if (m === i) break; [k[m], k[i]] = [k[i], k[m]]; [v[m], v[i]] = [v[i], v[m]]; i = m; } } return top; } }
+const DX = [1, -1, 0, 0, 1, 1, -1, -1], DY = [0, 0, 1, -1, 1, -1, 1, -1];
+const tobler = (tan) => Math.exp(-3.5 * Math.abs(tan + 0.05)) / Math.exp(-3.5 * 0.05);
+function astar(kind, a, b) {
+  const lim = kind === "rover" ? PARAMS.rMax : PARAMS.pMax, N = NX * NY;
+  const sI = a[1] * NX + a[0], gI = b[1] * NX + b[0];
+  if (S[sI] > lim || S[gI] > lim) return { err: "parada en terreno prohibido" };
+  const g = new Float64Array(N).fill(Infinity), from = new Int32Array(N).fill(-1), closed = new Uint8Array(N), h = new Heap();
+  const hm = kind === "rover" ? 1 : 1 / (PARAMS.vWalk * 1.2);
+  const H = (i) => Math.hypot(i % NX - b[0], ((i / NX) | 0) - b[1]) * CS * hm;
+  g[sI] = 0; h.push(H(sI), sI);
+  while (h.n) { const i = h.pop(); if (closed[i]) continue; closed[i] = 1; if (i === gI) break;
+    const x = i % NX, y = (i / NX) | 0;
+    for (let q = 0; q < 8; q++) { const nx = x + DX[q], ny = y + DY[q]; if (nx < 0 || ny < 0 || nx >= NX || ny >= NY) continue; const j = ny * NX + nx; if (closed[j] || S[j] > lim) continue;
+      const d = (q < 4 ? 1 : Math.SQRT2) * CS; let cost;
+      if (kind === "rover") { const s = S[j] / PARAMS.rMax; cost = d * (1 + 2 * s * s); }
+      else { const t = d / (PARAMS.vWalk * tobler((Z[j] - Z[i]) / d)); cost = t * (1 + PARAMS.wPer * 0.15 * (1 - SKY[j] / 255)); }
+      const ng = g[i] + cost; if (ng < g[j]) { g[j] = ng; from[j] = i; h.push(ng + H(j), j); } } }
+  if (!closed[gI]) return { err: "sin camino con ese límite de pendiente" };
+  const path = []; for (let c = gI; c !== -1; c = from[c]) path.push([c % NX, (c / NX) | 0]); return { path: path.reverse() };
+}
+function snap(c) { const lim = Math.min(PARAMS.rMax, PARAMS.pMax) - 0.5; let best = c, bd = Infinity;
+  for (let dj = -20; dj <= 20; dj++) for (let di = -20; di <= 20; di++) { const i = c[0] + di, j = c[1] + dj; if (i < 0 || j < 0 || i >= NX || j >= NY) continue; if (S[j * NX + i] > lim) continue; const d = di * di + dj * dj; if (d < bd) { bd = d; best = [i, j]; } }
+  return best; }
+function planAll(kind, stops) { stops = stops.map(snap); let full = []; for (let n = 1; n < stops.length; n++) { const r = astar(kind, stops[n - 1], stops[n]); if (r.err) return { err: `tramo ${n}: ${r.err}` }; full = full.concat(n > 1 ? r.path.slice(1) : r.path); } return { path: full }; }
+function toPolyline(cells) { const pts = cells.map(([i, j]) => { const x = toWorldX(i), z = toWorldZ(j); return new THREE.Vector3(x, heightAt(x, z), z); }); const L = [0]; for (let n = 1; n < pts.length; n++) L.push(L[n - 1] + pts[n].distanceTo(pts[n - 1])); return { pts, L, total: L[L.length - 1] }; }
+function along(pl, s) { s = Math.min(pl.total, Math.max(0, s)); let lo = 0, hi = pl.L.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (pl.L[m] <= s) lo = m; else hi = m; } const f = (s - pl.L[lo]) / Math.max(1e-6, pl.L[hi] - pl.L[lo]); return new THREE.Vector3().lerpVectors(pl.pts[lo], pl.pts[hi], f); }
+const routeObjs = [];
+const lineMats = [];
+function drawRoute(pl, color) { const flat = []; pl.pts.forEach((p) => flat.push(p.x, p.y + 0.35, p.z)); const g = new LineGeometry(); g.setPositions(flat); const mat = new LineMaterial({ color, linewidth: 3.5, worldUnits: false }); mat.resolution.set(innerWidth, innerHeight); lineMats.push(mat); const m = new Line2(g, mat); m.computeLineDistances(); scene.add(m); routeObjs.push(m); }
+
+// paradas
+let marking = false; const stops = []; const stopObjs = [];
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2();
+function pick(ev) { const r = canvas.getBoundingClientRect(); mouse.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(mouse, camera); const hit = ray.intersectObject(terrain)[0]; return hit ? hit.point : null; }
+let downAt = null;
+canvas.addEventListener("pointerdown", (e) => { downAt = [e.clientX, e.clientY]; });
+canvas.addEventListener("pointerup", (e) => {
+  if (!marking || !downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 4) return;
+  const p = pick(e); if (!p) return;
+  if (!stops.length) { const c = cellOf(state.x, state.z); stops.push(c); addStopMarker(state.x, state.z, 0); }
+  stops.push(cellOf(p.x, p.z)); addStopMarker(p.x, p.z, stops.length - 1);
+  say(`${stops.length - 1} parada(s) marcadas desde la posición del rover. Tocá "Calcular rutas".`);
+});
+function addStopMarker(x, z, n) { const g = new THREE.Group(); const y = heightAt(x, z); mesh(new THREE.CylinderGeometry(0.06, 0.06, 4, 8), M.white, g, [0, 2, 0]); mesh(new THREE.ConeGeometry(0.5, 0.9, 16), n === 0 ? M.alu : new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x553322 }), g, [0, 4.4, 0], [Math.PI, 0, 0]); g.position.set(x, y, z); scene.add(g); stopObjs.push(g); }
+canvas.addEventListener("pointermove", (e) => { const p = pick(e); if (!p) return; const [lo, la] = lonlat(p.x, p.z); const [i, j] = cellOf(p.x, p.z); const n = j * NX + i; $("eCur").textContent = `${la.toFixed(5)}°, ${lo.toFixed(5)}°E · ${fmt(S[n], 0)}°`; });
+
+function say(t) { $("msg").textContent = t; }
+$("bMark").onclick = () => { marking = !marking; $("bMark").setAttribute("aria-pressed", marking); say(marking ? "Modo marcar: clic sobre el terreno para cada parada (arrastrar sigue girando la cámara)." : "Modo marcar apagado."); };
+$("bClear").onclick = () => { stops.length = 0; stopObjs.forEach((o) => scene.remove(o)); stopObjs.length = 0; routeObjs.forEach((o) => scene.remove(o)); routeObjs.length = 0; paths = { rover: null, person: null }; roverPath = null; person.active = false; astro.visible = false; $("rRov").textContent = "—"; $("rPer").textContent = "—"; say("Borrado."); };
+$("bPlan").onclick = () => {
+  if (stops.length < 2) { say("Marcá al menos una parada (botón Marcar paradas)."); return; }
+  say("Calculando…");
+  setTimeout(() => {
+    routeObjs.forEach((o) => scene.remove(o)); routeObjs.length = 0;
+    const r = planAll("rover", stops), q = planAll("person", stops.concat([stops[0]]));
+    if (r.path) { paths.rover = toPolyline(r.path); drawRoute(paths.rover, 0x3fb6ff); $("rRov").textContent = `${fmt(paths.rover.total / 1000, 2)} km`; } else $("rRov").textContent = r.err;
+    if (q.path) { paths.person = toPolyline(q.path); drawRoute(paths.person, 0xff8a3d); $("rPer").textContent = `${fmt(paths.person.total / 1000, 2)} km ida y vuelta`; } else $("rPer").textContent = q.err;
+    roverPath = paths.rover; roverS = 0; state.dist = 0;
+    if (paths.person) { person.path = paths.person; person.s = 0; person.dist = 0; person.time = 0; person.dose = 0; person.active = true; astro.visible = true; }
+    say(r.err || q.err ? (r.err || q.err) : "Rutas listas. Autonomía (G) para que el rover y el astronauta las recorran.");
+  }, 30);
+};
+const setAuto = (on) => { state.auto = on; $("bGo").setAttribute("aria-pressed", on); };
+$("bGo").onclick = () => setAuto(!state.auto);
+$("sLayer").onchange = (e) => paint(e.target.value);
+$("sCam").onchange = (e) => setCam(e.target.value);
+const keys = {};
+addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+  keys[e.key.toLowerCase()] = true;
+  if (e.key === "g" || e.key === "G") setAuto(!state.auto);
+  if (e.key === " ") { setAuto(false); state.v = 0; e.preventDefault(); }
+  if (["1", "2", "3", "4"].includes(e.key)) { const m = ["free", "rover", "astro", "top"][+e.key - 1]; $("sCam").value = m; setCam(m); }
+  if (e.key === "c" || e.key === "C") { const s = $("sLayer"); s.selectedIndex = (s.selectedIndex + 1) % s.options.length; paint(s.value); }
+});
+addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
+
+// ---------- Sol y cielo ----------
+function updateSun() {
+  const hour = +$("iHour").value, Ls = (+$("iLs").value) * Math.PI / 180;
+  const dec = Math.asin(Math.sin(25.19 * Math.PI / 180) * Math.sin(Ls)), H = (hour - 12) * 15 * Math.PI / 180;
+  const el = Math.asin(Math.sin(LAT) * Math.sin(dec) + Math.cos(LAT) * Math.cos(dec) * Math.cos(H));
+  const az = Math.atan2(-Math.sin(H), Math.tan(dec) * Math.cos(LAT) - Math.sin(LAT) * Math.cos(H));
+  const dir = new THREE.Vector3(Math.cos(el) * Math.sin(az), Math.sin(el), -Math.cos(el) * Math.cos(az));
+  const day = Math.max(0, Math.min(1, (el * 180 / Math.PI + 4) / 18));
+  sun.intensity = 3.2 * day; hemi.intensity = 0.25 + 0.85 * day;
+  const sky = new THREE.Color().setRGB(0.12 + 0.66 * day, 0.10 + 0.52 * day, 0.10 + 0.36 * day);
+  if (el < 0.2 && el > -0.05) sky.lerp(new THREE.Color(0.35, 0.45, 0.6), 0.35);   // atardecer azulado de Marte
+  scene.background = sky; scene.fog.color.copy(sky);
+  sun.userData.dir = dir;
+  const hh = Math.floor(hour), mm = Math.round((hour - hh) * 60);
+  $("eHour").textContent = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+  $("eSun").textContent = `${fmt(el * 180 / Math.PI, 0)}°`;
+  const ls = +$("iLs").value; const season = ls < 90 ? "otoño austral" : ls < 180 ? "invierno austral" : ls < 270 ? "primavera austral" : "verano austral";
+  $("eLs").textContent = `Ls ${ls}° · ${season}`;
+}
+$("iHour").oninput = updateSun; $("iLs").oninput = updateSun; updateSun();
+
+// ---------- cámara ----------
+let camMode = "rover";
+function setCam(m) { camMode = m; if (m === "top") { controls.target.set(state.x, rover.position.y, state.z); camera.position.set(state.x, rover.position.y + 420, state.z + 1); } if (m === "free") controls.target.set(state.x, rover.position.y + 1, state.z); }
+placeRover();
+camera.position.set(state.x - 9, rover.position.y + 5, state.z + 8); controls.target.set(state.x, rover.position.y + 1, state.z);
+
+function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); lineMats.forEach((m) => m.resolution.set(w, h)); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+addEventListener("resize", resize); resize();
+$("loading").remove();
+
+// ---------- bucle ----------
+let last = performance.now();
+function frame(now) {
+  const dtReal = Math.min(0.05, (now - last) / 1000); last = now;
+  const warp = +$("sWarp").value, dt = dtReal * warp;
+  // manejo manual
+  const f = (keys.w ? 1 : 0) - (keys.s ? 1 : 0), t = (keys.a ? 1 : 0) - (keys.d ? 1 : 0);
+  let moved = 0;
+  if (f || t) { setAuto(false); const v = 0.04 * f; state.yaw += t * 0.15 * dt * 0.2; const [nx, nz] = [state.x + Math.cos(state.yaw) * v * dt, state.z - Math.sin(state.yaw) * v * dt]; if (S[cellOf(nx, nz)[1] * NX + cellOf(nx, nz)[0]] <= PARAMS.rMax + 4) { moved = Math.hypot(nx - state.x, nz - state.z); state.x = nx; state.z = nz; } }
+  // autonomía: el rover a ~4 cm/s reales (Curiosity), el astronauta a su ritmo
+  if (state.auto && roverPath && roverS < roverPath.total) {
+    const ds = 0.04 * dt; roverS = Math.min(roverPath.total, roverS + ds);
+    const p = along(roverPath, roverS), ahead = along(roverPath, roverS + 2.5);
+    const want = Math.atan2(-(ahead.z - p.z), ahead.x - p.x); let dy = want - state.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); state.yaw += dy * Math.min(1, dtReal * 3);
+    moved = Math.hypot(p.x - state.x, p.z - state.z); state.x = p.x; state.z = p.z;
+    if (roverS >= roverPath.total) say("El rover llegó a la última parada.");
+  }
+  state.dist += moved;
+  wheels.forEach((w) => { w.spin.rotation.z -= moved / WHEEL_R; });
+  if (state.auto && person.active && person.path && person.s < person.path.total) {
+    const p0 = along(person.path, person.s); const [i, j] = cellOf(p0.x, p0.z); const n = j * NX + i;
+    const next = along(person.path, person.s + 1); const tan = (next.y - p0.y) / 1;
+    const v = PARAMS.vWalk * tobler(tan); const ds = v * dt; person.s = Math.min(person.path.total, person.s + ds); person.dist += ds; person.time += dt;
+    person.dose += dt / 86400 * PARAMS.dose * (1 - PARAMS.k * SKY[n] / 255);
+    const p = along(person.path, person.s), ah = along(person.path, person.s + 1.5);
+    astro.position.copy(p); astro.rotation.y = Math.atan2(-(ah.z - p.z), ah.x - p.x);
+    legs[0].rotation.z = Math.sin(person.s * 3) * 0.4; legs[1].rotation.z = -Math.sin(person.s * 3) * 0.4;
+    $("pSky").textContent = `${Math.round(SKY[n] / 2.55)}%`;
+  }
+  placeRover();
+  // cámara
+  if (camMode === "rover" || camMode === "astro") {
+    const tgt = camMode === "astro" && astro.visible ? astro.position.clone().add(new THREE.Vector3(0, 1.2, 0)) : new THREE.Vector3(state.x, rover.position.y + 1.1, state.z);
+    const delta = new THREE.Vector3().subVectors(tgt, controls.target); controls.target.add(delta); camera.position.add(delta);
+  }
+  controls.update();
+  // sombra que sigue al rover
+  const sd = sun.userData.dir || new THREE.Vector3(0, 1, 0);
+  sun.target.position.set(state.x, rover.position.y, state.z); sun.position.copy(sun.target.position).addScaledVector(sd, 400);
+  // HUD
+  $("hMode").textContent = state.auto ? (roverPath && roverS < roverPath.total ? "autónomo" : "autónomo · sin ruta") : (f || t ? "manual" : "detenido");
+  $("hDist").textContent = `${fmt(state.dist, 0)} m`;
+  $("hSols").textContent = roverPath ? `${Math.ceil(roverPath.total / PARAMS.perSol[1])}–${Math.ceil(roverPath.total / PARAMS.perSol[0])} soles` : "—";
+  $("hTilt").textContent = `${fmt(state.tilt)}°`; $("hTilt").style.color = state.tilt > PARAMS.rMax ? "var(--bad)" : "";
+  $("bTilt").style.width = `${Math.min(100, state.tilt / 30 * 100)}%`; $("bTilt").style.background = state.tilt > PARAMS.rMax ? "var(--bad)" : "var(--ok)";
+  $("hPR").textContent = `${fmt(state.pitch * 180 / Math.PI, 0)}° / ${fmt(state.roll * 180 / Math.PI, 0)}°`;
+  if (person.active) {
+    const dRef = Math.hypot(astro.position.x - state.x, astro.position.z - state.z);
+    $("pDist").textContent = `${fmt(person.dist, 0)} m`; $("pRef").textContent = `${fmt(dRef, 0)} m`; $("pRef").style.color = dRef > PARAMS.refMax ? "var(--bad)" : "";
+    $("bRef").style.width = `${Math.min(100, dRef / PARAMS.refMax * 100)}%`; $("bRef").style.background = dRef > PARAMS.refMax ? "var(--bad)" : "var(--ok)";
+    $("pTime").textContent = `${fmt(person.time / 60, 0)} min`; $("pDose").textContent = `${fmt(person.dose * 1000, 1)} µSv`;
+  }
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__gale = { state, person, stops, setCam, planAll, paths: () => paths };
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+ "zona": "montesharp_s3331-3958",
+ "fuente_dem": "msl_orbital_dem.img, PDS Geosciences Node, paquete MSL PLACES (HiRISE/CTX), lineas 9971-11571, columnas 2360-3960, promediado a 2 m",
+ "fuente_orto": null,
+ "ancho": 800,
+ "alto": 800,
+ "tam_celda_m": 2.0,
+ "lat_norte": -4.748806606382483,
+ "lon_oeste": 137.38404130342624,
+ "grados_por_m": 1.6870604858115216e-05,
+ "radio_m": 3396190.0,
+ "elev_min": -4006.439697265625,
+ "elev_max": -3625.710693359375,
+ "extra": {
+  "cielo_bloqueado_u8.bin": "fracción de cielo tapado por el relieve, 0-255 = 0-1, 16 direcciones, horizonte 400 m"
+ }
+}
