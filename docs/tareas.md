@@ -18,4 +18,5 @@
 
 ## Claude
 - [ ] Pasar el planificador a la zona del sol 5070 cuando llegue el modelo de elevación.
-- [ ] Escena 3D (three.js) con las dos capas.
+- [x] Escena 3D (three.js) con las dos capas → `escena3d/index.html` (GALE-3D de David fusionado con la escena autónoma del compañero).
+- [ ] Escena 3D: probar en un celular real y en una compu con placa de video común; pasar los textos al inglés para la entrega.
