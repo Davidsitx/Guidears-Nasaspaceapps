@@ -1,0 +1,27 @@
+{
+  "zona": "sol5070",
+  "fuente_dem": "USGS Astrogeology, MSL_Gale_DEM_Mosaic_1m_v3 (Calef y Parker, 2016), https://planetarymaps.usgs.gov/mosaic/Mars/MSL/MSL_Gale_DEM_Mosaic_1m_v3.tif",
+  "fuente_orto": "USGS Astrogeology, MSL_Gale_Orthophoto_Mosaic_25cm_v3, mosaico HiRISE (Calef y Parker, 2016), https://planetarymaps.usgs.gov/mosaic/Mars/MSL/MSL_Gale_Orthophoto_Mosaic_25cm_v3.tif",
+  "ancho": 801,
+  "alto": 831,
+  "tam_celda_m": 2.0,
+  "lat_norte": -4.81998369,
+  "lon_oeste": 137.38498606,
+  "grados_por_m": 1.6870604858115216e-05,
+  "radio_m": 3396190.0,
+  "lat_sur": -4.84802263,
+  "lon_este": 137.41201277,
+  "esquina_noroeste_m": [
+    8143453.492786024,
+    -285703.075189438
+  ],
+  "sin_datos": -9999.0,
+  "elev_min_m": -3530.93,
+  "elev_max_m": -3210.67,
+  "celdas_sin_datos": 0,
+  "orto_res_m": 0.5,
+  "orto_ancho_px": 3204,
+  "orto_alto_px": 3324,
+  "nota": "lat_norte/lon_oeste = esquina noroeste de la celda (0,0). Proyección equirectangular con paralelo estándar 0: 1 celda = 2 m en el eje norte-sur y 2 m de 'este proyectado' (≈1,993 m reales en Gale, por cos(lat)). Las elevaciones son del DEM USGS (referidas al areoide de MOLA).",
+  "comando": "python herramientas/recortar_terreno.py --zona sol5070 --lat-norte -4.82 --lat-sur -4.848 --lon-oeste 137.385 --lon-este 137.412 --orto-res 0.5"
+}

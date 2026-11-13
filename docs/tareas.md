@@ -12,7 +12,8 @@
 - [ ] Leer el enunciado y la pestaña Resources apenas se publique (13 de noviembre).
 
 ## Compañero
-- [ ] Capas satelitales y modelo de elevación de la zona del sol 5070 (recorte del USGS MSL_Gale_DEM_Mosaic_1m_v3.tif y ortoimagen HiRISE).
+- [x] Capas satelitales y modelo de elevación de la zona del sol 5070 (recorte del USGS MSL_Gale_DEM_Mosaic_1m_v3.tif y ortoimagen HiRISE) → `data/terreno/sol5070/`.
+- [ ] Zona extra `boxwork` en el formato del contrato (a partir del DEM y la orto en color que ya tiene descargados).
 - [ ] Tabla de 5 límites físicos del astronauta con fuente (pendiente, velocidad, oxígeno, temperatura, dosis).
 
 ## Claude
