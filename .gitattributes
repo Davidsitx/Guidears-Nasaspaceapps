@@ -1,0 +1,4 @@
+# Grillas de terreno y otros binarios: nunca convertir saltos de línea
+*.bin binary
+*.jpg binary
+*.png binary
