@@ -22,22 +22,13 @@ Every stop is tied to a current science question of the Curiosity team.
 - Curiosity mission blog, NASA (science.nasa.gov).
 - RAD radiation measurements (Hassler et al., 2014); terrain shielding (DLR, JGR Planets 2026).
 - NASA "Where is Curiosity?" map for the current position.
-
-Full source register: `docs/fuentes.md`.
+- Apache License 2.0.
+- Topografía (relieve, altura, modelos de elevación) MOLA, HRSC, CRX, HiRISE
+- Imagen (fotografía visible) HiRISE, CTX, HRSC, CaSSIS, MOC
+- Full source register: `docs/fuentes.md`.
+- Composición/termal (minerales, temperatura, propiedades de la superficie) THEMIS, CRISM, OMEGA, TES
+- Agua y hielo / subsuelo SHARAD, MARSIS, GRS, FREND
+- Atmósfera y clima MCS, MAVEN, EMIRS/EXI
 
 ## License
-Apache License 2.0.
-Topografía (relieve, altura, modelos de elevación)
-MOLA, HRSC, CRX, HiRISE
 
-Imagen (fotografía visible)
-HiRISE, CTX, HRSC, CaSSIS, MOC
-
-Composición/termal (minerales, temperatura, propiedades de la superficie)
-THEMIS, CRISM, OMEGA, TES
-
-Agua y hielo / subsuelo
-SHARAD, MARSIS, GRS, FREND
-
-Atmósfera y clima
-MCS, MAVEN, EMIRS/EXI
