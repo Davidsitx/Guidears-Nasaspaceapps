@@ -27,3 +27,17 @@ Full source register: `docs/fuentes.md`.
 
 ## License
 Apache License 2.0.
+Topografía (relieve, altura, modelos de elevación)
+MOLA, HRSC, CRX, HiRISE
+
+Imagen (fotografía visible)
+HiRISE, CTX, HRSC, CaSSIS, MOC
+
+Composición/termal (minerales, temperatura, propiedades de la superficie)
+THEMIS, CRISM, OMEGA, TES
+
+Agua y hielo / subsuelo
+SHARAD, MARSIS, GRS, FREND
+
+Atmósfera y clima
+MCS, MAVEN, EMIRS/EXI
