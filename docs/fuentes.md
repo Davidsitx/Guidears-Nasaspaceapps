@@ -16,6 +16,8 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Blindaje por relieve | DLR, JGR Planets 2026 (elib.dlr.de/224554) |
 | Energía y ruedas del rover | ver docs/rover-salud.md |
 | MMGIS | NASA-AMMOS/MMGIS (Apache 2.0) |
+| Motor 3D de la escena | three.js r170 (MIT), copia en escena3d/vendor/ con su licencia |
+| Velocidad de caminata según pendiente (escena 3D) | Función de Tobler (Tobler, 1993), normalizada a la velocidad en llano de data/parametros.json. Es terrestre: provisoria |
 | Límite de pendiente del astronauta (20°) y alcance de caminata (1,38 km) | NASA NTRS 20210026296 (EVA lunar, Artemis) |
 | Radiación junto a relieve | Ehresmann et al. 2021 (doi:10.1029/2021JE006851); Guo et al. 2021 (doi:10.1029/2021GL093912) |
 | Rover presurizado (10 km/h, 125 km) | NASA Space Exploration Vehicle, ficha FS-2011-08-045-JSC |

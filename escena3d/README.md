@@ -1,0 +1,75 @@
+# GALE-3D · escena 3D
+
+`index.html` es una sola página autónoma: se abre con doble clic, funciona sin internet ni servidor y se puede
+publicar tal cual (GitHub Pages). Pesa unos 7 MB porque lleva adentro three.js, el terreno, la ortoimagen y las rutas.
+
+Es la fusión de dos trabajos del equipo:
+- **Simulador GALE-3D (David):** Curiosity a escala con suspensión, rutas A*, autonomía y manejo, sol y estación,
+  astronauta que camina su propia ruta, cámaras y panel de estado.
+- **Escena autónoma (compañero):** abre sin internet, métricas y perfil por ruta, recorrido en primera persona, fichas de
+  las paradas, capas sobre la ortoimagen, parámetros leídos de `data/parametros.json`.
+
+## Qué se puede hacer
+- **Terreno real 1:1** de la zona del sol 5070 (celdas de 2 m) con la ortoimagen HiRISE, y la posición de Curiosity.
+- **Rutas:** "Marcar paradas" y clic sobre el terreno; "Calcular rutas" da una para el vehículo (azul) y otra para el
+  astronauta (naranja, ida y vuelta, con preferencia por la sombra). Si una parada cae en terreno prohibido, se corre a
+  la celda permitida más cercana. Las rutas trazadas a ojo de `data/rutas/` se ven semitransparentes, para comparar.
+- **Métricas por ruta** (panel izquierdo): largo, subida y bajada, pendiente de marcha máxima, metros sobre el límite,
+  tiempo, dosis (astronauta), máxima distancia al punto de partida contra 1,38 km, soles de manejo (vehículo).
+  Perfil de elevación con los tramos sobre el límite en rojo.
+- **Autonomía (G):** el rover (a ~4 cm/s, como Curiosity) y el astronauta recorren sus rutas, a velocidad real ×1 a
+  ×300. Si no hay rutas calculadas, recorren las trazadas a ojo. **WASD** maneja el rover; **Espacio** lo detiene.
+- **Panel derecho:** inclinación del rover contra 20°, cabeceo y alabeo; recorrido, tiempo afuera, dosis y distancia
+  del astronauta al rover contra 1,38 km; hora, elevación del Sol, estación y coordenadas bajo el cursor.
+- **Sol y estación:** la hora (5:30 a 18:30) y Ls mueven el sol y las sombras, con tono azulado al atardecer.
+- **Capas** (tecla C): ortoimagen, pendiente contra los límites, zonas prohibidas (violeta para los dos, rojo solo el
+  rover, naranja solo el astronauta) y sombra de radiación (cielo tapado).
+- **Cámaras** (teclas 1 a 4): libre, seguir al rover, seguir al astronauta, cenital. Además, **primera persona** desde
+  cada ruta (botón de la ruta): recorre la ruta a la altura de los ojos con tiempo, pendiente y dosis acumulada.
+- **Paradas numeradas** de las rutas a ojo: al tocarlas, nombre, elevación y motivo científico (si el GeoJSON lo trae).
+- En celular los paneles arrancan cerrados (botones "Panel" y "Datos").
+
+## Cómo regenerarla
+Cada vez que cambie una ruta, el terreno, los parámetros o `plantilla.html`:
+```
+python escena3d/armar.py                                  # zona sol5070 -> escena3d/index.html
+python escena3d/armar.py --zona montesharp_s3331-3958     # otra zona -> escena3d/index_<zona>.html
+```
+Requiere numpy y pillow. Si la carpeta del terreno trae `cielo_bloqueado_u8.bin`, se usa; si no, se calcula
+(1–2 minutos) y se guarda en `escena3d/.cache/` (no se versiona). Si no hay `orto.jpg`, se usa un relieve sombreado.
+Si la carpeta trae `recorrido_curiosity.json`, el recorrido real se dibuja en amarillo. Solo se incluyen las rutas
+de `data/rutas/` que caen enteras dentro de la zona.
+
+Archivos:
+- `plantilla.html`: el código de la página (HTML, CSS y JavaScript propios del equipo).
+- `armar.py`: lee los datos del repo y escribe la página.
+- `vendor/`: three.js r170 (`three.module.min.js`, `OrbitControls.js`) con su licencia MIT (`LICENSE-three-MIT.txt`).
+
+## Medido, calculado y supuesto
+| Qué | Tipo | De dónde |
+| --- | --- | --- |
+| Elevación y ortoimagen | medido | USGS, mosaicos de Gale de Calef y Parker, 2016 (`data/terreno/sol5070/README.md`) |
+| Posición de Curiosity | medido | NASA, "Where is Curiosity?" |
+| Recorrido real (zona Monte Sharp) | medido | MSL PLACES, `localized_interp.csv` |
+| Rutas a ojo y sus paradas | propuesta del equipo | `data/rutas/` |
+| Límites de pendiente, velocidades, alcance de 1,38 km, dosis en superficie, blindaje | supuesto (**provisorio**) | `data/parametros.json` y sus fuentes |
+| Pendiente, cielo tapado, rutas A*, tiempos, dosis, inclinación del rover | cálculo propio | esta página y `armar.py` |
+| Modelo de Curiosity | aproximado | proporciones a escala, sin detalle de ingeniería |
+
+Detalles:
+- **Pendiente de marcha:** desnivel en ventanas de 10 m a lo largo de la ruta. La pendiente del terreno se calcula por
+  celda, con cos(lat) en el eje este-oeste. A 2 m es exigente: mucho terreno cercano supera 20°.
+- **Cielo tapado:** ángulo de horizonte en 16 direcciones hasta 400 m (mismo método que `herramientas/build_terrain.py`).
+- **Tiempo del astronauta:** función de Tobler normalizada a 2,5 km/h en llano. Es de caminata terrestre, no de traje.
+- **Dosis:** dosis de superficie × (1 − factor de blindaje × fracción de cielo tapado), integrada con el tiempo.
+- **Rover:** la suspensión se resuelve ajustando un plano a los seis puntos de contacto, no con la cinemática exacta del
+  rocker-bogie. El sol usa la declinación con oblicuidad de 25,19° y Ls.
+- Código propio. El simulador "ER-6 Terrain Explorer" fue solo inspiración visual; no se copió código.
+
+## Verificación (13 de noviembre de 2026)
+- Elevación del sol 5070: -3473,8 m (la verificación del terreno da -3473,9 m). Largo 2D de las rutas a ojo: 1457 m y
+  1501 m, igual que el GeoJSON.
+- Rutas a ojo: 54 m (vehículo) y 110 m (astronauta) sobre 20°. Rutas A* con paradas de prueba: 0 m sobre el límite.
+- Probada en el navegador integrado (escritorio y celular emulado) y abierta desde archivo (`file://`) con Edge, sin
+  errores. Zona Monte Sharp también probada.
+- Falta: celular real, y medir fluidez en una computadora con placa de video común.

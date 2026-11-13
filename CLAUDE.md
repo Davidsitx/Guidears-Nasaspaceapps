@@ -42,8 +42,8 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 - prototipo/planificador/index.html: planificador 2D que funciona (A* sobre modelo de elevación PLACES de 2 m, rutas vehículo y astronauta, pendiente, cielo bloqueado, dosis, perfil, validación contra el recorrido real). Terreno: laderas del Monte Sharp, soles 3331–3958. NO cubre la posición actual.
 - data/rutas/ruta_sol5070_cualitativa.geojson: primera propuesta de rutas desde el sol 5070, trazada a ojo sobre imagen, sin elevación.
 - MMGIS (NASA-AMMOS/MMGIS) instalado y probado con la misión Gale_Boxwork (herramientas/mmgis_config_Gale_Boxwork.json).
-- escena3d/index.html: simulador 3D (three.js) que funciona: terreno real a escala 1:1, Curiosity con suspensión que se adapta, rutas vehículo/astronauta con A*, conducción automática, hora y estación, capas de pendiente y sombra de radiación. Carga la zona por `?zona=<carpeta de data/terreno>`.
-- Falta: terreno de la zona actual (USGS MSL_Gale_DEM_Mosaic_1m_v3.tif, recorte aprox. lat -4.820 a -4.848, lon 137.385 a 137.412) en el formato de docs/contrato.md; la escena lo toma sin cambios de código.
+- data/terreno/sol5070/: terreno de la zona actual (DEM USGS 1 m y orto HiRISE, a 2 m y 0,5 m), verificado.
+- escena3d/index.html: GALE-3D, fusión del simulador de David y la escena autónoma del compañero (13/11). Se abre con doble clic, sin internet ni servidor. **No editar index.html a mano:** el código está en `escena3d/plantilla.html` y se arma con `python escena3d/armar.py [--zona <carpeta>]` (otras zonas salen como `index_<zona>.html`). Ver escena3d/README.md.
 
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).

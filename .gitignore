@@ -7,3 +7,4 @@ localized_interp.csv
 node_modules/
 __pycache__/
 .DS_Store
+escena3d/.cache/
