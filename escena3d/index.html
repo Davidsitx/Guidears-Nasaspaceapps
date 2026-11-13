@@ -73,7 +73,7 @@ input[type=number]{width:52px;font:inherit;background:#241e19;color:var(--ink);b
   <button id="bGo" aria-pressed="false">Autonomía (G)</button>
   <button id="bClear">Borrar</button>
   <select id="sLayer" aria-label="Capa">
-    <option value="color">Capa: terreno</option>
+    <option value="color">Capa: HiRISE / terreno</option>
     <option value="slope">Capa: pendiente</option>
     <option value="sky">Capa: sombra de radiación</option>
     <option value="no">Capa: zonas prohibidas</option>
@@ -89,7 +89,7 @@ input[type=number]{width:52px;font:inherit;background:#241e19;color:var(--ink);b
   <label>Velocidad ×<select id="sWarp"><option>1</option><option>10</option><option selected>60</option><option>300</option></select></label>
   <span id="msg">Marcá paradas sobre el terreno y calculá las rutas.</span>
 </div>
-<div id="src">Terreno: modelo de elevación MSL PLACES (PDS Geosciences), 2 m. Recorrido real: PLACES localized_interp. Dosis: RAD 0,67 mSv/día, blindaje del relieve calibrado en Murray Buttes. Límites de pendiente provisorios (docs/parametros). Modelo del rover aproximado, a escala.</div>
+<div id="src">Terreno: USGS MSL Gale DEM 1 m y ortofoto HiRISE (Calef y Parker, 2016) promediados a 2 m y 0,5 m; zona alternativa: MSL PLACES. Posición del sol 5070: mapa oficial de NASA. Dosis: RAD 0,67 mSv/día, blindaje del relieve calibrado en Murray Buttes. Límites de pendiente provisorios (docs/parametros). Modelo del rover aproximado, a escala.</div>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
@@ -99,7 +99,7 @@ import { Line2 } from "three/addons/lines/Line2.js";
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import { LineGeometry } from "three/addons/lines/LineGeometry.js";
 
-const ZONA = new URLSearchParams(location.search).get("zona") || "montesharp_s3331-3958";
+const ZONA = new URLSearchParams(location.search).get("zona") || "sol5070";
 const PARAMS = { rMax: 20, pMax: 20, vWalk: 2.5 / 3.6, dose: 0.67, k: 0.25, refMax: 1380, perSol: [30, 60], wPer: 3 };
 const LAT = -4.8 * Math.PI / 180;
 const $ = (id) => document.getElementById(id);
@@ -111,19 +111,26 @@ async function fetchFirst(paths, type) {
 }
 const bases = location.pathname.includes("/escena3d/") ? [`../data/terreno/${ZONA}/`, `data/terreno/${ZONA}/`] : [`data/terreno/${ZONA}/`, `../data/terreno/${ZONA}/`];
 const files = (f) => bases.map((b) => b + f);
-const [meta, demBuf, skyBuf, trav] = await Promise.all([fetchFirst(files("meta.json"), "json"), fetchFirst(files("dem_2m.bin")), fetchFirst(files("cielo_bloqueado_u8.bin")).catch(() => null), fetchFirst(files("recorrido_curiosity.json"), "json").catch(() => null)]);
+const b64 = (s) => { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+async function loadDem() { try { return new Float32Array(await fetchFirst(files("dem_2m.bin"))); } catch (e) { const j = await fetchFirst(files("dem_2m_u16.json"), "json"); const u = b64(j.b64), dv = new DataView(u.buffer), out = new Float32Array(u.length / 2); for (let n = 0; n < out.length; n++) out[n] = j.zmin + dv.getUint16(n * 2, true) * j.escala; return out; } }
+async function loadSky() { try { return new Uint8Array(await fetchFirst(files("cielo_bloqueado_u8.bin"))); } catch (e) { try { return b64((await fetchFirst(files("cielo_bloqueado_u8.json"), "json")).b64); } catch (e2) { return null; } } }
+const upFiles = (f) => location.pathname.includes("/escena3d/") ? ["../data/" + f, "data/" + f] : ["data/" + f, "../data/" + f];
+const [meta, Z, skyArr, trav, here, qual] = await Promise.all([fetchFirst(files("meta.json"), "json"), loadDem(), loadSky(), fetchFirst(files("recorrido_curiosity.json"), "json").catch(() => null),
+  fetchFirst([...upFiles("curiosity/posicion_sol5070.geojson"), ...upFiles("curiosity/posicion_sol5070.json")], "json").catch(() => null),
+  fetchFirst([...upFiles("rutas/ruta_sol5070_cualitativa.geojson"), ...upFiles("rutas/ruta_sol5070_cualitativa.json")], "json").catch(() => null)]);
 const NX = meta.ancho, NY = meta.alto, CS = meta.tam_celda_m;
-const Z = new Float32Array(demBuf);
-const SKY = skyBuf ? new Uint8Array(skyBuf) : new Uint8Array(NX * NY);
+const CC = meta.esquina_noroeste_m ? 0.5 : 0;            // lat_norte/lon_oeste en la esquina de la celda
+const SKY = skyArr || new Uint8Array(NX * NY);
+const cellOfLL = (lon, lat) => [(lon - meta.lon_oeste) / meta.grados_por_m / CS - CC, (meta.lat_norte - lat) / meta.grados_por_m / CS - CC];
 let zmin = Infinity, zmax = -Infinity; for (const v of Z) { if (v < zmin) zmin = v; if (v > zmax) zmax = v; }
 const Z0 = (zmin + zmax) / 2;
-$("zoneTxt").textContent = `Terreno real de Marte a escala 1:1: ${(NX * CS / 1000).toFixed(1)} × ${(NY * CS / 1000).toFixed(1)} km, celdas de ${CS} m, desnivel ${Math.round(zmax - zmin)} m.`;
+$("zoneTxt").textContent = `${ZONA === "sol5070" ? "Donde está Curiosity hoy (sol 5070). " : ""}Terreno real a escala 1:1: ${(NX * CS / 1000).toFixed(1)} × ${(NY * CS / 1000).toFixed(1)} km, celdas de ${CS} m, desnivel ${Math.round(zmax - zmin)} m.`;
 
 // pendiente por celda (grados)
 const S = new Float32Array(NX * NY);
 for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
   const im = Math.max(0, i - 1), ip = Math.min(NX - 1, i + 1), jm = Math.max(0, j - 1), jp = Math.min(NY - 1, j + 1);
-  const gx = (Z[j * NX + ip] - Z[j * NX + im]) / ((ip - im) * CS), gy = (Z[jp * NX + i] - Z[jm * NX + i]) / ((jp - jm) * CS);
+  const gx = (Z[j * NX + ip] - Z[j * NX + im]) / ((ip - im) * CS * Math.cos(LAT)), gy = (Z[jp * NX + i] - Z[jm * NX + i]) / ((jp - jm) * CS);
   S[j * NX + i] = Math.atan(Math.hypot(gx, gy)) * 180 / Math.PI;
 }
 // mundo: x = este, z = sur, y = arriba (m)
@@ -135,7 +142,7 @@ function heightAt(x, z) {
   return (Z[a] * (1 - u) + Z[a + 1] * u) * (1 - v) + (Z[a + NX] * (1 - u) + Z[a + NX + 1] * u) * v - Z0;
 }
 const cellOf = (x, z) => [Math.round(toI(x)), Math.round(toJ(z))];
-const lonlat = (x, z) => [meta.lon_oeste + toI(x) * CS * meta.grados_por_m, meta.lat_norte - toJ(z) * CS * meta.grados_por_m];
+const lonlat = (x, z) => [meta.lon_oeste + (toI(x) + CC) * CS * meta.grados_por_m, meta.lat_norte - (toJ(z) + CC) * CS * meta.grados_por_m];
 
 // ---------- escena ----------
 const canvas = $("c");
@@ -163,7 +170,10 @@ for (let n = 0; n < NX * NY; n++) pos.setY(n, Z[n] - Z0);
 geo.computeVertexNormals();
 const colors = new Float32Array(NX * NY * 3);
 geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-const terrain = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, metalness: 0 }));
+const terrainMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, metalness: 0 });
+const terrain = new THREE.Mesh(geo, terrainMat);
+let hasOrto = false;
+for (const p of files("orto.jpg")) { try { const r = await fetch(p, { method: "HEAD" }); if (!r.ok) continue; const tex = await new THREE.TextureLoader().loadAsync(p); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8; terrainMat.map = tex; terrainMat.needsUpdate = true; hasOrto = true; break; } catch (e) {} }
 terrain.receiveShadow = true; terrain.castShadow = true;
 scene.add(terrain);
 const hash = (n) => { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s); };
@@ -173,6 +183,7 @@ function paint(mode) {
     let c;
     if (mode === "slope") c = ramp(S[n] / 35, [[0, [0.18, 0.32, 0.22]], [0.3, [0.45, 0.62, 0.3]], [0.57, [0.85, 0.75, 0.32]], [0.75, [0.85, 0.42, 0.2]], [1, [0.6, 0.08, 0.12]]]);
     else if (mode === "sky") c = ramp(SKY[n] / 255 / 0.45, [[0, [0.12, 0.1, 0.18]], [0.35, [0.2, 0.36, 0.55]], [0.7, [0.45, 0.72, 0.8]], [1, [0.92, 0.97, 0.95]]]);
+    else if (hasOrto && mode === "color") c = [1.0, 0.66, 0.46];
     else {
       const e = (Z[n] - zmin) / (zmax - zmin), r = hash(n) * 0.06, sl = Math.min(1, S[n] / 30), concave = SKY[n] / 255;
       c = [0.42 + 0.10 * e + r - 0.1 * concave, 0.22 + 0.05 * e + r * 0.6 - 0.06 * concave, 0.13 + 0.03 * e + r * 0.4 - 0.03 * concave];
@@ -289,9 +300,13 @@ const state = { x: 0, z: 0, yaw: 0, v: 0, dist: 0, tilt: 0, pitch: 0, roll: 0, a
 const person = { x: 0, z: 0, yaw: 0, dist: 0, time: 0, dose: 0, path: null, s: 0, active: false };
 let roverPath = null, roverS = 0, paths = { rover: null, person: null };
 // arranque: primer punto del recorrido real
-if (trav) { const p = trav.puntos[Math.floor(trav.puntos.length * 0.55)]; state.x = toWorldX(p[0]); state.z = toWorldZ(p[1]); state.yaw = (90 - p[5]) * Math.PI / 180; }
+if (here && ZONA === "sol5070") { const [lo, la] = here.features[0].geometry.coordinates; const [i, j] = cellOfLL(lo, la); state.x = toWorldX(i); state.z = toWorldZ(j); state.yaw = -Math.PI / 4; addFlag(state.x, state.z, "sol 5070"); }
+else if (trav) { const p = trav.puntos[Math.floor(trav.puntos.length * 0.55)]; state.x = toWorldX(p[0]); state.z = toWorldZ(p[1]); state.yaw = (90 - p[5]) * Math.PI / 180; }
+if (qual && ZONA === "sol5070") { qual.features.filter((f) => f.geometry.type === "LineString").forEach((f) => { const pts = f.geometry.coordinates.map(([lo, la]) => { const [i, j] = cellOfLL(lo, la); const x = toWorldX(i), z = toWorldZ(j); return new THREE.Vector3(x, heightAt(x, z) + 0.8, z); }); const dense = []; for (let n = 1; n < pts.length; n++) for (let q = 0; q < 20; q++) { const v = new THREE.Vector3().lerpVectors(pts[n - 1], pts[n], q / 20); v.y = heightAt(v.x, v.z) + 0.8; dense.push(v); } const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints(dense), new THREE.LineDashedMaterial({ color: f.properties.ruta === "vehiculo" ? 0x9fd8ff : 0xffc49a, dashSize: 8, gapSize: 6 })); ln.computeLineDistances(); scene.add(ln); });
+  $("rCur").textContent = "pos. real sol 5070 · rutas a ojo punteadas"; }
 person.x = state.x + 3; person.z = state.z + 3;
 
+function addFlag(x, z, txt) { const g = new THREE.Group(); mesh(new THREE.CylinderGeometry(0.05, 0.05, 6, 8), M.white, g, [0, 3, 0]); mesh(new THREE.BoxGeometry(1.2, 0.7, 0.03), new THREE.MeshStandardMaterial({ color: 0xf2e14c, emissive: 0x3a3200 }), g, [0.6, 5.6, 0]); g.position.set(x - 4, heightAt(x - 4, z - 4), z - 4); scene.add(g); }
 const tmp = new THREE.Vector3();
 function worldOfLocal(lx, lz) { const c = Math.cos(state.yaw), s = Math.sin(state.yaw); return [state.x + lx * c + lz * s, state.z - lx * s + lz * c]; }
 // yaw: 0 = mirando a +x (este); rotación sobre y
