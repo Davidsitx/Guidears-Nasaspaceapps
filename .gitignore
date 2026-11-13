@@ -1,0 +1,9 @@
+# Datos pesados: se descargan, no se versionan (ver data/README.md)
+*.img
+*.tif
+*.tiff
+*.vrt
+localized_interp.csv
+node_modules/
+__pycache__/
+.DS_Store

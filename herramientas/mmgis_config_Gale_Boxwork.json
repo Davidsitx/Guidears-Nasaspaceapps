@@ -1,0 +1,189 @@
+{
+ "msv": {
+  "mission": "Gale_Boxwork",
+  "missionFolderName": "Gale_Boxwork",
+  "site": "Mars",
+  "masterdb": false,
+  "view": [
+   -4.806,
+   137.381,
+   16
+  ],
+  "radius": {
+   "major": "3396190",
+   "minor": "3376200"
+  },
+  "mapscale": "5"
+ },
+ "projection": {
+  "custom": false,
+  "epsg": "",
+  "proj": "",
+  "globeproj": "webmercator",
+  "xmlpath": "",
+  "bounds": [
+   "",
+   "",
+   "",
+   ""
+  ],
+  "origin": [
+   "",
+   ""
+  ],
+  "reszoomlevel": "",
+  "resunitsperpixel": ""
+ },
+ "look": {
+  "pagename": "Gale Boxwork - Space Apps 2026",
+  "minimalist": false,
+  "topbar": true,
+  "toolbar": true,
+  "scalebar": true,
+  "coordinates": true,
+  "zoomcontrol": false,
+  "graticule": false,
+  "miscellaneous": true,
+  "swap": true,
+  "copylink": true,
+  "screenshot": true,
+  "fullscreen": true,
+  "help": true,
+  "logourl": "",
+  "helpurl": "",
+  "aboutModalContent": ""
+ },
+ "panelSettings": {},
+ "panels": {
+  "viewer": true,
+  "map": true,
+  "globe": true
+ },
+ "time": {
+  "enabled": true
+ },
+ "tools": [
+  {
+   "name": "Layers",
+   "icon": "layers",
+   "js": "LayersTool"
+  },
+  {
+   "name": "Legend",
+   "icon": "format-list-bulleted-type",
+   "js": "LegendTool"
+  },
+  {
+   "name": "Info",
+   "icon": "information-variant",
+   "js": "InfoTool"
+  }
+ ],
+ "layers": [
+  {
+   "name": "Fondo",
+   "type": "header",
+   "uuid": "024a2ce8-da63-40cf-8448-86dc4aad53fe",
+   "sublayers": [
+    {
+     "name": "Gale HiRISE color (NASA MSL)",
+     "uuid": "8979c0aa-a960-4470-a0c9-9465439338b8",
+     "type": "tile",
+     "visibility": true,
+     "sourceType": "url",
+     "url": "https://mars.nasa.gov/mmgis-maps/MSL/Layers/MSL_Gale_HiRISE-LRGB_78quads/{z}/{x}/{y}.png",
+     "tileformat": "tms",
+     "initialOpacity": 1,
+     "minZoom": 10,
+     "maxNativeZoom": 18,
+     "maxZoom": 24,
+     "boundingBox": [
+      "137.32672354505786",
+      "-4.87560429259321",
+      "137.4785574965306",
+      "-4.55506331169111"
+     ],
+     "description": "Teselas HiRISE color de Gale servidas por NASA (mismo enlace que usa la misión de referencia de MMGIS)."
+    },
+    {
+     "name": "Relieve sombreado (DEM PLACES, 1 m, hasta sol 3958)",
+     "uuid": "821728fc-0a41-4e4f-b6c3-04f93818ce45",
+     "type": "tile",
+     "visibility": true,
+     "sourceType": "url",
+     "url": "Layers/Hillshade/{z}/{x}/{y}.png",
+     "tileformat": "wmts",
+     "initialOpacity": 0.6,
+     "minZoom": 12,
+     "maxNativeZoom": 17,
+     "maxZoom": 24,
+     "description": "Hecho por nosotros con msl_orbital_dem (PDS PLACES). No cubre el boxwork."
+    }
+   ]
+  },
+  {
+   "name": "Curiosity",
+   "type": "header",
+   "uuid": "fd12c60d-2d94-4de8-993f-98422a23ca3f",
+   "sublayers": [
+    {
+     "name": "Recorrido completo (PLACES, soles 0-4868)",
+     "uuid": "6e190646-9b99-4ef2-9d12-5e76bc1b92a1",
+     "type": "vector",
+     "url": "Layers/curiosity_traverse.geojson",
+     "visibility": true,
+     "initialOpacity": 1,
+     "style": {
+      "className": "traverse",
+      "strokeColor": "#ffd400",
+      "strokeWeight": 3,
+      "fillColor": "#ffd400",
+      "fillOpacity": 1,
+      "radius": 3
+     },
+     "variables": {
+      "search": "(tramo)"
+     }
+    },
+    {
+     "name": "Posiciones en el boxwork (inclinación)",
+     "uuid": "fcd44a32-5e6e-4dd3-af00-66e5ada05480",
+     "type": "vector",
+     "url": "Layers/boxwork_positions.geojson",
+     "visibility": false,
+     "initialOpacity": 1,
+     "style": {
+      "className": "bwpos",
+      "strokeColor": "#003300",
+      "strokeWeight": 1,
+      "fillColor": "#33ff66",
+      "fillOpacity": 0.8,
+      "radius": 4
+     },
+     "variables": {
+      "search": "(sol)"
+     }
+    },
+    {
+     "name": "Paradas del boxwork",
+     "uuid": "20f4c079-cbfe-4888-abd7-cae114a94cd4",
+     "type": "vector",
+     "url": "Layers/paradas_boxwork.geojson",
+     "visibility": true,
+     "initialOpacity": 1,
+     "style": {
+      "className": "paradas",
+      "strokeColor": "#ffffff",
+      "strokeWeight": 2,
+      "fillColor": "#ff2d55",
+      "fillOpacity": 1,
+      "radius": 9
+     },
+     "variables": {
+      "search": "(nombre)"
+     }
+    }
+   ]
+  }
+ ]
+}

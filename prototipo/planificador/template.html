@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planificador de rutas en Marte · Space Apps 2026</title>
+<style>
+:root{--bg:#14110f;--panel:#1e1a17;--line:#3a332d;--tx:#efe6dc;--mut:#a89b8c;--rover:#3fb6ff;--per:#ff8a3d;--cur:#f2e14c;--ok:#7bd88f;--warn:#ffcc66}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:14px 20px;border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:18px;font-weight:650}
+header p{margin:4px 0 0;color:var(--mut);font-size:13px}
+main{display:grid;grid-template-columns:minmax(320px,1fr) 380px;gap:16px;padding:16px 20px}
+@media (max-width:980px){main{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:0 0 8px;font-weight:600}
+#wrap{position:relative;width:100%;aspect-ratio:1/1;background:#000;border-radius:8px;overflow:hidden;cursor:crosshair}
+#wrap canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:auto}
+.tool{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 0}
+button,select{background:#2a2420;color:var(--tx);border:1px solid var(--line);border-radius:7px;padding:7px 11px;font:inherit;cursor:pointer}
+button:hover{border-color:#6a5c50}
+button.pri{background:#c4562b;border-color:#c4562b;color:#fff}
+label{display:flex;align-items:center;gap:6px;color:var(--mut)}
+.side{display:flex;flex-direction:column;gap:14px}
+.param{display:grid;grid-template-columns:1fr 70px;gap:6px 10px;align-items:center;font-size:13px}
+.param input{width:70px;background:#2a2420;color:var(--tx);border:1px solid var(--line);border-radius:6px;padding:5px 6px;font:inherit}
+.tag{font-size:11px;color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:5px 4px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left;color:var(--mut);font-weight:400}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}
+#prof{width:100%;height:170px;display:block}
+#status{color:var(--mut);font-size:13px;min-height:20px;margin-top:8px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin-top:8px}
+.note{font-size:12px;color:var(--mut)}
+.note b{color:var(--tx);font-weight:600}
+footer{padding:0 20px 24px;color:var(--mut);font-size:12px}
+footer li{margin:3px 0}
+a{color:#ffb38a}
+#hover{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.65);padding:4px 8px;border-radius:6px;font-size:12px;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Planificador de rutas en Marte: vehículo y astronauta</h1>
+  <p>Terreno real de las laderas del Monte Sharp, cráter Gale (zona que recorrió Curiosity entre los soles 3331 y 3958). Hacé clic en el mapa para marcar paradas y calculá las dos rutas.</p>
+</header>
+<main>
+  <section>
+    <div class="card">
+      <div id="wrap"><canvas id="base"></canvas><canvas id="over"></canvas><div id="hover"></div></div>
+      <div class="tool">
+        <select id="layer">
+          <option value="hs">Fondo: relieve sombreado</option>
+          <option value="slope">Fondo: pendiente</option>
+          <option value="sky">Fondo: cielo bloqueado (sombra de radiación)</option>
+        </select>
+        <label><input type="checkbox" id="showCur" checked> Recorrido real de Curiosity</label>
+        <label><input type="checkbox" id="showNo" checked> Zonas prohibidas</label>
+      </div>
+      <div class="tool">
+        <button class="pri" id="calc">Calcular rutas</button>
+        <button id="undo">Deshacer parada</button>
+        <button id="clear">Borrar</button>
+        <button id="demo">Ejemplo</button>
+        <button id="valid">Validar contra Curiosity</button>
+        <button id="exp">Copiar GeoJSON</button>
+      </div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--rover)"></span>Ruta del vehículo</span>
+        <span><span class="sw" style="background:var(--per)"></span>Ruta del astronauta</span>
+        <span><span class="sw" style="background:var(--cur)"></span>Recorrido real de Curiosity</span>
+        <span id="noLeg"><span class="sw" style="background:rgba(255,40,80,.55)"></span>Prohibido para el vehículo (rojo) o para ambos (violeta)</span>
+      </div>
+      <div id="status">Marcá al menos dos paradas.</div>
+      <textarea id="geo" readonly style="display:none;width:100%;height:90px;margin-top:8px;background:#0f0d0b;color:#cfc3b6;border:1px solid #3a332d;border-radius:6px;font:11px monospace"></textarea>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Perfil de elevación</h2>
+      <canvas id="prof"></canvas>
+    </div>
+  </section>
+  <aside class="side">
+    <div class="card">
+      <h2>Resultados</h2>
+      <table id="res">
+        <thead><tr><th></th><th style="color:var(--rover)">Vehículo</th><th style="color:var(--per)">Astronauta</th></tr></thead>
+        <tbody><tr><td colspan="3" style="text-align:left;color:var(--mut)">Sin rutas todavía.</td></tr></tbody>
+      </table>
+      <p class="note" id="valOut"></p>
+    </div>
+    <div class="card">
+      <h2>Parámetros</h2>
+      <div class="param">
+        <span>Pendiente máxima del vehículo (°)</span><input id="pRov" type="number" value="20" step="1">
+        <span>Pendiente máxima del astronauta (°)</span><input id="pPer" type="number" value="25" step="1">
+        <span>Velocidad del astronauta en llano (km/h)</span><input id="pV" type="number" value="2.5" step="0.1">
+        <span>Velocidad del vehículo (m/h)</span><input id="pVr" type="number" value="100" step="10">
+        <span>Dosis de rayos cósmicos sin blindaje (mSv/día)</span><input id="pDose" type="number" value="0.67" step="0.01">
+        <span>Reducción de dosis por cielo bloqueado (factor)</span><input id="pK" type="number" value="0.25" step="0.05">
+        <span>Prioridad a la sombra de radiación (0 a 10)</span><input id="pW" type="number" value="3" step="1" min="0" max="10">
+      </div>
+      <p class="note" style="margin-top:10px"><span class="tag">Provisorio:</span> la pendiente del vehículo sale de lo que Curiosity realmente recorrió en el boxwork (99% de las posiciones bajo 17,4°, máximo 22,8°). La del astronauta, su velocidad y la del vehículo son supuestos a reemplazar por los límites con fuente que traiga tu compañero. El factor 0,25 reproduce la medición de RAD cerca de Murray Buttes (19% de cielo bloqueado, 4 a 5% menos dosis).</p>
+    </div>
+    <div class="card">
+      <h2>Cómo decide cada ruta</h2>
+      <p class="note"><b>Vehículo:</b> evita toda celda con pendiente mayor a su límite y prefiere terreno suave. Minimiza distancia penalizada por pendiente. No le importa la radiación.</p>
+      <p class="note"><b>Astronauta:</b> evita su propio límite de pendiente, minimiza tiempo de marcha (más lento en subida, función de Tobler escalada al traje) y, según la prioridad elegida, se pega a las zonas con más cielo bloqueado. La dosis que muestra la tabla es siempre la estimada con los valores físicos, no la ponderada.</p>
+      <p class="note">Con valores realistas, la sombra del relieve baja la dosis solo unos pocos por ciento. La prioridad alta sirve para explorar el efecto, no para prometer una protección grande.</p>
+    </div>
+  </aside>
+</main>
+<footer>
+  <b>Fuentes</b>
+  <ul>
+    <li>Terreno: __SRC__. Alineación verificada: el modelo difiere de la elevación medida por Curiosity en 0,02 m de mediana.</li>
+    <li>Recorrido real: localized_interp.csv, paquete MSL PLACES (PDS Geosciences Node).</li>
+    <li>Dosis base: RAD, 0,67 mSv/día de rayos cósmicos en la superficie (Hassler et al., 2014, Science). Blindaje por relieve: DLR, JGR Planets 2026 (elib.dlr.de/224554).</li>
+    <li>Cielo bloqueado y pendiente: cálculo propio sobre el modelo (16 direcciones, horizonte hasta 400 m).</li>
+    <li>Velocidad de marcha: función de Tobler (1993), escalada a un astronauta con traje; supuesto a validar.</li>
+  </ul>
+  Prototipo del equipo para NASA Space Apps Challenge 2026, desafío "Interplanetary Survival Guide: Martian Map". Código abierto.
+</footer>
+<script id="terrain" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const T=JSON.parse(document.getElementById('terrain').textContent);
+const N=T.meta.n, CS=T.meta.cs;
+function b64(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
+const zb=b64(T.z); const Z=new Float32Array(N*N);{const dv=new DataView(zb.buffer);for(let i=0;i<N*N;i++)Z[i]=T.meta.zmin+dv.getUint16(i*2,true)/100}
+const B=new Float32Array(N*N);{const bb=b64(T.b);for(let i=0;i<N*N;i++)B[i]=bb[i]/255}
+const S=new Float32Array(N*N);
+for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+  const xm=Math.max(0,x-1),xp=Math.min(N-1,x+1),ym=Math.max(0,y-1),yp=Math.min(N-1,y+1);
+  const gx=(Z[y*N+xp]-Z[y*N+xm])/((xp-xm)*CS), gy=(Z[yp*N+x]-Z[ym*N+x])/((yp-ym)*CS);
+  S[y*N+x]=Math.atan(Math.hypot(gx,gy))*180/Math.PI;
+}
+const base=document.getElementById('base'),over=document.getElementById('over');
+base.width=base.height=over.width=over.height=N;
+const bctx=base.getContext('2d'),octx=over.getContext('2d');
+const hsImg=new Image();hsImg.src='data:image/png;base64,'+T.hs;
+function ramp(t,stops){t=Math.max(0,Math.min(1,t));for(let i=1;i<stops.length;i++){if(t<=stops[i][0]){const a=stops[i-1],b=stops[i],f=(t-a[0])/(b[0]-a[0]);return [0,1,2].map(k=>a[1][k]+(b[1][k]-a[1][k])*f)}}return stops[stops.length-1][1]}
+function drawBase(){
+  const mode=document.getElementById('layer').value;
+  if(mode==='hs'){bctx.drawImage(hsImg,0,0);return}
+  const im=bctx.createImageData(N,N);
+  const st=mode==='slope'?[[0,[30,60,40]],[.33,[120,170,80]],[.55,[230,200,90]],[.75,[220,110,50]],[1,[150,20,40]]]
+                         :[[0,[20,20,40]],[.3,[40,90,150]],[.6,[90,180,200]],[1,[230,250,250]]];
+  for(let i=0;i<N*N;i++){const v=mode==='slope'?S[i]/40:B[i]/0.45;const c=ramp(v,st);im.data[i*4]=c[0];im.data[i*4+1]=c[1];im.data[i*4+2]=c[2];im.data[i*4+3]=255}
+  bctx.putImageData(im,0,0);
+}
+hsImg.onload=()=>{drawBase();drawOver()};
+document.getElementById('layer').onchange=()=>{drawBase()};
+let pts=[],routes=null;
+const P=id=>parseFloat(document.getElementById(id).value);
+function params(){return{rMax:P('pRov'),pMax:P('pPer'),v0:P('pV')*1000/3600,vr:P('pVr')/3600,dose:P('pDose'),k:P('pK'),w:Math.max(0,Math.min(10,P('pW')))}}
+// forbidden mask overlay
+let noCanvas=document.createElement('canvas');noCanvas.width=noCanvas.height=N;
+function buildNo(){const p=params(),c=noCanvas.getContext('2d'),im=c.createImageData(N,N);
+  for(let i=0;i<N*N;i++){const r=S[i]>p.rMax,q=S[i]>p.pMax;if(q){im.data[i*4]=150;im.data[i*4+1]=60;im.data[i*4+2]=220;im.data[i*4+3]=140}else if(r){im.data[i*4]=255;im.data[i*4+1]=40;im.data[i*4+2]=80;im.data[i*4+3]=110}}
+  c.putImageData(im,0,0)}
+function line(ctx,arr,color,w,dash){if(arr.length<2)return;ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w;ctx.lineJoin='round';if(dash)ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(arr[0][0]+.5,arr[0][1]+.5);for(const q of arr)ctx.lineTo(q[0]+.5,q[1]+.5);ctx.stroke();ctx.restore()}
+function drawOver(){
+  octx.clearRect(0,0,N,N);
+  if(document.getElementById('showNo').checked){buildNo();octx.drawImage(noCanvas,0,0)}
+  if(document.getElementById('showCur').checked)line(octx,T.tr,'rgba(242,225,76,.9)',2,[4,3]);
+  if(routes){if(routes.rover)line(octx,routes.rover.path,'#0b2a40',5),line(octx,routes.rover.path,'#3fb6ff',2.5);
+             if(routes.person)line(octx,routes.person.path,'#40200b',5),line(octx,routes.person.path,'#ff8a3d',2.5)}
+  pts.forEach((q,i)=>{octx.beginPath();octx.arc(q[0]+.5,q[1]+.5,7,0,7);octx.fillStyle='#fff';octx.fill();octx.lineWidth=2;octx.strokeStyle='#000';octx.stroke();
+    octx.fillStyle='#000';octx.font='bold 10px system-ui';octx.textAlign='center';octx.textBaseline='middle';octx.fillText(i+1,q[0]+.5,q[1]+.5)});
+}
+['showCur','showNo'].forEach(id=>document.getElementById(id).onchange=drawOver);
+['pRov','pPer'].forEach(id=>document.getElementById(id).onchange=drawOver);
+function toPix(ev){const r=over.getBoundingClientRect();return[Math.floor((ev.clientX-r.left)/r.width*N),Math.floor((ev.clientY-r.top)/r.height*N)]}
+over.addEventListener('click',ev=>{const p=toPix(ev);if(p[0]<0||p[1]<0||p[0]>=N||p[1]>=N)return;pts.push(p);routes=null;drawOver();setStatus(pts.length<2?'Marcá al menos dos paradas.':pts.length+' paradas. Tocá "Calcular rutas".')});
+const hov=document.getElementById('hover');
+over.addEventListener('mousemove',ev=>{const [x,y]=toPix(ev);if(x<0||y<0||x>=N||y>=N)return;const i=y*N+x;const ll=lonlat(x,y);
+  hov.textContent=`${ll[1].toFixed(5)}°, ${ll[0].toFixed(5)}°E · ${Z[i].toFixed(1)} m · pendiente ${S[i].toFixed(1)}° · cielo bloqueado ${(B[i]*100).toFixed(0)}%`});
+function lonlat(x,y){const m=T.meta;return[m.lon_left+(x+.5)*CS*m.deg_per_m,m.lat_top-(y+.5)*CS*m.deg_per_m]}
+function setStatus(t){document.getElementById('status').textContent=t}
+document.getElementById('undo').onclick=()=>{pts.pop();routes=null;drawOver()};
+document.getElementById('clear').onclick=()=>{pts=[];routes=null;drawOver();renderRes();drawProf();document.getElementById('valOut').textContent='';setStatus('Marcá al menos dos paradas.')};
+
+// ---------- A* ----------
+class Heap{constructor(n){this.k=new Float64Array(n);this.v=new Int32Array(n);this.n=0}
+  grow(){const k=new Float64Array(this.k.length*2);k.set(this.k);this.k=k;const v=new Int32Array(this.v.length*2);v.set(this.v);this.v=v}
+  push(key,val){if(this.n>=this.k.length)this.grow();let i=this.n++;this.k[i]=key;this.v[i]=val;while(i>0){const p=(i-1)>>1;if(this.k[p]<=this.k[i])break;this.sw(i,p);i=p}}
+  pop(){const top=this.v[0];this.n--;if(this.n>0){this.k[0]=this.k[this.n];this.v[0]=this.v[this.n];let i=0;for(;;){const l=2*i+1,r=l+1;let m=i;if(l<this.n&&this.k[l]<this.k[m])m=l;if(r<this.n&&this.k[r]<this.k[m])m=r;if(m===i)break;this.sw(i,m);i=m}}return top}
+  sw(a,b){const tk=this.k[a];this.k[a]=this.k[b];this.k[b]=tk;const tv=this.v[a];this.v[a]=this.v[b];this.v[b]=tv}}
+const DX=[1,-1,0,0,1,1,-1,-1],DY=[0,0,1,-1,1,-1,1,-1];
+function tobler(tan){return Math.exp(-3.5*Math.abs(tan+0.05))/Math.exp(-3.5*0.05)}
+function stepCost(kind,p,i,j,d){
+  const dz=Z[j]-Z[i],tan=dz/d;
+  if(kind==='rover'){const s=S[j]/p.rMax;return d*(1+2*s*s)}
+  const t=d/(p.v0*tobler(tan));            // seconds
+  return t*(1+p.w*0.15*(1-B[j]));          // weighted by exposure to open sky
+}
+function astar(kind,p,a,b){
+  const lim=kind==='rover'?p.rMax:p.pMax;
+  const sIdx=a[1]*N+a[0],gIdx=b[1]*N+b[0];
+  if(S[sIdx]>lim||S[gIdx]>lim)return{err:'una parada cae en terreno prohibido'};
+  const g=new Float64Array(N*N).fill(Infinity),from=new Int32Array(N*N).fill(-1),closed=new Uint8Array(N*N);
+  const hmul=kind==='rover'?1:1/(p.v0*1.2);
+  const H=(i)=>{const x=i%N,y=(i/N)|0;return Math.hypot(x-b[0],y-b[1])*CS*hmul};
+  const h=new Heap(1<<20);g[sIdx]=0;h.push(H(sIdx),sIdx);
+  while(h.n){const i=h.pop();if(closed[i])continue;closed[i]=1;if(i===gIdx)break;
+    const x=i%N,y=(i/N)|0;
+    for(let k=0;k<8;k++){const nx=x+DX[k],ny=y+DY[k];if(nx<0||ny<0||nx>=N||ny>=N)continue;const j=ny*N+nx;if(closed[j]||S[j]>lim)continue;
+      const d=(k<4?1:Math.SQRT2)*CS;const ng=g[i]+stepCost(kind,p,i,j,d);if(ng<g[j]){g[j]=ng;from[j]=i;h.push(ng+H(j),j)}}}
+  if(!closed[gIdx])return{err:'no hay camino posible con ese límite de pendiente'};
+  const path=[];for(let c=gIdx;c!==-1;c=from[c])path.push([c%N,(c/N)|0]);return{path:path.reverse()};
+}
+function stats(kind,p,path){
+  let dist=0,up=0,down=0,smax=0,time=0,dose=0,bsum=0;const prof=[[0,Z[path[0][1]*N+path[0][0]]]];
+  for(let n=1;n<path.length;n++){const i=path[n-1][1]*N+path[n-1][0],j=path[n][1]*N+path[n][0];
+    const d=Math.hypot(path[n][0]-path[n-1][0],path[n][1]-path[n-1][1])*CS,dz=Z[j]-Z[i];
+    dist+=d;if(dz>0)up+=dz;else down-=dz;smax=Math.max(smax,S[j]);bsum+=B[j]*d;
+    const t=kind==='rover'?d/p.vr:d/(p.v0*tobler(dz/d));time+=t;dose+=t/86400*p.dose*(1-p.k*B[j]);prof.push([dist,Z[j]])}
+  return{dist,up,down,smax,time,dose,bmean:bsum/Math.max(dist,1e-9),prof,path};
+}
+function route(kind,p){
+  let full=[];for(let n=1;n<pts.length;n++){const r=astar(kind,p,pts[n-1],pts[n]);if(r.err)return{err:`Tramo ${n} a ${n+1}: ${r.err}`};full=full.concat(n>1?r.path.slice(1):r.path)}
+  return stats(kind,p,full);
+}
+document.getElementById('calc').onclick=()=>{
+  if(pts.length<2){setStatus('Marcá al menos dos paradas.');return}
+  setStatus('Calculando…');
+  setTimeout(()=>{try{const p=params(),t0=performance.now();const r=route('rover',p),q=route('person',p);
+    routes={rover:r.err?null:r,person:q.err?null:q,errR:r.err,errP:q.err};drawOver();renderRes();drawProf();
+    setStatus([r.err?'Vehículo: '+r.err:'',q.err?'Astronauta: '+q.err:'',`Listo en ${((performance.now()-t0)/1000).toFixed(1)} s.`].filter(Boolean).join(' · '))}catch(e){setStatus('Error: '+e.message)}},20)};
+function fmtT(s){const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h?`${h} h ${m} min`:`${m} min`}
+function renderRes(){
+  const tb=document.querySelector('#res tbody');
+  if(!routes){tb.innerHTML='<tr><td colspan="3" style="text-align:left;color:var(--mut)">Sin rutas todavía.</td></tr>';return}
+  const r=routes.rover,q=routes.person,f=(o,fn)=>o?fn(o):'—';
+  const rows=[['Distancia',o=>(o.dist/1000).toFixed(2)+' km'],['Subida acumulada',o=>Math.round(o.up)+' m'],['Bajada acumulada',o=>Math.round(o.down)+' m'],
+    ['Pendiente máxima',o=>o.smax.toFixed(1)+'°'],['Tiempo estimado',o=>fmtT(o.time)],['Cielo bloqueado promedio',o=>(o.bmean*100).toFixed(0)+'%'],
+    ['Dosis estimada en la ruta',o=>(o.dose*1000).toFixed(1)+' µSv']];
+  tb.innerHTML=rows.map(([n,fn],k)=>`<tr><td>${n}</td><td>${k===6?'no aplica':f(r,fn)}</td><td>${f(q,fn)}</td></tr>`).join('');
+}
+const prof=document.getElementById('prof');
+function drawProf(){
+  const dpr=window.devicePixelRatio||1,W=prof.clientWidth,Hh=prof.clientHeight;prof.width=W*dpr;prof.height=Hh*dpr;const c=prof.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,W,Hh);
+  const sets=routes?[[routes.rover,'#3fb6ff'],[routes.person,'#ff8a3d']].filter(s=>s[0]):[];
+  if(!sets.length){c.fillStyle='#a89b8c';c.font='13px system-ui';c.fillText('Calculá una ruta para ver el perfil.',10,24);return}
+  let dmax=0,zmn=Infinity,zmx=-Infinity;sets.forEach(([o])=>{dmax=Math.max(dmax,o.dist);o.prof.forEach(q=>{zmn=Math.min(zmn,q[1]);zmx=Math.max(zmx,q[1])})});
+  const pad=zmx-zmn<10?5:(zmx-zmn)*.08;zmn-=pad;zmx+=pad;const L=46,R=8,Tp=8,Bt=24;
+  const X=d=>L+(W-L-R)*d/dmax,Y=z=>Tp+(Hh-Tp-Bt)*(1-(z-zmn)/(zmx-zmn));
+  c.strokeStyle='#3a332d';c.fillStyle='#a89b8c';c.font='11px system-ui';c.lineWidth=1;
+  for(let k=0;k<=4;k++){const z=zmn+(zmx-zmn)*k/4,y=Y(z);c.beginPath();c.moveTo(L,y);c.lineTo(W-R,y);c.stroke();c.fillText(Math.round(z)+' m',2,y+4)}
+  for(let k=0;k<=4;k++){const d=dmax*k/4;c.fillText((d/1000).toFixed(2)+' km',X(d)-16,Hh-6)}
+  sets.forEach(([o,col])=>{c.strokeStyle=col;c.lineWidth=2;c.beginPath();o.prof.forEach((q,n)=>n?c.lineTo(X(q[0]),Y(q[1])):c.moveTo(X(q[0]),Y(q[1])));c.stroke()});
+}
+window.addEventListener('resize',drawProf);
+document.getElementById('demo').onclick=()=>{
+  // two points on the real traverse, far apart
+  const a=T.tr[Math.floor(T.tr.length*0.15)],b=T.tr[Math.floor(T.tr.length*0.9)];
+  pts=[[Math.round(a[0]),Math.round(a[1])],[Math.round(b[0]),Math.round(b[1])]];routes=null;drawOver();document.getElementById('calc').click()};
+document.getElementById('valid').onclick=()=>{
+  // route the rover between two real traverse points and compare with Curiosity's path length between them
+  const i0=Math.floor(T.tr.length*0.55),i1=Math.floor(T.tr.length*0.75),a=T.tr[i0],b=T.tr[i1];
+  pts=[[Math.round(a[0]),Math.round(a[1])],[Math.round(b[0]),Math.round(b[1])]];routes=null;drawOver();
+  let real=0,smaxReal=0;for(let n=i0+1;n<=i1;n++){real+=Math.hypot(T.tr[n][0]-T.tr[n-1][0],T.tr[n][1]-T.tr[n-1][1])*CS;
+    const tilt=Math.acos(Math.cos(T.tr[n][3]*Math.PI/180)*Math.cos(T.tr[n][4]*Math.PI/180))*180/Math.PI;smaxReal=Math.max(smaxReal,tilt)}
+  document.getElementById('calc').click();
+  setTimeout(()=>{const r=routes&&routes.rover;document.getElementById('valOut').innerHTML=r?
+    `<b>Validación (soles ${a[2]} a ${b[2]}):</b> Curiosity recorrió ${(real/1000).toFixed(2)} km entre esos puntos, con inclinación máxima medida de ${smaxReal.toFixed(1)}°. Nuestra ruta de vehículo mide ${(r.dist/1000).toFixed(2)} km con pendiente máxima del modelo de ${r.smax.toFixed(1)}°. El rover real se desvía por objetivos científicos y por comunicaciones, así que se espera que su recorrido sea más largo.`:'No se pudo calcular la ruta de validación.'},400)};
+document.getElementById('exp').onclick=()=>{
+  if(!routes){setStatus('Primero calculá las rutas.');return}
+  const feats=[];[['vehiculo',routes.rover],['astronauta',routes.person]].forEach(([n,o])=>{if(!o)return;
+    feats.push({type:'Feature',properties:{ruta:n,distancia_m:Math.round(o.dist),subida_m:Math.round(o.up),pendiente_max:+o.smax.toFixed(1),tiempo_min:Math.round(o.time/60),dosis_uSv:+(o.dose*1000).toFixed(2)},
+      geometry:{type:'LineString',coordinates:o.path.filter((_,k)=>k%2===0||k===o.path.length-1).map(q=>lonlat(q[0],q[1]).map(v=>+v.toFixed(7)))}})});
+  pts.forEach((q,k)=>feats.push({type:'Feature',properties:{parada:k+1},geometry:{type:'Point',coordinates:lonlat(q[0],q[1])}}));
+  const txt=JSON.stringify({type:'FeatureCollection',features:feats});
+  const box=document.getElementById('geo');box.value=txt;box.style.display='block';box.select();
+  try{navigator.clipboard.writeText(txt).then(()=>setStatus('GeoJSON copiado. Pegalo en un archivo .geojson para cargarlo en MMGIS.'),()=>setStatus('Copiá el texto del cuadro y guardalo como .geojson.'))}catch(e){setStatus('Copiá el texto del cuadro y guardalo como .geojson.')}};
+drawProf();
+</script>
+</body>
+</html>
