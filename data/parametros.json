@@ -25,9 +25,11 @@
   "estado": "provisorio",
   "notas": "Reemplazar cada valor por uno con fuente (ver docs/fuentes.md y CLAUDE.md).",
   "vehiculo_tripulado": {
-    "perfil": "rover presurizado para tripulación: SUPUESTO",
-    "velocidad_km_h": null,
+    "perfil": "rover presurizado tripulado: SUPUESTO (ruta C)",
+    "velocidad_km_h": 10,
+    "alcance_km": 125,
     "pendiente_max_deg": null,
-    "estado": "pendiente de fuente (buscar estudios de NASA de rover presurizado)"
+    "fuente": "NASA Space Exploration Vehicle (concepto lunar 2008; ficha FS-2011-08-045-JSC). A validar para Marte.",
+    "estado": "provisorio"
   }
 }

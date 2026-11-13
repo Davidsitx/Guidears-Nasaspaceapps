@@ -1,7 +1,10 @@
 # Tareas
 
 ## David (viernes 13)
-- [ ] Crear el repo en GitHub (público, licencia Apache 2.0) y sumar al compañero como colaborador.
+- [x] Crear el repo en GitHub y sumar al compañero.
+- [x] Justificación científica de las rutas A, B y C (prototipo/rutas_sol5070.html).
+- [ ] Tiempo de soporte vital de un traje (fuente) → radio de alerta.
+- [ ] Velocidad y pendiente de un rover presurizado para Marte (hoy: SEV lunar).
 - [ ] Leer el artículo de estado de la misión, años 9 a 12 (Space Science Reviews 2026): anotar objetivos científicos actuales y planes de la misión extendida.
 - [ ] Confirmar con fuente si el terreno claro al sureste del sol 5070 es la unidad de yardangs (blog, mapas geológicos de Gale).
 - [ ] Buscar el original de la entrevista a Alexandra Holloway (IEEE Spectrum, junio 2026) y datos de energía (vatios actuales del MMRTG).

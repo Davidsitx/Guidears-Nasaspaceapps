@@ -53,7 +53,7 @@ footer li{margin:3px 0}
 <div class="wrap">
   <p class="kicker">NASA Space Apps 2026 · Interplanetary Survival Guide: Martian Map</p>
   <h1>¿Por qué por acá? Tres formas de salir desde donde está Curiosity hoy</h1>
-  <p class="lead">Curiosity está en el sol 5070, en un valle del Monte Sharp (cráter Gale). Desde ese punto proponemos tres recorridos: uno para el vehículo, uno para un astronauta a pie y uno combinado. Hacé clic en cada parada para ver por qué está ahí y qué tan seguro es lo que sabemos.</p>
+  <p class="lead">Curiosity está en el sol 5070, en un valle del Monte Sharp (cráter Gale). Desde ese punto proponemos tres recorridos: uno para el robot Curiosity, uno para un astronauta a pie y uno combinado con un rover presurizado tripulado (supuesto). Hacé clic en cada parada para ver por qué está ahí y qué tan seguro es lo que sabemos.</p>
 
   <div class="grid">
     <div class="card">
@@ -62,9 +62,9 @@ footer li{margin:3px 0}
         <svg id="svg" viewBox="0 0 1579 823" preserveAspectRatio="none" aria-label="Rutas sobre el mapa"></svg>
       </div>
       <div class="tabs" role="group" aria-label="Rutas">
-        <button class="tab" data-r="A" aria-pressed="true" style="color:var(--A)"><span class="dot" style="background:var(--A)"></span>A · Vehículo</button>
+        <button class="tab" data-r="A" aria-pressed="true" style="color:var(--A)"><span class="dot" style="background:var(--A)"></span>A · Robot (Curiosity)</button>
         <button class="tab" data-r="B" aria-pressed="true" style="color:var(--B)"><span class="dot" style="background:var(--B)"></span>B · Astronauta a pie</button>
-        <button class="tab" data-r="C" aria-pressed="true" style="color:var(--C)"><span class="dot" style="background:var(--C)"></span>C · Combinada</button>
+        <button class="tab" data-r="C" aria-pressed="true" style="color:var(--C)"><span class="dot" style="background:var(--C)"></span>C · Rover tripulado + caminatas</button>
       </div>
       <p class="note">Imagen: mapa oficial "Where is Curiosity?" de NASA (HiRISE en color), captura del 13 de noviembre de 2026. Escala 3,40 m por píxel, norte arriba. Las rutas están trazadas a mano sobre la imagen, todavía sin modelo de elevación: son una propuesta, no un cálculo.</p>
     </div>
@@ -83,9 +83,9 @@ footer li{margin:3px 0}
         <tr><td>Pendiente máxima</td><td>20° (provisorio; Curiosity llegó a 24° en agosto de 2026)</td><td>20° (requisito lunar Artemis, a validar para Marte)</td><td>Blog sols 4975–4981; NASA NTRS 20210026296</td></tr>
         <tr><td>Arena</td><td>Evitarla: el rover patina</td><td>Evitarla: cansa y entierra el paso</td><td>Blog sols 4818–4824 (manejo esquivando arena y pendientes)</td></tr>
         <tr><td>Desgaste</td><td>Penalizar roca angulosa (ruedas)</td><td>—</td><td>NASA, desgaste de ruedas y control de tracción (2017)</td></tr>
-        <tr><td>Energía</td><td>30–60 m por sol de manejo; días de recarga tras días pesados</td><td>Tiempo de soporte vital del traje (dato pendiente)</td><td>Blog sols 5010–5015, 4982–4987, 5056–5062</td></tr>
+        <tr><td>Ritmo y energía</td><td>Robot: 30–60 m por sol, días de recarga tras días pesados. Rover tripulado (supuesto): ~10 km/h</td><td>Tiempo de soporte vital del traje (dato pendiente)</td><td>Blog sols 5010–5015, 4982–4987, 5056–5062; NASA, Space Exploration Vehicle (concepto 2008)</td></tr>
         <tr><td>Radiación</td><td>No limita</td><td>Dosis acumulada; el relieve baja la dosis 4–5% (19% de cielo tapado)</td><td>Ehresmann et al. 2021; Guo et al. 2021; DLR 2026</td></tr>
-        <tr><td>Regreso</td><td>—</td><td>No alejarse más de un radio del refugio; referencia lunar 1,38 km</td><td>NASA NTRS 20210026296</td></tr>
+        <tr><td>Regreso</td><td>—</td><td>No alejarse más de lo que permite volver con la reserva del traje; referencia lunar: 1,38 km caminando</td><td>NASA NTRS 20210026296; ficha SEV</td></tr>
         <tr><td>Estación</td><td colspan="2">Otoño austral (año marciano 39), hacia el invierno: más frío, menos energía, nubes y escarcha de madrugada</td><td>Blog sols 5036–5042 y 4570–4572; cálculo propio de Ls</td></tr>
       </tbody>
     </table>
@@ -107,7 +107,8 @@ footer li{margin:3px 0}
     <ul>
       <li>Si el terreno claro con estrías al sureste es la unidad de yardangs (falta un mapa geológico o una imagen etiquetada por NASA).</li>
       <li>Pendientes reales: necesitamos el modelo de elevación de USGS para esta zona. Con él, el planificador recalcula las tres rutas.</li>
-      <li>Tiempo de soporte vital de un traje en una caminata marciana, con fuente.</li>
+      <li>Tiempo de soporte vital de un traje en una caminata marciana, con fuente: define el radio de alerta.</li>
+      <li>Velocidad y pendiente máximas de un rover presurizado para Marte (hoy usamos el concepto SEV de NASA, pensado para la Luna).</li>
       <li>Qué hay en las lomas: hoy es una hipótesis (restos erosionados de capas más duras; posibles discos como los de Nazca).</li>
     </ul>
   </div>
@@ -119,6 +120,7 @@ footer li{margin:3px 0}
       <li>Blog de la misión Curiosity, 2025–2026 (science.nasa.gov/blog), entradas citadas en cada parada.</li>
       <li>Radiación: Ehresmann et al. 2021, JGR Planets (doi:10.1029/2021JE006851); Guo et al. 2021, GRL (doi:10.1029/2021GL093912); DLR, JGR Planets 2026 (elib.dlr.de/224554).</li>
       <li>Límites de caminata: NASA NTRS 20210026296 (estudio de EVA lunar, Artemis).</li>
+      <li>Rover presurizado: NASA, Space Exploration Vehicle, ficha FS-2011-08-045-JSC y especificaciones del concepto 2008 (10 km/h, 125 km de alcance).</li>
       <li>Criterios de aterrizaje de MSL: MSL Landing Site Selection, User's Guide to Engineering Constraints (JPL).</li>
     </ul>
     Página del equipo para NASA Space Apps Challenge 2026. Código abierto (Apache 2.0).
@@ -133,16 +135,16 @@ const STOPS={
   S:{p:[742,400],t:'Salida: Curiosity, sol 5070',k:'Punto de partida',c:'ok',
      why:'Es donde terminó la campaña del pozo Nazca, abierto en un bloque con muchos "discos" que podrían ser cristales. El rover está por seguir hacia el sur.',
      risk:'Terreno conocido: el rover ya está ahí.',src:'Blog de Curiosity, sols 5050–5055 y 5063–5069; mapa "Where is Curiosity?".'},
-  A1:{p:[800,470],t:'Borde este del valle',k:'Ruta A · vehículo',c:'warn',
+  A1:{p:[800,470],t:'Borde este del valle',k:'Ruta A · robot',c:'warn',
      why:'Seguir el valle por su borde, sobre roca clara, deja el centro de arena oscura a un lado. Es la misma lógica que usa el equipo real.',
      risk:'Arena oscura en el centro del valle: patinaje.',src:'Blog sols 4818–4824 (esquivar arena y pendientes) y sols 5010–5015 (bandas de arena y roca de 25 a 200 m).'},
-  A2:{p:[850,560],t:'Fondo de valle, roca clara',k:'Ruta A · vehículo',c:'warn',
+  A2:{p:[850,560],t:'Fondo de valle, roca clara',k:'Ruta A · robot',c:'warn',
      why:'Seguir comparando las "bandas" de arena y roca que el equipo viene estudiando en Valle Grande.',
      risk:'Pendiente desconocida hasta tener el modelo de elevación.',src:'Blog sols 5010–5015.'},
-  A3:{p:[930,650],t:'Entrada al campo de lomas',k:'Ruta A · vehículo',c:'warn',
-     why:'Desde acá el vehículo sirve de base para salidas cortas a pie (ruta C).',
+  A3:{p:[930,650],t:'Entrada al campo de lomas',k:'Ruta A · robot',c:'warn',
+     why:'En la ruta C, desde acá el rover tripulado sirve de base para salidas cortas a pie.',
      risk:'Terreno más rocoso: más desgaste de ruedas.',src:'NASA sobre desgaste de ruedas (2017–2026).'},
-  A4:{p:[1020,720],t:'Base del terreno claro con estrías',k:'Ruta A · vehículo · destino',c:'warn',
+  A4:{p:[1020,720],t:'Base del terreno claro con estrías',k:'Ruta A · robot · destino',c:'warn',
      why:'Candidato a la unidad de yardangs, colinas claras esculpidas por el viento que la misión declaró como su próxima gran parada.',
      risk:'La identificación es nuestra lectura de la imagen; falta confirmarla.',src:'Blog sols 4913–4919.'},
   B1:{p:[860,445],t:'Loma 1: afloramiento y sombra',k:'Ruta B · astronauta',c:'warn',
@@ -151,23 +153,23 @@ const STOPS={
   B2:{p:[935,535],t:'Loma 2: muestra y punto de retorno',k:'Ruta B · astronauta',c:'warn',
      why:'Punto más lejano de la salida a pie (unos 800 m del rover). Desde acá se vuelve.',
      risk:'Distancia al refugio: dentro de la referencia lunar de 1,38 km.',src:'NASA NTRS 20210026296.'},
-  C2:{p:[950,522],t:'Salida a pie desde el vehículo (1)',k:'Ruta C · combinada',c:'warn',
-     why:'El vehículo para en el fondo del valle y el astronauta camina unos 300 m hasta la loma. El rover funciona como refugio móvil.',
-     risk:'Distancia al refugio corta: el riesgo de la caminata baja mucho.',src:'Criterio propio basado en la referencia lunar de regreso.'},
-  C3:{p:[1010,600],t:'Salida a pie desde el vehículo (2)',k:'Ruta C · combinada',c:'warn',
+  C2:{p:[950,522],t:'Salida a pie desde el vehículo (1)',k:'Ruta C · rover tripulado',c:'warn',
+     why:'El rover presurizado para en el fondo del valle y el astronauta camina unos 300 m hasta la loma. El rover funciona como refugio móvil.',
+     risk:'Refugio cerca: el riesgo de la caminata baja mucho. El radio de alerta debe salir del tiempo de regreso con la reserva del traje (dato pendiente).',src:'NASA, ficha del Space Exploration Vehicle: el alcance de exploración depende de cuán rápido los astronautas pueden volver a un ambiente presurizado.'},
+  C3:{p:[1010,600],t:'Salida a pie desde el vehículo (2)',k:'Ruta C · rover tripulado',c:'warn',
      why:'Segunda salida corta, unos 320 m, a otra loma del campo.',
      risk:'Igual que la anterior.',src:'Criterio propio.'},
-  C4:{p:[1100,640],t:'Mirador del terreno claro',k:'Ruta C · combinada',c:'warn',
+  C4:{p:[1100,640],t:'Mirador del terreno claro',k:'Ruta C · rover tripulado',c:'warn',
      why:'Unos 385 m desde el vehículo, para ver de cerca el posible contacto con los yardangs.',
      risk:'Identificación de los yardangs a confirmar.',src:'Blog sols 4913–4919.'}
 };
 const ROUTES={
- A:{col:'#3fb6ff',name:'A · Vehículo',pts:['S','A1','A2','A3','A4'],m:'1,46 km',sub:'por el fondo del valle',
-    li:['Llega al próximo destino de la misión','Evita la arena del centro','25 a 50 soles de manejo (30–60 m por sol)','Sin riesgo para personas, pero gasta energía y ruedas']},
+ A:{col:'#3fb6ff',name:'A · Robot (Curiosity)',pts:['S','A1','A2','A3','A4'],m:'1,46 km',sub:'por el fondo del valle · datos medidos',
+    li:['Llega al próximo destino de la misión','Evita la arena del centro','25 a 50 soles de manejo (30–60 m por sol, ritmo real de Curiosity)','Sin riesgo para personas, pero gasta energía y ruedas','No puede subir a las lomas ni tocar las capas altas']},
  B:{col:'#ff8a3d',name:'B · Astronauta a pie',pts:['S','B1','B2','A1','S'],m:'1,65 km',sub:'ida y vuelta, máximo 0,80 km del rover',
-    li:['Llega a afloramientos altos que el rover evita','Una sola salida (~40 min de marcha a 2,5 km/h, supuesto)','Vuelve al punto de partida: refugio cerca','No llega al terreno claro: quedaría lejos del refugio']},
- C:{col:'#b98cff',name:'C · Combinada',pts:['S','A1','A2','A3','A4'],m:'1,46 km + 3 salidas',sub:'vehículo como refugio móvil',
-    li:['El vehículo lleva al astronauta por el valle','Tres caminatas cortas de 300 a 385 m','Junta lo mejor de A y B: alcance y ciencia de cerca','Nuestra propuesta principal para el pitch'],
+    li:['Llega a afloramientos altos que el rover evita','Vuelve al punto de partida: nunca a más de 0,8 km del refugio','Desventaja: una sola salida larga, más exposición y más consumo del traje','No llega al terreno claro: quedaría demasiado lejos del refugio']},
+ C:{col:'#b98cff',name:'C · Rover tripulado + caminatas',pts:['S','A1','A2','A3','A4'],m:'1,46 km + 3 salidas',sub:'rover presurizado como refugio móvil · SUPUESTO',
+    li:['Rover tipo SEV de NASA (concepto): ~10 km/h, unos 9 min de manejo para todo el valle','Tres caminatas cortas, de 300 a 385 m, con el refugio a la vista','Junta lo mejor de A y B: alcance y ciencia de cerca','Nuestra propuesta principal para el pitch','El rover tripulado es un supuesto: Curiosity no lleva personas'],
     eva:[['A2','C2'],['A3','C3'],['A4','C4']]}
 };
 const on={A:true,B:true,C:true};
@@ -215,7 +217,12 @@ const AUDIT=[
  ['Criterios de Shenai (AWS): pendiente regional ≤5°, latitud ±30°, etc.','warn','Fuera de escala','Sirven para elegir dónde aterrizar en todo Marte, no para una ruta de 1,5 km. Además es una fuente secundaria.'],
  ['Agua de sulfatos hidratados para reabastecer (M-WIP)','warn','A matizar','El estudio M-WIP se centra en hielo enterrado de latitudes medias; Gale es ecuatorial. DAN midió en Gale de casi 0 a 6,1% de agua en peso en el suelo, en el tramo hasta 2021.'],
  ['Dos modos de ruta: vehículo y caminata','ok','Correcto','Es la base del proyecto. Sumamos una tercera, combinada, con el vehículo como refugio móvil.'],
- ['Refugio ante eventos de partículas solares','ok','Correcto','El propio estudio de RAD remarca que los refugios importan sobre todo durante tormentas solares.']
+ ['Refugio ante eventos de partículas solares','ok','Correcto','El propio estudio de RAD remarca que los refugios importan sobre todo durante tormentas solares.'],
+ ['(2.ª versión) Ruta A como "vehículo presurizado" a 30–60 m por sol','bad','Mezcla','Ese ritmo es del robot Curiosity. Un rover tripulado iría a ~10 km/h (concepto SEV de NASA). Separamos: A = robot, C = rover tripulado (supuesto).'],
+ ['(2.ª versión) Radio de seguridad de 385 m','bad','Error','385 m es solo nuestra caminata más larga. El radio debe salir del tiempo de regreso con la reserva del traje.'],
+ ['(2.ª versión) Ruta B sin refugio cercano al final','warn','Mal planteado','B vuelve al punto de partida (máximo 0,8 km). Su desventaja es la exposición y el consumo de una salida larga.'],
+ ['(2.ª versión) "Hasta un 19%" mezclado','warn','Confuso','19% del cielo tapado en Murray Buttes bajó la dosis 4–5%; la reducción de dosis llegó al 19% en otros terrenos (DLR 2026). Son cifras distintas.'],
+ ['(2.ª versión) Sus citas remiten a nuestro propio material','warn','Método','No cuenta como validación independiente; hay que ir a las fuentes primarias.']
 ];
 document.getElementById('audit').innerHTML=AUDIT.map(a=>`<tr><td>${a[0]}</td><td class="n"><span class="pill ${a[1]}">${a[2]}</span></td><td>${a[3]}</td></tr>`).join('');
 const GL=[
