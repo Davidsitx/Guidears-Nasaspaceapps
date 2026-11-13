@@ -20,3 +20,15 @@ Partimos de una propuesta de NotebookLM y la corregimos con fuentes.
 ## 4. Exploración científica y regreso
 - Cada parada con motivo científico (docs/ciencia.md).
 - Regla de regreso: el astronauta no se aleja más de un radio máximo del refugio o del rover presurizado. Referencia lunar: 1,38 km caminando (NTRS 20210026296). Nuestra ruta del sol 5070 mide 1,50 km de ida: hay que acortarla o usar el rover como refugio móvil.
+
+## Decisión pendiente: qué vehículo modelamos (13 de noviembre)
+- **Robótico (Curiosity):** límites y ritmo medidos (30–60 m por sol). Sirve para la ruta A y para el contraste "rover en semanas, persona en una mañana".
+- **Rover presurizado tripulado:** necesario para la ruta C (refugio móvil). Su velocidad es de otro orden y no puede usar el ritmo de Curiosity. Es un supuesto y necesita fuente.
+- No mezclar los dos en la misma ruta ni en la misma cifra.
+
+## Notas de la revisión de NotebookLM (segunda versión)
+- Sus citas ahora remiten a nuestro propio material: no cuenta como validación independiente.
+- "19%" aparece con dos sentidos: 19% del cielo tapado (Murray Buttes, dosis -4 a -5%) y hasta 19% de reducción de dosis en otros terrenos (DLR 2026). No confundirlos.
+- La ruta B sí vuelve al punto de partida (refugio a 0,8 km como máximo); su desventaja es la exposición y el consumo de una salida larga, no la falta de refugio.
+- 385 m es la salida más larga de la ruta C, no un radio de seguridad.
+- Latitud: escribir -4,82568° o 4,82568° S, no ambos.

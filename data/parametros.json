@@ -5,14 +5,17 @@
     "avance_por_sol_m": [
       30,
       60
-    ]
+    ],
+    "perfil": "robotico (Curiosity): datos medidos"
   },
   "astronauta": {
     "pendiente_max_deg": 20,
     "velocidad_llano_km_h": 2.5,
     "fuente_pendiente": "Requisito lunar Artemis: el astronauta con traje debe poder subir, bajar y cruzar una pendiente de 20 grados (NASA NTRS 20210026296). Es lunar: a validar para Marte.",
     "radio_max_desde_refugio_km": 1.38,
-    "fuente_radio": "Ejemplo de EVA lunar caminando: alcance máximo 1,38 km desde el módulo (NASA NTRS 20210026296). Referencia, no requisito marciano."
+    "fuente_radio": "Ejemplo de EVA lunar caminando: alcance máximo 1,38 km desde el módulo (NASA NTRS 20210026296). Referencia, no requisito marciano.",
+    "radio_alerta_km": null,
+    "nota_radio": "El radio de alerta debe salir del tiempo de regreso con la reserva del traje, no de la longitud de nuestras salidas (385 m no es un estándar)."
   },
   "radiacion": {
     "dosis_superficie_mSv_dia": 0.67,
@@ -20,5 +23,11 @@
     "fuente": "Dosis 0,67 mSv/día: Hassler et al. 2014. Murray Buttes, 19% de cielo bloqueado: dosis -4% a -5% y partículas neutras -7,5% (Ehresmann et al. 2021, JGR Planets, doi:10.1029/2021JE006851; Guo et al. 2021, GRL, doi:10.1029/2021GL093912). Hasta -19% en otros terrenos (DLR, JGR Planets 2026). Cerca de un acantilado aumenta la radiación reflejada (albedo)."
   },
   "estado": "provisorio",
-  "notas": "Reemplazar cada valor por uno con fuente (ver docs/fuentes.md y CLAUDE.md)."
+  "notas": "Reemplazar cada valor por uno con fuente (ver docs/fuentes.md y CLAUDE.md).",
+  "vehiculo_tripulado": {
+    "perfil": "rover presurizado para tripulación: SUPUESTO",
+    "velocidad_km_h": null,
+    "pendiente_max_deg": null,
+    "estado": "pendiente de fuente (buscar estudios de NASA de rover presurizado)"
+  }
 }
