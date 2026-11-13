@@ -18,10 +18,15 @@ Resumen en nuestras palabras. Cada punto enlaza a su fuente.
 | sept. 2026 | Bandas de arena y roca en Valle Grande; ondulación eólica Chocolatal | Sedimentos movidos por el viento | blog sols 4995–5015 |
 | sept. – nov. 2026 | Bloques con discos (¿cristales?); pozos Basque Lakes (n.º 48) y Nazca (n.º 49) | Identificar el mineral con CheMin y SAM | blog sols 5016–5069 |
 
+## Novedades aportadas por David (13 de noviembre)
+- **Yardangs confirmados como capa real y destino.** NASA publicó una panorámica de Mastcam del amanecer del sol 4982 (11 de agosto de 2026) que muestra yardangs a lo lejos. Según el texto: en la ladera que sube Curiosity, la sucesión de capas termina con la capa de yardangs; antes de que se depositara, el Monte Sharp pudo haberse erosionado, cortando el registro climático; no se sabe bien cómo se formó, y una teoría es que sea ceniza volcánica acumulada. Esto conecta la "superficie erosiva" (julio–agosto 2026) con el destino de nuestras rutas. Pendiente: guardar el enlace exacto de la nota de NASA.
+- **Polvo fino y trajes (Perseverance, PNAS, 27 de octubre de 2026).** En 1.645 soles, PIXL midió polvo fino (<2,5 µm) y ultrafino (~100 nm) pegado a muestras de materiales de trajes (teflón, Vectran). La electricidad estática determina qué tamaño se adhiere; las partículas finas no se desprenden; el polvo tiene percloratos y hierro reactivo, y el riesgo depende de cantidad y tiempo de exposición. NASA menciona los suitports y las esclusas de doble cámara para reducir el polvo que entra a la cabina. Pendiente: enlace y DOI del artículo.
+  - **Para nuestras rutas:** el tiempo fuera del vehículo también suma polvo, no solo radiación. Refuerza la ruta C (caminatas cortas desde un rover con suitports) frente a la B (una salida larga).
+
 ## Por qué cada parada de nuestra ruta (borrador)
 - Salida: posición real del sol 5070, donde terminó la campaña de Nazca.
 - Paradas intermedias: afloramientos de roca clara y lomas, para seguir las "bandas" y buscar más discos (pregunta abierta del equipo).
-- Destino: base del terreno claro con estrías al sureste, candidato a la unidad de yardangs, que es el próximo objetivo declarado de la misión. **A confirmar** con imágenes o mapas geológicos.
+- Destino: base del terreno claro con estrías al sureste, candidato a la unidad de yardangs, que es el próximo objetivo declarado de la misión. La capa de yardangs está confirmada por NASA (panorámica del sol 4982); que **ese** terreno del mapa sea la capa sigue **a confirmar** (falta ubicar la dirección de la panorámica o un mapa geológico).
 - Capa estacional: es otoño austral (año marciano 39). Hacia el invierno vuelven el frío, las nubes y la escarcha de madrugada sobre arena (blog sols 4570–4572 y 5036–5042).
 
 ## Pendientes
