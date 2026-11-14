@@ -157,9 +157,9 @@ function bibPozo() {
       <div><small>CO₂ en carbonatos <span class="tag">calculado</span></small><b style="color:#d9a441">${p.co2_kg_t != null ? fmt(p.co2_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
       <div><small>Arcillas <span class="tag">medido</span></small><b>${p.ind.arc != null ? fmt(p.ind.arc) + ' <small>%</small>' : '—'}</b></div>
       <div><small>Gases SAM confirmados</small><b>${p.ind.nsam}</b></div></div>
-    ${sec('Minerales', 'medido · CheMin', che)}
-    ${sec('Química de la roca', 'medido · APXS', qui, false)}
-    ${sec('Gases al calentar la muestra', 'medido · SAM', gas, false)}
+    ${p.chemin.length ? sec('Minerales', 'medido · CheMin', che) : ''}
+    ${ap ? sec('Química de la roca', 'medido · APXS', qui, false) : ''}
+    ${p.sam.length ? sec('Gases al calentar la muestra', 'medido · SAM', gas, false) : ''}
     ${climaDia ? sec('Clima ese día', 'medido · REMS', climaDia, false) : ''}
     ${sec('Fotos del día de la perforación', 'NASA', fot)}
     ${p.blog && p.blog.length ? sec('Lo que contó el equipo', 'blog de Curiosity · resumen propio', p.blog.map(x => `<div class="tarjeta" style="cursor:default"><div class="sub">${escB(x.fecha)}</div>${escB(x.texto)} <a href="${x.url}" target="_blank" rel="noopener">Leer</a></div>`).join('') + '<p class="fuente">Los números de laboratorio de este pozo todavía no están en el PDS: el blog dice qué se hizo, no los resultados.</p>', true) : ''}
@@ -223,7 +223,7 @@ function bibFuentes() {
       <li>SAM: ${cnt('confirmado')} experimentos confirmados (ODR o designación de PDS), ${cnt('probable')} probables (misma semana que la perforación, sin designación publicada), ${cnt('otra_muestra')} de otra muestra (arenas de Gobabeb y Ogunquit Beach) y ${cnt('sin_muestra')} corridas que no son muestra (blancos, calibración, atmósfera).</li>
       <li>Valores de SAM imposibles para una porción de ~45 mg (supuesto) se marcan con ⚠ y no se usan: HCl, NO y H₂S en Mojave 2 y Telegraph Peak, HCl en un experimento de Cumberland y el H₂O de 7×10⁷ mol de Glen Etive (error de la tabla de PDS).</li>
       <li>Pozos nuevos: Nevado Sajama 2 ya tiene química (APXS) y el experimento de orgánicos con TMAH; Campo Marte, Basque Lakes y Nazca solo tienen lo que contó el equipo en el blog: sus números salen en la próxima entrega del PDS (los datos actuales llegan hasta marzo de 2026).</li>
-      <li>Clima: el resumen diario de REMS es de divulgación (CAB); lo verificamos contra los datos calibrados del PDS. El viento y la humedad salen de leer nosotros los archivos crudos calibrados (muestreo propio); el sensor de viento funcionó hasta el sol 1491 (2016).</li></ul>
+      <li>Clima: el resumen diario de REMS es de divulgación (CAB); lo verificamos contra los datos calibrados del PDS. El viento y la humedad salen de nuestra lectura de los archivos calibrados de REMS en el PDS (muestreo propio); hay datos de viento hasta alrededor del sol 1482 (2016).</li></ul>
     <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> desde el Drive (${escB(BIB.datos.origen)}).</p>`;
   engancharBib();
 }
@@ -255,18 +255,19 @@ function bibClima() {
   const ult = c.diario.filter(x => x[3] != null).at(-1);
   const uvTop = u => { const e = Object.entries(u || {}).sort((a, b) => b[1] - a[1])[0]; return e ? UVN[e[0]] || e[0] : '—'; };
   cont().innerHTML = `${volverBib('inicio')}<h3 style="margin-top:10px">Clima y radiación en Gale</h3>
-    <p class="sub">Lo que midió Curiosity durante ${fm(c.diario.length)} soles, desde el aterrizaje hasta el sol ${c.ultimo.sol} (${c.ultimo.fecha}). Gale está a 5° S: las estaciones son las del hemisferio sur.</p>
+    <p class="sub">Mediciones de la estación meteorológica REMS de Curiosity durante ${fm(c.diario.length)} soles, desde el aterrizaje hasta el sol ${c.ultimo.sol} (${c.ultimo.fecha}).</p>
     <div class="ind"><div><small>Último dato · sol ${ult[0]} <span class="tag">medido</span></small><b>${fm(ult[3])} / ${fm(ult[4])} <small>°C</small></b></div>
       <div><small>Presión ese día</small><b>${fm(ult[5])} <small>Pa</small></b></div>
       <div><small>Récord de frío</small><b>${fm(c.records.frio.valor)} <small>°C</small></b><small>${c.records.frio.fecha}</small></div>
       <div><small>Récord de calor</small><b>${fm(c.records.calor.valor)} <small>°C</small></b><small>${c.records.calor.fecha}</small></div></div>
     <h2>El último año marciano</h2>${grafClima(c.diario)}
-    <h2>Cada estación <span class="tag">medido · promedio de todos los años</span></h2>
-    <div class="tablaw"><table class="comp"><tr><th>Mes</th><th>Ls</th><th>Estación</th><th>Mín.</th><th>Máx.</th><th>Récords</th><th>Suelo</th><th>Presión</th><th>UV</th></tr>
-      ${c.meses.map(m => `<tr><td>${m.mes}</td><td>${m.ls[0]}–${m.ls[1]}°</td><td>${ESTACION[m.mes - 1]}</td><td>${fm(m.tmin)}°</td><td>${fm(m.tmax)}°</td><td>${fm(m.tmin_rec)}° / ${fm(m.tmax_rec)}°</td><td>${fm(m.gmin)}° / ${fm(m.gmax)}°</td><td>${fm(m.p)} Pa</td><td>${uvTop(m.uv)}</td></tr>`).join('')}</table></div>
-    <p class="fuente">Temperaturas en °C. "Suelo": temperatura de la superficie (sensor infrarrojo de REMS). UV: categoría más frecuente.</p>
+    <h2>Las cuatro estaciones <span class="tag">medido · promedio de ${c.anios.length} años marcianos</span></h2>
+    <p class="sub">En Marte la época del año se mide con la longitud solar (L<sub>s</sub>): el ángulo de Marte en su órbita, de 0° a 360°. NASA y el equipo de REMS la usan para comparar años. Gale está en el hemisferio sur, así que L<sub>s</sub> 0–90° es otoño, 90–180° invierno, 180–270° primavera y 270–360° verano. Cada estación dura entre 142 y 194 soles porque la órbita de Marte es elíptica.</p>
+    <div class="tablaw"><table class="comp"><tr><th>Estación</th><th>L<sub>s</sub></th><th>Soles con dato</th><th>Mín. del aire</th><th>Máx. del aire</th><th>Récords</th><th>Suelo mín./máx.</th><th>Presión</th><th>UV más frecuente</th></tr>
+      ${c.estaciones.map(m => `<tr><td>${m.estacion}</td><td>${m.ls[0]}–${m.ls[1]}°</td><td>${fmt(m.n)}</td><td>${fm(m.tmin)} °C</td><td>${fm(m.tmax)} °C</td><td>${fm(m.tmin_rec)} / ${fm(m.tmax_rec)} °C</td><td>${fm(m.gmin)} / ${fm(m.gmax)} °C</td><td>${fm(m.p)} Pa</td><td>${uvTop(m.uv)}</td></tr>`).join('')}</table></div>
+    <p class="fuente">Promedios de los valores diarios (cálculo propio sobre datos medidos). "Suelo": temperatura de la superficie medida por el sensor infrarrojo de REMS. UV: categoría de radiación ultravioleta que informa REMS.</p>
     <h2>La presión baja porque Curiosity sube</h2>${grafPresion(c.diario)}
-    <p class="sub">La presión sube y baja con las estaciones (el CO₂ se congela y se libera en los polos). La caída de fondo, de ${fm(c.anios[0].p)} Pa de promedio el primer año a ${fm(c.anios.at(-1).p)} Pa el último, coincide con lo que subió Curiosity por el Monte Sharp: unos 1.000 m, de −4.520 m en John Klein a −3.488 m en Nazca (cálculo propio con una altura de escala de ~11 km: unos 70 Pa menos).</p>
+    <p class="sub">La presión sube y baja con las estaciones porque parte del CO₂ de la atmósfera se congela en los casquetes polares y después vuelve a la atmósfera. La caída de fondo, de ${fm(c.anios[0].p)} Pa de promedio el primer año a ${fm(c.anios.at(-1).p)} Pa el último, coincide con lo que subió Curiosity por el Monte Sharp: unos 1.000 m, de −4.520 m en John Klein a −3.488 m en Nazca (cálculo propio con una altura de escala de ~11 km: unos 70 Pa menos).</p>
     <div class="tablaw"><table class="comp"><tr><th>Año marciano</th><th>Desde</th><th>Hasta</th><th>Mín.</th><th>Máx.</th><th>Presión</th></tr>
       ${c.anios.map(a => `<tr><td>${a.my}</td><td>${a.desde}</td><td>${a.hasta}</td><td>${fm(a.tmin)}°</td><td>${fm(a.tmax)}°</td><td>${fm(a.p)}</td></tr>`).join('')}</table></div>
     ${BIB.vh ? vientoHumedad(BIB.vh) : ''}
@@ -286,15 +287,16 @@ function vientoHumedad(v) {
   const ejes = [0, 4, 8, 12].map(s => `<line x1="34" x2="${W - 10}" y1="${y(s)}" y2="${y(s)}" stroke="#ffffff14"/><text x="30" y="${y(s) + 4}" text-anchor="end" font-size="10" fill="#9aa0a6">${s}</text>`).join('')
     + [0, 6, 12, 18].map(h => `<text x="${34 + h * bw + 2}" y="${H - 3}" font-size="10" fill="#9aa0a6">${h} h</text>`).join('');
   const lin = v.hr_hora.map((h, i) => `${i ? 'L' : 'M'}${(34 + i * bw + bw / 2).toFixed(1)},${(H - 18 - h.mediana / 30 * (H - 30)).toFixed(1)}`).join('');
-  return `<h2>Viento y humedad <span class="tag">medido · datos crudos de REMS</span></h2>
-    <p class="sub">Leímos directamente los archivos calibrados de REMS en el PDS (unas ${fmt(v.soles.length)} jornadas repartidas en toda la misión). El sensor de viento quedó dañado al aterrizar y murió en 2016 (sol 1491), así que el viento llega hasta ahí; la humedad se mide toda la misión.</p>
+  const nW = v.soles.filter(s => s.n_viento > 0).length, vmax = Math.max(...v.soles.map(s => s.viento_max || 0));
+  return `<h2>Viento y humedad <span class="tag">medido · lectura propia de los datos de REMS</span></h2>
+    <p class="sub">Estos valores salen de leer directamente los archivos calibrados de REMS en el archivo oficial de NASA (PDS), en ${fmt(v.soles.length)} soles repartidos en toda la misión. El viento está disponible en ${nW} de ellos, todos anteriores al sol 1500 (año 2016); después el sensor dejó de entregar velocidades. La humedad está disponible durante toda la misión.</p>
     <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;margin:6px 0">${ejes}${barras}</svg>
-    <div class="leyenda"><span><i class="cuad" style="background:#9fd0ff"></i>viento típico (mediana, m/s) por hora local</span><span><i class="cuad" style="background:#e2b04a"></i>ráfagas frecuentes (9 de cada 10 veces por debajo)</span></div>
-    <p class="sub">El viento es más fuerte al mediodía y a la tarde (unos 7 m/s, ráfagas de 9-10 m/s). En los soles medidos el máximo fue ${fm(Math.max(...v.soles.map(s => s.viento_max || 0)))} m/s; los estudios publicados mencionan rachas nocturnas de hasta ~20 m/s bajando por las laderas del cráter.</p>
+    <div class="leyenda"><span><i class="cuad" style="background:#9fd0ff"></i>velocidad típica (mediana, m/s) según la hora local</span><span><i class="cuad" style="background:#e2b04a"></i>percentil 90 (solo 1 de cada 10 mediciones lo supera)</span></div>
+    <p class="sub">El viento medido es más intenso entre el mediodía y la tarde, con una mediana de unos 7 m/s. El valor más alto en la muestra es ${fm(vmax)} m/s.</p>
     <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;margin:6px 0">${[0, 10, 20, 30].map(s => `<line x1="34" x2="${W - 10}" y1="${H - 18 - s / 30 * (H - 30)}" y2="${H - 18 - s / 30 * (H - 30)}" stroke="#ffffff14"/><text x="30" y="${H - 14 - s / 30 * (H - 30)}" text-anchor="end" font-size="10" fill="#9aa0a6">${s}%</text>`).join('')}${[0, 6, 12, 18].map(h => `<text x="${34 + h * bw + 2}" y="${H - 3}" font-size="10" fill="#9aa0a6">${h} h</text>`).join('')}<path d="${lin}" fill="none" stroke="#7fd18b" stroke-width="2"/></svg>
-    <div class="leyenda"><span><i class="cuad" style="background:#7fd18b"></i>humedad relativa típica por hora (respecto del hielo)</span></div>
-    <div class="tablaw"><table class="comp"><tr><th>Mes</th><th>Estación</th><th>Viento de día</th><th>Ráfaga máx.</th><th>Humedad noche</th><th>Vapor noche</th></tr>
-      ${v.meses.map(m => `<tr><td>${m.mes}</td><td>${ESTACION[m.mes - 1]}</td><td>${fm(m.viento_dia)} m/s</td><td>${fm(m.viento_max)} m/s</td><td>${fm(m.hr)} %</td><td>${fm(m.vmr)} ppm</td></tr>`).join('')}</table></div>
-    <p class="sub">De noche, en invierno, la humedad relativa llega a 40-70 % porque el aire está muy frío, aunque tiene poca agua (decenas de partes por millón). En verano hay más vapor pero el aire es más cálido. Para una base: el aire de Marte casi no tiene agua para extraer; el agua está en el suelo (minerales hidratados de los pozos).</p>
-    <p class="fuente">${escB(v.fuente)} ${v.notas.map(escB).join(' ')}</p>`;
+    <div class="leyenda"><span><i class="cuad" style="background:#7fd18b"></i>humedad relativa típica (mediana) según la hora local</span></div>
+    <div class="tablaw"><table class="comp"><tr><th>Estación</th><th>L<sub>s</sub></th><th>Viento de día</th><th>Viento de noche</th><th>Máximo</th><th>Humedad nocturna máx.</th><th>Vapor de agua (noche)</th></tr>
+      ${v.estaciones.map(m => `<tr><td>${m.estacion}</td><td>${m.ls[0]}–${m.ls[1]}°</td><td>${fm(m.viento_dia)} m/s</td><td>${fm(m.viento_noche)} m/s</td><td>${fm(m.viento_max)} m/s</td><td>${fm(m.hr)} %</td><td>${fm(m.vmr)} ppm</td></tr>`).join('')}</table></div>
+    <p class="sub">La humedad relativa nocturna es mayor en otoño e invierno porque el aire está más frío, aunque contiene poca agua (decenas de partes por millón en volumen). En primavera y verano hay más vapor, pero el aire más cálido baja la humedad relativa. Para una base, la cantidad de agua en el aire es muy baja: la fuente de agua aprovechable son los minerales hidratados del suelo.</p>
+    <p class="fuente">${escB(v.fuente)}</p><ul class="fuente">${v.notas.map(n => `<li>${escB(n)}</li>`).join('')}</ul>`;
 }

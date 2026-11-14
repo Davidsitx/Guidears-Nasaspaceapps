@@ -3,7 +3,7 @@
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
 ## 2026-11-14 noche (2) · Compañero (con Claude) · VIENTO, HUMEDAD Y POZOS NUEVOS
-- **Viento y humedad:** salen de los datos crudos calibrados de REMS en el PDS, leídos por partes (unas 112 jornadas de toda la misión). El viento llega hasta el sol 1491, cuando murió el sensor: unos 7 m/s al mediodía, ráfagas de 9-10 m/s y un máximo medido de 19,6 m/s. La humedad nocturna llega a 40-70 % en invierno, con muy poco vapor (decenas de ppm). Está en Biblioteca → Clima y radiación.
+- **Viento y humedad:** salen de los datos crudos calibrados de REMS en el PDS, leídos por partes (unas 112 jornadas de toda la misión). El viento aparece en el PDS hasta alrededor del sol 1482 (2016): unos 7 m/s al mediodía y un máximo de 19,6 m/s en la muestra. Solo se citan el PDS y artículos con revisión de pares. La humedad nocturna es mayor en otoño e invierno, con muy poco vapor (decenas de ppm). Las tablas van por las 4 estaciones (Ls). Está en Biblioteca → Clima y radiación.
 - **Pozos 40-46:** química APXS desde el PDS (que llega hasta el sol 4842). Nevado Sajama y Nevado Sajama 2 están confirmados por el blog; Mineral King, Altadena y Valle de la Luna quedan como probables. Se sumó el experimento TMAH de Nevado Sajama 2 (orgánicos, 3 corridas), con los picos del cromatógrafo.
 - **Pozos 47-49** (Campo Marte, Basque Lakes, Nazca): sus números todavía no están en el PDS. La ficha muestra lo que dijo el equipo en el blog, resumido.
 - Pendiente: cuando salga la próxima entrega del PDS, volver a correr `armar_biblioteca.py` para sumar CheMin, APXS y SAM de los pozos 46-49.
