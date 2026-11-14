@@ -74,3 +74,4 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Gale Earth: experimento TMAH de Nevado Sajama 2 y estado de Campo Marte, Basque Lakes y Nazca | SAM nivel 2 (EID 25828-25830, PDS Geosciences); blog de Curiosity en science.nasa.gov (soles 4798-4803, 4900-4912, 5022-5035, 5043-5055), resumido con palabras propias |
 
 En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).
+| Gale Earth: alojamiento de las teselas (copia de nuestros datos derivados del USGS, sin datos nuevos) | Hugging Face, dataset público ChuchuTEA/gale-earth-teselas. Las fuentes de cada capa siguen en `terreno/meta.json` y en las filas USGS de arriba. |
