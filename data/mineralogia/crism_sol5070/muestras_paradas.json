@@ -1,0 +1,644 @@
+{
+ "ALT": {
+  "S": [
+   {
+    "param": "D2300",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 74.7,
+    "valor": 0.0159,
+    "pct_zona": 94,
+    "pct_mosaico": 99
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 14.3,
+    "valor": 0.0061,
+    "pct_zona": 65,
+    "pct_mosaico": 89
+   }
+  ],
+  "A1": [
+   {
+    "param": "D2300",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 47.6,
+    "valor": 0.0137,
+    "pct_zona": 87,
+    "pct_mosaico": 98
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 0.0,
+    "valor": 0.005,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   }
+  ],
+  "A2": [
+   {
+    "param": "D2300",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 10.3,
+    "valor": 0.0108,
+    "pct_zona": 64,
+    "pct_mosaico": 93
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 0.0,
+    "valor": 0.005,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   }
+  ],
+  "A3": [
+   {
+    "param": "D2300",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 7.1,
+    "valor": 0.0106,
+    "pct_zona": 62,
+    "pct_mosaico": 93
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 12.3,
+    "valor": 0.006,
+    "pct_zona": 64,
+    "pct_mosaico": 89
+   }
+  ],
+  "A4": [
+   {
+    "param": "D2300",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 5.6,
+    "valor": 0.0054,
+    "pct_zona": 61,
+    "pct_mosaico": 87
+   }
+  ],
+  "B1": [
+   {
+    "param": "D2300",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 36.4,
+    "valor": 0.0129,
+    "pct_zona": 81,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 18.0,
+    "valor": 0.0064,
+    "pct_zona": 66,
+    "pct_mosaico": 90
+   }
+  ],
+  "B2": [
+   {
+    "param": "D2300",
+    "dn": 8.7,
+    "valor": 0.0107,
+    "pct_zona": 96,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 32.4,
+    "valor": 0.0126,
+    "pct_zona": 79,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 28.3,
+    "valor": 0.0072,
+    "pct_zona": 72,
+    "pct_mosaico": 92
+   }
+  ],
+  "C3": [
+   {
+    "param": "D2300",
+    "dn": 6.2,
+    "valor": 0.0105,
+    "pct_zona": 95,
+    "pct_mosaico": 96
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 44.6,
+    "valor": 0.0085,
+    "pct_zona": 79,
+    "pct_mosaico": 94
+   }
+  ],
+  "C4": [
+   {
+    "param": "D2300",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "SINDEX2",
+    "dn": 0.3,
+    "valor": 0.01,
+    "pct_zona": 55,
+    "pct_mosaico": 91
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 15.4,
+    "valor": 0.0062,
+    "pct_zona": 65,
+    "pct_mosaico": 90
+   }
+  ]
+ },
+ "ALT_zona_media_dn": [
+  1.7,
+  16.5,
+  24.0
+ ],
+ "FM2": {
+  "S": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 32.8,
+    "valor": 0.0069,
+    "pct_zona": 79,
+    "pct_mosaico": 98
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 129.9,
+    "valor": 0.0161,
+    "pct_zona": 84,
+    "pct_mosaico": 96
+   }
+  ],
+  "A1": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 21.4,
+    "valor": 0.0063,
+    "pct_zona": 74,
+    "pct_mosaico": 98
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 164.7,
+    "valor": 0.0178,
+    "pct_zona": 95,
+    "pct_mosaico": 99
+   }
+  ],
+  "A2": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 56.9,
+    "valor": 0.0084,
+    "pct_zona": 88,
+    "pct_mosaico": 99
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 112.2,
+    "valor": 0.0153,
+    "pct_zona": 77,
+    "pct_mosaico": 95
+   }
+  ],
+  "A3": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 7.8,
+    "valor": 0.0055,
+    "pct_zona": 67,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 97.9,
+    "valor": 0.0146,
+    "pct_zona": 70,
+    "pct_mosaico": 93
+   }
+  ],
+  "A4": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 9.0,
+    "valor": 0.0055,
+    "pct_zona": 67,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 34.6,
+    "valor": 0.0116,
+    "pct_zona": 40,
+    "pct_mosaico": 84
+   }
+  ],
+  "B1": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 54.8,
+    "valor": 0.0082,
+    "pct_zona": 88,
+    "pct_mosaico": 99
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 154.2,
+    "valor": 0.0173,
+    "pct_zona": 93,
+    "pct_mosaico": 98
+   }
+  ],
+  "B2": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 3.9,
+    "valor": 0.0052,
+    "pct_zona": 65,
+    "pct_mosaico": 96
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 49.9,
+    "valor": 0.0124,
+    "pct_zona": 47,
+    "pct_mosaico": 86
+   }
+  ],
+  "C3": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 4.4,
+    "valor": 0.0053,
+    "pct_zona": 66,
+    "pct_mosaico": 96
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 29.8,
+    "valor": 0.0114,
+    "pct_zona": 37,
+    "pct_mosaico": 83
+   }
+  ],
+  "C4": [
+   {
+    "param": "BD530",
+    "dn": 0.0,
+    "valor": 0.18,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD920",
+    "dn": 0.0,
+    "valor": 0.005,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BDI1000VIS",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   }
+  ]
+ },
+ "FM2_zona_media_dn": [
+  0.1,
+  17.2,
+  63.6
+ ],
+ "MAF": {
+  "S": [
+   {
+    "param": "OLINDEX3",
+    "dn": 81.2,
+    "valor": 0.049,
+    "pct_zona": 85,
+    "pct_mosaico": 93
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 15.6,
+    "valor": 0.0092,
+    "pct_zona": 85,
+    "pct_mosaico": 94
+   }
+  ],
+  "A1": [
+   {
+    "param": "OLINDEX3",
+    "dn": 95.0,
+    "valor": 0.0531,
+    "pct_zona": 94,
+    "pct_mosaico": 96
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 3.6,
+    "valor": 0.0021,
+    "pct_zona": 81,
+    "pct_mosaico": 93
+   }
+  ],
+  "A2": [
+   {
+    "param": "OLINDEX3",
+    "dn": 79.7,
+    "valor": 0.0485,
+    "pct_zona": 83,
+    "pct_mosaico": 93
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 10.6,
+    "valor": 0.0062,
+    "pct_zona": 83,
+    "pct_mosaico": 94
+   }
+  ],
+  "A3": [
+   {
+    "param": "OLINDEX3",
+    "dn": 63.8,
+    "valor": 0.0438,
+    "pct_zona": 63,
+    "pct_mosaico": 88
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 15.6,
+    "valor": 0.0092,
+    "pct_zona": 85,
+    "pct_mosaico": 94
+   }
+  ],
+  "A4": [
+   {
+    "param": "OLINDEX3",
+    "dn": 22.2,
+    "valor": 0.0316,
+    "pct_zona": 13,
+    "pct_mosaico": 70
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   }
+  ],
+  "B1": [
+   {
+    "param": "OLINDEX3",
+    "dn": 96.7,
+    "valor": 0.0535,
+    "pct_zona": 95,
+    "pct_mosaico": 96
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 17.4,
+    "valor": 0.0103,
+    "pct_zona": 85,
+    "pct_mosaico": 95
+   }
+  ],
+  "B2": [
+   {
+    "param": "OLINDEX3",
+    "dn": 52.1,
+    "valor": 0.0404,
+    "pct_zona": 46,
+    "pct_mosaico": 84
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 1.7,
+    "valor": 0.001,
+    "pct_zona": 80,
+    "pct_mosaico": 93
+   }
+  ],
+  "C3": [
+   {
+    "param": "OLINDEX3",
+    "dn": 47.0,
+    "valor": 0.0389,
+    "pct_zona": 38,
+    "pct_mosaico": 82
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 8.0,
+    "valor": 0.0047,
+    "pct_zona": 82,
+    "pct_mosaico": 94
+   }
+  ],
+  "C4": [
+   {
+    "param": "OLINDEX3",
+    "dn": 10.7,
+    "valor": 0.0281,
+    "pct_zona": 7,
+    "pct_mosaico": 61
+   },
+   {
+    "param": "LCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "HCPINDEX2",
+    "dn": 0.0,
+    "valor": 0.0,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   }
+  ]
+ },
+ "MAF_zona_media_dn": [
+  53.9,
+  0.0,
+  9.8
+ ]
+}

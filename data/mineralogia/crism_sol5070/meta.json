@@ -1,0 +1,20 @@
+{
+ "fuente": "CRISM GMWG, mosaicos dirigidos del cráter Gale, versión 120723 (Seelos, Seelos, Viviano y Murchie, JHU/APL, 24/7/2012). Descarga: crism.jhuapl.edu/msl_landing_sites/",
+ "proyeccion": "Equirectangular, paralelo estándar 0, R=3396190 m (igual que data/terreno)",
+ "lat_norte": -4.815838919157048,
+ "lon_oeste": 137.38069135440423,
+ "grados_por_px": 0.00032552083445745695,
+ "m_por_px": 19.295149,
+ "ancho": 109,
+ "alto": 112,
+ "nota": "lat_norte/lon_oeste = esquina noroeste del píxel (0,0). Valores en bytes: 0 = en o por debajo del límite inferior del estiramiento (sin señal), 254 = en o por encima del superior; 255 = fondo. Recorte del mosaico original con un margen de ~0,004° alrededor de la zona sol5070.",
+ "alineacion_hirise": "Correlación 0,87 con el orto HiRISE llevado a 19 m; desfase óptimo de 1 píxel norte-sur (~19 m). Aceptable para valores por parada, no para detalle bajo ~40 m.",
+ "advertencias": "Indicadores cualitativos y relativos a la región del sitio de aterrizaje, no análisis cuantitativo. Costuras entre observaciones, ruido, sensibilidad a polvo, bruma de hielo e iluminación. El mosaico TRU no se incluye (archivo recibido incompleto) y HYD falta descargar.",
+ "leyenda": {
+  "VNA": "Brillo a 770 nm (gris, referencia de forma)",
+  "FAL": "Color infrarrojo mejorado: R=R2529, G=R1506, B=R1080",
+  "FM2": "Minerales de hierro: R=BD530 (polvo férrico/hematita de grano fino, 0,18-0,25), G=BD920 (férricos cristalinos/hematita, 0,005-0,02), B=BDI1000VIS (Fe ferroso/máficos, 0,01-0,022)",
+  "MAF": "Máficos: R=OLINDEX3 (olivino o filosilicato con Fe, 0,025-0,1), G=LCPINDEX2 (piroxeno bajo en Ca, 0-0,02), B=HCPINDEX2 (piroxeno alto en Ca, 0-0,15)",
+  "ALT": "Alteración: R=D2300 (arcillas Fe/Mg, 0,01-0,03), G=SINDEX2 (sulfatos hidratados, 0,01-0,03), B=BD1900_2 (agua molecular, 0,005-0,025)"
+ }
+}

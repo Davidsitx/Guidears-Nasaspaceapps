@@ -2,6 +2,12 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 madrugada · David (con Claude) · MINERALOGÍA CRISM POR PARADA
+- Hizo: recorté los mosaicos CRISM GMWG 2012 (ALT, FM2, MAF, VNA, FAL) sobre la zona sol5070 y medí cada parada. Están en `data/mineralogia/crism_sol5070/`: PNG en la misma proyección que el terreno, `meta.json` con esquina noroeste, grados por píxel y leyenda, y `muestras_paradas.json`. Script en `herramientas/crism_muestras_paradas.py`. Figura e interpretación en `docs/paradas.md` (sección CRISM).
+- Resultado: los mosaicos **cubren** la zona. Alineación con HiRISE: ≤ 1 píxel (19 m). Hay sulfatos en la parte baja (S, A1, B1, B2); el terreno claro (A4, C4) da poca señal en todos los productos, lo que apoya, sin probar, que sea otra unidad. B2 es la parada con más señales y C3 la de más agua.
+- **Para el compañero (capas):** los PNG se pueden usar directo como textura en la escena 3D. Ubicación: `lon = lon_oeste + (col + 0,5) × grados_por_px`, `lat = lat_norte − (fila + 0,5) × grados_por_px`. El recorte es algo mayor que la zona (margen de ~0,004°). Sugerencia: capa "Mineralogía (CRISM)" con selector ALT/FM2/MAF, más la leyenda de `meta.json`.
+- Falta: el producto **HYD** (David lo baja) y volver a bajar el **TRU**, que llegó cortado. Los .tif originales (~10 MB cada uno) no se suben al repo.
+
 ## 2026-11-13 noche · David (con Claude) · PARADAS JUSTIFICADAS Y RUTAS CALCULADAS
 - Hizo: `data/rutas/rutas_sol5070_calculadas.geojson` (contrato §2): rutas A (robot), B (a pie, ida y vuelta), C (rover tripulado + 3 caminatas) calculadas con A* sobre el DEM sol5070, **0 m sobre 20°**; 10 paradas con `motivo_cientifico`, `fuente_motivo`, quién va y datos medidos. Paradas reubicadas sobre el terreno (vehículo: menor pendiente/rugosidad; astronauta: caminable, al pie de afloramiento, más cielo tapado). Justificación completa en `docs/paradas.md` con fotos HiRISE. Regeneré `escena3d/index.html` con `armar.py` (sin tocar la plantilla).
 - Decidió: la ruta B cambió a 2,6 km ida y vuelta (84 min); las caminatas de C miden 0,76–0,96 km ida y vuelta porque rodean pendientes.

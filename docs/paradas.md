@@ -84,8 +84,39 @@ Cada parada se ubicó **sobre el terreno real** (DEM USGS de 2 m y ortofoto HiRI
 ## Sobre la imagen THEMIS de Gale (falso color)
 - Es útil como **contexto regional**, no para elegir paradas: THEMIS IR tiene unos **100 m por píxel**, así que toda nuestra zona (1,6 × 1,7 km) ocupa unos 16 × 17 píxeles y cada parada cae dentro de un píxel (NASA/JPL/ASU, PIA06814).
 - Los colores marcan **diferencias de composición o temperatura**, no "minerales a excavar": en ese procesamiento el rosa-magenta suele ser arena basáltica (más el polvo), el verde-amarillo polvo y suelo, y el cian nubes de hielo de agua (PIA06814). El anillo rosa brillante es la arena basáltica que rodea al Monte Sharp.
-- Para minerales a escala de ruta, la herramienta correcta es **CRISM** (espectrómetro de MRO, decenas de metros por píxel), que en el Monte Sharp detecta arcillas Fe/Mg, sulfatos mono y polihidratados y óxidos de hierro (Rice et al. 2015; Sheppard et al. 2021). Pendiente: buscar escenas CRISM sobre nuestra zona.
-- **Mosaicos CRISM 2012 (Seelos et al., GMWG):** 8 productos en GeoTIFF + .tfw, 19,3 m/píxel, misma proyección que nuestro terreno (equirectangular, R=3396190), así que se superponen sin reproyectar. Los que sirven para justificar paradas son **HYD** (sulfatos: polihidratados magenta/azul, monohidratados verde/amarillo), **ALT** (arcillas Fe/Mg rojo/magenta, sulfatos hidratados verde/azul verdoso) y **FM2** (óxidos de hierro; verde/amarillo = hematita). Son indicadores **cualitativos y relativos**: hay costuras entre imágenes, ruido y desfasajes; identificar el mineral exige el espectro. Se armaron para la elipse de aterrizaje y la base del Monte Sharp (8 observaciones, entre ellas FRT0000B6F1 y HRL0000BABA); **falta confirmar si llegan a lat −4,82 a −4,85, lon 137,385 a 137,412**. Si no llegan, buscar observaciones CRISM dirigidas más nuevas (MTRDR) en el PDS ODE con ese recuadro.
+- Para minerales a escala de ruta, la herramienta correcta es **CRISM** (espectrómetro de MRO, decenas de metros por píxel), que en el Monte Sharp detecta arcillas Fe/Mg, sulfatos mono y polihidratados y óxidos de hierro (Rice et al. 2015; Sheppard et al. 2021). Resultado en la sección siguiente.
+- **Mosaicos CRISM 2012 (Seelos et al., GMWG):** 8 productos en GeoTIFF + .tfw, 19,3 m/píxel, misma proyección que nuestro terreno (equirectangular, R=3396190), así que se superponen sin reproyectar. Los que sirven para justificar paradas son **HYD** (sulfatos: polihidratados magenta/azul, monohidratados verde/amarillo), **ALT** (arcillas Fe/Mg rojo/magenta, sulfatos hidratados verde/azul verdoso) y **FM2** (óxidos de hierro; verde/amarillo = hematita). Son indicadores **cualitativos y relativos**: hay costuras entre imágenes, ruido y desfasajes; identificar el mineral exige el espectro. Se armaron para la elipse de aterrizaje y la base del Monte Sharp (8 observaciones, entre ellas FRT0000B6F1 y HRL0000BABA); **sí cubren toda nuestra zona** (verificado con los GeoTIFF: el mosaico va de 4,28° S a 5,00° S y de 137,16° E a 137,66° E, sin fondo vacío en el recuadro).
+
+## Mineralogía desde órbita (CRISM) en cada parada
+
+![CRISM sobre las paradas](img/crism_paradas_sol5070.png)
+
+**Qué hicimos.** Recortamos los mosaicos CRISM GMWG 2012 (Seelos et al., JHU/APL; 19,3 m/píxel) sobre la zona sol 5070 y medimos cada producto en cada parada, promediando 3 × 3 píxeles (~58 m). Comparamos cada valor con el resto de la zona (percentil). Recortes, georreferencia y valores: `data/mineralogia/crism_sol5070/`; script: `herramientas/crism_muestras_paradas.py`.
+
+**Control de calidad.** El brillo CRISM (VNA) coincide con el orto HiRISE llevado a 19 m (correlación 0,87; desfase óptimo de 1 píxel, ~19 m). Sirve para valores por parada, no para detalles menores a ~40 m. Los píxeles en 0 de ALT y FM2 son "sin señal" (por debajo del umbral del producto), no huecos: VNA y FAL tienen datos en toda la zona.
+
+| Parada | Sulfatos hidratados (SINDEX2) | Agua (BD1900) | Arcillas Fe/Mg (D2300) | Fe ferroso / máficos (BDI1000VIS) | Férricos cristalinos (BD920) | Olivino (OLINDEX3) | Lectura (indicador, no identificación) |
+|---|---|---|---|---|---|---|---|
+| S | **alta (p94)** | media | no | **alta (p84)** | media | alta | Banda oscura con sulfatos: coincide con lo que mide Curiosity (perforación Atacama, primer bedrock de sulfatos después del boxwork) |
+| A1 | **alta (p87)** | no | no | **muy alta (p95)** | media | **muy alta (p94)** | Sulfatos + material máfico oscuro (probable arena basáltica) |
+| B1 | **alta (p81)** | media | no | **muy alta (p93)** | **alta (p88)** | **muy alta (p95)** | Igual que A1, con algo más de férricos |
+| A2 | media (p64) | no | no | alta (p77) | **alta (p88)** | alta | Posible óxido férrico cristalino (hematita); débil |
+| B2 | **alta (p79)** | media-alta (p72) | **apenas sobre el umbral** | media | baja | media | Único punto con sulfatos + agua + rastro de arcilla: la parada más "mineralógica" |
+| A3 | media (p62) | media | no | media | baja | media | Transición |
+| C3 | no | **la más alta (p79)** | apenas sobre el umbral | baja | baja | baja | Otra fase hidratada (azul en ALT), no sulfato |
+| A4 | no | media | no | baja (p40) | baja | **muy baja (p13)** | Terreno claro casi "mudo" en todos los productos |
+| C4 | no | media | no | **nula** | **nula** | **muy baja (p7)** | Ídem, el más "mudo" de la zona |
+
+pN = percentil dentro de la zona (p94 = más fuerte que el 94% de la zona). Valores en bytes y parámetros aproximados en `muestras_paradas.json`.
+
+**Qué nos dice para las rutas.**
+- **El patrón acompaña la historia que contamos:** abajo (S, A1, B1, B2) hay señal de sulfatos hidratados; arriba, en el terreno claro (A4, C4), la señal se apaga en todos los productos. Desde órbita, en el Monte Sharp, las capas superiores son "parecidas al polvo y sin minerales hidratados" (Milliken y colaboradores). Es un **indicio a favor** de que A4/C4 esté en otra unidad, posiblemente la de yardangs, **no una prueba**: una capa fina de polvo también apaga la señal (CRISM, guía GMWG).
+- **B2 gana peso como parada del astronauta:** además de la sombra de radiación (33% de cielo tapado), es el punto con más variedad de señales (sulfatos, agua y un rastro de arcilla). Vale ir a pie a tomar muestras ahí.
+- **C3 (butte) tiene la señal de agua más fuerte** sin sulfatos: candidato a "otra fase hidratada" que conviene ver de cerca.
+- **A2:** el leve indicio de hematita justifica una parada de cámara (Mastcam/ChemCam) al pasar, no una perforación.
+- Precedente que conviene citar: en Vera Rubin, CRISM marcó hematita fuerte, pero Curiosity después la encontró también donde CRISM casi no la veía (Fraeman et al. 2020, JGR Planets). Por eso la órbita **orienta** y el rover o el astronauta **confirman**.
+
+**Advertencias.** Son indicadores cualitativos y relativos al entorno del sitio de aterrizaje (en Gale la señal es mucho más sutil que en Mawrth Vallis o Nili Fossae). Pueden aparecer falsos positivos por polvo, bruma de hielo (tono azul en ALT e HYD), iluminación o pendiente. Las observaciones son de 2006–2012. Falta el producto **HYD**, que separa sulfatos mono y polihidratados, y el TRU llegó incompleto.
 
 ## Limitaciones
 - Pendientes a 2 m: el DEM promedia; una roca de 1 m no aparece.
