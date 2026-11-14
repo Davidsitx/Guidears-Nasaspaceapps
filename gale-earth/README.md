@@ -11,9 +11,9 @@ Marte en 3D, al estilo Google Earth, con todo lo que Curiosity midió en Gale. P
 - Doble clic en `index.html` también funciona, pero solo con Cesium Mars (sin el globo propio ni las capas).
 
 ## Interfaz (estilo Google Earth)
-- **Riel de la izquierda** (abajo en el celular): Buscar, Explorar, Base, Órbitas, Biblioteca, Capas, Celular, Ayuda y Pantalla completa. Tocar de nuevo una pestaña la cierra.
+- **Riel de la izquierda** (abajo en el celular): Buscar, Explorar, Base, Órbitas, Biblioteca, Historia (línea de tiempo), Capas, Celular, Ayuda y Pantalla completa. Tocar de nuevo una pestaña la cierra.
 - **Buscador:** pozos (nombre o número), zonas, sitios de la base, orbitadores, lugares de Marte (Olympus Mons, Valles Marineris, Jezero…) y coordenadas (`-4.59, 137.44` o `4.59 S, 137.44 E`). Atajo: tecla `/`.
-- **Controles abajo a la derecha:** brújula (vuelve el norte arriba), 2D/3D, línea de tiempo (reloj), relieve ×1/×1,5/×2/×3, acercar y alejar.
+- **Controles abajo a la derecha:** brújula (vuelve el norte arriba), 2D/3D, relieve ×1/×1,5/×2/×3, acercar y alejar.
 - **Barra de estado:** coordenadas y elevación bajo el mouse (latitud planetocéntrica, elevación sobre la esfera MOLA de 3396,19 km), altura de la cámara sobre el suelo y escala.
 - **Cielo:** Vía Láctea y estrellas reales (catálogo Hipparcos de ESA y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial, licencia BSD). Las 6 caras están en `capas/cielo/` y se regeneran con `python cielo_via_lactea.py RUTA/package/data` (instrucciones adentro del script). El brillo difuso y la textura son una representación visual, no una foto.
 - **Logo:** `capas/logo/` (recortado del PNG del equipo, fondo transparente; íconos para el navegador y el celular).

@@ -247,7 +247,9 @@ table.comp tr[data-p]:hover td{background-color:#ffffff0d}
 #lPlay .pa{display:none}#lPlay.on .pa{display:block}#lPlay.on .pl{display:none}
 #lCerrar{background:#2a4f8f;color:#fff}
 #lCerrar:hover{background:#3563b3}
-#bLinea.on,body.lineaAbierta #bLinea{color:var(--acento2)}
+body.lineaAbierta #rHistoria{color:var(--acento2)}
+body.cajonAbierto #linea{left:calc(var(--riel) + 428px)}
+body.cajonAbierto #cajon.ancho~#linea,body.cajonAbierto:has(#cajon.ancho) #linea{left:calc(var(--riel) + 588px)}
 body.lineaAbierta #aviso{bottom:auto;top:80px}
 /* ── celular: riel abajo, cajón como hoja deslizable ── */
 @media (max-width:760px),(pointer:coarse) and (max-width:900px){
@@ -273,6 +275,8 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
   .lPto{flex:0 0 34px}
   #lPlay,#lCerrar{width:40px;height:40px}
   body.lineaAbierta #controles,body.lineaAbierta #estado,body.lineaAbierta #busca{display:none}
+  body.cajonAbierto #linea,body.hoja #linea{display:none}
+  body.cajonAbierto #linea{left:8px}
   #controles{right:10px;bottom:calc(72px + var(--inf-seg))}
   body.hoja #controles{display:none}
   #estado{left:0;bottom:calc(58px + var(--inf-seg));height:26px;padding-bottom:0;background:none}
@@ -295,6 +299,7 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
   <button class="rb" data-t="base" title="Base en Gale"><svg class="i" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Base</button>
   <button class="rb" data-t="orbita" title="Orbitadores"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-25 12 12)"/><circle cx="20.2" cy="8.2" r="1.6"/></svg>Órbitas</button>
   <button class="rb" data-t="biblioteca" title="Biblioteca: toda la información guardada"><svg class="i" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>Biblioteca</button>
+  <button class="rb" id="rHistoria" title="Línea de tiempo: de la formación de Gale a hoy"><svg class="i" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9.1.1L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"/></svg>Historia</button>
   <button class="rb" data-t="capas" title="Capas y estilo del mapa"><svg class="i" viewBox="0 0 24 24"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg>Capas</button>
   <div class="esp"></div>
   <button class="rb solopc" id="rCel" title="Abrir en el celular"><svg class="i" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>Celular</button>
@@ -334,7 +339,6 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
 <div id="controles">
   <button class="cb" id="brujula" title="Norte arriba (clic) · girar: Shift + arrastrar"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#ffffff22" stroke-width="1.5"/><path d="M20 5l5 15h-10z" fill="#e5534b"/><path d="M20 35l-5-15h10z" fill="#e8eaed"/></svg></button>
   <button class="cb" id="b3d" title="Vista 2D / 3D">3D</button>
-  <button class="cb" id="bLinea" title="Línea de tiempo: de Galileo a hoy"><svg class="i" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9.1.1L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"/></svg></button>
   <button class="cb" id="vRelieve" title="Relieve ×1 (escala real)"><svg class="i" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg><span class="badge oculto" id="relBadge"></span></button>
   <div class="grupo">
     <button class="cb" id="bMas" title="Acercar"><svg class="i" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
@@ -1432,8 +1436,6 @@ function bibInicio() {
   const P = BIB.datos.pozos, conChe = P.filter(p => p.chemin.length).length, conSam = P.filter(p => p.ind.nsam).length;
   const tarjeta = (ir, titulo, sub, extra = '') => `<div class="tarjeta bibt" data-ir="${ir}">${extra}<b>${titulo}</b><div class="sub">${sub}</div></div>`;
   cont().innerHTML = `<p class="sub">Todo lo que guardamos de Marte, ordenado para consultar. Cada número tiene su fuente y se marca si es <b>medido</b>, <b>calculado</b> o <b>supuesto</b>.</p>
-    <h2>Historia</h2>
-    <div class="tarjeta bibt" id="bibLinea"><span class="bibic" style="background:#2a4f8f">⏱</span><b>Línea de tiempo</b><div class="sub">Desde que se formó Gale, pasando por Galileo, hasta hoy: cada misión que llegó a Marte, dónde aterrizó y qué encontró Curiosity.</div></div>
     <h2>Datos de campo</h2>
     ${tarjeta('lista', `Las ${P.length} perforaciones de Curiosity`, `Ficha completa de cada pozo: minerales, química, gases, fotos y archivos crudos. ${conChe} con mineralogía, ${conSam} con gases confirmados.`, `<span class="bibic" style="background:#4FA3D9">⛏</span>`)}
     ${tarjeta('comparar', 'Comparar pozos', 'Tabla con los indicadores clave de los 49 pozos. Tocá una columna para ordenar.', `<span class="bibic" style="background:#2E9E8F">▦</span>`)}
@@ -1443,7 +1445,7 @@ function bibInicio() {
     ${tarjeta('fuentes', 'Fuentes y calidad de los datos', 'De dónde sale cada dato, qué falta y qué valores hay que tomar con cuidado.', `<span class="bibic" style="background:#7E57C2">ⓘ</span>`)}
     <div class="tarjeta bibt" id="bibAyuda"><span class="bibic" style="background:#3c4043">?</span><b>Controles y ayuda</b><div class="sub">Cómo moverse por el mapa con mouse, teclado o dedos.</div></div>
     <p class="fuente">Datos: carpeta del Drive Marte/Perforaciones Datos Crudos, armada con NASA PDS, base ODR del cráter Gale y fotos crudas de NASA/JPL-Caltech/MSSS.</p>`;
-  engancharBib(); $('bibLinea').onclick = () => abrirLinea(); $('bibAyuda').onclick = () => $('ayuda').classList.remove('oculto');
+  engancharBib(); $('bibAyuda').onclick = () => $('ayuda').classList.remove('oculto');
 }
 
 const ORDENES = { n: ['Número', p => p.n ?? 999, 1], sol: ['Sol', p => p.sol ?? 1e9, 1], agua: ['Agua en minerales', p => p.ind.agua ?? -1, -1], arc: ['Arcillas', p => p.ind.arc ?? -1, -1],
@@ -1615,7 +1617,7 @@ function claseEv(e) { return e.tipo === 'geologia' ? 'geo' : e.gale ? 'gale' : (
 
 async function abrirLinea(idEvento) {
   try { await cargarLinea(); } catch (e) { return avisar(location.protocol === 'file:' ? 'La línea de tiempo necesita abrir Gale Earth con abrir.bat / servir.py (el navegador bloquea leer archivos desde file://).' : e.message, 9000); }
-  if (esCelB()) cerrarCajon();
+  cerrarCajon();
   document.body.classList.add('lineaAbierta'); $('linea').classList.remove('oculto');
   pintarBarra();
   const k = idEvento ? LT.ev.findIndex(e => e.id === idEvento) : LT.ev.findIndex(e => e.hoy);
@@ -1692,7 +1694,7 @@ $('lPlay').onclick = () => {
   LT.play = setInterval(() => { if (LT.i >= LT.ev.length - 1) return pararPlay(); elegirEv(LT.i + 1, true); }, 4500);
 };
 $('lCerrar').onclick = cerrarLinea;
-$('bLinea').onclick = () => $('linea').classList.contains('oculto') ? abrirLinea() : cerrarLinea();
+$('rHistoria').onclick = () => $('linea').classList.contains('oculto') ? abrirLinea() : cerrarLinea();
 addEventListener('keydown', e => {
   if ($('linea').classList.contains('oculto') || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { pararPlay(); elegirEv(LT.i + (e.key === 'ArrowRight' ? 1 : -1), true); e.preventDefault(); e.stopImmediatePropagation(); }
