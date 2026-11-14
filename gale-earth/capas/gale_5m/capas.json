@@ -1,0 +1,36 @@
+{
+ "caja_planetocentrica": {
+  "lon_oeste": 137.12416650612477,
+  "lon_este": 137.6805590543454,
+  "lat_norte": -4.1296047962656,
+  "lat_sur": -5.098652339315738,
+  "res_m": 5.0,
+  "ancho": 6596,
+  "alto": 11488
+ },
+ "rect_geodetico": [
+  137.12416650612477,
+  -5.158883015765448,
+  137.6805590543454,
+  -4.178478467090234
+ ],
+ "px": [
+  2352,
+  4096
+ ],
+ "notas": [
+  "relieve_color y orto_color son FALSO COLOR: el color indica la altura, no el color real de Marte.",
+  "zonas_prohibidas: violeta = ninguno; rojo = rover; naranja = astronauta; amarillo = precaución (5° bajo el límite).",
+  "dosis_mSv_dia: dosis de superficie de RAD × (1 - factor × cielo tapado). Cálculo propio, provisorio."
+ ],
+ "parametros": {
+  "pendiente_astronauta": 20,
+  "pendiente_rover": 20,
+  "dosis_superficie": 0.67,
+  "blindaje": 0.25
+ },
+ "elev_min": -4625.818359375,
+ "elev_max": -322.5602722167969,
+ "dosis_min": 0.5211215019226074,
+ "dosis_max": 0.6700000166893005
+}

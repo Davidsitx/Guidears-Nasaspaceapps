@@ -1,0 +1,152 @@
+{
+ "epoca_jd_tdb": 2461358.5,
+ "epoca": "2026-11-14T00:00:00 TDB",
+ "fuente": "JPL Horizons, elementos osculadores respecto del centro de Marte (500@499), plano del ecuador de Marte, consultado 2026-11-14",
+ "orbitadores": {
+  "MRO": {
+   "ec": 0.00920896523616462,
+   "qr": 3631.760937460518,
+   "inc": 92.77580374955589,
+   "om": 283.975632581907,
+   "w": 263.1596984564809,
+   "ma": 285.715355456233,
+   "a": 3665.516551960105,
+   "pr": 6737.780337388755,
+   "id": -74,
+   "agencia": "NASA",
+   "llegada": "2006",
+   "color": "#4FA3D9",
+   "estado": "activo",
+   "mision": "Mars Reconnaissance Orbiter: mapea Marte en alta resolución y retransmite datos de los rovers.",
+   "instrumentos": "HiRISE (cámara de 25 cm/píxel), CTX (6 m/píxel), CRISM (minerales), SHARAD (radar del subsuelo), MCS (clima)",
+   "aporta": "Las imágenes HiRISE y CTX del mapa y el terreno 3D de Gale; CRISM detectó desde órbita las arcillas y sulfatos que Curiosity confirmó."
+  },
+  "Mars Odyssey": {
+   "ec": 0.007687346839959711,
+   "qr": 3770.356858869845,
+   "inc": 91.84839559608169,
+   "om": 147.9698844826209,
+   "w": 272.5749769273351,
+   "ma": 120.2064770046853,
+   "a": 3799.565436219184,
+   "pr": 7110.742686167134,
+   "id": -53,
+   "agencia": "NASA",
+   "llegada": "2001",
+   "color": "#7BC4A4",
+   "estado": "activo",
+   "mision": "La nave más longeva en Marte: mapea minerales, temperatura del suelo y el hielo cercano a la superficie.",
+   "instrumentos": "THEMIS (infrarrojo térmico y visible), GRS (rayos gamma y neutrones)",
+   "aporta": "Inercia térmica (qué tan suelto es el suelo) y mapas de hidrógeno, útiles para buscar agua y terreno firme."
+  },
+  "Mars Express": {
+   "ec": 0.5684535190308984,
+   "qr": 3806.281123825014,
+   "inc": 88.46953134426123,
+   "om": 44.16542368315388,
+   "w": 64.62229250301793,
+   "ma": 52.42597252710157,
+   "a": 8820.095381793975,
+   "pr": 25149.1894978961,
+   "id": -41,
+   "agencia": "ESA",
+   "llegada": "2003",
+   "color": "#E2B04A",
+   "estado": "activo",
+   "mision": "Primera misión planetaria de Europa: estereografía, minerales y radar del subsuelo.",
+   "instrumentos": "HRSC (cámara estéreo), OMEGA (minerales), MARSIS (radar)",
+   "aporta": "El modelo de elevación HRSC que forma la base del terreno global de Cesium Mars."
+  },
+  "ExoMars TGO": {
+   "ec": 0.005896214410967989,
+   "qr": 3754.401961083144,
+   "inc": 76.4000735208198,
+   "om": 297.6583580432354,
+   "w": 255.0550488340862,
+   "ma": 38.75482774189141,
+   "a": 3776.67001726441,
+   "pr": 7046.567742926294,
+   "id": -143,
+   "agencia": "ESA / Roscosmos",
+   "llegada": "2016",
+   "color": "#D96C9A",
+   "estado": "activo",
+   "mision": "Trace Gas Orbiter: estudia gases traza (como metano) y busca hidrógeno en el subsuelo.",
+   "instrumentos": "CaSSIS (cámara color estéreo), FREND (neutrones: agua en el subsuelo), NOMAD y ACS (gases)",
+   "aporta": "Mapas de hidrógeno de alta resolución (FREND) para ubicar agua cerca de la superficie."
+  },
+  "Hope (EMM)": {
+   "ec": 0.3382361925343155,
+   "qr": 23251.28426752711,
+   "inc": 23.37676396824479,
+   "om": 112.2177456309281,
+   "w": 197.5135105580369,
+   "ma": 39.03800522857836,
+   "a": 35135.3217042363,
+   "pr": 199953.9428386026,
+   "id": -62,
+   "agencia": "Emiratos Árabes Unidos",
+   "llegada": "2021",
+   "color": "#F28C38",
+   "estado": "activo",
+   "mision": "Emirates Mars Mission: primer observatorio del clima de Marte que ve todo el planeta a todas las horas del día.",
+   "instrumentos": "EXI (cámara), EMIRS (infrarrojo), EMUS (ultravioleta)",
+   "aporta": "Clima y polvo diario: dato clave para planificar salidas y la energía solar de una base."
+  }
+ },
+ "otros": [
+  {
+   "nombre": "MAVEN",
+   "agencia": "NASA",
+   "llegada": "2014",
+   "estado": "finalizada",
+   "color": "#888",
+   "mision": "Estudió cómo Marte perdió su atmósfera. NASA dio por terminada la misión en 2026.",
+   "instrumentos": "Espectrómetros de iones, neutros y UV",
+   "aporta": "Pérdida de atmósfera y clima espacial (tormentas solares)."
+  }
+ ],
+ "lunas": {
+  "Fobos": {
+   "ec": 0.01483023921421581,
+   "qr": 9238.94076095151,
+   "inc": 0.7260377829333049,
+   "om": 331.4568645768084,
+   "w": 4.284860974022192,
+   "ma": 238.710674886672,
+   "a": 9378.019026469521,
+   "pr": 27572.7911603967,
+   "id": 401,
+   "color": "#8a7c6e",
+   "radios_km": [
+    13.0,
+    11.4,
+    9.1
+   ],
+   "descubierta": "18 de agosto de 1877, Asaph Hall (Observatorio Naval de EE. UU.)",
+   "texto": "La luna grande y cercana. Da la vuelta a Marte en 7,7 h, más rápido de lo que gira el planeta: desde Gale sale por el oeste y se pone por el este, dos veces por día. Cada siglo se acerca unos 2 m; dentro de unos 50 millones de años se romperá en un anillo o chocará contra Marte.",
+   "futuro": "Destino de la misión japonesa MMX (lanzada el 20/10/2026): traerá a la Tierra las primeras muestras del sistema marciano. Se propuso como escala para misiones tripuladas por su baja gravedad."
+  },
+  "Deimos": {
+   "ec": 0.0003366055993632802,
+   "qr": 23451.94172678431,
+   "inc": 1.856902884820476,
+   "om": 267.3740746428134,
+   "w": 169.8331796153909,
+   "ma": 337.9241603701072,
+   "a": 23459.83843976329,
+   "pr": 109094.1833654086,
+   "id": 402,
+   "color": "#9c9286",
+   "radios_km": [
+    7.8,
+    6.0,
+    5.1
+   ],
+   "descubierta": "12 de agosto de 1877, Asaph Hall (Observatorio Naval de EE. UU.)",
+   "texto": "La luna chica y lejana. Tarda 30,3 h en dar la vuelta, casi lo mismo que el día marciano, así que desde Gale se ve cruzar el cielo muy despacio (unos 2,7 días de salida a puesta). Desde la superficie parece una estrella brillante.",
+   "futuro": "MMX también la va a observar de cerca. Su superficie está cubierta de polvo fino (regolito) que suaviza los cráteres."
+  }
+ },
+ "fuente_lunas": "Elementos osculadores de Fobos (401) y Deimos (402) de JPL Horizons, centro de Marte (500@499), plano del ecuador de Marte (IAU_MARS), época 2026-11-14 TDB, consultado 2026-11-14 (medido). Radios: NASA NSSDCA, Mars Fact Sheet (medido). Fechas de descubrimiento: NASA Science, Mars Moons."
+}

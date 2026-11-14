@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0d12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Gale Earth: Marte en 3D con datos de NASA y ESA. El cráter Gale como sitio para la primera base humana.">
+<title>Gale Earth · Marte en 3D</title>
+<link rel="icon" href="capas/logo/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="capas/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="capas/logo/icon-180.png">
+<link rel="preload" as="image" href="capas/carga/horizonte_marte.jpg" media="(orientation:landscape)">
+<link rel="preload" as="image" href="capas/carga/horizonte_marte_cel.jpg" media="(orientation:portrait)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.147.0/Build/Cesium/Widgets/widgets.css">
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.147.0/Build/Cesium/Cesium.js"></script>
+<style>
+:root{
+  --fondo:#0b0d12;--sup:rgba(32,33,36,.94);--sup2:#2b2c30;--sup3:#35363a;--linea:#3c4043;--texto:#e8eaed;--suave:#9aa0a6;
+  --acento:#f28c38;--acento2:#ffb070;--ok:#4caf7d;--agua:#4fa3d9;--sombra:0 1px 3px rgba(0,0,0,.45),0 4px 12px rgba(0,0,0,.35);
+  --riel:72px;--sup-seg:env(safe-area-inset-top,0px);--inf-seg:env(safe-area-inset-bottom,0px);
+  /* compatibilidad con los estilos de las fichas */
+  --panel:var(--sup);--panel2:var(--sup2);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:var(--texto);font:14px/1.45 "Google Sans",Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;overscroll-behavior:none}
+button{font:inherit;color:inherit}
+svg.i{width:22px;height:22px;fill:currentColor;flex:none}
+#globo{position:absolute;inset:0}
+.cesium-viewer-bottom{display:none!important}           /* los créditos van en la barra de estado */
+.cesium-widget-credits{display:none}
+.oculto{display:none!important}
+
+/* ── riel izquierdo (como Google Earth) ── */
+#riel{position:absolute;left:0;top:0;bottom:0;width:var(--riel);background:rgba(20,21,24,.92);border-right:1px solid #ffffff12;z-index:8;
+  display:flex;flex-direction:column;align-items:center;padding:calc(10px + var(--sup-seg)) 0 10px;gap:2px;backdrop-filter:blur(8px)}
+#riel .logo{width:46px;height:46px;margin:2px 0 10px;cursor:pointer;border-radius:50%;filter:drop-shadow(0 2px 6px #0008)}
+.rb{width:60px;border:0;background:none;color:var(--suave);display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border-radius:14px;cursor:pointer;font-size:10.5px;letter-spacing:.2px}
+.rb:hover{background:#ffffff10;color:var(--texto)}
+.rb.on{color:var(--acento2)}
+.rb.on svg.i{background:#f28c3826;border-radius:12px;padding:3px 12px;width:46px;height:28px}
+.rb svg.i{padding:3px 12px;width:46px;height:28px}
+#riel .esp{flex:1}
+
+/* ── buscador ── */
+#busca{position:absolute;top:calc(12px + var(--sup-seg));left:calc(var(--riel) + 12px);z-index:7;width:380px;max-width:calc(100vw - var(--riel) - 24px)}
+#cajaBusca{display:flex;align-items:center;gap:8px;height:46px;background:var(--sup);border-radius:24px;box-shadow:var(--sombra);padding:0 8px 0 14px;border:1px solid #ffffff10}
+#cajaBusca svg{color:var(--suave)}
+#q{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--texto);font:inherit;font-size:15px;height:100%}
+#q::placeholder{color:var(--suave)}
+#q::-webkit-search-cancel-button,#q::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+#limpiarQ{border:0;background:none;color:var(--suave);cursor:pointer;padding:6px;border-radius:50%;display:flex}
+#limpiarQ:hover{background:#ffffff12}
+#resultados{margin-top:6px;background:var(--sup);border-radius:16px;box-shadow:var(--sombra);max-height:min(60vh,460px);overflow:auto;border:1px solid #ffffff10}
+#resultados .r{display:flex;align-items:center;gap:12px;padding:9px 14px;cursor:pointer}
+#resultados .r:hover,#resultados .r.sel{background:#ffffff10}
+#resultados .r .ic{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--sup3);font-size:12px;font-weight:700;flex:none;color:#111}
+#resultados .r b{display:block;font-weight:500}
+#resultados .r small{color:var(--suave);font-size:12px}
+#resultados .nada{padding:12px 14px;color:var(--suave)}
+#lugares{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;width:calc(100vw - var(--riel) - 90px);max-width:720px}
+body.cajonAbierto #busca{display:none}
+#lugares::-webkit-scrollbar{display:none}
+.chipb{flex:none;display:flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:16px;border:1px solid #ffffff1a;background:var(--sup);color:var(--texto);cursor:pointer;box-shadow:var(--sombra);font-size:13px;white-space:nowrap}
+.chipb:hover{background:var(--sup2)}
+.chipb i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+/* ── cajón de información (panel lateral) ── */
+#cajon{position:absolute;top:calc(12px + var(--sup-seg));left:calc(var(--riel) + 12px);bottom:40px;width:400px;max-width:calc(100vw - var(--riel) - 24px);
+  background:#202124;border-radius:16px;box-shadow:var(--sombra);z-index:9;display:flex;flex-direction:column;border:1px solid #ffffff10;
+  transform:translateX(0);transition:transform .22s ease,opacity .22s ease}
+#cajon.cerrado{transform:translateX(-30px);opacity:0;pointer-events:none}
+#cajonCab{display:flex;align-items:center;gap:8px;padding:12px 10px 8px 18px}
+#cajonCab h2{flex:1;margin:0;font-size:18px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--texto)}
+#cerrarCajon{border:0;background:none;color:var(--suave);cursor:pointer;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+#cerrarCajon:hover{background:#ffffff12;color:var(--texto)}
+#asa{display:none}
+#reloj{margin:0 14px 6px;background:var(--sup2);border-radius:12px;padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#reloj .seg button{background:none;border:1px solid var(--linea);color:var(--suave);border-radius:8px;padding:3px 8px;cursor:pointer;font-size:11px}
+#reloj .seg button.on{background:var(--acento);color:#111;border-color:var(--acento)}
+#contenido{overflow:auto;padding:4px 18px 18px;flex:1;-webkit-overflow-scrolling:touch}
+
+/* ── fichas (contenido del cajón) ── */
+h2{font-size:11.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--suave);margin:16px 0 8px;font-weight:500}
+#contenido>h2:first-child{margin-top:4px}
+h3{margin:2px 0 4px;font-size:19px;font-weight:500}
+p{margin:6px 0}
+.tarjeta{background:var(--sup2);border:1px solid transparent;border-radius:12px;padding:10px 12px;margin:8px 0;cursor:pointer;transition:background .15s}
+.tarjeta:hover{background:var(--sup3)}
+.tarjeta.on{border-color:var(--acento)}
+.chip{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.sub,.fuente{color:var(--suave);font-size:12.5px}
+.fuente{font-size:11px}
+.tag{font-size:10px;padding:1px 7px;border-radius:9px;background:#ffffff10;color:var(--suave);margin-left:4px;white-space:nowrap}
+.pz{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:24px;padding:0 6px;margin:4px 4px 0 0;border-radius:12px;background:#ffffff10;border:0;font-size:11px;cursor:pointer;color:var(--texto)}
+.pz:hover{background:#f28c3840}
+.ind{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+.ind div{background:var(--sup2);border-radius:12px;padding:8px 10px}
+.ind b{display:block;font-size:18px;font-weight:500}
+.ind small{color:var(--suave);font-size:11px}
+.barra{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:6px 0 4px;background:var(--sup3)}
+.leyenda{display:flex;flex-wrap:wrap;gap:3px 10px;font-size:11px;color:var(--suave)}
+.leyenda i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.astro{background:#1b2a21;border-radius:12px;padding:9px 12px;margin:10px 0}
+.astro ul{margin:4px 0 0;padding-left:18px}
+.btn{background:var(--sup2);color:var(--texto);border:0;border-radius:18px;padding:7px 14px;cursor:pointer;font-size:12.5px;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--sup3)}
+.btn.prim{background:var(--acento);color:#111;font-weight:600}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fila{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #ffffff0d}
+.fila:last-child{border-bottom:0}
+label.fila{cursor:pointer}
+input[type=checkbox]{accent-color:var(--acento);width:17px;height:17px;flex:none}
+input[type=range]{accent-color:var(--acento)}
+select,input[type=text]{background:var(--sup2);color:var(--texto);border:1px solid var(--linea);border-radius:9px;padding:6px 8px;font:inherit;font-size:12.5px;max-width:58%}
+input[type=text]{width:100%;max-width:none}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{padding:5px;border-bottom:1px solid #ffffff0d;text-align:left;vertical-align:top}
+th{color:var(--suave);font-weight:500}
+.punt{font-weight:700}
+
+
+/* ── Biblioteca ── */
+#cajon.ancho{width:560px}
+.bibt{display:flex;flex-direction:column;position:relative;padding-left:58px;min-height:56px;justify-content:center}
+.bibic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:16px}
+.bibt.apagada{opacity:.55;cursor:default}
+.bibt.apagada:hover{background:var(--sup2)}
+.bibp{display:flex;gap:12px;align-items:center;padding:8px}
+.bibp img,.bibp .sinfoto{width:72px;height:54px;object-fit:cover;border-radius:8px;flex:none;background:#000}
+.bibp .sinfoto{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--suave);background:var(--sup3)}
+.bibp>span{display:flex;flex-direction:column;min-width:0}
+.bibp b{font-weight:500}
+.num{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 5px;border-radius:10px;color:#111;font-size:11px;font-weight:700;margin-right:6px}
+.bibp .num{position:absolute;margin-left:-26px;margin-top:-36px;display:none}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px}
+.pz.on{background:var(--acento);color:#111}
+details.sec{background:var(--sup2);border-radius:12px;margin:8px 0;padding:2px 12px}
+details.sec>summary{cursor:pointer;padding:10px 0;font-weight:500;list-style:none;display:flex;align-items:center;gap:6px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"▾";margin-left:auto;color:var(--suave);transition:transform .15s}
+details.sec:not([open])>summary::after{transform:rotate(-90deg)}
+details.sec>:last-child{margin-bottom:10px}
+details.sec .ind div{background:var(--sup3)}
+i.cuad{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.samx{border-top:1px solid #ffffff12;padding:8px 0}
+.samx table{margin-top:4px}
+tr.dudoso td{color:#e5534b}
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.fotos a{position:relative;display:block;border-radius:8px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.fotos img{width:100%;height:100%;object-fit:cover;display:block}
+.fotos span{position:absolute;left:4px;bottom:4px;font-size:10px;background:#000a;padding:1px 5px;border-radius:5px}
+img.portada{width:100%;max-height:230px;object-fit:cover;border-radius:12px;margin-top:10px;background:#000}
+.tablaw{overflow:auto;margin:8px -6px;-webkit-overflow-scrolling:touch}
+table.comp{font-size:11.5px;white-space:nowrap}
+table.comp th{cursor:pointer;position:sticky;top:0;background:#202124;user-select:none}
+table.comp tr[data-p]{cursor:pointer}
+table.comp tr[data-p]:hover td{background-color:#ffffff0d}
+.doc h2{font-size:12px}
+.doc h3{font-size:16px;margin-top:14px}
+.doc ul{padding-left:18px}
+.doc li{margin:3px 0}
+.doc code,.sub code,.fuente code,details code{font-size:11px;background:#ffffff10;padding:0 4px;border-radius:4px;word-break:break-all}
+.doc .nota{background:#1b2a21;border-radius:10px;padding:8px 10px}
+.doc table{margin:8px 0}
+
+/* ── controles de cámara (abajo a la derecha, como Google Earth) ── */
+#controles{position:absolute;right:14px;bottom:44px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:10px}
+.cb{width:40px;height:40px;border-radius:50%;border:0;background:var(--sup);color:var(--texto);box-shadow:var(--sombra);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;font-weight:600;font-size:13px}
+.cb:hover{background:var(--sup2)}
+.cb .badge{position:absolute;right:-4px;top:-4px;background:var(--acento);color:#111;font-size:9.5px;border-radius:8px;padding:0 4px;line-height:15px}
+.grupo{display:flex;flex-direction:column;background:var(--sup);border-radius:20px;box-shadow:var(--sombra);overflow:hidden}
+.grupo .cb{box-shadow:none;border-radius:0;background:none}
+.grupo .cb:hover{background:#ffffff10}
+.grupo .cb+.cb{border-top:1px solid #ffffff12}
+#brujula{width:44px;height:44px}
+#brujula svg{width:34px;height:34px;transition:transform .06s linear}
+
+/* ── barra de estado ── */
+#estado{position:absolute;left:var(--riel);right:0;bottom:0;height:30px;z-index:6;display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:0 14px calc(var(--inf-seg)) 14px;
+  font-size:11.5px;color:#cfd2d6;background:linear-gradient(#0000,#000a);pointer-events:none;text-shadow:0 1px 2px #000}
+#estado>*{pointer-events:auto;white-space:nowrap}
+#escala{display:flex;align-items:center;gap:6px}
+#escala i{display:block;height:6px;border:1.5px solid #e8eaed;border-top:0}
+#creditos{border:0;background:none;color:#cfd2d6;cursor:pointer;padding:0;font-size:11.5px;text-decoration:underline dotted;text-underline-offset:2px}
+#fuentesBox{position:absolute;right:14px;bottom:36px;z-index:10;max-width:min(560px,calc(100vw - 28px));background:var(--sup);border-radius:12px;box-shadow:var(--sombra);padding:12px 14px;font-size:11.5px;color:var(--suave);max-height:50vh;overflow:auto}
+#fuentesBox .cesium-credit-lightbox-overlay{display:none}
+#fuentesBox img{max-height:18px;vertical-align:middle}
+
+/* ── ventanas (ayuda, celular) ── */
+.modal{position:absolute;inset:0;z-index:20;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .caja{background:var(--sup);border-radius:20px;box-shadow:var(--sombra);padding:20px 22px;max-width:440px;width:100%;max-height:90vh;overflow:auto;border:1px solid #ffffff10}
+.modal h3{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+.modal kbd{background:var(--sup3);border-radius:5px;padding:1px 6px;font:600 11px system-ui;margin-right:3px;border-bottom:2px solid #0006}
+.modal .lin{padding:5px 0;border-bottom:1px solid #ffffff0d;display:flex;gap:10px;align-items:baseline}
+.modal .lin span:first-child{min-width:150px}
+#qr{display:flex;justify-content:center;margin:12px 0}
+#qr svg,#qr img{width:200px;height:200px;background:#fff;border-radius:12px;padding:8px}
+.url{font:600 15px ui-monospace,monospace;background:var(--sup2);border-radius:10px;padding:8px 10px;text-align:center;word-break:break-all;user-select:all}
+
+#aviso{position:absolute;left:50%;transform:translateX(-50%);bottom:46px;z-index:15;background:#3c4043;color:#e8eaed;padding:11px 16px;border-radius:10px;font-size:13px;max-width:min(560px,calc(100vw - 32px));box-shadow:var(--sombra)}
+#cargando{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;z-index:30;color:#c9ccd1;transition:opacity .7s;
+  background:#000 url(capas/carga/horizonte_marte.jpg) center/cover no-repeat}
+@media (orientation:portrait){#cargando{background-image:url(capas/carga/horizonte_marte_cel.jpg)}}
+#cargando .marca{display:flex;align-items:center;gap:14px;transform:translateY(-4vh)}
+#cargando img{width:64px;height:64px;filter:drop-shadow(0 2px 10px #0008)}
+#cargando .t{font-size:clamp(34px,5.2vw,64px);color:#ececec;font-weight:400;letter-spacing:-.5px;text-shadow:0 2px 18px #000a}
+#cargando .giro{width:40px;height:40px;margin-top:5vh;border-radius:50%;border:3.5px solid #ffffff22;border-top-color:var(--acento);border-right-color:var(--acento);animation:girar 1s linear infinite;transform:translateY(-4vh)}
+#cargando .msj{position:absolute;bottom:calc(26px + var(--inf-seg));font-size:12.5px;color:#d7d9dccc;text-shadow:0 1px 6px #000}
+#cargando .cred{position:absolute;right:14px;bottom:calc(8px + var(--inf-seg));font-size:10px;color:#ffffff66}
+@media (max-width:600px){#cargando .cred{display:none}}
+@keyframes girar{to{transform:translateY(-4vh) rotate(360deg)}}
+@keyframes latido{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 #f28c3800)}50%{transform:scale(1.04);filter:drop-shadow(0 0 22px #f28c3866)}}
+
+
+/* ── línea de tiempo ── */
+#linea{position:absolute;left:calc(var(--riel) + 16px);right:80px;bottom:40px;z-index:8;display:flex;flex-direction:column;align-items:flex-start;gap:10px;pointer-events:none}
+#linea>*{pointer-events:auto}
+#lFicha{width:min(460px,100%);background:#202124f2;border:1px solid #ffffff12;border-radius:16px;box-shadow:var(--sombra);padding:12px 16px 10px;max-height:44vh;overflow:auto;backdrop-filter:blur(8px)}
+#lFicha h3{margin:4px 0 6px;font-size:17px;font-weight:500}
+#lFicha p{margin:0 0 8px}
+.lCab{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lFecha{font-weight:700;color:var(--acento2)}
+.lRes{font-size:11px;padding:1px 8px;border-radius:9px;color:#111;background:var(--c)}
+#lBarra{width:100%;display:flex;align-items:center;gap:10px}
+#lPista{flex:1;min-width:0;position:relative;display:flex;align-items:center;height:58px;padding:0 18px;overflow-x:auto;scrollbar-width:none;
+  background:linear-gradient(90deg,#0b1a3a00,#1d3f8acc 8%,#2456b8cc 50%,#1d3f8acc 92%,#0b1a3a00);border-radius:29px}
+#lPista::-webkit-scrollbar{display:none}
+.lLinea{display:none}
+.lPto{flex:1 0 22px;height:58px;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#dfe6f5;position:relative}
+.lPto i{width:7px;height:7px;border-radius:50%;background:#c8d6f5;transition:transform .2s,background .2s;margin-top:4px}
+.lPto span{font-size:10.5px;height:13px;white-space:nowrap;opacity:.9}
+.lPto.on span{font-weight:700;color:#fff;opacity:1}
+.lPto.mal i,.lPto.med i{width:5px;height:5px;background:#8fa5d6;opacity:.75}
+.lPto.fut i{background:none;border:1.5px solid #f2a7c8}
+.lPto.gale i{background:var(--acento2)}
+.lPto.geo i{background:#e0c9a0}
+.lPto:hover i{transform:scale(1.5)}
+.lPto.on i{width:20px;height:20px;background:#fff;opacity:1;border:0;box-shadow:0 0 0 4px #ffffff30;margin-top:-9px;margin-bottom:-4px}
+.lPto.on.gale i{background:var(--acento2);box-shadow:0 0 0 4px #ffb07040}
+.lCorte{flex:none;width:2px;height:22px;margin:0 6px;background:repeating-linear-gradient(#ffffff70 0 3px,transparent 3px 6px);align-self:center;margin-top:-14px}
+#lPlay,#lCerrar{flex:none;width:46px;height:46px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sombra)}
+#lPlay{background:var(--sup);color:var(--texto)}#lPlay svg,#lCerrar svg{width:24px;height:24px;fill:currentColor}
+#lPlay .pa{display:none}#lPlay.on .pa{display:block}#lPlay.on .pl{display:none}
+#lCerrar{background:#2a4f8f;color:#fff}
+#lCerrar:hover{background:#3563b3}
+#bLinea.on,body.lineaAbierta #bLinea{color:var(--acento2)}
+body.lineaAbierta #aviso{bottom:auto;top:80px}
+/* ── celular: riel abajo, cajón como hoja deslizable ── */
+@media (max-width:760px),(pointer:coarse) and (max-width:900px){
+  :root{--riel:0px}
+  #riel{top:auto;bottom:0;left:0;right:0;width:auto;height:calc(58px + var(--inf-seg));flex-direction:row;justify-content:space-around;padding:0 4px var(--inf-seg);border-right:0;border-top:1px solid #ffffff12}
+  #riel .logo,#riel .esp,#riel .solopc{display:none}
+  .rb{width:auto;flex:1;padding:6px 0;font-size:10.5px}
+  #busca{left:10px;right:10px;width:auto;max-width:none;top:calc(10px + var(--sup-seg))}
+  #cajaBusca{height:44px}
+  #lugares{width:auto}
+  body.cajonAbierto #busca{display:block}
+  body.cajonAbierto #lugares{display:none}
+  #cajon{left:0;right:0;width:auto;max-width:none;top:auto;bottom:calc(58px + var(--inf-seg));height:min(62vh,560px);border-radius:18px 18px 0 0;border-bottom:0}
+  #cajon.cerrado{transform:translateY(40px)}
+  #cajon.chico{height:150px}
+  #cajon.ancho{width:auto}
+  .rb{font-size:9.5px}
+  #asa{display:block;width:40px;height:5px;border-radius:3px;background:#ffffff40;margin:8px auto 0;cursor:grab}
+  #cajonCab{padding-top:4px}
+  #linea{left:8px;right:8px;bottom:calc(64px + var(--inf-seg));gap:8px}
+  #lFicha{width:auto;align-self:stretch;max-height:34vh;padding:10px 13px 8px;font-size:13px}
+  #lFicha h3{font-size:15.5px}
+  .lPto{flex:0 0 34px}
+  #lPlay,#lCerrar{width:40px;height:40px}
+  body.lineaAbierta #controles,body.lineaAbierta #estado,body.lineaAbierta #busca{display:none}
+  #controles{right:10px;bottom:calc(72px + var(--inf-seg))}
+  body.hoja #controles{display:none}
+  #estado{left:0;bottom:calc(58px + var(--inf-seg));height:26px;padding-bottom:0;background:none}
+  #estado .solopc{display:none}
+  #estado{justify-content:space-between;font-size:11px}
+  #fuentesBox{bottom:calc(88px + var(--inf-seg))}
+  #aviso{bottom:calc(92px + var(--inf-seg))}
+}
+</style>
+</head>
+<body>
+<div id="globo"></div>
+
+<div id="cargando"><div class="marca"><img src="capas/logo/logo-128.png" alt=""><div class="t">Gale Earth</div></div><div class="giro" role="progressbar" aria-label="Cargando"></div><div class="msj">Cargando Marte en 3D…</div><div class="cred">Render propio · mapa Viking (NASA/USGS)</div></div>
+
+<nav id="riel" aria-label="Menú principal">
+  <img class="logo" src="capas/logo/logo-128.png" alt="Gale Earth" title="Gale Earth · ver Marte entero" id="logoRiel">
+  <button class="rb" id="rBuscar" title="Buscar"><svg class="i" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>Buscar</button>
+  <button class="rb" data-t="explorar" title="Explorar Gale"><svg class="i" viewBox="0 0 24 24"><path d="M12 10.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1 1.1-.49 1.1-1.1-.49-1.1-1.1-1.1zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19z"/></svg>Explorar</button>
+  <button class="rb" data-t="base" title="Base en Gale"><svg class="i" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Base</button>
+  <button class="rb" data-t="orbita" title="Orbitadores"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-25 12 12)"/><circle cx="20.2" cy="8.2" r="1.6"/></svg>Órbitas</button>
+  <button class="rb" data-t="biblioteca" title="Biblioteca: toda la información guardada"><svg class="i" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>Biblioteca</button>
+  <button class="rb" data-t="capas" title="Capas y estilo del mapa"><svg class="i" viewBox="0 0 24 24"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg>Capas</button>
+  <div class="esp"></div>
+  <button class="rb solopc" id="rCel" title="Abrir en el celular"><svg class="i" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>Celular</button>
+  <button class="rb solopc" id="vAyuda" title="Controles y ayuda"><svg class="i" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>Ayuda</button>
+  <button class="rb solopc" id="rPantalla" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>Pantalla</button>
+</nav>
+
+<div id="busca">
+  <div id="cajaBusca">
+    <svg class="i" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Buscar en Marte: pozo, zona, lugar o coordenadas">
+    <button id="limpiarQ" class="oculto" title="Borrar"><svg class="i" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div id="resultados" class="oculto"></div>
+  <div id="lugares">
+    <button class="chipb" id="vGale"><i style="background:#ff9f43"></i>Cráter Gale</button>
+    <button class="chipb" id="vRec"><i style="background:#4fa3d9"></i>Recorrido de Curiosity</button>
+    <button class="chipb" id="vHoy"><i style="background:#e5534b"></i>Curiosity hoy</button>
+    <button class="chipb" id="vMarte"><i style="background:#c46a3c"></i>Marte entero</button>
+  </div>
+</div>
+
+<aside id="cajon" class="cerrado" aria-label="Información">
+  <div id="asa" title="Agrandar o achicar"></div>
+  <div id="cajonCab"><h2 id="cajonTitulo">Explorar</h2>
+    <button id="cerrarCajon" title="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
+  <div id="reloj" class="oculto"><span id="hora">—</span><span class="seg" id="vel"><button data-x="1" class="on">×1</button><button data-x="60">×60</button><button data-x="600">×600</button></span><button class="btn" id="ahora">Ahora</button></div>
+  <div id="contenido"></div>
+</aside>
+
+<div id="linea" class="oculto" role="region" aria-label="Línea de tiempo">
+  <div id="lFicha"></div>
+  <div id="lBarra"><button id="lPlay" title="Reproducir"><svg viewBox="0 0 24 24"><path class="pl" d="M8 5v14l11-7z"/><path class="pa" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg></button>
+    <div id="lPista"></div>
+    <button id="lCerrar" title="Cerrar la línea de tiempo"><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
+</div>
+<div id="controles">
+  <button class="cb" id="brujula" title="Norte arriba (clic) · girar: Shift + arrastrar"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#ffffff22" stroke-width="1.5"/><path d="M20 5l5 15h-10z" fill="#e5534b"/><path d="M20 35l-5-15h10z" fill="#e8eaed"/></svg></button>
+  <button class="cb" id="b3d" title="Vista 2D / 3D">3D</button>
+  <button class="cb" id="bLinea" title="Línea de tiempo: de Galileo a hoy"><svg class="i" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9.1.1L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"/></svg></button>
+  <button class="cb" id="vRelieve" title="Relieve ×1 (escala real)"><svg class="i" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg><span class="badge oculto" id="relBadge"></span></button>
+  <div class="grupo">
+    <button class="cb" id="bMas" title="Acercar"><svg class="i" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+    <button class="cb" id="bMenos" title="Alejar"><svg class="i" viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg></button>
+  </div>
+</div>
+
+<footer id="estado">
+  <span id="coords" class="solopc"></span>
+  <span id="camara" class="solopc"></span>
+  <span id="escala"><i id="escalaBarra" style="width:60px"></i><span id="escalaTxt"></span></span>
+  <button id="creditos" title="Fuentes de los datos">Datos: NASA · ESA · USGS</button>
+</footer>
+<div id="fuentesBox" class="oculto"></div>
+
+<div id="ayuda" class="modal oculto"><div class="caja">
+  <h3>Controles <button class="btn" data-cerrar>Cerrar</button></h3>
+  <div class="solotact">
+    <div class="lin"><span>1 dedo</span><span>mover el mapa</span></div>
+    <div class="lin"><span>2 dedos: pellizcar</span><span>acercar / alejar</span></div>
+    <div class="lin"><span>2 dedos: arrastrar arriba o abajo</span><span>inclinar la vista</span></div>
+    <div class="lin"><span>2 dedos: girar</span><span>rotar</span></div>
+  </div>
+  <div class="solomouse">
+    <div class="lin"><span><kbd>arrastrar</kbd></span><span>mover el mapa</span></div>
+    <div class="lin"><span><kbd>Shift</kbd>+<kbd>arrastrar</kbd> · rueda apretada</span><span>girar alrededor del punto</span></div>
+    <div class="lin"><span><kbd>Alt</kbd>+<kbd>arrastrar</kbd></span><span>mirar alrededor sin moverse</span></div>
+    <div class="lin"><span><kbd>rueda</kbd> · clic derecho</span><span>acercar / alejar</span></div>
+    <div class="lin"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> · <kbd>Q</kbd><kbd>E</kbd></span><span>volar · bajar / subir</span></div>
+    <div class="lin"><span><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd></span><span>girar la vista (<kbd>Shift</kbd> más rápido)</span></div>
+    <div class="lin"><span><kbd>/</kbd></span><span>buscar</span></div>
+  </div>
+  <p class="sub">La brújula vuelve el norte arriba. El botón 3D alterna entre vista desde arriba e inclinada.</p>
+</div></div>
+
+<div id="celular" class="modal oculto"><div class="caja">
+  <h3>Abrir en el celular <button class="btn" data-cerrar>Cerrar</button></h3>
+  <div id="celInfo" class="sub">Buscando la dirección de esta computadora en la red…</div>
+</div></div>
+
+<div id="aviso" class="oculto"></div>
+<script id="datos" type="application/json">/*__DATOS__*/null</script>
+<script>
+'use strict';
+const D = JSON.parse(document.getElementById('datos').textContent);
+const C = Cesium, $ = id => document.getElementById(id);
+const fmt = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString('es-AR', { maximumFractionDigits: d, minimumFractionDigits: d });
+
+// ---------- Marte: elipsoide IAU 2015 (49901) y token de Cesium ion ----------
+C.Ellipsoid.default = C.Ellipsoid.MARS;
+const MARS = C.Ellipsoid.MARS, A = MARS.radii.x, B = MARS.radii.z;
+let token = null; try { token = localStorage.getItem('galeEarthToken'); } catch {}
+if (token) C.Ion.defaultAccessToken = token;
+// Los datos de NASA usan latitud planetocéntrica; Cesium usa latitud geodésica (planetográfica) sobre el elipsoide.
+const geodetica = latc => Math.atan(Math.tan(latc * Math.PI / 180) * (A * A) / (B * B)) * 180 / Math.PI;
+const pos = (lon, latc, h = 0) => C.Cartesian3.fromDegrees(lon, geodetica(latc), h, MARS);
+
+const viewer = new C.Viewer('globo', {
+  globe: new C.Globe(MARS), baseLayer: false, skyAtmosphere: false, baseLayerPicker: false, geocoder: false, timeline: false, animation: false,
+  homeButton: false, sceneModePicker: false, navigationHelpButton: false, infoBox: false, selectionIndicator: false, fullscreenButton: false,
+});
+viewer.scene.backgroundColor = C.Color.BLACK;
+// Cielo: Vía Láctea y estrellas reales (catálogo Hipparcos de ESA + contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial).
+// Las 6 caras del cubo las genera herramientas/cielo_via_lactea.py.
+viewer.scene.skyBox = new C.SkyBox({ sources: Object.fromEntries([['positiveX', 'px'], ['negativeX', 'mx'], ['positiveY', 'py'], ['negativeY', 'my'], ['positiveZ', 'pz'], ['negativeZ', 'mz']].map(([k, f]) => [k, `capas/cielo/via_lactea_${f}.jpg`])) });
+if (viewer.scene.moon) viewer.scene.moon.show = false;          // la Luna de Cesium es la de la Tierra: en Marte no va
+const MOVIL = matchMedia('(pointer:coarse)').matches;
+viewer.scene.globe.baseColor = C.Color.fromCssColorString('#6b4a3a');
+viewer.scene.globe.showGroundAtmosphere = false;
+// Atmósfera de Marte: cielo color caramelo (polvo en suspensión) y bruma hacia el horizonte.
+// Es una aproximación visual: se corre el color de la atmósfera terrestre de Cesium hacia el naranja.
+viewer.scene.skyAtmosphere = new C.SkyAtmosphere(MARS);
+Object.assign(viewer.scene.skyAtmosphere, { show: true, hueShift: -0.56, saturationShift: -0.3, brightnessShift: -0.05 });
+Object.assign(viewer.scene.atmosphere, { hueShift: -0.56, saturationShift: -0.3, brightnessShift: -0.1 });
+Object.assign(viewer.scene.fog, { enabled: true, density: 2.5e-5, minimumBrightness: 0.3, screenSpaceErrorFactor: 2 });   // liviana: no tapa el Monte Sharp
+viewer.scene.globe.enableLighting = false;
+viewer.scene.globe.maximumScreenSpaceError = 2;       // equilibrio entre detalle y fluidez
+viewer.scene.globe.tileCacheSize = 1500;              // guarda más teselas: menos parpadeo al alejar y acercar
+viewer.scene.globe.preloadAncestors = true;
+viewer.scene.globe.preloadSiblings = true;            // carga también las vecinas: al girar no aparecen huecos
+viewer.scene.globe.loadingDescendantLimit = 40;
+if (MOVIL) {                                           // celular: menos detalle simultáneo para que vaya fluido
+  viewer.scene.globe.maximumScreenSpaceError = 3;
+  viewer.scene.globe.tileCacheSize = 500;
+  viewer.scene.globe.loadingDescendantLimit = 16;
+  viewer.scene.globe.preloadSiblings = false;
+}
+C.RequestScheduler.maximumRequests = 80;
+C.RequestScheduler.requestsByServer['astro.arcgis.com:443'] = 24;
+C.RequestScheduler.requestsByServer['trek.nasa.gov:443'] = 18;
+C.RequestScheduler.requestsByServer[location.host] = 16;   // servidor local: no saturarlo
+viewer.clock.shouldAnimate = true;
+viewer.clock.clockStep = C.ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+
+// ---------- Motor 3D ----------
+// "globo": globo propio de todo Marte. Terreno: HRSC/MOLA 200 m (global) + DEM de 1 m de MSL (5 m) servidos por servir.py.
+//          Imagen: mosaico CTX global de 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri), color Viking (NASA Trek)
+//          y HiRISE 25 cm de Gale (USGS), más las capas de análisis.
+// "cesium": Cesium Mars (3D Tiles de Cesium ion). Se usa si no hay servidor/teselas o si el usuario lo elige.
+let MODO = 'cesium', tileset = null, TERRENO = null;
+const CAPAS_BASE = {};
+// Esquema de teselas planetocéntrico (como los mosaicos de NASA) sobre el elipsoide geodésico de Cesium.
+const _k = (A * A) / (B * B);
+class EsquemaPC extends C.GeographicTilingScheme {
+  constructor(o = {}) { super({ ellipsoid: MARS, numberOfLevelZeroTilesX: 2, numberOfLevelZeroTilesY: 1, ...o }); }
+  tileXYToRectangle(x, y, l, r) { const R = super.tileXYToRectangle(x, y, l, r); R.north = Math.atan(Math.tan(R.north) * _k); R.south = Math.atan(Math.tan(R.south) * _k); return R; }
+  tileXYToNativeRectangle(x, y, l, r) { return this.tileXYToRectangle(x, y, l, r); }
+  positionToTileXY(p, l, r) { return super.positionToTileXY(new C.Cartographic(p.longitude, Math.atan(Math.tan(p.latitude) / _k), p.height), l, r); }
+}
+// Lee una tesela de alturas; si no existe (borde de una zona), recorta y amplía la de su nivel superior.
+const _alt = new Map();
+async function alturasTesela(x, y, n) {
+  const k = `${n}/${x}/${y}`;
+  if (_alt.has(k)) return _alt.get(k);
+  let h = null, falloRed = false;
+  // Reintenta si la conexión falla (servidor ocupado); un 404 real significa "no hay tesela" y se usa la de arriba.
+  let r = null;
+  for (let intento = 0; intento < 4 && !r; intento++) {
+    r = await fetch(`teselas/terreno/${k}.bin`).catch(() => null);
+    if (!r) await new Promise(ok => setTimeout(ok, 300 * (intento + 1)));
+  }
+  if (!r) falloRed = true;
+  if (r && r.ok) {
+    const b = await r.arrayBuffer(), dv = new DataView(b), mn = dv.getFloat32(0, true), es = dv.getFloat32(4, true);
+    const q = new Uint16Array(b, 8); h = new Float32Array(q.length);
+    for (let i = 0; i < q.length; i++) h[i] = mn + q[i] * es;
+  } else if (n > 0) {
+    const P = await alturasTesela(x >> 1, y >> 1, n - 1), ox = (x & 1) * 32, oy = (y & 1) * 32;
+    h = new Float32Array(65 * 65);
+    for (let i = 0; i < 65; i++) for (let j = 0; j < 65; j++) {
+      const fy = oy + i / 2, fx = ox + j / 2, y0 = Math.floor(fy), x0 = Math.floor(fx), y1 = Math.min(64, y0 + 1), x1 = Math.min(64, x0 + 1), u = fx - x0, v = fy - y0;
+      h[i * 65 + j] = (P[y0 * 65 + x0] * (1 - u) + P[y0 * 65 + x1] * u) * (1 - v) + (P[y1 * 65 + x0] * (1 - u) + P[y1 * 65 + x1] * u) * v;
+    }
+  } else h = new Float32Array(65 * 65);
+  if (_alt.size > 3000) _alt.clear();
+  if (!falloRed) _alt.set(k, h);        // lo que vino de un fallo de red no se guarda: se vuelve a pedir
+  return h;
+}
+async function crearTerreno() {
+  const meta = await (await fetch('teselas/terreno/meta.json')).json();
+  const rangos = meta.rangos.map(r => ({ n0: r.niveles[0], n1: r.niveles[1], c: r.caja_geodetica }));
+  const disponible = (x, y, n) => {
+    const d = 180 / 2 ** n, o = -180 + x * d, no = 90 - y * d;
+    return rangos.some(r => n >= r.n0 && n <= r.n1 && (!r.c || !(o + d <= r.c[0] || o >= r.c[2] || no <= r.c[1] || no - d >= r.c[3])));
+  };
+  const prov = new C.CustomHeightmapTerrainProvider({
+    ellipsoid: MARS, width: 65, height: 65, tilingScheme: new C.GeographicTilingScheme({ ellipsoid: MARS }),
+    callback: (x, y, n) => alturasTesela(x, y, n),
+    credit: 'Terreno: USGS Astrogeology (HRSC/MOLA Blend 200 m; MSL Gale DEM 1 m)',
+  });
+  prov.getTileDataAvailable = disponible;
+  prov.nivelEn = (lon, latg) => { let m = 0; for (const r of rangos) if (!r.c || (lon >= r.c[0] && lon <= r.c[2] && latg >= r.c[1] && latg <= r.c[3])) m = Math.max(m, r.n1); return m; };
+  prov.getLevelMaximumGeometricError = l => C.TerrainProvider.getEstimatedLevelZeroGeometricErrorForAHeightmap(MARS, 65, 2) / (1 << l);
+  return prov;
+}
+// CTX 5 m coloreado: el brillo sale de CTX (detalle) y el color de una paleta de Marte por brillo,
+// mezclada con el color real de Viking (232 m). Es la misma idea que colorear en QGIS una imagen en blanco y negro.
+// Color: mapa global Viking MDIM 2.1 (NASA/USGS) bajado una vez de Mars Trek y servido local (capas/viking_color_8k.jpg,
+// 8192×4096, ~2,6 km/píxel). Antes cada tesela esperaba al servidor de Trek (>1 s); ahora el color sale al instante.
+const VIKING_IMG = new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = MOVIL ? 'capas/viking_color_4k.jpg' : 'capas/viking_color_8k.jpg'; });   // el celular usa la versión de 4096 px (menos memoria)
+const PALETA = [[0, [38, 22, 16]], [0.35, [120, 62, 38]], [0.6, [176, 104, 66]], [0.82, [214, 156, 112]], [1, [244, 214, 182]]];
+const LUT = new Uint8ClampedArray(768);
+for (let i = 0; i < 256; i++) { const v = i / 255; let k = 0; while (k < PALETA.length - 2 && v > PALETA[k + 1][0]) k++; const [p0, c0] = PALETA[k], [p1, c1] = PALETA[k + 1], u = (v - p0) / (p1 - p0); for (let j = 0; j < 3; j++) LUT[i * 3 + j] = c0[j] * (1 - u) + c1[j] * u; }
+// ── Sombreado del relieve a partir de NUESTRO modelo de elevación ──
+// Para cada tesela de imagen se toman 65×65 alturas del terreno (el mismo que dibuja el 3D) y se calcula
+// la luz de un sol bajo desde el noroeste. Así el relieve se lee aunque la foto CTX sea plana o tenga polvo.
+const SOL = { az: 315 * Math.PI / 180, el: 35 * Math.PI / 180, z: 2.4 };
+// Parámetros de la imagen (se pueden ajustar en vivo: AJUSTE.x = …; capaCTX();)
+const AJUSTE = { sombra: 0.85, pesoCTX: 0, ganMax: 3.2, desvio: 17, escalaViking: 1.45, techo: 200, nivelSombraFijo: null };
+window.AJUSTE = AJUSTE;
+async function sombraTesela(x, y, l) {
+  if (!TERRENO) return null;
+  const d = 180 / 2 ** l, N = 65, lonC = -180 + (x + 0.5) * d, latcC = 90 - (y + 0.5) * d;
+  const latg = c => Math.atan(Math.tan(c * Math.PI / 180) * _k) * 180 / Math.PI;
+  const lt = Math.max(0, Math.min(l, AJUSTE.nivelSombraFijo ?? 99, TERRENO.nivelEn(lonC, latg(latcC)))), dt = 180 / 2 ** lt;
+  const lons = new Float64Array(N), lats = new Float64Array(N);
+  for (let j = 0; j < N; j++) lons[j] = -180 + x * d + j * d / (N - 1);
+  for (let i = 0; i < N; i++) lats[i] = latg(90 - y * d - i * d / (N - 1));
+  const claves = new Set(), clave = (lo, la) => { const tx = Math.min(2 ** (lt + 1) - 1, Math.floor((lo + 180) / dt)), ty = Math.min(2 ** lt - 1, Math.max(0, Math.floor((90 - la) / dt))); return tx + ',' + ty; };
+  for (let i = 0; i < N; i += 8) for (let j = 0; j < N; j += 8) claves.add(clave(lons[j], lats[i]));
+  for (const i of [N - 1]) for (let j = 0; j < N; j++) claves.add(clave(lons[j], lats[i]));
+  for (let i = 0; i < N; i++) { claves.add(clave(lons[0], lats[i])); claves.add(clave(lons[N - 1], lats[i])); }
+  const tes = {};
+  await Promise.all([...claves].map(async k => { const [tx, ty] = k.split(',').map(Number); tes[k] = await alturasTesela(tx, ty, lt); }));
+  const h = new Float32Array(N * N);
+  for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+    const lo = lons[j], la = lats[i], tx = Math.min(2 ** (lt + 1) - 1, Math.floor((lo + 180) / dt)), ty = Math.min(2 ** lt - 1, Math.max(0, Math.floor((90 - la) / dt)));
+    const T = tes[tx + ',' + ty]; if (!T) continue;
+    const fx = Math.min(64, Math.max(0, (lo + 180 - tx * dt) / dt * 64)), fy = Math.min(64, Math.max(0, (90 - la - ty * dt) / dt * 64));
+    const x0 = Math.floor(fx), y0 = Math.floor(fy), x1 = Math.min(64, x0 + 1), y1 = Math.min(64, y0 + 1), u = fx - x0, v = fy - y0;
+    h[i * N + j] = (T[y0 * 65 + x0] * (1 - u) + T[y0 * 65 + x1] * u) * (1 - v) + (T[y1 * 65 + x0] * (1 - u) + T[y1 * 65 + x1] * u) * v;
+  }
+  const mpg = R_MARTE * Math.PI / 180, dy = d / (N - 1) * mpg, dx = dy * Math.cos(latcC * Math.PI / 180);
+  const sx = Math.sin(SOL.az) * Math.cos(SOL.el), sy = Math.cos(SOL.az) * Math.cos(SOL.el), sz = Math.sin(SOL.el);
+  const S = new Float32Array(N * N);
+  for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+    const jm = Math.max(0, j - 1), jp = Math.min(N - 1, j + 1), im = Math.max(0, i - 1), ip = Math.min(N - 1, i + 1);
+    const gx = (h[i * N + jp] - h[i * N + jm]) / ((jp - jm) * dx) * SOL.z, gy = (h[im * N + j] - h[ip * N + j]) / ((ip - im) * dy) * SOL.z;
+    const n = Math.hypot(gx, gy, 1), luz = Math.max(0, (-gx * sx - gy * sy + sz) / n);
+    S[i * N + j] = Math.min(1.35, Math.max(0.38, 1 + AJUSTE.sombra * (luz / sz - 1)));
+  }
+  return S;
+}
+const _lin = (A, n, fx, fy) => { const x0 = Math.min(n - 1, Math.max(0, Math.floor(fx))), y0 = Math.min(n - 1, Math.max(0, Math.floor(fy))), x1 = Math.min(n - 1, x0 + 1), y1 = Math.min(n - 1, y0 + 1), u = Math.min(1, Math.max(0, fx - x0)), v = Math.min(1, Math.max(0, fy - y0));
+  return (A[y0 * n + x0] * (1 - u) + A[y0 * n + x1] * u) * (1 - v) + (A[y1 * n + x0] * (1 - u) + A[y1 * n + x1] * u) * v; };
+
+// CTX 5 m "realzado": el brillo general sale del mapa de color Viking (continuo en todo Marte) y el detalle de CTX,
+// con el contraste local normalizado. Así desaparecen los parches de fotos CTX tomadas con polvo o con otra luz,
+// y el detalle fino (rocas, dunas, capas) se ve parejo. Después se aplica el sombreado del relieve.
+class CTXColor extends C.UrlTemplateImageryProvider {
+  constructor(o, modo = 'color', mezcla = 0.3, huecosTransparentes = false) { super(o); this.modo = modo; this.mezcla = mezcla; this.huecos = huecosTransparentes; }
+  async requestImage(x, y, l, req) {
+    const p = super.requestImage(x, y, l, req); if (!p) return p;          // undefined = Cesium reintenta más tarde
+    let g = null; try { g = await p; } catch {}
+    const [vi, S] = await Promise.all([VIKING_IMG, sombraTesela(x, y, l).catch(() => null)]);
+    if (!g && !vi) throw new Error('sin imagen');
+    const c = document.createElement('canvas'); c.width = c.height = 512; const t = c.getContext('2d', { willReadFrequently: true });
+    let V = null;
+    if (vi) {
+      const d = 180 / 2 ** l, k = vi.width / 360;
+      t.imageSmoothingQuality = 'high';
+      t.drawImage(vi, x * d * k, y * d * k, d * k, d * k, 0, 0, 512, 512);
+      V = t.getImageData(0, 0, 512, 512).data;
+    }
+    if (g) { t.globalCompositeOperation = 'copy'; t.drawImage(g, 0, 0, 512, 512); }
+    if (this.modo === 'gris' && g) return c;
+    const d = t.getImageData(0, 0, 512, 512), a = d.data, w = this.mezcla;
+    // Estadística local de CTX en celdas de 16×16 px (media y desvío), ignorando huecos negros.
+    const NC = 32, suma = new Float32Array(NC * NC), suma2 = new Float32Array(NC * NC), cuenta = new Float32Array(NC * NC);
+    if (g) for (let py = 0; py < 512; py++) for (let px = 0; px < 512; px++) {
+      const v = a[(py * 512 + px) * 4]; if (v <= 6) continue;
+      const q = (py >> 4) * NC + (px >> 4); suma[q] += v; suma2[q] += v * v; cuenta[q]++;
+    }
+    const med = new Float32Array(NC * NC), des = new Float32Array(NC * NC);
+    for (let q = 0; q < NC * NC; q++) { const n = cuenta[q]; med[q] = n ? suma[q] / n : 0; des[q] = n > 8 ? Math.sqrt(Math.max(0, suma2[q] / n - med[q] * med[q])) : 0; }
+    const ESC = 64 / 512;
+    for (let py = 0, i = 0; py < 512; py++) for (let px = 0; px < 512; px++, i += 4) {
+      if (this.huecos && g && (a[i + 3] === 0 || a[i] <= 6)) { a[i + 3] = 0; continue; }   // capa local: fuera de cobertura se ve la de abajo
+      const VL = V ? 0.3 * V[i] + 0.59 * V[i + 1] + 0.11 * V[i + 2] : 0;
+      let base = V ? Math.min(AJUSTE.techo, VL * AJUSTE.escalaViking) : 0, det = 0;
+      if (g && a[i] > 6) {
+        const fx = (px - 7.5) / 16, fy = (py - 7.5) / 16, m = _lin(med, NC, fx, fy), sd = _lin(des, NC, fx, fy);
+        if (m > 0) {
+          const gan = Math.min(AJUSTE.ganMax, Math.max(0.9, AJUSTE.desvio / Math.max(sd, 3)));            // realza fotos con poco contraste
+          det = Math.max(-80, Math.min(80, (a[i] - m) * gan));
+          base = V ? base * (1 - AJUSTE.pesoCTX) + m * AJUSTE.pesoCTX : m;
+        }
+      }
+      let L0 = base + det;
+      if (S && AJUSTE.sombra) L0 *= _lin(S, 65, (px + 0.5) * ESC, (py + 0.5) * ESC);
+      L0 = Math.max(0, Math.min(255, Math.round(L0)));
+      let r = LUT[L0 * 3], gg = LUT[L0 * 3 + 1], b = LUT[L0 * 3 + 2];
+      if (V && w > 0) { const f = L0 / (VL || 1); r = r * (1 - w) + Math.min(255, V[i] * f) * w; gg = gg * (1 - w) + Math.min(255, V[i + 1] * f) * w; b = b * (1 - w) + Math.min(255, V[i + 2] * f) * w; }
+      a[i] = r; a[i + 1] = gg; a[i + 2] = b; a[i + 3] = 255;
+    }
+    t.putImageData(d, 0, 0); return c;
+  }
+}
+// Proveedor de imagen que reintenta las teselas que fallan por red (en vez de dejarlas borrosas).
+class ConReintentos extends C.UrlTemplateImageryProvider {
+  async requestImage(x, y, l, req) {
+    for (let i = 0; i < 4; i++) {
+      const p = super.requestImage(x, y, l, i === 0 ? req : undefined);
+      if (!p) return p;
+      try { return await p; } catch (e) { if (e && e.statusCode === 404) throw e; await new Promise(ok => setTimeout(ok, 400 * (i + 1))); }
+    }
+    throw new Error('sin tesela');
+  }
+}
+// HiRISE: los costados de cada franja se tomaron solo con el canal rojo y quedan grises. Se colorean con la misma
+// paleta de Marte para que no parezcan bordes o escalones.
+class HiRISEColor extends ConReintentos {
+  async requestImage(x, y, l, req) {
+    const p = super.requestImage(x, y, l, req); if (!p) return p;
+    const im = await p;
+    const c = document.createElement('canvas'); c.width = c.height = 512; const t = c.getContext('2d', { willReadFrequently: true });
+    t.drawImage(im, 0, 0, 512, 512);
+    const d = t.getImageData(0, 0, 512, 512), a = d.data;
+    for (let i = 0; i < a.length; i += 4) {
+      if (!a[i + 3]) continue;
+      const mx = Math.max(a[i], a[i + 1], a[i + 2]), mn = Math.min(a[i], a[i + 1], a[i + 2]), sat = mx - mn;
+      // Grises (solo canal rojo): color completo de la paleta. Resto: mitad paleta, mitad color HiRISE
+      // (el mosaico usa color realzado, más azul que el real; así empalma con el resto del planeta).
+      const L0 = Math.round(0.3 * a[i] + 0.59 * a[i + 1] + 0.11 * a[i + 2]), w = sat >= 14 ? 0.5 : 0.5 + 0.5 * (14 - sat) / 14;
+      a[i] = a[i] * (1 - w) + LUT[L0 * 3] * w; a[i + 1] = a[i + 1] * (1 - w) + LUT[L0 * 3 + 1] * w; a[i + 2] = a[i + 2] * (1 - w) + LUT[L0 * 3 + 2] * w;
+    }
+    t.putImageData(d, 0, 0); return c;
+  }
+}
+let MODO_COLOR = 'color'; try { MODO_COLOR = localStorage.getItem('galeEarthColor') || 'color'; } catch {}
+window.capaCTX = capaCTX;
+function capaCTX() {
+  const L = viewer.imageryLayers;
+  if (CAPAS_BASE.ctx) L.remove(CAPAS_BASE.ctx, true);
+  CAPAS_BASE.ctx = L.addImageryProvider(new CTXColor({
+    url: 'https://astro.arcgis.com/arcgis/rest/services/OnMars/CTX/MapServer/tile/{z}/{y}/{x}', tilingScheme: new EsquemaPC(),
+    tileWidth: 512, tileHeight: 512, maximumLevel: 12,
+    credit: 'Imagen: CTX 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri); color: Viking MDIM 2.1 (NASA/USGS)' }, MODO_COLOR, 0.3), 0);
+  CAPAS_BASE.ctx.contrast = 1.05;
+}
+function crearImagenes(t) {
+  capaCTX();
+  // Ortofoto MSL a 1 m (USGS, de HiRISE) en toda la zona de Curiosity (33 × 57 km), coloreado igual que CTX.
+  if (t && t.orto) CAPAS_BASE.orto = viewer.imageryLayers.addImageryProvider(new CTXColor({
+    url: 'teselas/orto1m/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512, minimumLevel: 9, maximumLevel: 14,
+    rectangle: C.Rectangle.fromDegrees(137.0938, geodetica(-5.2495), 137.8530, geodetica(-4.0686)),
+    credit: 'Ortofoto MSL Gale 1 m: NASA/JPL/University of Arizona (HiRISE), mosaico USGS Astrogeology' }, 'color', 0.3, true));
+  CAPAS_BASE.hirise = viewer.imageryLayers.addImageryProvider(new HiRISEColor({
+    url: 'teselas/hirise/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512,
+    minimumLevel: 9, maximumLevel: 16, rectangle: C.Rectangle.fromDegrees(137.3267, geodetica(-4.8756), 137.4786, geodetica(-4.5551)),
+    credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }));
+}
+(async () => {
+  let t = null;
+  try { if (location.protocol.startsWith('http')) t = await (await fetch('teselas.json')).json(); } catch {}
+  let pref = null; try { pref = localStorage.getItem('galeEarthMotor'); } catch {}
+  MODO = t && t.terreno && pref !== 'cesium' ? 'globo' : 'cesium';
+  if (t && !t.terreno) setTimeout(() => avisar('El servidor no encontró las teselas de Marte completo (carpeta Google Mars\\teselas o Google Drive). Se muestra Cesium Mars, que solo tiene alta resolución en un sector de Gale.', 20000), 3000);
+  if (MODO === 'globo') {
+    try {
+      TERRENO = await crearTerreno();
+      viewer.scene.globe.terrainProvider = TERRENO;
+      crearImagenes(t);
+      if (!t.hirise) CAPAS_BASE.hirise.show = false;
+    } catch (e) { MODO = 'cesium'; avisar('No se pudo cargar el terreno propio (' + (e.message || e) + '). Uso Cesium Mars.'); }
+  }
+  if (MODO === 'cesium') {
+    viewer.scene.globe.show = false;
+    try {
+      tileset = await C.Cesium3DTileset.fromIonAssetId(3644333, { maximumScreenSpaceError: 12 });
+      viewer.scene.primitives.add(tileset);
+    } catch (e) {
+      avisar('No se pudo cargar Cesium Mars (' + (e.message || e) + '). Revisá la conexión o cargá tu propia clave de Cesium ion en la pestaña Capas.');
+    }
+    if (!t && location.protocol === 'file:') setTimeout(() => avisar('Abriste el archivo directo: se ve Cesium Mars. Para el globo completo de Marte (CTX 5 m, terreno propio y HiRISE 25 cm) abrí Gale Earth con abrir.bat.', 15000), 4000);
+  }
+  $('cargando').style.opacity = 0; setTimeout(() => $('cargando').classList.add('oculto'), 500);
+  irA('marte', 0);
+  if (!location.hash) setTimeout(() => irA('gale', 3), 2600);
+})();
+const capasImagen = () => MODO === 'globo' ? viewer.imageryLayers : tileset && tileset.imageryLayers;
+async function alturas(cartos) {
+  if (MODO === 'globo' && TERRENO) {
+    const n = Math.min(...cartos.map(c => TERRENO.nivelEn(C.Math.toDegrees(c.longitude), C.Math.toDegrees(c.latitude))));
+    return (await C.sampleTerrain(TERRENO, n, cartos.map(c => c.clone()))).map(c => c.height);
+  }
+  if (tileset) return (await viewer.scene.sampleHeightMostDetailed(cartos)).map(c => c.height);
+  return null;
+}
+function avisar(t, ms = 9000) { const a = $('aviso'); a.textContent = t; a.classList.remove('oculto'); clearTimeout(avisar.t); if (ms) avisar.t = setTimeout(() => a.classList.add('oculto'), ms); }
+
+// ---------- datos ----------
+const ZONAS = D.zonas.zonas, ZID = Object.fromEntries(ZONAS.map(z => [z.id, z]));
+const POZOS = D.pozos.features.map(f => ({ ...f.properties, lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1] }));
+const NUM = POZOS.filter(p => p.n != null).sort((a, b) => a.n - b.n);
+const REC = D.recorrido.features[0], RC = REC.geometry.coordinates, RS = REC.properties.soles;
+const HOY = RC[RC.length - 1];
+
+// ---------- íconos ----------
+const iconos = {};
+function icono(texto, color, tam = 26, borde = '#0b0d12') {
+  const k = texto + color + tam + borde; if (iconos[k]) return iconos[k];
+  const c = document.createElement('canvas'); c.width = c.height = tam * 2; const x = c.getContext('2d');
+  x.beginPath(); x.arc(tam, tam, tam - 3, 0, 2 * Math.PI); x.fillStyle = color; x.fill(); x.lineWidth = 4; x.strokeStyle = borde; x.stroke();
+  x.fillStyle = '#111'; x.font = `700 ${tam * 0.85}px system-ui,sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(texto, tam, tam + 1);
+  return iconos[k] = c;
+}
+const CLAMP = C.HeightReference.CLAMP_TO_GROUND;   // terreno propio o 3D Tiles, según el motor
+
+// ---------- recorrido por zona ----------
+const capas = { recorrido: [], pozos: [], zonas: [], orbitas: [], base: [], etiquetas: [] };
+for (const z of ZONAS) {
+  const seg = []; for (let i = 0; i < RC.length; i++) if (RS[i] >= z.sol[0] && RS[i] <= z.sol[1]) { if (!seg.length && i > 0) seg.push(RC[i - 1]); seg.push(RC[i]); }
+  if (seg.length < 2) continue;
+  const e = viewer.entities.add({ polyline: { positions: seg.map(c => pos(c[0], c[1])), width: 4, clampToGround: true, classificationType: C.ClassificationType.BOTH, material: C.Color.fromCssColorString(z.color) }, properties: { tipo: 'zona', id: z.id } });
+  capas.recorrido.push(e);
+  const [[la0, lo0], [la1, lo1]] = z.limites;
+  const lbl = viewer.entities.add({ position: pos((lo0 + lo1) / 2 + 0.006, (la0 + la1) / 2), label: { text: z.nombre.split(':')[0], font: '600 13px system-ui', fillColor: C.Color.WHITE, outlineColor: C.Color.BLACK, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, heightReference: CLAMP, distanceDisplayCondition: new C.DistanceDisplayCondition(2000, 40000), disableDepthTestDistance: Number.POSITIVE_INFINITY, horizontalOrigin: C.HorizontalOrigin.LEFT }, properties: { tipo: 'zona', id: z.id } });
+  capas.etiquetas.push(lbl);
+}
+viewer.entities.add({ position: pos(HOY[0], HOY[1]), billboard: { image: icono('', '#e5534b', 13, '#fff'), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY }, label: { text: `Curiosity · sol ${RS[RS.length - 1]}`, font: '600 13px system-ui', pixelOffset: new C.Cartesian2(0, -22), outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK, heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY, distanceDisplayCondition: new C.DistanceDisplayCondition(0, 60000) } });
+viewer.entities.add({ position: pos(RC[0][0], RC[0][1]), billboard: { image: icono('', '#4FA3D9', 11, '#fff'), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY }, label: { text: 'Aterrizaje · 6/8/2012', font: '12px system-ui', pixelOffset: new C.Cartesian2(0, -20), outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK, heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY, distanceDisplayCondition: new C.DistanceDisplayCondition(0, 60000) } });
+
+// ---------- pozos ----------
+const ESCALAS = {
+  agua: { campo: 'agua_kg_t', max: 80, c: ['#1c2a3a', '#4fa3d9', '#bfe6ff'], u: 'kg/t', n: 'agua en minerales' },
+  co2: { campo: 'co2_kg_t', max: 100, c: ['#2a2420', '#d9a441', '#fff1b8'], u: 'kg/t', n: 'CO₂ en carbonatos' },
+  fe: { campo: 'oxidos_fe_pct', max: 30, c: ['#2a1d1d', '#c0392b', '#ffb199'], u: '%', n: 'óxidos de hierro' },
+  cl: { campo: 'cloro_pct', max: 2.1, c: ['#1d2a1f', '#4caf7d', '#d6ffd0'], u: '%', n: 'cloro' },
+};
+let colorPor = 'zona';
+const mezcla = (cs, t) => { t = Math.max(0, Math.min(1, t)); const k = t < .5 ? 0 : 1, u = t < .5 ? t * 2 : (t - .5) * 2;
+  const a = cs[k].match(/\w\w/g).map(h => parseInt(h, 16)), b = cs[k + 1].match(/\w\w/g).map(h => parseInt(h, 16));
+  return '#' + a.map((x, i) => Math.round(x + (b[i] - x) * u).toString(16).padStart(2, '0')).join(''); };
+const colorDe = p => { if (colorPor === 'zona') return ZID[p.zona].color; const e = ESCALAS[colorPor], v = p[e.campo]; return v == null ? '#555555' : mezcla(e.c, v / e.max); };
+let sel = null;
+for (const p of POZOS) {
+  p.ent = viewer.entities.add({ position: pos(p.lon, p.lat), billboard: { image: icono(p.n ?? '×', colorDe(p)), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY, scaleByDistance: new C.NearFarScalar(500, 1.1, 40000, 0.45), distanceDisplayCondition: new C.DistanceDisplayCondition(0, 90000) },
+    label: { text: p.nombre, font: '12px system-ui', pixelOffset: new C.Cartesian2(16, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK, heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY, distanceDisplayCondition: new C.DistanceDisplayCondition(0, 3500) },
+    properties: { tipo: 'pozo', nombre: p.nombre } });
+  capas.pozos.push(p.ent);
+}
+function repintar() { for (const p of POZOS) p.ent.billboard.image = icono(p.n ?? '×', colorDe(p), p === sel ? 32 : 26, p === sel ? '#ffffff' : '#0b0d12'); }
+
+// ---------- sitios candidatos para la base ----------
+const SITIOS = D.sitios;
+const R_MARTE = 3389500, d2r = Math.PI / 180;
+const distKm = (lon1, lat1, lon2, lat2) => { const x = (lon2 - lon1) * d2r * Math.cos((lat1 + lat2) / 2 * d2r), y = (lat2 - lat1) * d2r; return Math.hypot(x, y) * R_MARTE / 1000; };
+for (const s of SITIOS) {
+  const cerca = NUM.filter(p => distKm(s.lon, s.lat, p.lon, p.lat) <= s.radio_km);
+  const max = k => { const v = cerca.map(p => p[k]).filter(x => x != null); return v.length ? Math.max(...v) : null; };
+  s.agua = max('agua_kg_t'); s.co2 = max('co2_kg_t'); s.fe = max('oxidos_fe_pct'); s.npozos = cerca.length;
+  let best = 0, bd = 1e9; RC.forEach((c, i) => { const d = distKm(s.lon, s.lat, c[0], c[1]); if (d < bd) { bd = d; best = i; } });
+  s.elev = RC[best][2];
+  s.zonas = [...new Set(cerca.map(p => ZID[p.zona].nombre))];
+  s.ent = viewer.entities.add({ position: pos(s.lon, s.lat), billboard: { image: icono('★', '#ffd166', 22, '#fff'), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+    label: { text: s.nombre, font: '700 14px system-ui', fillColor: C.Color.fromCssColorString('#ffd166'), pixelOffset: new C.Cartesian2(0, -28), outlineWidth: 5, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK, heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY, distanceDisplayCondition: new C.DistanceDisplayCondition(0, 150000) },
+    properties: { tipo: 'sitio', id: s.id } });
+  s.radio = viewer.entities.add({ position: pos(s.lon, s.lat), ellipse: { semiMajorAxis: s.radio_km * 1000, semiMinorAxis: s.radio_km * 1000, material: C.Color.fromCssColorString('#ffd166').withAlpha(0.12), classificationType: C.ClassificationType.BOTH } });
+  capas.base.push(s.ent, s.radio);
+}
+const zRef = Math.max(...SITIOS.map(s => s.elev));
+for (const s of SITIOS) s.columna = Math.exp((zRef - s.elev) / 11100);     // atmósfera sobre el sitio, relativa al sitio más alto
+let zonaEZ = null;
+function zonaExploracion(s) {
+  if (zonaEZ) viewer.entities.remove(zonaEZ);
+  zonaEZ = viewer.entities.add({ position: pos(s.lon, s.lat), ellipse: { semiMajorAxis: 100000, semiMinorAxis: 100000, material: C.Color.fromCssColorString('#ffd166').withAlpha(0.06), outline: false, classificationType: C.ClassificationType.BOTH } });
+}
+
+// ---------- orbitadores: Kepler desde elementos de JPL Horizons ----------
+const O = D.orbitadores, J2000 = 2451545.0, MU = 42828.37;      // km³/s² (GM de Marte)
+const wMarte = jd => (176.630 + 350.89198226 * (jd - J2000)) * d2r;   // rotación de Marte (IAU)
+function kepler(el, jd) {
+  const n = 2 * Math.PI / el.pr, M = el.ma * d2r + n * (jd - O.epoca_jd_tdb) * 86400;
+  let E = M; for (let k = 0; k < 12; k++) E = E - (E - el.ec * Math.sin(E) - M) / (1 - el.ec * Math.cos(E));
+  const nu = 2 * Math.atan2(Math.sqrt(1 + el.ec) * Math.sin(E / 2), Math.sqrt(1 - el.ec) * Math.cos(E / 2)), r = el.a * (1 - el.ec * Math.cos(E));
+  const O_ = el.om * d2r, w = el.w * d2r, i = el.inc * d2r, u = w + nu;
+  return [r * (Math.cos(O_) * Math.cos(u) - Math.sin(O_) * Math.sin(u) * Math.cos(i)), r * (Math.sin(O_) * Math.cos(u) + Math.cos(O_) * Math.sin(u) * Math.cos(i)), r * Math.sin(u) * Math.sin(i)];
+}
+function fijo(xyz, jd) { const W = wMarte(jd), c = Math.cos(W), s = Math.sin(W); return new C.Cartesian3((xyz[0] * c + xyz[1] * s) * 1000, (-xyz[0] * s + xyz[1] * c) * 1000, xyz[2] * 1000); }
+const jdDe = t => C.JulianDate.totalDays(t) + 69.184 / 86400;   // UTC -> TDB aprox.
+for (const [nombre, el] of Object.entries(O.orbitadores)) {
+  const col = C.Color.fromCssColorString(el.color);
+  el.ent = viewer.entities.add({ position: new C.CallbackPositionProperty(t => fijo(kepler(el, jdDe(t)), jdDe(t)), false),
+    point: { pixelSize: 9, color: col, outlineColor: C.Color.WHITE, outlineWidth: 2 },
+    label: { text: nombre, font: '600 13px system-ui', fillColor: col, pixelOffset: new C.Cartesian2(10, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK },
+    properties: { tipo: 'orbitador', nombre } });
+  let cache = null, cacheT = -1;
+  el.orb = viewer.entities.add({ polyline: { positions: new C.CallbackProperty(t => {
+      const jd = jdDe(t); if (cache && Math.abs(jd - cacheT) < 30 / 86400) return cache;
+      const pts = []; for (let k = 0; k <= 180; k++) { const xyz = kepler(el, jd + k / 180 * el.pr / 86400); pts.push(fijo(xyz, jd)); }
+      cacheT = jd; return cache = pts; }, false), width: 1.5, material: col.withAlpha(0.55), arcType: C.ArcType.NONE } });
+  capas.orbitas.push(el.ent, el.orb);
+}
+// ---------- lunas: Fobos y Deimos (mismos elementos de JPL Horizons, cuerpo a escala real) ----------
+// Están acopladas por marea (siempre muestran la misma cara a Marte): el eje largo apunta al planeta.
+for (const [nombre, el] of Object.entries(O.lunas || {})) {
+  el.pr = el.pr || 2 * Math.PI * Math.sqrt(el.a ** 3 / MU);
+  const col = C.Color.fromCssColorString(el.color), posL = t => fijo(kepler(el, jdDe(t)), jdDe(t));
+  const orient = new C.CallbackProperty(t => {
+    const jd = jdDe(t), p = fijo(kepler(el, jd), jd), q = fijo(kepler(el, jd + 60 / 86400), jd);
+    const x = C.Cartesian3.normalize(C.Cartesian3.negate(p, new C.Cartesian3()), new C.Cartesian3());
+    const z = C.Cartesian3.normalize(C.Cartesian3.cross(p, C.Cartesian3.subtract(q, p, new C.Cartesian3()), new C.Cartesian3()), new C.Cartesian3());
+    const y = C.Cartesian3.cross(z, x, new C.Cartesian3());
+    return C.Quaternion.fromRotationMatrix(new C.Matrix3(x.x, y.x, z.x, x.y, y.y, z.y, x.z, y.z, z.z)); }, false);
+  el.ent = viewer.entities.add({ position: new C.CallbackPositionProperty(posL, false), orientation: orient,
+    ellipsoid: { radii: new C.Cartesian3(el.radios_km[0] * 1000, el.radios_km[1] * 1000, el.radios_km[2] * 1000), material: col, slicePartitions: 24, stackPartitions: 16 },
+    point: { pixelSize: 7, color: col, outlineColor: C.Color.BLACK, outlineWidth: 1, distanceDisplayCondition: new C.DistanceDisplayCondition(400000, 1e12) },
+    label: { text: nombre, font: 'italic 600 13px system-ui', fillColor: col, pixelOffset: new C.Cartesian2(10, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK },
+    properties: { tipo: 'luna', nombre } });
+  const pts = []; for (let k = 0; k <= 240; k++) pts.push(kepler(el, O.epoca_jd_tdb + k / 240 * el.pr / 86400));
+  el.orb = viewer.entities.add({ polyline: { positions: new C.CallbackProperty(t => pts.map(x => fijo(x, jdDe(t))), false), width: 1.2,
+    material: new C.PolylineDashMaterialProperty({ color: col.withAlpha(0.6), dashLength: 12 }), arcType: C.ArcType.NONE } });
+  capas.orbitas.push(el.ent, el.orb);
+}
+
+function subpunto(el, jd) { const p = fijo(kepler(el, jd), jd), c = C.Cartographic.fromCartesian(p, C.Ellipsoid.unitSphere); return [c.longitude / d2r, c.latitude / d2r, C.Cartesian3.magnitude(p) / 1000]; }
+function proximoPaso(el, jd0, lim = 2.0) {   // primer momento en que pasa a menos de `lim` grados del centro de Gale
+  const step = Math.min(30, el.pr / 200) / 86400;
+  for (let jd = jd0; jd < jd0 + 3; jd += step) { const [lo, la] = subpunto(el, jd); if (Math.abs(la - (-5.4)) < lim && Math.abs(((lo - 137.8 + 540) % 360) - 180) < lim) return jd; }
+  return null;
+}
+const fechaDeJd = jd => C.JulianDate.toDate(C.JulianDate.fromDate(new Date((jd - 2440587.5) * 86400000 - 69184)));
+
+// ---------- cámara ----------
+function irA(v, dur = 2) {
+  const cam = viewer.camera;
+  if (v === 'marte') cam.flyTo({ destination: pos(137.8, -5.4, 32000000), duration: dur });
+  if (v === 'gale') cam.flyTo({ destination: pos(137.55, -6.9, 70000), orientation: { heading: 0.15, pitch: -0.55, roll: 0 }, duration: dur });
+  if (v === 'rec') cam.flyTo({ destination: pos(137.40, -4.93, 16000), orientation: { heading: 0.1, pitch: -0.62, roll: 0 }, duration: dur });
+  if (v === 'hoy') volarA(HOY[0], HOY[1], 1500);
+}
+async function volarA(lon, lat, rango = 900) {
+  let p = pos(lon, lat, 0);
+  try { const h = await alturas([C.Cartographic.fromDegrees(lon, geodetica(lat))]); if (h && h[0] != null) p = pos(lon, lat, h[0]); } catch {}
+  viewer.camera.flyToBoundingSphere(new C.BoundingSphere(p, 30), { offset: new C.HeadingPitchRange(0.3, -0.5, rango), duration: 2 });
+}
+$('vAyuda').onclick = () => $('ayuda').classList.remove('oculto');
+{ const NIV = [1, 1.5, 2, 3]; let k = 0;
+  $('vRelieve').onclick = () => { k = (k + 1) % NIV.length; viewer.scene.verticalExaggeration = NIV[k];
+    const t = `×${String(NIV[k]).replace('.', ',')}`; $('vRelieve').title = `Relieve ${t}${NIV[k] === 1 ? ' (escala real)' : ' (realzado)'}`;
+    $('relBadge').textContent = t; $('relBadge').classList.toggle('oculto', NIV[k] === 1);
+    if ($('exag')) $('exag').value = String(NIV[k]); }; }
+$('vMarte').onclick = () => irA('marte'); $('vGale').onclick = () => { abrir('explorar'); fichaGale(); }; $('vRec').onclick = () => irA('rec'); $('vHoy').onclick = () => irA('hoy');
+
+// ---------- reloj de los orbitadores ----------
+document.querySelectorAll('#vel button').forEach(b => b.onclick = () => { viewer.clock.multiplier = +b.dataset.x; document.querySelectorAll('#vel button').forEach(x => x.classList.toggle('on', x === b)); });
+$('ahora').onclick = () => { viewer.clock.currentTime = C.JulianDate.now(); };
+viewer.clock.onTick.addEventListener(c => { $('hora').textContent = C.JulianDate.toDate(c.currentTime).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'; });
+
+// ---------- borde del cráter Gale (punto de interés) ----------
+// Trazado con nuestro DEM: línea de cresta en 360 perfiles radiales (ver datos/borde_gale.json).
+const BORDE = D.borde_gale;
+capas.borde = [];
+capas.borde.push(viewer.entities.add({
+  polyline: { positions: BORDE.puntos.map(p => pos(p[0], p[1])), width: 7, clampToGround: true, classificationType: C.ClassificationType.BOTH,
+    material: new C.PolylineGlowMaterialProperty({ glowPower: 0.25, taperPower: 1, color: C.Color.fromCssColorString('#ff9f43') }) },
+  properties: { tipo: 'gale' } }));
+const nBorde = BORDE.puntos.reduce((a, p) => p[1] > a[1] ? p : a);
+capas.borde.push(viewer.entities.add({ position: pos(nBorde[0], nBorde[1]),
+  label: { text: 'Cráter Gale · 154 km', font: '700 16px system-ui', fillColor: C.Color.fromCssColorString('#ffd29a'), outlineColor: C.Color.BLACK, outlineWidth: 5,
+    style: C.LabelStyle.FILL_AND_OUTLINE, heightReference: CLAMP, verticalOrigin: C.VerticalOrigin.BOTTOM, pixelOffset: new C.Cartesian2(0, -8),
+    distanceDisplayCondition: new C.DistanceDisplayCondition(15000, 4.0e6), disableDepthTestDistance: Number.POSITIVE_INFINITY },
+  properties: { tipo: 'gale' } }));
+
+// ---------- cámara libre (estilo simulador / CAD) ----------
+// Mouse: arrastrar = mover el mapa · Shift+arrastrar o botón del medio = girar alrededor del punto
+//        Alt+arrastrar = mirar alrededor sin moverse · rueda o clic derecho = acercar (hacia el cursor)
+// Teclado: W/S adelante-atrás · A/D costados · Q/E bajar-subir · flechas girar la vista · Shift = más rápido
+{
+  const ctl = viewer.scene.screenSpaceCameraController, T = C.CameraEventType, K = C.KeyboardEventModifier;
+  ctl.minimumZoomDistance = 20;
+  ctl.maximumZoomDistance = 4.0e7;
+  ctl.enableCollisionDetection = true;
+  ctl.inertiaSpin = 0.85; ctl.inertiaTranslate = 0.85; ctl.inertiaZoom = 0.7;
+  ctl.tiltEventTypes = [T.MIDDLE_DRAG, T.PINCH, { eventType: T.LEFT_DRAG, modifier: K.SHIFT }, { eventType: T.LEFT_DRAG, modifier: K.CTRL }];
+  ctl.lookEventTypes = [{ eventType: T.LEFT_DRAG, modifier: K.ALT }];
+  ctl.zoomEventTypes = [T.WHEEL, T.PINCH, T.RIGHT_DRAG];
+  const teclas = new Set();
+  const escribiendo = () => ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement && document.activeElement.tagName);
+  addEventListener('keydown', e => { if (escribiendo()) return; teclas.add(e.code); if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault(); });
+  addEventListener('keyup', e => teclas.delete(e.code));
+  addEventListener('blur', () => teclas.clear());
+  let tAnt = performance.now();
+  viewer.scene.preRender.addEventListener(() => {
+    const ahora = performance.now(), dt = Math.min(0.1, (ahora - tAnt) / 1000); tAnt = ahora;
+    if (!teclas.size) return;
+    const cam = viewer.camera, alto = Math.max(50, cam.positionCartographic.height - (viewer.scene.globe.getHeight(cam.positionCartographic) || 0));
+    const v = alto * (teclas.has('ShiftLeft') || teclas.has('ShiftRight') ? 2.5 : 0.8) * dt, giro = 1.2 * dt;
+    // adelante "horizontal": dirección de la cámara proyectada sobre el plano local
+    const up = MARS.geodeticSurfaceNormal(cam.position, new C.Cartesian3());
+    const fwd = C.Cartesian3.subtract(cam.direction, C.Cartesian3.multiplyByScalar(up, C.Cartesian3.dot(cam.direction, up), new C.Cartesian3()), new C.Cartesian3());
+    if (C.Cartesian3.magnitude(fwd) < 1e-6) C.Cartesian3.clone(cam.up, fwd);
+    C.Cartesian3.normalize(fwd, fwd);
+    const der = C.Cartesian3.normalize(C.Cartesian3.cross(fwd, up, new C.Cartesian3()), new C.Cartesian3());
+    const mover = (dir, d) => cam.position = C.Cartesian3.add(cam.position, C.Cartesian3.multiplyByScalar(dir, d, new C.Cartesian3()), new C.Cartesian3());
+    if (teclas.has('KeyW')) mover(fwd, v); if (teclas.has('KeyS')) mover(fwd, -v);
+    if (teclas.has('KeyD')) mover(der, v); if (teclas.has('KeyA')) mover(der, -v);
+    if (teclas.has('KeyE')) mover(up, v); if (teclas.has('KeyQ')) mover(up, -v);
+    if (teclas.has('ArrowLeft')) cam.lookLeft(giro); if (teclas.has('ArrowRight')) cam.lookRight(giro);
+    if (teclas.has('ArrowUp')) cam.lookUp(giro * 0.7); if (teclas.has('ArrowDown')) cam.lookDown(giro * 0.7);
+    if (teclas.has('ArrowLeft') || teclas.has('ArrowRight')) cam.setView({ orientation: { heading: cam.heading, pitch: cam.pitch, roll: 0 } });
+  });
+}
+
+// ---------- selección con clic ----------
+viewer.screenSpaceEventHandler.setInputAction(m => {
+  const o = viewer.scene.pick(m.position); if (!o || !o.id || !o.id.properties) return;
+  const pr = o.id.properties, tipo = pr.tipo.getValue();
+  if (tipo === 'pozo') { abrir('explorar'); fichaPozo(POZOS.find(p => p.nombre === pr.nombre.getValue()), true); }
+  if (tipo === 'zona') { abrir('explorar'); fichaZona(pr.id.getValue()); }
+  if (tipo === 'sitio') { abrir('base'); fichaSitio(pr.id.getValue()); }
+  if (tipo === 'orbitador') { abrir('orbita'); fichaOrbitador(pr.nombre.getValue()); }
+  if (tipo === 'luna') { abrir('orbita'); fichaLuna(pr.nombre.getValue()); }
+  if (tipo === 'gale') { abrir('explorar'); fichaGale(); }
+}, C.ScreenSpaceEventType.LEFT_CLICK);
+
+// ---------- panel ----------
+let pestaña = 'explorar';
+function abrir(t, mostrar = true) {
+  pestaña = t; document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.toggle('on', mostrar && b.dataset.t === t));
+  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca' })[t];
+  $('cajon').classList.remove('ancho');
+  $('reloj').classList.toggle('oculto', t !== 'orbita');
+  if (mostrar && window.abrirCajon) abrirCajon();
+  $('contenido').scrollTop = 0;
+  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca })[t](); }
+const cont = () => $('contenido');
+
+function vistaExplorar() {
+  cont().innerHTML = `<p class="sub">Tocá una zona, un pozo en el globo o un número. Los colores del recorrido son las zonas que cruzó Curiosity.</p>
+    <div class="tarjeta" id="tGale"><span class="chip" style="background:#ff9f43"></span><b>Punto de interés: cráter Gale</b><div class="sub">154 km de diámetro · borde marcado en naranja</div></div>
+    <h2>Zonas del cráter recorridas por Curiosity</h2>
+    ${ZONAS.map(z => `<div class="tarjeta" data-z="${z.id}"><span class="chip" style="background:${z.color}"></span><b>${z.nombre}</b>
+      <div class="sub">soles ${z.sol[0]}–${Math.min(z.sol[1], RS[RS.length - 1])} · ${fmt(z.largo_km, 1)} km</div>
+      <div>${z.pozos.map(n => `<span class="pz" data-n="${n}">${n}</span>`).join('')}</div></div>`).join('')}
+    <h2>Lo que revelan los datos</h2><div id="hallazgos"></div>`;
+  cont().querySelectorAll('.tarjeta').forEach(el => el.onclick = e => { if (e.target.dataset.n) return; fichaZona(el.dataset.z); });
+  cont().querySelectorAll('.pz').forEach(el => el.onclick = () => fichaPozo(NUM[+el.dataset.n - 1], true));
+  $('tGale').onclick = fichaGale;
+  hallazgos();
+}
+function hallazgos() {
+  const con = k => NUM.filter(p => p[k] != null);
+  const agua = con('agua_kg_t').sort((a, b) => b.agua_kg_t - a.agua_kg_t).slice(0, 3);
+  const co2 = con('co2_kg_t').reduce((a, b) => b.co2_kg_t > a.co2_kg_t ? b : a), cl = con('cloro_pct').reduce((a, b) => b.cloro_pct > a.cloro_pct ? b : a);
+  const sid = n => (NUM.find(p => p.nombre === n).minerales.find(m => m[0] === 'siderita') || [0, 0])[1];
+  const L = [
+    [`<b>Agua en minerales:</b> ${agua.map(p => `${p.nombre} (${p.agua_kg_t} kg/t)`).join(', ')}.`, agua[0], 'agua'],
+    [`<b>Carbono:</b> ${co2.nombre} guarda ~${co2.co2_kg_t} kg de CO₂ por tonelada en siderita.`, co2, 'co2'],
+    [`<b>Boxwork:</b> el hueco Valle de la Luna tiene ${fmt(sid('Valle de la Luna'), 1)} % de siderita y la cresta Nevado Sajama, a ~10 m, ${fmt(sid('Nevado Sajama'), 1)} %.`, NUM.find(p => p.nombre === 'Valle de la Luna'), 'co2'],
+    [`<b>Cloro más alto:</b> ${cl.nombre} (${fmt(cl.cloro_pct, 2)} %): posibles sales de cloro en el polvo.`, cl, 'cl'],
+  ];
+  $('hallazgos').innerHTML = L.map((h, k) => `<div class="tarjeta" data-k="${k}">${h[0]}</div>`).join('') + `<p class="fuente">Cálculo propio con la mineralogía CheMin de NASA (kg por tonelada de fracción cristalina: mínimos).</p>`;
+  $('hallazgos').querySelectorAll('.tarjeta').forEach(el => el.onclick = () => { const h = L[+el.dataset.k]; colorPor = h[2]; repintar(); fichaPozo(h[1], true); });
+}
+function fichaGale() {
+  viewer.camera.flyTo({ destination: C.Cartesian3.fromDegrees(BORDE.centro[0], geodetica(BORDE.centro[1] - 1.75), 160000, MARS), orientation: { heading: 0, pitch: -0.75, roll: 0 }, duration: 2.5 });
+  const el = BORDE.puntos.map(p => p[2]);
+  cont().innerHTML = `<button class="btn" id="volver">← Zonas</button>
+    <h3 style="margin-top:10px"><span class="chip" style="background:#ff9f43"></span>Punto de interés: cráter Gale</h3>
+    <div class="sub">Centro 5,4° S · 137,8° E · diámetro publicado 154 km (nuestro trazado: ${BORDE.diametro_km} km)</div>
+    <p>Un cráter de impacto muy antiguo, cerca del ecuador, con una montaña de capas en el centro: el Monte Sharp (Aeolis Mons). Esas capas guardan la historia del agua de Marte: abajo arcillas que se formaron con agua, arriba sulfatos de un clima más seco. Curiosity lo recorre desde agosto de 2012.</p>
+    <div class="astro"><b>Por qué para una base</b><ul>
+      <li>Fondo del cráter muy bajo (borde de ${fmt(Math.min(...el))} a ${fmt(Math.max(...el))} m; fondo cerca de −4500 m): más atmósfera encima = un poco más de presión y de protección contra la radiación.</li>
+      <li>Cerca del ecuador: más sol para paneles y temperaturas menos extremas.</li>
+      <li>Agua en minerales (arcillas y sulfatos) medida por Curiosity en 49 pozos.</li>
+      <li>Es el lugar de Marte con más datos de superficie: 12+ años de mediciones in situ.</li></ul></div>
+    <p class="fuente">Diámetro, ubicación y misión: NASA/JPL (Mars Science Laboratory). Borde y alturas: trazado propio sobre el DEM HRSC/MOLA Blend 200 m (USGS Astrogeology). ${BORDE.metodo}</p>`;
+  $('volver').onclick = vistaExplorar;
+}
+function fichaZona(id) {
+  const z = ZID[id];
+  viewer.camera.flyTo({ destination: C.Rectangle.fromDegrees(z.limites[0][1] - 0.01, geodetica(z.limites[0][0]) - 0.01, z.limites[1][1] + 0.01, geodetica(z.limites[1][0]) + 0.01), duration: 2 });
+  cont().innerHTML = `<button class="btn" id="volver">← Zonas</button>
+    <h3 style="margin-top:10px"><span class="chip" style="background:${z.color}"></span>${z.nombre}</h3>
+    <div class="sub">Soles ${z.sol[0]}–${Math.min(z.sol[1], RS[RS.length - 1])} · ${fmt(z.largo_km, 2)} km · de ${fmt(z.elev_m[0])} a ${fmt(z.elev_m[1])} m</div>
+    <p>${z.simple}</p><p class="sub">${z.tecnico}</p>
+    <div class="astro"><b>Para una base</b><ul><li>${z.astronauta}</li>${z.agua_kg_t_media != null ? `<li>Agua en minerales cristalinos (promedio): <b>${z.agua_kg_t_media} kg/t</b> <span class="tag">cálculo</span></li>` : ''}</ul></div>
+    <div>${z.pozos.map(n => `<span class="pz" data-n="${n}">${n}. ${NUM[n - 1].nombre}</span>`).join('')}</div>
+    <p class="fuente">Fuente: ${z.fuente}.</p>`;
+  $('volver').onclick = vistaExplorar;
+  cont().querySelectorAll('.pz').forEach(el => el.onclick = () => fichaPozo(NUM[+el.dataset.n - 1], true));
+}
+const COL_MIN = { plagioclasa: '#8d99ae', andesina: '#8d99ae', piroxeno: '#5c677d', augita: '#5c677d', pigeonita: '#5c677d', ortopiroxeno: '#5c677d', hematita: '#c0392b', magnetita: '#555', goethita: '#d35400', anhidrita: '#f1e3c6', basanita: '#e8d8b0', yeso: '#ffffff', siderita: '#d9a441', starkeyita: '#4fa3d9', kieserita: '#79c0f0', 'sulfato de mg·4h2o': '#4fa3d9', halita: '#e0f7ff', jarosita: '#e6c229', natrojarosita: '#e6c229', akaganeíta: '#a0522d', tridimita: '#ff79c6', cristobalita: '#f5a3d0', cuarzo: '#d0d0d0', sanidina: '#b0a8d9' };
+function fichaPozo(p, volar) {
+  if (!p) return; sel = p; repintar(); if (volar) volarA(p.lon, p.lat, 700);
+  const z = ZID[p.zona], tot = p.minerales.reduce((a, m) => a + m[1], 0) || 1, i = NUM.indexOf(p);
+  const usos = [];
+  if (p.agua_kg_t >= 20) usos.push(`<b>Agua:</b> al menos ~${p.agua_kg_t} kg por tonelada de fracción cristalina (yeso y sulfatos hidratados).`);
+  if (p.co2_kg_t >= 30) usos.push(`<b>Carbonatos:</b> ~${p.co2_kg_t} kg de CO₂ por tonelada.`);
+  if (p.oxidos_fe_pct >= 15) usos.push(`<b>Hierro:</b> ${fmt(p.oxidos_fe_pct, 1)} % de óxidos de hierro.`);
+  if (p.cloro_pct >= 1) usos.push(`<b>Cuidado:</b> cloro ${fmt(p.cloro_pct, 2)} %: posibles percloratos en el polvo.`);
+  if (!usos.length) usos.push(p.agua_kg_t != null ? `Agua en minerales cristalinos: ~${p.agua_kg_t} kg/t.` : 'Mineralogía todavía no publicada por NASA.');
+  cont().innerHTML = `<div style="display:flex;justify-content:space-between"><button class="btn" id="volver">← Zonas</button>
+      <span><button class="btn" id="ant" ${i <= 0 ? 'disabled' : ''}>←</button> <button class="btn" id="sig" ${i < 0 || i >= NUM.length - 1 ? 'disabled' : ''}>→</button></span></div>
+    <div class="sub" style="margin-top:10px"><span class="chip" style="background:${z.color}"></span>${z.nombre}</div>
+    <h3>${p.n ? p.n + '. ' : ''}${p.nombre}</h3>
+    <div class="sub">Sol ${p.sol} · ${p.fecha_aprox} (aprox.) · ${p.roca} · ${fmt(p.elevacion_m)} m</div>
+    <p>${p.hallazgo}</p><p class="sub">${p.tecnico}</p>
+    ${p.minerales.length ? `<b>Minerales</b> <span class="tag">medido · CheMin</span><div class="barra">${p.minerales.map(m => `<span title="${m[0]} ${fmt(m[1], 1)} %" style="width:${m[1] / tot * 100}%;background:${COL_MIN[m[0].toLowerCase()] || '#6b7a99'}"></span>`).join('')}</div>
+      <div class="leyenda">${p.minerales.slice(0, 6).map(m => `<span><i style="background:${COL_MIN[m[0].toLowerCase()] || '#6b7a99'}"></i>${m[0]} ${fmt(m[1], 1)} %</span>`).join('')}</div>` : ''}
+    ${p.agua_kg_t != null ? `<div class="ind"><div><small>Agua en minerales</small><b style="color:var(--agua)">${fmt(p.agua_kg_t)} <small>kg/t</small></b></div><div><small>CO₂ en carbonatos</small><b style="color:#d9a441">${fmt(p.co2_kg_t)} <small>kg/t</small></b></div><div><small>Óxidos de hierro</small><b style="color:#e5534b">${fmt(p.oxidos_fe_pct, 1)} <small>%</small></b></div><div><small>Cloro (APXS)</small><b style="color:var(--ok)">${fmt(p.cloro_pct, 2)} <small>%</small></b></div></div>` : ''}
+    <div class="astro"><b>Para la base</b><ul>${usos.map(u => `<li>${u}</li>`).join('')}</ul></div>
+    <div class="btns"><a class="btn" href="${p.enlace_datos}" target="_blank" rel="noopener">Datos en NASA</a>
+      ${D.mapa2d ? `<a class="btn" href="${D.mapa2d}#pozo-${p.n ?? 'atacama'}">Mapa 2D</a>` : ''}
+      <button class="btn prim" id="aBib">Ficha completa en la Biblioteca</button></div>
+    <p class="fuente">Hallazgo: ${p.fuente_hallazgo}. Posición: ${p.fuente_posicion}.</p>`;
+  $('volver').onclick = () => { sel = null; repintar(); vistaExplorar(); };
+  $('ant').onclick = () => fichaPozo(NUM[i - 1], true); $('sig').onclick = () => fichaPozo(NUM[i + 1], true);
+  $('aBib').onclick = () => { BIB.vista = 'pozo'; BIB.pozoMapa = p; abrir('biblioteca'); };
+}
+
+function vistaBase() {
+  const filas = SITIOS.map(s => `<tr data-s="${s.id}" style="cursor:pointer"><td><b>${s.nombre}</b></td><td>${fmt(s.agua)}</td><td>${fmt(s.co2)}</td><td>${s.npozos}</td><td>${fmt(s.columna * 100 - 100, 1)} %</td><td id="pend-${s.id}">…</td></tr>`).join('');
+  cont().innerHTML = `<h2>Nuestro propósito</h2>
+    <p>Usar todo lo que Curiosity midió en 14 años para elegir dónde instalar la <b>primera base humana en Gale</b>: agua, materiales, terreno firme, protección contra la radiación y ciencia cerca.</p>
+    <p class="sub">En el taller de NASA de 2015 sobre sitios para misiones humanas, Gale quedó entre las tres zonas de exploración más votadas, junto con Melas Chasma y Jezero.</p>
+    <h2>Sitios candidatos <span class="tag">propuesta del equipo</span></h2>
+    <table><tr><th>Sitio</th><th>Agua kg/t</th><th>CO₂ kg/t</th><th>Pozos</th><th>Atmósfera extra</th><th>Pendiente</th></tr>${filas}</table>
+    <p class="fuente">Agua y CO₂: máximo de los pozos a menos del radio de cada sitio (cálculo propio, CheMin). Atmósfera extra: columna de aire sobre el sitio respecto del más alto, con altura de escala ~11 km (a más aire, menos radiación). Pendiente: medida en vivo sobre el terreno 3D de Cesium Mars (±150 m).</p>
+    ${SITIOS.map(s => `<div class="tarjeta" data-s="${s.id}"><b>★ ${s.nombre}</b><div class="sub">${s.resumen}</div></div>`).join('')}
+    <h2>El interior: un antecedente argentino</h2>
+    <p><b>Mars 3D Home</b> (UNCuyo, con integrantes de San Luis) ganó el premio Mejor Concepto de Misión del Space Apps 2022: el interior de un hábitat y herramientas impresas en 3D para que cuatro astronautas vivan un año en Marte. Nuestra base aporta <i>dónde</i>; su trabajo, <i>cómo vivir adentro</i>.</p>
+    <div class="btns"><a class="btn" target="_blank" rel="noopener" href="https://2022.spaceappschallenge.org/challenges/2022-challenges/mars-habitat/teams/mars-3d-home">Ver Mars 3D Home</a></div>`;
+  cont().querySelectorAll('[data-s]').forEach(el => el.onclick = () => fichaSitio(el.dataset.s));
+  medirPendientes();
+}
+async function pendienteEn(s) {
+  if (!tileset && !TERRENO) return null;
+  const d = 150 / R_MARTE / d2r, lat = geodetica(s.lat);
+  const pts = [[0, 0], [d, 0], [-d, 0], [0, d], [0, -d]].map(([a, b]) => C.Cartographic.fromDegrees(s.lon + a / Math.cos(lat * d2r), lat + b));
+  const h = await alturas(pts); if (!h || h.some(x => x == null)) return null;
+  const gx = (h[1] - h[2]) / 300, gy = (h[3] - h[4]) / 300;
+  return Math.atan(Math.hypot(gx, gy)) / d2r;
+}
+async function medirPendientes() { for (const s of SITIOS) { if (s.pendiente == null) { try { s.pendiente = await pendienteEn(s); } catch { s.pendiente = null; } } const el = $('pend-' + s.id); if (el) el.textContent = s.pendiente == null ? 'sin dato' : fmt(s.pendiente, 1) + '°'; } }
+function fichaSitio(id) {
+  const s = SITIOS.find(x => x.id === id); volarA(s.lon, s.lat, 4000); zonaExploracion(s);
+  cont().innerHTML = `<button class="btn" id="volver">← Sitios</button>
+    <h3 style="margin-top:10px">★ ${s.nombre}</h3><div class="sub">${s.lat.toFixed(4)}°, ${s.lon.toFixed(4)}° E · ${fmt(s.elev)} m · radio de trabajo ${s.radio_km} km</div>
+    <p>${s.resumen}</p>
+    <div class="ind"><div><small>Agua en minerales (máx.)</small><b style="color:var(--agua)">${fmt(s.agua)} <small>kg/t</small></b></div><div><small>CO₂ en carbonatos (máx.)</small><b style="color:#d9a441">${fmt(s.co2)} <small>kg/t</small></b></div>
+      <div><small>Pendiente local</small><b>${s.pendiente == null ? '…' : fmt(s.pendiente, 1) + '°'}</b></div><div><small>Pozos de Curiosity cerca</small><b>${s.npozos}</b></div></div>
+    <div class="astro"><b>A favor</b><ul>${s.pros.map(x => `<li>${x}</li>`).join('')}</ul></div>
+    <div class="tarjeta" style="cursor:default"><b>En contra</b><ul style="margin:4px 0 0;padding-left:18px">${s.contras.map(x => `<li>${x}</li>`).join('')}</ul></div>
+    <p class="sub">El círculo amarillo grande es una zona de exploración de 100 km de radio alrededor del sitio, la escala con la que NASA planteó la exploración humana desde una base.</p>
+    <p class="fuente">${s.fuente}</p>`;
+  $('volver').onclick = vistaBase;
+}
+
+function vistaOrbitas() {
+  const jd = jdDe(viewer.clock.currentTime);
+  cont().innerHTML = `<p class="sub">Posiciones calculadas con los elementos orbitales de JPL Horizons del ${O.epoca.slice(0, 10)} (órbita kepleriana: precisa por horas, aproximada después de días). Usá ×60 o ×600 para verlos moverse.</p>
+    ${Object.entries(O.orbitadores).map(([n, el]) => `<div class="tarjeta" data-o="${n}"><span class="chip" style="background:${el.color}"></span><b>${n}</b> <span class="sub">· ${el.agencia} · desde ${el.llegada}</span>
+      <div class="sub">${fmt(el.qr - 3389.5)}–${fmt(el.a * (1 + el.ec) - 3389.5)} km de altura · ${fmt(el.inc, 1)}° · vuelta en ${fmt(el.pr / 3600, 2)} h</div></div>`).join('')}
+    <h4 style="margin:14px 0 6px">Lunas</h4>
+    ${Object.entries(O.lunas || {}).map(([n, el]) => `<div class="tarjeta" data-l="${n}"><span class="chip" style="background:${el.color}"></span><b>${n}</b> <span class="sub">· ${fmt(el.radios_km[0] * 2)} km de largo</span>
+      <div class="sub">a ${fmt(el.a - 3389.5)} km de altura · vuelta en ${fmt(el.pr / 3600, 1)} h</div></div>`).join('')}
+    <h4 style="margin:14px 0 6px">Otras misiones</h4>
+    ${O.otros.map(o => `<div class="tarjeta" style="cursor:default;opacity:.75"><b>${o.nombre}</b> <span class="sub">· ${o.agencia} · ${o.estado}</span><div class="sub">${o.mision} ${o.aporta}</div></div>`).join('')}
+    <p class="fuente">${O.fuente}.</p>`;
+  cont().querySelectorAll('[data-o]').forEach(el => el.onclick = () => fichaOrbitador(el.dataset.o));
+  cont().querySelectorAll('[data-l]').forEach(el => el.onclick = () => fichaLuna(el.dataset.l));
+}
+function fichaLuna(n) {
+  const el = O.lunas[n], jd = jdDe(viewer.clock.currentTime), [lo, la, r] = subpunto(el, jd);
+  const p = fijo(kepler(el, jd), jd);
+  viewer.camera.flyToBoundingSphere(new C.BoundingSphere(p, el.radios_km[0] * 1000), { offset: new C.HeadingPitchRange(0.6, -0.25, el.radios_km[0] * 9000), duration: 2.5 });
+  cont().innerHTML = `<button class="btn" id="volver">← Órbitas</button>
+    <h3 style="margin-top:10px"><span class="chip" style="background:${el.color}"></span>${n}</h3><div class="sub">Luna de Marte · descubierta el ${el.descubierta}</div>
+    <p>${el.texto}</p>
+    <div class="ind"><div><small>Tamaño <span class="tag">medido</span></small><b style="font-size:14px">${el.radios_km.map(x => fmt(x * 2, 1)).join(' × ')} <small>km</small></b></div>
+      <div><small>Altura sobre Marte ahora</small><b>${fmt(r - 3389.5)} <small>km</small></b></div>
+      <div><small>Vuelta completa</small><b>${fmt(el.pr / 3600, 2)} <small>h</small></b></div><div><small>Sobre</small><b style="font-size:14px">${la.toFixed(1)}°, ${((lo + 360) % 360).toFixed(1)}° E</b></div></div>
+    <div class="astro"><b>Para futuras misiones</b><ul><li>${el.futuro}</li></ul></div>
+    <p class="fuente">Posición calculada (órbita kepleriana desde elementos medidos). ${O.fuente_lunas}</p>`;
+  $('volver').onclick = vistaOrbitas;
+}
+function fichaOrbitador(n) {
+  const el = O.orbitadores[n], jd = jdDe(viewer.clock.currentTime), [lo, la, r] = subpunto(el, jd), pas = proximoPaso(el, jd);
+  viewer.camera.flyTo({ destination: C.Cartesian3.multiplyByScalar(C.Cartesian3.normalize(fijo(kepler(el, jd), jd), new C.Cartesian3()), (r + Math.max(6000, el.a * 1.6)) * 1000, new C.Cartesian3()), duration: 2 });
+  cont().innerHTML = `<button class="btn" id="volver">← Orbitadores</button>
+    <h3 style="margin-top:10px"><span class="chip" style="background:${el.color}"></span>${n}</h3><div class="sub">${el.agencia} · en Marte desde ${el.llegada} · ${el.estado}</div>
+    <p>${el.mision}</p><p><b>Instrumentos:</b> ${el.instrumentos}</p>
+    <div class="astro"><b>Qué aporta a Gale Earth</b><ul><li>${el.aporta}</li></ul></div>
+    <div class="ind"><div><small>Altura ahora</small><b>${fmt(r - 3389.5)} <small>km</small></b></div><div><small>Sobre</small><b style="font-size:14px">${la.toFixed(1)}°, ${((lo + 360) % 360).toFixed(1)}° E</b></div>
+      <div><small>Vuelta completa</small><b>${fmt(el.pr / 3600, 2)} <small>h</small></b></div><div><small>Próximo paso sobre Gale</small><b style="font-size:13px">${pas ? fechaDeJd(pas).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : 'en +3 días'}</b></div></div>
+    <p class="fuente">Paso sobre Gale: el punto bajo la nave a menos de 2° del centro del cráter (cálculo propio). ${O.fuente}.</p>`;
+  $('volver').onclick = vistaOrbitas;
+}
+
+const VIS = { recorrido: true, pozos: true, etiquetas: true, orbitas: true, base: true };
+
+// ── Capas de análisis del terreno (5 m), pegadas sobre el 3D de Cesium Mars ──
+// Se generan con herramientas/gale_datos.py a partir del DEM de 1 m y el mosaico HiRISE de 25 cm (USGS/NASA).
+// Necesitan abrirse por http (abrir.bat / abrir.sh): desde file:// el navegador no deja usarlas en WebGL.
+const ANALISIS = [
+  ['relieve_color', 'Relieve en color (llanuras → montañas)', 'Falso color por altura con sombreado: azul = llanuras bajas, verde-amarillo = laderas, rojo-blanco = Monte Sharp.', 0.75],
+  ['orto_color', 'Foto HiRISE coloreada por altura', 'Brillo de la foto HiRISE (25 cm, reducida) con el color de la altura. Donde no hay foto se usa el sombreado.', 0.85],
+  ['zonas_prohibidas', 'Zonas prohibidas por pendiente', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite).', 0.9],
+  ['dosis_color', 'Radiación en superficie (estimada)', 'Rojo = dosis máxima a cielo abierto (RAD). Azul = sitios donde el relieve tapa parte del cielo y baja la dosis. Cálculo propio, provisorio.', 0.6],
+];
+const CAPA_A = {};
+async function capaAnalisis(id, on, alfa) {
+  if (!D.capas5m || !capasImagen()) return avisar('Las capas de análisis necesitan el terreno 3D cargado.');
+  if (on && !CAPA_A[id]) {
+    try {
+      const r = D.capas5m.rect_geodetico;
+      const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
+      CAPA_A[id] = capasImagen().addImageryProvider(prov);
+    } catch (e) {
+      return avisar(location.protocol === 'file:' ? 'Para ver esta capa abrí Gale Earth con abrir.bat (Windows) o abrir.sh: el navegador no permite usar imágenes locales en 3D desde file://.' : 'No se pudo cargar la capa ' + id + ': ' + (e.message || e), 14000);
+    }
+  }
+  if (CAPA_A[id]) { CAPA_A[id].show = on; CAPA_A[id].alpha = alfa; }
+}
+function vistaCapas() {
+  cont().innerHTML = `<h2>Capas</h2>
+    ${[['recorrido', 'Recorrido de Curiosity por zonas'], ['pozos', 'Las 49 perforaciones'], ['etiquetas', 'Nombres de zonas'], ['base', 'Sitios candidatos para la base'], ['orbitas', 'Orbitadores y órbitas']].map(([k, t]) => `<label class="fila"><span>${t}</span><input type="checkbox" data-c="${k}" ${VIS[k] ? 'checked' : ''}></label>`).join('')}
+    <div class="fila"><span>Color de los pozos</span><select id="colorPor"><option value="zona">zona</option><option value="agua">agua en minerales</option><option value="co2">carbonatos (CO₂)</option><option value="fe">óxidos de hierro</option><option value="cl">cloro</option></select></div>
+    <div class="fila"><span>Exagerar el relieve</span><select id="exag"><option value="1">×1 (real)</option><option value="1.5">×1,5</option><option value="2">×2</option><option value="3">×3</option></select></div>
+    ${D.capas5m ? `<h2>Análisis del terreno (5 m)</h2><p class="sub">Todo el área de Curiosity en Gale (${Math.round(D.capas5m.caja_planetocentrica.ancho * 5 / 1000)} × ${Math.round(D.capas5m.caja_planetocentrica.alto * 5 / 1000)} km). Elevación ${Math.round(D.capas5m.elev_min)} a ${Math.round(D.capas5m.elev_max)} m. Límite de pendiente: astronauta ${D.capas5m.parametros.pendiente_astronauta}°, rover ${D.capas5m.parametros.pendiente_rover}°.</p>
+    ${ANALISIS.map(([k, t, d, a]) => `<label class="fila"><span title="${d}">${t}</span><input type="checkbox" data-a="${k}" ${CAPA_A[k] && CAPA_A[k].show ? 'checked' : ''}></label><div class="fila"><span class="sub">${d}</span><input type="range" min="0.1" max="1" step="0.05" data-o="${k}" value="${CAPA_A[k] ? CAPA_A[k].alpha : a}" style="width:90px"></div>`).join('')}` : ''}
+    <h2>Motor 3D</h2>
+    <div class="fila"><span>Globo</span><select id="motor"><option value="globo">Marte completo (CTX 5 m + HiRISE 25 cm)</option><option value="cesium">Cesium Mars (3D Tiles)</option></select></div>
+    ${MODO === 'globo' ? `<p class="sub">Todo Marte con el mosaico CTX de 5 m por píxel. Relieve: HRSC/MOLA (200 m) en el planeta y modelo de 1 m (a 5 m) en la zona de Curiosity. Fotos HiRISE de 25 cm en Gale.</p>
+    <div class="fila"><span>Imagen de todo Marte (CTX 5 m)</span><select id="colorCTX"><option value="color">color de Marte</option><option value="gris">blanco y negro original</option></select></div>
+    <label class="fila"><span>Fotos HiRISE 25 cm (Gale)</span><input type="checkbox" data-b="hirise" ${CAPAS_BASE.hirise.show ? 'checked' : ''}></label>
+    <p class="sub">El color se arma con el brillo de CTX y el color de Viking: es aproximado, no una foto en color.</p>`
+    : `<p class="sub">Cesium Mars (Cesium ion): relieve MOLA + HRSC de todo Marte y un sector de Gale en alta resolución.${location.protocol === 'file:' ? ' Para el globo completo abrí Gale Earth con <b>abrir.bat</b>.' : ''}</p>`}
+    <h2>Cesium ion</h2><p class="sub">Solo para el motor Cesium Mars. Usa la clave de evaluación incluida; para la presentación conviene una clave propia gratuita: cesium.com/ion → Access Tokens.</p>
+    <input type="text" id="tok" placeholder="Pegá tu clave de Cesium ion (opcional)" value="${token ? '••••••' + token.slice(-6) : ''}">
+    <div class="btns"><button class="btn prim" id="guardarTok">Guardar y recargar</button><button class="btn" id="borrarTok">Usar la de evaluación</button></div>
+    <h2>Fuentes</h2><p class="fuente">Imagen global: mosaico CTX de 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri) y color Viking MDIM 2.1 (NASA/USGS, Mars Trek). HiRISE 25 cm: NASA/JPL/Univ. of Arizona, mosaico USGS. Terreno: HRSC/MOLA Blend 200 m y DEM MSL 1 m (USGS Astrogeology). Motor alternativo: Cesium Mars (NASA, ESA y Cesium). Recorrido: NASA/JPL "Where is Curiosity?". Pozos: base de mineralogía y geoquímica de Gale de NASA (CheMin/APXS) y blog de la misión. Órbitas: JPL Horizons. Zonas y sitios para la base: propuesta del equipo con esos datos. Capas de análisis: DEM de 1 m y mosaico HiRISE color de 25 cm del área de MSL (USGS Astrogeology / NASA PDS), procesados por el equipo; la dosis parte de la medición de superficie de RAD.</p>`;
+  cont().querySelectorAll('[data-c]').forEach(el => el.onchange = () => { VIS[el.dataset.c] = el.checked; for (const e of capas[el.dataset.c]) e.show = el.checked; if (el.dataset.c === 'base' && zonaEZ) zonaEZ.show = el.checked; });
+  const alfaDe = k => +cont().querySelector(`[data-o="${k}"]`).value;
+  cont().querySelectorAll('[data-a]').forEach(el => el.onchange = () => capaAnalisis(el.dataset.a, el.checked, alfaDe(el.dataset.a)));
+  cont().querySelectorAll('[data-o]').forEach(el => el.oninput = () => { const L = CAPA_A[el.dataset.o]; if (L) L.alpha = +el.value; });
+  $('motor').value = MODO; $('motor').onchange = e => { try { localStorage.setItem('galeEarthMotor', e.target.value); } catch {} location.reload(); };
+  cont().querySelectorAll('[data-b]').forEach(el => el.onchange = () => { CAPAS_BASE[el.dataset.b].show = el.checked; });
+  if ($('colorCTX')) { $('colorCTX').value = MODO_COLOR; $('colorCTX').onchange = e => { MODO_COLOR = e.target.value; try { localStorage.setItem('galeEarthColor', MODO_COLOR); } catch {} capaCTX(); }; }
+  $('colorPor').value = colorPor; $('colorPor').onchange = e => { colorPor = e.target.value; repintar(); };
+  $('exag').value = String(viewer.scene.verticalExaggeration || 1); $('exag').onchange = e => { const v = +e.target.value; viewer.scene.verticalExaggeration = v; $('relBadge').textContent = '×' + String(v).replace('.', ','); $('relBadge').classList.toggle('oculto', v === 1); };
+  $('guardarTok').onclick = () => { const v = $('tok').value.trim(); if (v && !v.startsWith('••')) { try { localStorage.setItem('galeEarthToken', v); } catch {} location.reload(); } };
+  $('borrarTok').onclick = () => { try { localStorage.removeItem('galeEarthToken'); } catch {} location.reload(); };
+}
+// Las órbitas se ven desde lejos; de cerca cruzarían la pantalla, así que se ocultan bajo 200 km.
+viewer.camera.percentageChanged = 0.05;
+viewer.scene.preRender.addEventListener(() => {
+  const lejos = viewer.camera.positionCartographic.height > 200000;
+  for (const e of capas.orbitas) if (e.polyline) e.show = VIS.orbitas && lejos;
+  // Las fotos HiRISE aparecen al acercarse (de lejos se verían como un rectángulo de otro tono).
+  if (CAPAS_BASE.hirise) { const h = viewer.camera.positionCartographic.height; CAPAS_BASE.hirise.alpha = Math.min(1, Math.max(0, (22000 - h) / 12000)); }
+});
+// ==================== Interfaz estilo Google Earth ====================
+// Riel de navegación, buscador, cajón de información (hoja deslizable en el celular),
+// brújula, 2D/3D, zoom, barra de estado (coordenadas, altura de cámara y escala) y ventanas.
+{
+  const ES_TACTIL = matchMedia('(pointer:coarse)').matches;
+  const esCel = () => matchMedia('(max-width:760px),(pointer:coarse) and (max-width:900px)').matches;
+  const cajon = $('cajon');
+  const TITULOS = { explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Orbitadores', capas: 'Capas' };
+
+// ---------- protección contra errores ----------
+  // Un error en una parte (una capa, un archivo que no carga) no tiene que dejar la página en blanco:
+  // se avisa una vez, con una frase clara, y el resto sigue funcionando.
+  { let ultimo = 0;
+    const avisarError = m => { console.error('[Gale Earth]', m); if (Date.now() - ultimo > 8000) { ultimo = Date.now(); avisar('Algo no cargó bien (' + String(m).slice(0, 90) + '). El resto sigue funcionando; si se ve raro, recargá la página.', 9000); } };
+    addEventListener('error', e => { if (e.message && !/ResizeObserver/.test(e.message)) avisarError(e.message); });
+    addEventListener('unhandledrejection', e => console.warn('[Gale Earth] promesa sin resolver:', e.reason));   // teselas que no llegan, etc.: no se molesta al usuario
+    // Si el celular o la placa de video "pierden" WebGL (pasa al cambiar de app o con poca memoria), se avisa en vez de quedar en negro.
+    viewer.scene.canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); avisar('El navegador pausó el 3D (falta de memoria o cambio de app). Recargá la página para seguir.', 0); });
+    viewer.scene.renderError.addEventListener((s, err) => avisar('El 3D se detuvo por un error del navegador: ' + String(err && err.message || err).slice(0, 100) + '. Recargá la página.', 0));
+   
+  }
+
+  // ---------- cajón ----------
+  window.abrirCajon = () => { cajon.classList.remove('cerrado', 'chico'); document.body.classList.add('cajonAbierto'); document.body.classList.toggle('hoja', esCel()); };
+  window.cerrarCajon = () => { cajon.classList.add('cerrado'); document.body.classList.remove('cajonAbierto'); document.body.classList.remove('hoja'); document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.remove('on')); };
+  $('cerrarCajon').onclick = cerrarCajon;
+  document.querySelectorAll('.rb[data-t]').forEach(b => b.onclick = () => {
+    if (b.classList.contains('on') && !cajon.classList.contains('cerrado')) return cerrarCajon();   // segundo toque: cierra (como Google Earth)
+    abrir(b.dataset.t);
+  });
+  // Hoja del celular: tocar el asa la achica o agranda; deslizar hacia abajo la cierra.
+  { let y0 = null, t0 = 0;
+    const ini = e => { y0 = (e.touches ? e.touches[0] : e).clientY; t0 = Date.now(); };
+    const fin = e => { if (y0 == null) return; const dy = (e.changedTouches ? e.changedTouches[0] : e).clientY - y0; y0 = null;
+      if (Math.abs(dy) < 8 && Date.now() - t0 < 400) return cajon.classList.toggle('chico');
+      if (dy > 60) { cajon.classList.contains('chico') ? cerrarCajon() : cajon.classList.add('chico'); }
+      else if (dy < -40) cajon.classList.remove('chico'); };
+    for (const el of [$('asa'), $('cajonCab')]) { el.addEventListener('touchstart', ini, { passive: true }); el.addEventListener('touchend', fin); el.addEventListener('mousedown', ini); }
+    addEventListener('mouseup', fin);
+  }
+
+  // ---------- botones de vista ----------
+  $('logoRiel').onclick = () => irA('marte');
+  $('rPantalla').onclick = () => { const d = document; d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen && d.documentElement.requestFullscreen().catch(() => {}); };
+
+  // Punto de la superficie bajo un punto de la pantalla: el terreno 3D si está cargado; si no, el elipsoide.
+  const superficie = (x, y) => {
+    const px = new C.Cartesian2(x, y), r = viewer.camera.getPickRay(px); if (!r) return null;
+    let p = MODO === 'globo' ? viewer.scene.globe.pick(r, viewer.scene) : (viewer.scene.pickPositionSupported ? viewer.scene.pickPosition(px) : null);
+    if (!p) { const i = C.IntersectionTests.rayEllipsoid(r, MARS); if (i && i.start > 0) p = C.Ray.getPoint(r, i.start); }
+    return p || null;
+  };
+  const centroVista = () => { const cv = viewer.scene.canvas; return superficie(cv.clientWidth / 2, cv.clientHeight / 2); };
+  const orbitar = (heading, pitch, distMult = 1, dur = 0.8) => {
+    const c = centroVista(), cam = viewer.camera;
+    if (!c) { cam.flyTo({ destination: cam.position, orientation: { heading, pitch: Math.min(pitch, -0.2), roll: 0 }, duration: dur }); return; }
+    const d = C.Cartesian3.distance(cam.position, c) * distMult;
+    cam.flyToBoundingSphere(new C.BoundingSphere(c, 0), { offset: new C.HeadingPitchRange(heading, pitch, d), duration: dur });
+  };
+  $('brujula').onclick = () => orbitar(0, viewer.camera.pitch);
+  $('b3d').onclick = () => orbitar(viewer.camera.heading, viewer.camera.pitch < -1.25 ? -0.62 : -C.Math.PI_OVER_TWO + 0.0001);
+  const zoom = f => { const c = centroVista(), cam = viewer.camera;
+    const d = c ? C.Cartesian3.distance(cam.position, c) : cam.positionCartographic.height;
+    f > 0 ? cam.zoomIn(d * f) : cam.zoomOut(d * -f); };
+  $('bMas').onclick = () => zoom(0.45);
+  $('bMenos').onclick = () => zoom(-0.9);
+
+  // ---------- brújula, 2D/3D, altura de cámara y escala ----------
+  const brujula = $('brujula').querySelector('svg');
+  let rumboAnt = 1e9;
+  viewer.scene.postRender.addEventListener(() => {
+    const h = C.Math.toDegrees(viewer.camera.heading);
+    if (Math.abs(h - rumboAnt) > 0.2) { brujula.style.transform = `rotate(${-h}deg)`; rumboAnt = h; }
+  });
+  const fmtDist = m => m >= 1000 ? `${fmt(m / 1000, m >= 1e5 ? 0 : 1)} km` : `${fmt(m)} m`;
+  const lindo = v => { const p = 10 ** Math.floor(Math.log10(v)), k = v / p; return (k >= 5 ? 5 : k >= 2 ? 2 : 1) * p; };
+  let camAnt = '';
+  setInterval(() => {
+    const cam = viewer.camera, k = cam.position.toString() + cam.heading.toFixed(3) + cam.pitch.toFixed(3);
+    if (k === camAnt) return; camAnt = k;
+    // altura de la cámara sobre el suelo (en Marte no hay nivel del mar)
+    const pc = cam.positionCartographic, suelo = viewer.scene.globe.show ? viewer.scene.globe.getHeight(pc) : null;
+    const alto = Math.max(0, pc.height - (suelo ?? 0));
+    $('camara').textContent = 'Cámara: ' + fmtDist(alto) + (suelo != null && alto < 200000 ? ' sobre el suelo' : '');
+    $('b3d').textContent = cam.pitch < -1.25 ? '3D' : '2D';
+    // escala: distancia real entre dos puntos de la pantalla separados 100 px
+    const cv = viewer.scene.canvas, y = cv.clientHeight - 70, x = cv.clientWidth / 2;
+    const p = xx => superficie(xx, y);
+    const a = p(x - 50), b = p(x + 50);
+    if (!a || !b) { $('escala').style.visibility = 'hidden'; return; }
+    const mpp = C.Cartesian3.distance(a, b) / 100, L = lindo(mpp * 90);
+    $('escala').style.visibility = ''; $('escalaBarra').style.width = Math.round(L / mpp) + 'px'; $('escalaTxt').textContent = fmtDist(L);
+  }, 250);
+
+  // ---------- coordenadas bajo el mouse (como Google Earth) ----------
+  // Se muestran en latitud planetocéntrica (la de NASA) y la elevación sobre la esfera de referencia de MOLA (3396,19 km).
+  const R_MOLA = 3396190;
+  const latPC = latg => Math.atan(Math.tan(latg) * (B * B) / (A * A));
+  const rElip = psi => A * B / Math.hypot(B * Math.cos(psi), A * Math.sin(psi));
+  const gms = (v, pos_, neg) => `${fmt(Math.abs(v), 4)}° ${v >= 0 ? pos_ : neg}`;
+  let ultimoMouse = null, pendiente = false;
+  if (!ES_TACTIL) viewer.screenSpaceEventHandler.setInputAction(m => {
+    ultimoMouse = m.endPosition; if (pendiente) return; pendiente = true;
+    requestAnimationFrame(() => {
+      pendiente = false;
+      const r = viewer.camera.getPickRay(ultimoMouse); let c = null;
+      if (r) c = MODO === 'globo' ? viewer.scene.globe.pick(r, viewer.scene) : (viewer.scene.pickPositionSupported ? viewer.scene.pickPosition(ultimoMouse) : null);
+      if (!c) { $('coords').textContent = ''; return; }
+      const g = C.Cartographic.fromCartesian(c, MARS); if (!g) return;
+      const psi = latPC(g.latitude), ex = viewer.scene.verticalExaggeration || 1;
+      const elev = g.height / ex - (R_MOLA - rElip(psi));
+      $('coords').textContent = `${gms(C.Math.toDegrees(psi), 'N', 'S')}  ${gms(C.Math.toDegrees(g.longitude), 'E', 'O')}  ·  elev. ${fmt(elev)} m`;
+    });
+  }, C.ScreenSpaceEventType.MOUSE_MOVE);
+
+  // ---------- buscador ----------
+  const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const verLugar = (lon, lat, alto, pitch = -0.62) => {
+    const off = alto / Math.tan(-pitch) / (R_MARTE * d2r);
+    viewer.camera.flyTo({ destination: pos(lon, lat - off, alto), orientation: { heading: 0, pitch, roll: 0 }, duration: 2.5 });
+  };
+  // Coordenadas aproximadas del Nomenclátor de Nomenclatura Planetaria (IAU/USGS), longitud este.
+  const MARTE = [
+    ['Olympus Mons', 'El volcán más alto del sistema solar', 18.65, 226.2, 900000],
+    ['Valles Marineris', 'Sistema de cañones de más de 4000 km', -13.9, -59.2, 2500000],
+    ['Hellas Planitia', 'La cuenca de impacto más grande de Marte', -42.4, 70.5, 2500000],
+    ['Cráter Jezero', 'Sitio de Perseverance (NASA)', 18.38, 77.58, 120000],
+    ['Cráter Gusev', 'Sitio de Spirit (NASA)', -14.5, 175.4, 300000],
+    ['Meridiani Planum', 'Sitio de Opportunity (NASA)', -1.95, 354.47, 300000],
+    ['Elysium Mons', 'Volcán de la región Elysium', 25.02, 147.21, 700000],
+  ];
+  const IDX = [];
+  const add = (nombre, sub, ic, color, ir, extra = '') => IDX.push({ nombre, sub, ic, color, ir, k: norm(nombre + ' ' + extra) });
+  add('Cráter Gale', 'Punto de interés · 154 km', '◎', '#ff9f43', () => { abrir('explorar'); fichaGale(); }, 'gale crater');
+  add('Monte Sharp (Aeolis Mons)', 'Montaña central de Gale', '▲', '#d9a441', () => verLugar(137.85, -5.08, 60000), 'mount sharp aeolis');
+  add('Curiosity hoy', `Sol ${RS[RS.length - 1]}`, '●', '#e5534b', () => irA('hoy'), 'rover');
+  add('Aterrizaje de Curiosity (Bradbury)', '6 de agosto de 2012', '↓', '#4FA3D9', () => volarA(RC[0][0], RC[0][1], 2500), 'bradbury landing');
+  for (const z of ZONAS) add(z.nombre, `Zona · soles ${z.sol[0]}–${Math.min(z.sol[1], RS[RS.length - 1])}`, '〰', z.color, () => { abrir('explorar'); fichaZona(z.id); });
+  for (const p of POZOS) add(p.nombre, p.n != null ? `Perforación ${p.n} · sol ${p.sol}` : 'Perforación', p.n ?? '×', colorDe(p), () => { abrir('explorar'); fichaPozo(p, true); }, `pozo ${p.n ?? ''}`);
+  for (const s of SITIOS) add(s.nombre, 'Sitio candidato para la base', '★', '#ffd166', () => { abrir('base'); fichaSitio(s.id); });
+  for (const n of Object.keys(O.orbitadores)) add(n, 'Orbitador', '◌', O.orbitadores[n].color, () => { abrir('orbita'); fichaOrbitador(n); }, 'satelite orbita');
+  add('Línea de tiempo', 'Historia de la exploración de Marte', '⏱', '#2a4f8f', () => abrirLinea(), 'historia misiones viking mariner galileo cronologia timeline');
+  for (const n of Object.keys(O.lunas || {})) add(n, 'Luna de Marte', '●', O.lunas[n].color, () => { abrir('orbita'); fichaLuna(n); }, n === 'Fobos' ? 'phobos luna satelite natural' : 'luna satelite natural');
+  for (const [n, s, la, lo, h] of MARTE) add(n, s, '⌖', '#9aa0a6', () => verLugar(lo > 180 ? lo - 360 : lo, la, h));
+  const q = $('q'), res = $('resultados');
+  let lista = [], marcado = 0;
+  const pintar = () => {
+    const t = norm(q.value.trim()); $('limpiarQ').classList.toggle('oculto', !q.value);
+    const m = q.value.trim().match(/^(-?\d+(?:[.,]\d+)?)\s*°?\s*([NSns])?\s*[,; ]\s*(-?\d+(?:[.,]\d+)?)\s*°?\s*([EOWeow])?$/);
+    lista = [];
+    if (m) {
+      let la = parseFloat(m[1].replace(',', '.')), lo = parseFloat(m[3].replace(',', '.'));
+      if (/[sS]/.test(m[2] || '')) la = -Math.abs(la); if (/[oOwW]/.test(m[4] || '')) lo = -Math.abs(lo);
+      if (lo > 180) lo -= 360;
+      if (Math.abs(la) <= 90 && Math.abs(lo) <= 180) lista.push({ nombre: `Ir a ${fmt(la, 4)}°, ${fmt(lo, 4)}°`, sub: 'Coordenadas (latitud, longitud este)', ic: '⌖', color: '#9aa0a6', ir: () => verLugar(lo, la, 20000) });
+    }
+    if (t) lista.push(...IDX.map(x => ({ x, s: x.k.startsWith(t) ? 0 : x.k.includes(' ' + t) ? 1 : x.k.includes(t) ? 2 : 9 })).filter(o => o.s < 9).sort((a, b) => a.s - b.s).slice(0, 9).map(o => o.x));
+    else lista.push(...IDX.slice(0, 4), ...IDX.filter(x => MARTE.some(mm => mm[0] === x.nombre)).slice(0, 3));
+    marcado = 0;
+    res.innerHTML = lista.length ? lista.map((x, i) => `<div class="r${i === 0 ? ' sel' : ''}" data-i="${i}"><span class="ic" style="background:${x.color}">${x.ic}</span><span><b>${x.nombre}</b><small>${x.sub}</small></span></div>`).join('')
+      : `<div class="nada">No encontré "${q.value}". Probá con un pozo (John Klein), una zona, un sitio o coordenadas: -4.59, 137.44</div>`;
+    res.querySelectorAll('.r').forEach(el => el.onmousedown = e => { e.preventDefault(); elegir(+el.dataset.i); });
+    res.classList.remove('oculto');
+  };
+  const elegir = i => { const x = lista[i]; if (!x) return; res.classList.add('oculto'); q.blur(); if (esCel()) q.value = ''; x.ir(); };
+  q.addEventListener('input', pintar);
+  q.addEventListener('focus', pintar);
+  q.addEventListener('blur', () => setTimeout(() => res.classList.add('oculto'), 150));
+  q.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); marcado = (marcado + (e.key === 'ArrowDown' ? 1 : -1) + lista.length) % Math.max(1, lista.length);
+      res.querySelectorAll('.r').forEach((el, i) => el.classList.toggle('sel', i === marcado)); }
+    if (e.key === 'Enter') elegir(marcado);
+    if (e.key === 'Escape') { q.value = ''; q.blur(); res.classList.add('oculto'); }
+    e.stopPropagation();
+  });
+  $('limpiarQ').onclick = () => { q.value = ''; q.focus(); pintar(); };
+  $('rBuscar').onclick = () => { cerrarCajon(); setTimeout(() => q.focus(), 30); };
+  addEventListener('keydown', e => {
+    const tag = document.activeElement && document.activeElement.tagName;
+    if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) { e.preventDefault(); if (!esCel()) cerrarCajon(); setTimeout(() => q.focus(), 30); }
+    if (e.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.classList.add('oculto')); $('fuentesBox').classList.add('oculto'); }
+  });
+
+  // ---------- ventanas ----------
+  document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m || e.target.hasAttribute('data-cerrar')) m.classList.add('oculto'); }));
+  if (ES_TACTIL) document.querySelectorAll('.solomouse').forEach(e => e.classList.add('oculto'));
+  else document.querySelectorAll('.solotact').forEach(e => e.classList.add('oculto'));
+
+  // Fuentes de los datos (los créditos de Cesium se agregan abajo cuando hay)
+  $('creditos').onclick = () => {
+    const f = $('fuentesBox');
+    if (!f.classList.contains('oculto')) return f.classList.add('oculto');
+    const cr = [...document.querySelectorAll('.cesium-credit-textContainer *, .cesium-credit-logoContainer *')].map(e => e.outerHTML).join(' ');
+    f.innerHTML = `<b style="color:var(--texto)">Fuentes</b><p>Imagen global: mosaico CTX de 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri) y color Viking MDIM 2.1 (NASA/USGS).
+      HiRISE 25 cm y ortofoto 1 m: NASA/JPL/Univ. of Arizona, mosaicos USGS Astrogeology. Terreno: HRSC/MOLA Blend 200 m y DEM MSL 1 m (USGS Astrogeology; ESA/DLR/FU Berlin; NASA/GSFC).
+      Recorrido: NASA/JPL. Pozos: base de mineralogía y geoquímica del cráter Gale (CheMin/APXS/SAM, NASA PDS y OPScI). Órbitas: JPL Horizons.
+      Cielo: estrellas del catálogo Hipparcos (ESA) y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial (BSD).</p>${cr ? '<p>' + cr + '</p>' : ''}<p class="fuente">Motor: CesiumJS (Apache 2.0). Gale Earth · NASA Space Apps 2026, San Luis.</p>`;
+    f.classList.remove('oculto');
+  };
+
+  // Abrir en el celular: el servidor de la PC informa su dirección en la red local (red.json) y se muestra un QR.
+  $('rCel').onclick = async () => {
+    $('celular').classList.remove('oculto');
+    const info = $('celInfo');
+    const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+    let urls = [];
+    if (!local && location.protocol.startsWith('http')) urls = [location.href.split('#')[0]];
+    else { try { const r = await fetch('red.json', { cache: 'no-store' }); if (r.ok) urls = (await r.json()).urls || []; } catch {} }
+    if (!urls.length) { info.innerHTML = location.protocol === 'file:'
+      ? 'Abriste el archivo directamente. Para verlo en el celular abrí Gale Earth con <b>abrir.bat</b>: el servidor muestra la dirección y el QR.'
+      : 'No encontré la dirección de la PC en la red. Usá el <b>servir.py</b> nuevo (lo trae esta versión) y volvé a abrir con abrir.bat.'; return; }
+    info.innerHTML = `<p>Con el celular conectado al <b>mismo Wi-Fi</b> que esta computadora, escaneá el código o escribí la dirección:</p>
+      <div id="qr"></div><div class="url">${urls[0]}</div>${urls.length > 1 ? `<p class="sub">Otras direcciones: ${urls.slice(1).join(' · ')}</p>` : ''}
+      <p class="sub">La primera vez Windows puede preguntar si Python puede usar la red: elegí <b>Redes privadas</b>. La PC tiene que quedar prendida con el servidor abierto.</p>`;
+    try {
+      if (!window.qrcode) await new Promise((ok, mal) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = ok; s.onerror = mal; document.head.appendChild(s); });
+      const qr = qrcode(0, 'M'); qr.addData(urls[0]); qr.make(); $('qr').innerHTML = qr.createImgTag(6, 8, 'Código QR de Gale Earth');
+    } catch { $('qr').remove(); }
+  };
+
+  // Cesium Mars (Cesium ion) pide mostrar su logo: en ese modo se ve abajo a la izquierda.
+  setTimeout(() => { if (MODO === 'cesium') { const b = document.querySelector('.cesium-viewer-bottom'); if (b) { b.style.cssText = 'display:block!important;left:calc(var(--riel) + 10px);right:auto;bottom:32px'; } } }, 4000);
+
+  // Al rotar el celular o cambiar el tamaño, se ajusta el estado de la hoja.
+  addEventListener('resize', () => document.body.classList.toggle('hoja', esCel() && !cajon.classList.contains('cerrado')));
+}
+// ==================== Biblioteca ====================
+// Toda la información guardada en el Drive (Marte/Perforaciones Datos Crudos), ordenada para consultar:
+// perforaciones (ficha completa), comparar pozos, temas para futuras misiones, fuentes. Lee datos/biblioteca.json,
+// que arma armar_biblioteca.py. Si un dato no existe, la ficha lo dice: no se completa con estimaciones.
+const BIB = { datos: null, cargando: null, vista: 'inicio', pozo: null, orden: 'n', filtro: '', soloCon: '', drive: null, ordenTabla: ['n', 1] };
+const normB = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '');
+const escB = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const ESTADO_SAM = { confirmado: ['confirmado por ODR', 'var(--ok)'], sin_confirmar: ['sin confirmar', '#d9a441'], otra_muestra: ['de otra muestra', '#e5534b'] };
+const TIPO_SAM = { spyr: 'pirólisis', sder: 'derivatización', scmb: 'combustión', csol: 'sólido', smet: 'metanol' };
+const NOMBRE_GAS = { H2O: 'H₂O', CO2: 'CO₂', SO2: 'SO₂', O2: 'O₂', HCl: 'HCl', H2S: 'H₂S', NO: 'NO', H2: 'H₂', CH3Cl: 'CH₃Cl', CH2Cl2: 'CH₂Cl₂', OCS: 'OCS' };
+const OX = { SiO2: 'SiO₂', TiO2: 'TiO₂', Al2O3: 'Al₂O₃', FeO: 'FeO', MnO: 'MnO', MgO: 'MgO', CaO: 'CaO', Na2O: 'Na₂O', K2O: 'K₂O', P2O5: 'P₂O₅', Cr2O3: 'Cr₂O₃', SO3: 'SO₃', Cl: 'Cl' };
+const sci = v => v == null ? '—' : v.toExponential(2).replace('e', ' × 10^').replace(/\^\+?(-?\d+)/, (m, e) => '<sup>' + e + '</sup>');
+const kB = b => b > 1048576 ? fmt(b / 1048576, 1) + ' MB' : fmt(Math.max(1, b / 1024)) + ' KB';
+
+async function cargarBiblioteca() {
+  if (BIB.datos) return BIB.datos;
+  if (!BIB.cargando) BIB.cargando = (async () => {
+    const r = await fetch('datos/biblioteca.json', { cache: 'no-cache' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    for (const p of d.pozos) {                                    // une cada pozo con el del mapa (color de zona y posición)
+      p.mapa = POZOS.find(q => normB(q.nombre) === normB(p.nombre)) || POZOS.find(q => q.n != null && q.n === p.n) || null;
+      const aq = p.apxs && p.apxs.ox || {};
+      p.ind = { arc: p.chemin.map(c => c.arcillas).find(v => v != null) ?? null, amo: p.chemin.map(c => c.amorfo).find(v => v != null) ?? null,
+        agua: p.agua_kg_t, so3: aq.SO3 ? aq.SO3[0] : null, cl: aq.Cl ? aq.Cl[0] : null, feo: aq.FeO ? aq.FeO[0] : null,
+        zn: p.apxs && p.apxs.tr && p.apxs.tr.Zn ? p.apxs.tr.Zn[0] : null,
+        h2o: Math.max(0, ...p.sam.filter(s => s.estado === 'confirmado' && !s.dudoso.includes('H2O')).map(s => s.gases.H2O || 0)) || null,
+        nsam: p.sam.filter(s => s.estado === 'confirmado').length };
+    }
+    try { const e = await fetch('perforaciones/estado.json', { cache: 'no-store' }); BIB.drive = e.ok ? (await e.json()).ok : false; } catch { BIB.drive = false; }
+    return (BIB.datos = d);
+  })().catch(e => { BIB.cargando = null; throw e; });
+  return BIB.cargando;
+}
+
+function vistaBiblioteca() {
+  const c = cont();
+  if (!BIB.datos) {
+    c.innerHTML = '<p class="sub">Cargando la biblioteca…</p>';
+    cargarBiblioteca().then(() => pestaña === 'biblioteca' && vistaBiblioteca()).catch(e => {
+      c.innerHTML = `<h2>Biblioteca</h2><p>No pude cargar <code>datos/biblioteca.json</code> (${escB(e.message)}).</p>
+        <p class="sub">${location.protocol === 'file:' ? 'Abriste el archivo con doble clic: el navegador no deja leer datos locales así. Abrí Gale Earth con <b>abrir.bat</b>.' : 'Generalo con <code>python armar_biblioteca.py</code> en la carpeta Google Mars.'}</p>`;
+    });
+    return;
+  }
+  ({ inicio: bibInicio, lista: bibLista, pozo: bibPozo, comparar: bibComparar, temas: bibTemas, fuentes: bibFuentes })[BIB.vista]();
+  $('cajon').classList.toggle('ancho', BIB.vista === 'comparar' || BIB.vista === 'pozo');
+}
+const irBib = (v, pozo) => { BIB.vista = v; if (pozo !== undefined) BIB.pozo = pozo; $('contenido').scrollTop = 0; vistaBiblioteca(); };
+const volverBib = (a = 'inicio') => `<button class="btn" data-ir="${a}">← ${a === 'inicio' ? 'Biblioteca' : a === 'lista' ? 'Perforaciones' : 'Volver'}</button>`;
+const engancharBib = () => cont().querySelectorAll('[data-ir]').forEach(b => b.onclick = () => irBib(b.dataset.ir));
+
+function bibInicio() {
+  const P = BIB.datos.pozos, conChe = P.filter(p => p.chemin.length).length, conSam = P.filter(p => p.ind.nsam).length;
+  const tarjeta = (ir, titulo, sub, extra = '') => `<div class="tarjeta bibt" data-ir="${ir}">${extra}<b>${titulo}</b><div class="sub">${sub}</div></div>`;
+  cont().innerHTML = `<p class="sub">Todo lo que guardamos de Marte, ordenado para consultar. Cada número tiene su fuente y se marca si es <b>medido</b>, <b>calculado</b> o <b>supuesto</b>.</p>
+    <h2>Historia</h2>
+    <div class="tarjeta bibt" id="bibLinea"><span class="bibic" style="background:#2a4f8f">⏱</span><b>Línea de tiempo</b><div class="sub">Desde que se formó Gale, pasando por Galileo, hasta hoy: cada misión que llegó a Marte, dónde aterrizó y qué encontró Curiosity.</div></div>
+    <h2>Datos de campo</h2>
+    ${tarjeta('lista', `Las ${P.length} perforaciones de Curiosity`, `Ficha completa de cada pozo: minerales, química, gases, fotos y archivos crudos. ${conChe} con mineralogía, ${conSam} con gases confirmados.`, `<span class="bibic" style="background:#4FA3D9">⛏</span>`)}
+    ${tarjeta('comparar', 'Comparar pozos', 'Tabla con los indicadores clave de los 49 pozos. Tocá una columna para ordenar.', `<span class="bibic" style="background:#2E9E8F">▦</span>`)}
+    <h2>Análisis</h2>
+    ${BIB.datos.temas_html ? tarjeta('temas', 'Temas para futuras misiones', 'Agua que todavía no contamos, agua fácil de extraer, riesgos al calentar el suelo, nitrógeno y oxígeno, calidad de los datos.', `<span class="bibic" style="background:#E8A33D">✦</span>`) : ''}
+    <h2>Referencia</h2>
+    ${tarjeta('fuentes', 'Fuentes y calidad de los datos', 'De dónde sale cada dato, qué falta y qué valores hay que tomar con cuidado.', `<span class="bibic" style="background:#7E57C2">ⓘ</span>`)}
+    <div class="tarjeta bibt" id="bibAyuda"><span class="bibic" style="background:#3c4043">?</span><b>Controles y ayuda</b><div class="sub">Cómo moverse por el mapa con mouse, teclado o dedos.</div></div>
+    <p class="fuente">Datos: carpeta del Drive Marte/Perforaciones Datos Crudos, armada con NASA PDS, base ODR del cráter Gale y fotos crudas de NASA/JPL-Caltech/MSSS.</p>`;
+  engancharBib(); $('bibLinea').onclick = () => abrirLinea(); $('bibAyuda').onclick = () => $('ayuda').classList.remove('oculto');
+}
+
+const ORDENES = { n: ['Número', p => p.n ?? 999, 1], sol: ['Sol', p => p.sol ?? 1e9, 1], agua: ['Agua en minerales', p => p.ind.agua ?? -1, -1], arc: ['Arcillas', p => p.ind.arc ?? -1, -1],
+  so3: ['Azufre (SO₃)', p => p.ind.so3 ?? -1, -1], cl: ['Cloro', p => p.ind.cl ?? -1, -1], zn: ['Zinc', p => p.ind.zn ?? -1, -1], h2o: ['Agua liberada (SAM)', p => p.ind.h2o ?? -1, -1] };
+function bibLista() {
+  const P = BIB.datos.pozos;
+  cont().innerHTML = `${volverBib('inicio')}
+    <h3 style="margin-top:10px">Perforaciones</h3>
+    <input type="text" id="bibFiltro" placeholder="Filtrar por nombre, zona o roca" value="${escB(BIB.filtro)}" style="margin:6px 0 8px">
+    <div class="fila" style="border:0;padding:2px 0"><span class="sub">Ordenar por</span><select id="bibOrden">${Object.entries(ORDENES).map(([k, v]) => `<option value="${k}" ${k === BIB.orden ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></div>
+    <div class="chips" id="bibChips">${[['', 'Todos'], ['chemin', 'Con minerales'], ['sam', 'Con gases SAM'], ['sin', 'Sin laboratorio aún']].map(([k, t]) => `<button class="pz${BIB.soloCon === k ? ' on' : ''}" data-f="${k}">${t}</button>`).join('')}</div>
+    <div id="bibItems"></div>`;
+  const pintar = () => {
+    const f = normB(BIB.filtro), o = ORDENES[BIB.orden];
+    const L = P.filter(p => (!f || normB(`${p.nombre}${p.zona}${p.formacion}${p.roca}${p.n}`).includes(f)) &&
+      (!BIB.soloCon || (BIB.soloCon === 'chemin' ? p.chemin.length : BIB.soloCon === 'sam' ? p.ind.nsam : !p.chemin.length)))
+      .sort((a, b) => (o[1](a) - o[1](b)) * o[2]);
+    $('bibItems').innerHTML = L.map(p => {
+      const col = p.mapa ? colorDe(p.mapa) : '#666', foto = p.fotos[0];
+      const dato = BIB.orden === 'n' || BIB.orden === 'sol' ? (p.ind.arc != null ? `arcillas ${fmt(p.ind.arc)} %` : p.chemin.length ? 'con minerales' : 'sin laboratorio aún')
+        : `${ORDENES[BIB.orden][0].toLowerCase()}: ${({ agua: v => v == null ? '—' : fmt(v) + ' kg/t', arc: v => v == null ? '—' : fmt(v) + ' %', so3: v => v == null ? '—' : fmt(v, 1) + ' %', cl: v => v == null ? '—' : fmt(v, 2) + ' %', zn: v => v == null ? '—' : fmt(v) + ' ppm', h2o: v => v == null ? '—' : sci(v) + ' mol' })[BIB.orden](p.ind[BIB.orden])}`;
+      return `<div class="tarjeta bibp" data-p="${escB(p.nombre)}">
+        ${foto ? `<img loading="lazy" src="${foto.src}" alt="">` : '<span class="sinfoto">sin foto</span>'}
+        <span><span class="num" style="background:${col}">${p.n ?? '×'}</span><b>${escB(p.nombre)}</b>
+        <span class="sub">Sol ${p.sol ?? '—'} · ${escB(p.roca || '—')}</span><span class="sub">${dato}</span></span></div>`;
+    }).join('') || '<p class="sub">Ningún pozo coincide.</p>';
+    $('bibItems').querySelectorAll('[data-p]').forEach(el => el.onclick = () => irBib('pozo', el.dataset.p));
+  };
+  engancharBib();
+  $('bibFiltro').oninput = e => { BIB.filtro = e.target.value; pintar(); };
+  $('bibFiltro').onkeydown = e => e.stopPropagation();
+  $('bibOrden').onchange = e => { BIB.orden = e.target.value; pintar(); };
+  $('bibChips').querySelectorAll('[data-f]').forEach(b => b.onclick = () => { BIB.soloCon = b.dataset.f; $('bibChips').querySelectorAll('.pz').forEach(x => x.classList.toggle('on', x === b)); pintar(); });
+  pintar();
+}
+
+function bibPozo() {
+  const P = BIB.datos.pozos;
+  if (BIB.pozoMapa) { const x = P.find(q => q.mapa === BIB.pozoMapa); BIB.pozo = x ? x.nombre : null; BIB.pozoMapa = null; }
+  const i = P.findIndex(q => normB(q.nombre) === normB(BIB.pozo)), p = P[i];
+  if (!p) return irBib('lista');
+  const col = p.mapa ? colorDe(p.mapa) : '#666', zona = p.mapa && ZID[p.mapa.zona] ? ZID[p.mapa.zona].nombre : p.formacion;
+  const sec = (titulo, tag, cuerpo, abierto = true) => `<details class="sec" ${abierto ? 'open' : ''}><summary>${titulo}${tag ? ` <span class="tag">${tag}</span>` : ''}</summary>${cuerpo}</details>`;
+  // Minerales
+  const che = p.chemin.length ? p.chemin.map(a => {
+    const tot = a.minerales.reduce((s, m) => s + (m[1] || 0), 0) || 1;
+    return `<div class="sub" style="margin-top:6px">Análisis del sol ${a.sol} · <code>${escB(a.archivo)}</code></div>
+      ${a.minerales.length ? `<div class="barra">${a.minerales.map(m => `<span title="${escB(m[0])} ${fmt(m[1], 1)} %" style="width:${(m[1] || 0) / tot * 100}%;background:${COL_MIN[m[0]] || '#6b7a99'}"></span>`).join('')}</div>` : ''}
+      <table><tr><th>Mineral (fracción cristalina)</th><th>%</th><th>± 2σ</th></tr>${a.minerales.map(m => `<tr><td><i class="cuad" style="background:${COL_MIN[m[0]] || '#6b7a99'}"></i>${escB(m[0])}</td><td>${fmt(m[1], 1)}</td><td>${fmt(m[2], 1)}</td></tr>`).join('')}</table>
+      ${a.arcillas != null || a.amorfo != null ? `<div class="ind"><div><small>Arcillas (muestra total)</small><b>${a.arcillas != null ? fmt(a.arcillas) + ' <small>% ± ' + fmt(a.arcillas_err) + '</small>' : '—'}</b></div><div><small>Material amorfo</small><b>${a.amorfo != null ? fmt(a.amorfo) + ' <small>% ± ' + fmt(a.amorfo_err) + '</small>' : '—'}</b></div></div>` : ''}`;
+  }).join('') : '<p class="sub">NASA todavía no publicó la mineralogía de este pozo (ni en el PDS ni en la base ODR).</p>';
+  // Química
+  const ap = p.apxs;
+  const qui = ap ? `<div class="sub">${escB(ap.fuente)}${ap.sol ? ` · sol ${ap.sol}` : ''}${ap.objetivo ? ` · objetivo <code>${escB(ap.objetivo)}</code>` : ''}${ap.producto ? ` · <code>${escB(ap.producto)}</code>` : ''}</div>
+      <table class="tabq"><tr><th>Óxido</th><th>% en peso</th><th>±</th></tr>${Object.entries(ap.ox).map(([k, v]) => `<tr><td>${OX[k] || k}</td><td>${fmt(v[0], 2)}</td><td>${fmt(v[1], 2)}</td></tr>`).join('')}
+      ${Object.entries(ap.tr || {}).map(([k, v]) => `<tr><td>${k}</td><td>${fmt(v[0])} ppm</td><td>${fmt(v[1])}</td></tr>`).join('')}</table>
+      <p class="fuente">${p.apxs_mediciones} mediciones de APXS en la zona del pozo (${p.apxs_del_pozo} sobre el pozo o su polvo) en <code>Datos Crudos/APXS</code>.</p>`
+    : `<p class="sub">Sin química APXS publicada para la muestra de este pozo${p.apxs_mediciones ? ` (hay ${p.apxs_mediciones} mediciones de la zona en Datos Crudos/APXS)` : ''}.</p>`;
+  // Gases SAM
+  const gas = p.sam.length ? `<p class="sub">Moles liberados al calentar la muestra en el horno de SAM y temperatura del pico (°C). Solo los confirmados por ODR son seguro de este pozo.</p>` + p.sam.map(s => {
+    const [et, ec] = ESTADO_SAM[s.estado];
+    const filas = Object.entries(s.gases).filter(([k]) => ['H2O', 'CO2', 'SO2', 'O2', 'HCl', 'H2S', 'NO', 'H2'].includes(k))
+      .map(([k, v]) => `<tr${s.dudoso.includes(k) ? ' class="dudoso" title="Valor imposible en la fuente: no se usa"' : ''}><td>${NOMBRE_GAS[k] || k}</td><td>${sci(v)}${s.dudoso.includes(k) ? ' ⚠' : ''}</td><td>${(s.picos[k] || []).map(t => fmt(t)).join(', ') || '—'}</td></tr>`).join('');
+    return `<div class="samx"><div><b>Sol ${s.sol}</b> · experimento ${s.eid} · ${TIPO_SAM[s.tipo] || s.tipo} <span class="tag" style="color:${ec}">${et}${s.otra ? ': ' + escB(s.otra) : ''}</span></div>
+      ${filas ? `<table><tr><th>Gas</th><th>mol</th><th>pico °C</th></tr>${filas}</table>` : '<div class="sub">Sin tabla de gases en este experimento (puede ser de calibración o de otro tipo).</div>'}</div>`;
+  }).join('') : '<p class="sub">No hay experimentos de SAM asociados a este pozo.</p>';
+  // Fotos
+  const fot = p.fotos.length ? `<div class="fotos">${p.fotos.map(f => `<a href="${f.url || f.src}" target="_blank" rel="noopener" title="${escB(f.archivo)}"><img loading="lazy" src="${f.src}" alt="${escB(f.camara)}"><span>${escB(f.camara || '')}</span></a>`).join('')}</div>
+      <p class="fuente">${p.fotos.length} destacadas de ${p.fotos_total} fotos crudas del sol de la perforación (todas en <code>Imagenes/todas_las_imagenes.zip</code>). Fotos: NASA/JPL-Caltech/MSSS. Tocá una para abrir el original en NASA.</p>` : '<p class="sub">Sin fotos destacadas.</p>';
+  const base = `G:\\Mi unidad\\Marte\\Perforaciones Datos Crudos\\${p.nombre}`;
+  const arch = `<p class="sub">${BIB.drive ? 'Tocá un archivo para abrirlo o bajarlo (lo sirve la PC desde el Drive).' : `Están en <code>${escB(base)}</code>.`}</p>
+    <table>${p.archivos.map(([r, b]) => `<tr><td>${BIB.drive ? `<a href="perforaciones/${encodeURIComponent(p.nombre)}/${r.split('/').map(encodeURIComponent).join('/')}" target="_blank" rel="noopener">${escB(r)}</a>` : escB(r)}</td><td style="white-space:nowrap">${kB(b)}</td></tr>`).join('')}</table>`;
+  cont().innerHTML = `<div style="display:flex;justify-content:space-between;gap:6px">${volverBib('lista')}
+      <span><button class="btn" id="bAnt" ${i <= 0 ? 'disabled' : ''}>←</button> <button class="btn" id="bSig" ${i >= P.length - 1 ? 'disabled' : ''}>→</button></span></div>
+    ${p.fotos[0] ? `<img class="portada" src="${p.fotos[0].src}" alt="">` : ''}
+    <div class="sub" style="margin-top:8px"><span class="chip" style="background:${col}"></span>${escB(zona || '')}</div>
+    <h3>${p.n ? p.n + '. ' : ''}${escB(p.nombre)}</h3>
+    <div class="sub">Sol ${p.sol ?? '—'} · ${escB(p.fecha)} (aprox.) · ${escB(p.roca || '—')} · ${p.elev != null ? fmt(p.elev) + ' m' : ''}</div>
+    ${p.hallazgo ? `<p>${escB(p.hallazgo)}</p>` : ''}${p.tecnico ? `<p class="sub">${escB(p.tecnico)}</p>` : ''}
+    <div class="btns"><button class="btn prim" id="bMapa">Ver en el mapa</button>${p.odr && p.odr.url ? `<a class="btn" href="${p.odr.url}" target="_blank" rel="noopener">Ficha en la base ODR</a>` : ''}</div>
+    <div class="ind">
+      <div><small>Agua en minerales <span class="tag">calculado</span></small><b style="color:var(--agua)">${p.agua_kg_t != null ? fmt(p.agua_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
+      <div><small>CO₂ en carbonatos <span class="tag">calculado</span></small><b style="color:#d9a441">${p.co2_kg_t != null ? fmt(p.co2_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
+      <div><small>Arcillas <span class="tag">medido</span></small><b>${p.ind.arc != null ? fmt(p.ind.arc) + ' <small>%</small>' : '—'}</b></div>
+      <div><small>Gases SAM confirmados</small><b>${p.ind.nsam}</b></div></div>
+    ${sec('Minerales', 'medido · CheMin', che)}
+    ${sec('Química de la roca', 'medido · APXS', qui, false)}
+    ${sec('Gases al calentar la muestra', 'medido · SAM', gas, false)}
+    ${sec('Fotos del día de la perforación', 'NASA', fot)}
+    ${sec('Qué falta', '', p.falta.length ? '<ul>' + p.falta.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>' : '<p class="sub">Nada pendiente registrado.</p>', false)}
+    ${p.cruce.length ? sec('Cruce con la base ODR', '', '<ul>' + p.cruce.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>', false) : ''}
+    ${sec(`Archivos crudos (${p.archivos.length})`, 'Drive', arch, false)}
+    <p class="fuente">${escB(p.fuente_hallazgo || '')}</p>`;
+  engancharBib();
+  $('bAnt').onclick = () => irBib('pozo', P[i - 1].nombre); $('bSig').onclick = () => irBib('pozo', P[i + 1].nombre);
+  $('bMapa').onclick = () => {
+    if (p.mapa) { sel = p.mapa; repintar(); volarA(p.mapa.lon, p.mapa.lat, 700); }
+    else if (p.lat != null) volarA(p.lon, p.lat, 700);
+    if (esCelB()) $('cajon').classList.add('chico');
+  };
+}
+const esCelB = () => matchMedia('(max-width:760px),(pointer:coarse) and (max-width:900px)').matches;
+
+const COLS = [['n', '#', p => p.n, v => v ?? '×'], ['nombre', 'Pozo', p => p.nombre, v => escB(v)], ['sol', 'Sol', p => p.sol, v => v ?? '—'],
+  ['arc', 'Arcillas %', p => p.ind.arc, v => v == null ? '—' : fmt(v)], ['amo', 'Amorfo %', p => p.ind.amo, v => v == null ? '—' : fmt(v)],
+  ['agua', 'Agua kg/t*', p => p.ind.agua, v => v == null ? '—' : fmt(v)], ['so3', 'SO₃ %', p => p.ind.so3, v => v == null ? '—' : fmt(v, 1)],
+  ['cl', 'Cl %', p => p.ind.cl, v => v == null ? '—' : fmt(v, 2)], ['feo', 'FeO %', p => p.ind.feo, v => v == null ? '—' : fmt(v, 1)],
+  ['zn', 'Zn ppm', p => p.ind.zn, v => v == null ? '—' : fmt(v)], ['h2o', 'H₂O SAM mol', p => p.ind.h2o, v => v == null ? '—' : v.toExponential(1)]];
+function bibComparar() {
+  const [k, dir] = BIB.ordenTabla, col = COLS.find(c => c[0] === k);
+  const L = [...BIB.datos.pozos].sort((a, b) => { const x = col[2](a), y = col[2](b); if (x == null) return 1; if (y == null) return -1; return (typeof x === 'string' ? x.localeCompare(y) : x - y) * dir; });
+  const max = {}; for (const c of COLS.slice(3)) max[c[0]] = Math.max(...BIB.datos.pozos.map(p => c[2](p) || 0));
+  cont().innerHTML = `${volverBib('inicio')}<h3 style="margin-top:10px">Comparar pozos</h3>
+    <p class="sub">Tocá el título de una columna para ordenar. La barra de fondo compara con el máximo de los 49. Tocá un pozo para abrir su ficha.</p>
+    <div class="tablaw"><table class="comp"><tr>${COLS.map(c => `<th data-k="${c[0]}">${c[1]}${c[0] === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr>
+    ${L.map(p => `<tr data-p="${escB(p.nombre)}">${COLS.map(c => { const v = c[2](p);
+      return c[0] === 'n' ? `<td><span class="num" style="background:${p.mapa ? colorDe(p.mapa) : '#666'}">${c[3](v)}</span></td>`
+        : max[c[0]] && v != null ? `<td style="background:linear-gradient(90deg,#f28c3830 ${v / max[c[0]] * 100}%,transparent 0)">${c[3](v)}</td>` : `<td>${c[3](v)}</td>`; }).join('')}</tr>`).join('')}</table></div>
+    <p class="fuente">Arcillas y amorfo: CheMin (medido). SO₃, Cl, FeO, Zn: APXS de la muestra (medido). H₂O SAM: máximo liberado en experimentos confirmados (medido). *Agua kg/t: cálculo del equipo solo con minerales cristalinos, no incluye arcillas ni amorfo.</p>`;
+  engancharBib();
+  cont().querySelectorAll('th[data-k]').forEach(th => th.onclick = () => { BIB.ordenTabla = [th.dataset.k, th.dataset.k === k ? -dir : (['n', 'nombre', 'sol'].includes(th.dataset.k) ? 1 : -1)]; bibComparar(); });
+  cont().querySelectorAll('tr[data-p]').forEach(tr => tr.onclick = () => irBib('pozo', tr.dataset.p));
+}
+
+function bibTemas() {
+  cont().innerHTML = `${volverBib('inicio')}<div class="doc">${BIB.datos.temas_html}</div>
+    <p class="fuente">Documento del equipo: Drive, carpeta "zz Analisis y temas para futuras misiones". "No tratados" quiere decir que nuestro proyecto todavía no los trabajó.</p>`;
+  engancharBib();
+}
+
+function bibFuentes() {
+  const P = BIB.datos.pozos;
+  const n = { che: P.filter(p => p.chemin.length).length, ap: P.filter(p => p.apxs).length, apodr: P.filter(p => p.apxs && p.apxs.fuente.startsWith('ODR')).length,
+    sam: P.reduce((s, p) => s + p.ind.nsam, 0), samno: P.reduce((s, p) => s + p.sam.filter(x => x.estado !== 'confirmado').length, 0),
+    fot: P.reduce((s, p) => s + (p.fotos_total || 0), 0), odr: P.filter(p => p.odr && p.odr.tiene_ficha).length };
+  cont().innerHTML = `${volverBib('inicio')}<h3 style="margin-top:10px">Fuentes y calidad de los datos</h3>
+    <table><tr><th>Dato</th><th>Pozos</th><th>Fuente</th></tr>
+      <tr><td>Minerales (CheMin)</td><td>${n.che}/49</td><td>NASA PDS Geosciences, CheMin RDR</td></tr>
+      <tr><td>Química (APXS)</td><td>${n.ap}/49</td><td>NASA PDS (tablas supplement); ${n.apodr} desde la base ODR</td></tr>
+      <tr><td>Gases (SAM)</td><td>${n.sam} exp.</td><td>NASA PDS SAM nivel 2; asignación a cada pozo según ODR</td></tr>
+      <tr><td>Fotos crudas</td><td>${fmt(n.fot)}</td><td>NASA/JPL-Caltech/MSSS, raw images</td></tr>
+      <tr><td>Ficha en la base ODR</td><td>${n.odr}/49</td><td>Gale Crater Mineralogy and Geochemistry Database, doi:10.48484/JN48-YW52</td></tr></table>
+    <h2>Tomar con cuidado</h2><ul>
+      <li>${n.samno} experimentos SAM no están confirmados como de su pozo, o son de otra muestra: se muestran separados.</li>
+      <li>Algunos valores de SAM son físicamente dudosos (por ejemplo HCl en Mojave 2) y se marcan con ⚠.</li>
+      <li>Los pozos 46 a 49 todavía no tienen datos de laboratorio publicados.</li>
+      <li>Radiación (RAD) y clima (REMS) todavía no están: falta habilitar esos dominios.</li></ul>
+    <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> desde el Drive (${escB(BIB.datos.origen)}).</p>`;
+  engancharBib();
+}
+// ==================== Línea de tiempo (estilo Google Earth) ====================
+// Desde la formación de Gale hasta hoy: telescopios, cada misión que llegó (o intentó llegar) a Marte
+// y los hallazgos de Curiosity en Gale. Datos: datos/linea_tiempo.json (cada evento con su fuente).
+const LT = { ev: null, i: -1, play: null, pins: [] };
+const RES = { exito: 'Éxito', activo: 'Activa hoy', parcial: 'Éxito parcial', fallo: 'Falló', fallo_fin: 'Terminada', historia: 'Historia', en_camino: 'En camino', futuro: 'Previsto' };
+const COL_RES = { exito: '#7fd18b', activo: '#4fa3d9', parcial: '#e2b04a', fallo: '#9aa0a6', fallo_fin: '#9aa0a6', historia: '#c9b79c', en_camino: '#d96c9a', futuro: '#d96c9a' };
+
+async function cargarLinea() {
+  if (LT.ev) return LT.ev;
+  const r = await fetch('datos/linea_tiempo.json'); if (!r.ok) throw new Error('No se encontró datos/linea_tiempo.json');
+  const d = await r.json(); LT.ev = d.eventos; LT.nota = d.nota; return LT.ev;
+}
+function fechaLinda(e) {
+  if (e.f.startsWith('-')) return e.etq;
+  const M = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'], p = e.f.split('-');
+  return p.length === 3 ? `${+p[2]} ${M[+p[1] - 1]} ${p[0]}` : p[0];
+}
+function claseEv(e) { return e.tipo === 'geologia' ? 'geo' : e.gale ? 'gale' : (e.res === 'fallo' || e.res === 'fallo_fin') ? 'mal' : (e.res === 'futuro' || e.res === 'en_camino') ? 'fut' : e.res === 'parcial' ? 'med' : 'bien'; }
+
+async function abrirLinea(idEvento) {
+  try { await cargarLinea(); } catch (e) { return avisar(location.protocol === 'file:' ? 'La línea de tiempo necesita abrir Gale Earth con abrir.bat / servir.py (el navegador bloquea leer archivos desde file://).' : e.message, 9000); }
+  if (esCelB()) cerrarCajon();
+  document.body.classList.add('lineaAbierta'); $('linea').classList.remove('oculto');
+  pintarBarra();
+  const k = idEvento ? LT.ev.findIndex(e => e.id === idEvento) : LT.ev.findIndex(e => e.hoy);
+  elegirEv(k < 0 ? LT.ev.length - 1 : k, !!idEvento);
+}
+function cerrarLinea() {
+  pararPlay(); $('linea').classList.add('oculto'); document.body.classList.remove('lineaAbierta');
+  for (const p of LT.pins) viewer.entities.remove(p); LT.pins = [];
+}
+
+function pintarBarra() {
+  const pista = $('lPista'); if (pista.dataset.listo) return; pista.dataset.listo = 1;
+  let html = '', ultEtq = '', ultX = -99, grupo = null;
+  LT.ev.forEach((e, k) => {
+    const g = e.tipo === 'geologia' ? 'geo' : e.tipo === 'telescopio' ? 'tel' : e.res === 'futuro' ? 'fut' : 'esp';
+    if (grupo && g !== grupo) html += `<span class="lCorte" title="${g === 'tel' ? 'salto de miles de millones de años' : ''}"></span>`;
+    grupo = g;
+    const etq = e.etq !== ultEtq && k - ultX >= 2 ? e.etq : ''; if (etq) { ultEtq = e.etq; ultX = k; }
+    html += `<button class="lPto ${claseEv(e)}" data-k="${k}" data-etq="${etq}" title="${fechaLinda(e)} · ${e.t.replace(/"/g, '')}"><i></i><span>${etq}</span></button>`;
+  });
+  pista.innerHTML = `<div class="lLinea"></div>${html}`;
+  pista.querySelectorAll('.lPto').forEach(b => b.onclick = () => { pararPlay(); elegirEv(+b.dataset.k, true); });
+}
+
+function elegirEv(k, volar) {
+  k = Math.max(0, Math.min(LT.ev.length - 1, k)); LT.i = k; const e = LT.ev[k];
+  document.querySelectorAll('#lPista .lPto').forEach((b, j) => {
+    b.classList.toggle('on', j === k); const sp = b.querySelector('span');
+    sp.textContent = j === k ? LT.ev[j].etq : b.dataset.etq; sp.style.opacity = Math.abs(j - k) === 1 && b.dataset.etq ? 0 : ''; });
+  const b = document.querySelector(`#lPista .lPto[data-k="${k}"]`);
+  if (b) { const p = $('lPista'); p.scrollTo({ left: b.offsetLeft - p.clientWidth / 2, behavior: 'smooth' }); }
+  const etiqueta = e.etiqueta || (e.tipo === 'telescopio' ? 'registro histórico' : 'registrado');
+  const botones = [];
+  if (e.lat != null) botones.push(`<button class="btn prim" id="lVer">Ver ${e.sitio ? e.sitio : 'dónde aterrizó'}</button>`);
+  if (e.orbitador && O.orbitadores[e.orbitador]) botones.push(`<button class="btn" id="lOrb">Ver su órbita hoy</button>`);
+  if (e.luna) botones.push(`<button class="btn" id="lLuna">Ver Fobos</button>`);
+  if (e.pozo) botones.push(`<button class="btn" id="lPozo">Ficha del pozo ${e.pozo}</button>`);
+  if (e.gale && e.lat == null && !e.pozo) botones.push(`<button class="btn" id="lGale">Ir a Gale</button>`);
+  if (e.hoy) botones.push(`<button class="btn" id="lBib">Abrir la Biblioteca</button>`);
+  $('lFicha').innerHTML = `<div class="lCab"><span class="lFecha">${fechaLinda(e)}</span><span class="lRes" style="--c:${COL_RES[e.res] || '#aaa'}">${RES[e.res] || ''}</span>${e.ag && e.ag !== '—' ? `<span class="sub">${e.ag}</span>` : ''}</div>
+    <h3>${e.t}</h3><p>${e.txt}</p>${botones.length ? `<div class="btns">${botones.join('')}</div>` : ''}
+    <p class="fuente">Fuente: ${e.fuente} <span class="tag">${etiqueta}</span></p>`;
+  if ($('lVer')) $('lVer').onclick = () => { pararPlay(); volarA(e.lon, e.lat, e.gale ? 60000 : 900000); };
+  if ($('lOrb')) $('lOrb').onclick = () => { pararPlay(); abrir('orbita'); fichaOrbitador(e.orbitador); };
+  if ($('lLuna')) $('lLuna').onclick = () => { pararPlay(); abrir('orbita'); fichaLuna('Fobos'); };
+  if ($('lPozo')) $('lPozo').onclick = () => { pararPlay(); BIB.vista = 'pozo'; BIB.pozo = e.pozo; abrir('biblioteca'); };
+  if ($('lGale')) $('lGale').onclick = () => { pararPlay(); irA('gale'); };
+  if ($('lBib')) $('lBib').onclick = () => { pararPlay(); BIB.vista = 'lista'; abrir('biblioteca'); };
+  pinesHasta(k);
+  if (volar && e.lat != null) volarA(e.lon, e.lat, e.gale ? 60000 : 900000);
+}
+
+// Sitios de aterrizaje: aparecen a medida que avanza la línea de tiempo.
+function pinesHasta(k) {
+  for (const p of LT.pins) viewer.entities.remove(p); LT.pins = [];
+  LT.ev.slice(0, k + 1).forEach((e, j) => {
+    if (e.lat == null) return;
+    const actual = j === k, bien = e.res === 'exito' || e.res === 'activo';
+    const col = C.Color.fromCssColorString(actual ? '#ffffff' : bien ? '#7fd18b' : '#9aa0a6');
+    const nombre = (e.sitio || e.t.split(/[:(]/)[0]).trim();
+    LT.pins.push(viewer.entities.add({ position: pos(e.lon, e.lat),
+      point: { pixelSize: actual ? 13 : 9, color: col, outlineColor: C.Color.BLACK, outlineWidth: 2, heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+      label: { text: nombre, font: `${actual ? 700 : 500} 13px system-ui`, fillColor: col, outlineColor: C.Color.BLACK, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE,
+        pixelOffset: new C.Cartesian2(10, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        distanceDisplayCondition: new C.DistanceDisplayCondition(0, actual ? 1e9 : 2.5e7) } }));
+  });
+}
+
+function pararPlay() { if (LT.play) { clearInterval(LT.play); LT.play = null; } $('lPlay').classList.remove('on'); $('lPlay').title = 'Reproducir'; }
+$('lPlay').onclick = () => {
+  if (LT.play) return pararPlay();
+  if (LT.i >= LT.ev.length - 1) elegirEv(0, true);
+  $('lPlay').classList.add('on'); $('lPlay').title = 'Pausa';
+  LT.play = setInterval(() => { if (LT.i >= LT.ev.length - 1) return pararPlay(); elegirEv(LT.i + 1, true); }, 4500);
+};
+$('lCerrar').onclick = cerrarLinea;
+$('bLinea').onclick = () => $('linea').classList.contains('oculto') ? abrirLinea() : cerrarLinea();
+addEventListener('keydown', e => {
+  if ($('linea').classList.contains('oculto') || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { pararPlay(); elegirEv(LT.i + (e.key === 'ArrowRight' ? 1 : -1), true); e.preventDefault(); e.stopImmediatePropagation(); }
+  if (e.key === 'Escape') cerrarLinea();
+}, true);
+abrir('explorar', false);
+const h = location.hash.match(/pozo-(\d+)/); if (h) setTimeout(() => fichaPozo(NUM[+h[1] - 1], true), 3500);
+window.__gale = { viewer, POZOS, SITIOS, O, kepler, subpunto, proximoPaso };
+</script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0d12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Gale Earth: Marte en 3D con datos de NASA y ESA. El cráter Gale como sitio para la primera base humana.">
+<title>Gale Earth · Marte en 3D</title>
+<link rel="icon" href="capas/logo/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="capas/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="capas/logo/icon-180.png">
+<link rel="preload" as="image" href="capas/carga/horizonte_marte.jpg" media="(orientation:landscape)">
+<link rel="preload" as="image" href="capas/carga/horizonte_marte_cel.jpg" media="(orientation:portrait)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.147.0/Build/Cesium/Widgets/widgets.css">
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.147.0/Build/Cesium/Cesium.js"></script>
+<style>
+:root{
+  --fondo:#0b0d12;--sup:rgba(32,33,36,.94);--sup2:#2b2c30;--sup3:#35363a;--linea:#3c4043;--texto:#e8eaed;--suave:#9aa0a6;
+  --acento:#f28c38;--acento2:#ffb070;--ok:#4caf7d;--agua:#4fa3d9;--sombra:0 1px 3px rgba(0,0,0,.45),0 4px 12px rgba(0,0,0,.35);
+  --riel:72px;--sup-seg:env(safe-area-inset-top,0px);--inf-seg:env(safe-area-inset-bottom,0px);
+  /* compatibilidad con los estilos de las fichas */
+  --panel:var(--sup);--panel2:var(--sup2);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:var(--texto);font:14px/1.45 "Google Sans",Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;overscroll-behavior:none}
+button{font:inherit;color:inherit}
+svg.i{width:22px;height:22px;fill:currentColor;flex:none}
+#globo{position:absolute;inset:0}
+.cesium-viewer-bottom{display:none!important}           /* los créditos van en la barra de estado */
+.cesium-widget-credits{display:none}
+.oculto{display:none!important}
+
+/* ── riel izquierdo (como Google Earth) ── */
+#riel{position:absolute;left:0;top:0;bottom:0;width:var(--riel);background:rgba(20,21,24,.92);border-right:1px solid #ffffff12;z-index:8;
+  display:flex;flex-direction:column;align-items:center;padding:calc(10px + var(--sup-seg)) 0 10px;gap:2px;backdrop-filter:blur(8px)}
+#riel .logo{width:46px;height:46px;margin:2px 0 10px;cursor:pointer;border-radius:50%;filter:drop-shadow(0 2px 6px #0008)}
+.rb{width:60px;border:0;background:none;color:var(--suave);display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border-radius:14px;cursor:pointer;font-size:10.5px;letter-spacing:.2px}
+.rb:hover{background:#ffffff10;color:var(--texto)}
+.rb.on{color:var(--acento2)}
+.rb.on svg.i{background:#f28c3826;border-radius:12px;padding:3px 12px;width:46px;height:28px}
+.rb svg.i{padding:3px 12px;width:46px;height:28px}
+#riel .esp{flex:1}
+
+/* ── buscador ── */
+#busca{position:absolute;top:calc(12px + var(--sup-seg));left:calc(var(--riel) + 12px);z-index:7;width:380px;max-width:calc(100vw - var(--riel) - 24px)}
+#cajaBusca{display:flex;align-items:center;gap:8px;height:46px;background:var(--sup);border-radius:24px;box-shadow:var(--sombra);padding:0 8px 0 14px;border:1px solid #ffffff10}
+#cajaBusca svg{color:var(--suave)}
+#q{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--texto);font:inherit;font-size:15px;height:100%}
+#q::placeholder{color:var(--suave)}
+#q::-webkit-search-cancel-button,#q::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+#limpiarQ{border:0;background:none;color:var(--suave);cursor:pointer;padding:6px;border-radius:50%;display:flex}
+#limpiarQ:hover{background:#ffffff12}
+#resultados{margin-top:6px;background:var(--sup);border-radius:16px;box-shadow:var(--sombra);max-height:min(60vh,460px);overflow:auto;border:1px solid #ffffff10}
+#resultados .r{display:flex;align-items:center;gap:12px;padding:9px 14px;cursor:pointer}
+#resultados .r:hover,#resultados .r.sel{background:#ffffff10}
+#resultados .r .ic{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--sup3);font-size:12px;font-weight:700;flex:none;color:#111}
+#resultados .r b{display:block;font-weight:500}
+#resultados .r small{color:var(--suave);font-size:12px}
+#resultados .nada{padding:12px 14px;color:var(--suave)}
+#lugares{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;width:calc(100vw - var(--riel) - 90px);max-width:720px}
+body.cajonAbierto #busca{display:none}
+#lugares::-webkit-scrollbar{display:none}
+.chipb{flex:none;display:flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:16px;border:1px solid #ffffff1a;background:var(--sup);color:var(--texto);cursor:pointer;box-shadow:var(--sombra);font-size:13px;white-space:nowrap}
+.chipb:hover{background:var(--sup2)}
+.chipb i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+/* ── cajón de información (panel lateral) ── */
+#cajon{position:absolute;top:calc(12px + var(--sup-seg));left:calc(var(--riel) + 12px);bottom:40px;width:400px;max-width:calc(100vw - var(--riel) - 24px);
+  background:#202124;border-radius:16px;box-shadow:var(--sombra);z-index:9;display:flex;flex-direction:column;border:1px solid #ffffff10;
+  transform:translateX(0);transition:transform .22s ease,opacity .22s ease}
+#cajon.cerrado{transform:translateX(-30px);opacity:0;pointer-events:none}
+#cajonCab{display:flex;align-items:center;gap:8px;padding:12px 10px 8px 18px}
+#cajonCab h2{flex:1;margin:0;font-size:18px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--texto)}
+#cerrarCajon{border:0;background:none;color:var(--suave);cursor:pointer;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+#cerrarCajon:hover{background:#ffffff12;color:var(--texto)}
+#asa{display:none}
+#reloj{margin:0 14px 6px;background:var(--sup2);border-radius:12px;padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#reloj .seg button{background:none;border:1px solid var(--linea);color:var(--suave);border-radius:8px;padding:3px 8px;cursor:pointer;font-size:11px}
+#reloj .seg button.on{background:var(--acento);color:#111;border-color:var(--acento)}
+#contenido{overflow:auto;padding:4px 18px 18px;flex:1;-webkit-overflow-scrolling:touch}
+
+/* ── fichas (contenido del cajón) ── */
+h2{font-size:11.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--suave);margin:16px 0 8px;font-weight:500}
+#contenido>h2:first-child{margin-top:4px}
+h3{margin:2px 0 4px;font-size:19px;font-weight:500}
+p{margin:6px 0}
+.tarjeta{background:var(--sup2);border:1px solid transparent;border-radius:12px;padding:10px 12px;margin:8px 0;cursor:pointer;transition:background .15s}
+.tarjeta:hover{background:var(--sup3)}
+.tarjeta.on{border-color:var(--acento)}
+.chip{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.sub,.fuente{color:var(--suave);font-size:12.5px}
+.fuente{font-size:11px}
+.tag{font-size:10px;padding:1px 7px;border-radius:9px;background:#ffffff10;color:var(--suave);margin-left:4px;white-space:nowrap}
+.pz{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:24px;padding:0 6px;margin:4px 4px 0 0;border-radius:12px;background:#ffffff10;border:0;font-size:11px;cursor:pointer;color:var(--texto)}
+.pz:hover{background:#f28c3840}
+.ind{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+.ind div{background:var(--sup2);border-radius:12px;padding:8px 10px}
+.ind b{display:block;font-size:18px;font-weight:500}
+.ind small{color:var(--suave);font-size:11px}
+.barra{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:6px 0 4px;background:var(--sup3)}
+.leyenda{display:flex;flex-wrap:wrap;gap:3px 10px;font-size:11px;color:var(--suave)}
+.leyenda i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.astro{background:#1b2a21;border-radius:12px;padding:9px 12px;margin:10px 0}
+.astro ul{margin:4px 0 0;padding-left:18px}
+.btn{background:var(--sup2);color:var(--texto);border:0;border-radius:18px;padding:7px 14px;cursor:pointer;font-size:12.5px;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--sup3)}
+.btn.prim{background:var(--acento);color:#111;font-weight:600}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fila{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #ffffff0d}
+.fila:last-child{border-bottom:0}
+label.fila{cursor:pointer}
+input[type=checkbox]{accent-color:var(--acento);width:17px;height:17px;flex:none}
+input[type=range]{accent-color:var(--acento)}
+select,input[type=text]{background:var(--sup2);color:var(--texto);border:1px solid var(--linea);border-radius:9px;padding:6px 8px;font:inherit;font-size:12.5px;max-width:58%}
+input[type=text]{width:100%;max-width:none}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{padding:5px;border-bottom:1px solid #ffffff0d;text-align:left;vertical-align:top}
+th{color:var(--suave);font-weight:500}
+.punt{font-weight:700}
+
+
+/* ── Biblioteca ── */
+#cajon.ancho{width:560px}
+.bibt{display:flex;flex-direction:column;position:relative;padding-left:58px;min-height:56px;justify-content:center}
+.bibic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:16px}
+.bibt.apagada{opacity:.55;cursor:default}
+.bibt.apagada:hover{background:var(--sup2)}
+.bibp{display:flex;gap:12px;align-items:center;padding:8px}
+.bibp img,.bibp .sinfoto{width:72px;height:54px;object-fit:cover;border-radius:8px;flex:none;background:#000}
+.bibp .sinfoto{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--suave);background:var(--sup3)}
+.bibp>span{display:flex;flex-direction:column;min-width:0}
+.bibp b{font-weight:500}
+.num{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 5px;border-radius:10px;color:#111;font-size:11px;font-weight:700;margin-right:6px}
+.bibp .num{position:absolute;margin-left:-26px;margin-top:-36px;display:none}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px}
+.pz.on{background:var(--acento);color:#111}
+details.sec{background:var(--sup2);border-radius:12px;margin:8px 0;padding:2px 12px}
+details.sec>summary{cursor:pointer;padding:10px 0;font-weight:500;list-style:none;display:flex;align-items:center;gap:6px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"▾";margin-left:auto;color:var(--suave);transition:transform .15s}
+details.sec:not([open])>summary::after{transform:rotate(-90deg)}
+details.sec>:last-child{margin-bottom:10px}
+details.sec .ind div{background:var(--sup3)}
+i.cuad{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.samx{border-top:1px solid #ffffff12;padding:8px 0}
+.samx table{margin-top:4px}
+tr.dudoso td{color:#e5534b}
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.fotos a{position:relative;display:block;border-radius:8px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.fotos img{width:100%;height:100%;object-fit:cover;display:block}
+.fotos span{position:absolute;left:4px;bottom:4px;font-size:10px;background:#000a;padding:1px 5px;border-radius:5px}
+img.portada{width:100%;max-height:230px;object-fit:cover;border-radius:12px;margin-top:10px;background:#000}
+.tablaw{overflow:auto;margin:8px -6px;-webkit-overflow-scrolling:touch}
+table.comp{font-size:11.5px;white-space:nowrap}
+table.comp th{cursor:pointer;position:sticky;top:0;background:#202124;user-select:none}
+table.comp tr[data-p]{cursor:pointer}
+table.comp tr[data-p]:hover td{background-color:#ffffff0d}
+.doc h2{font-size:12px}
+.doc h3{font-size:16px;margin-top:14px}
+.doc ul{padding-left:18px}
+.doc li{margin:3px 0}
+.doc code,.sub code,.fuente code,details code{font-size:11px;background:#ffffff10;padding:0 4px;border-radius:4px;word-break:break-all}
+.doc .nota{background:#1b2a21;border-radius:10px;padding:8px 10px}
+.doc table{margin:8px 0}
+
+/* ── controles de cámara (abajo a la derecha, como Google Earth) ── */
+#controles{position:absolute;right:14px;bottom:44px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:10px}
+.cb{width:40px;height:40px;border-radius:50%;border:0;background:var(--sup);color:var(--texto);box-shadow:var(--sombra);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;font-weight:600;font-size:13px}
+.cb:hover{background:var(--sup2)}
+.cb .badge{position:absolute;right:-4px;top:-4px;background:var(--acento);color:#111;font-size:9.5px;border-radius:8px;padding:0 4px;line-height:15px}
+.grupo{display:flex;flex-direction:column;background:var(--sup);border-radius:20px;box-shadow:var(--sombra);overflow:hidden}
+.grupo .cb{box-shadow:none;border-radius:0;background:none}
+.grupo .cb:hover{background:#ffffff10}
+.grupo .cb+.cb{border-top:1px solid #ffffff12}
+#brujula{width:44px;height:44px}
+#brujula svg{width:34px;height:34px;transition:transform .06s linear}
+
+/* ── barra de estado ── */
+#estado{position:absolute;left:var(--riel);right:0;bottom:0;height:30px;z-index:6;display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:0 14px calc(var(--inf-seg)) 14px;
+  font-size:11.5px;color:#cfd2d6;background:linear-gradient(#0000,#000a);pointer-events:none;text-shadow:0 1px 2px #000}
+#estado>*{pointer-events:auto;white-space:nowrap}
+#escala{display:flex;align-items:center;gap:6px}
+#escala i{display:block;height:6px;border:1.5px solid #e8eaed;border-top:0}
+#creditos{border:0;background:none;color:#cfd2d6;cursor:pointer;padding:0;font-size:11.5px;text-decoration:underline dotted;text-underline-offset:2px}
+#fuentesBox{position:absolute;right:14px;bottom:36px;z-index:10;max-width:min(560px,calc(100vw - 28px));background:var(--sup);border-radius:12px;box-shadow:var(--sombra);padding:12px 14px;font-size:11.5px;color:var(--suave);max-height:50vh;overflow:auto}
+#fuentesBox .cesium-credit-lightbox-overlay{display:none}
+#fuentesBox img{max-height:18px;vertical-align:middle}
+
+/* ── ventanas (ayuda, celular) ── */
+.modal{position:absolute;inset:0;z-index:20;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .caja{background:var(--sup);border-radius:20px;box-shadow:var(--sombra);padding:20px 22px;max-width:440px;width:100%;max-height:90vh;overflow:auto;border:1px solid #ffffff10}
+.modal h3{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+.modal kbd{background:var(--sup3);border-radius:5px;padding:1px 6px;font:600 11px system-ui;margin-right:3px;border-bottom:2px solid #0006}
+.modal .lin{padding:5px 0;border-bottom:1px solid #ffffff0d;display:flex;gap:10px;align-items:baseline}
+.modal .lin span:first-child{min-width:150px}
+#qr{display:flex;justify-content:center;margin:12px 0}
+#qr svg,#qr img{width:200px;height:200px;background:#fff;border-radius:12px;padding:8px}
+.url{font:600 15px ui-monospace,monospace;background:var(--sup2);border-radius:10px;padding:8px 10px;text-align:center;word-break:break-all;user-select:all}
+
+#aviso{position:absolute;left:50%;transform:translateX(-50%);bottom:46px;z-index:15;background:#3c4043;color:#e8eaed;padding:11px 16px;border-radius:10px;font-size:13px;max-width:min(560px,calc(100vw - 32px));box-shadow:var(--sombra)}
+#cargando{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;z-index:30;color:#c9ccd1;transition:opacity .7s;
+  background:#000 url(capas/carga/horizonte_marte.jpg) center/cover no-repeat}
+@media (orientation:portrait){#cargando{background-image:url(capas/carga/horizonte_marte_cel.jpg)}}
+#cargando .marca{display:flex;align-items:center;gap:14px;transform:translateY(-4vh)}
+#cargando img{width:64px;height:64px;filter:drop-shadow(0 2px 10px #0008)}
+#cargando .t{font-size:clamp(34px,5.2vw,64px);color:#ececec;font-weight:400;letter-spacing:-.5px;text-shadow:0 2px 18px #000a}
+#cargando .giro{width:40px;height:40px;margin-top:5vh;border-radius:50%;border:3.5px solid #ffffff22;border-top-color:var(--acento);border-right-color:var(--acento);animation:girar 1s linear infinite;transform:translateY(-4vh)}
+#cargando .msj{position:absolute;bottom:calc(26px + var(--inf-seg));font-size:12.5px;color:#d7d9dccc;text-shadow:0 1px 6px #000}
+#cargando .cred{position:absolute;right:14px;bottom:calc(8px + var(--inf-seg));font-size:10px;color:#ffffff66}
+@media (max-width:600px){#cargando .cred{display:none}}
+@keyframes girar{to{transform:translateY(-4vh) rotate(360deg)}}
+@keyframes latido{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 #f28c3800)}50%{transform:scale(1.04);filter:drop-shadow(0 0 22px #f28c3866)}}
+
+
+/* ── línea de tiempo ── */
+#linea{position:absolute;left:calc(var(--riel) + 16px);right:80px;bottom:40px;z-index:8;display:flex;flex-direction:column;align-items:flex-start;gap:10px;pointer-events:none}
+#linea>*{pointer-events:auto}
+#lFicha{width:min(460px,100%);background:#202124f2;border:1px solid #ffffff12;border-radius:16px;box-shadow:var(--sombra);padding:12px 16px 10px;max-height:44vh;overflow:auto;backdrop-filter:blur(8px)}
+#lFicha h3{margin:4px 0 6px;font-size:17px;font-weight:500}
+#lFicha p{margin:0 0 8px}
+.lCab{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lFecha{font-weight:700;color:var(--acento2)}
+.lRes{font-size:11px;padding:1px 8px;border-radius:9px;color:#111;background:var(--c)}
+#lBarra{width:100%;display:flex;align-items:center;gap:10px}
+#lPista{flex:1;min-width:0;position:relative;display:flex;align-items:center;height:58px;padding:0 18px;overflow-x:auto;scrollbar-width:none;
+  background:linear-gradient(90deg,#0b1a3a00,#1d3f8acc 8%,#2456b8cc 50%,#1d3f8acc 92%,#0b1a3a00);border-radius:29px}
+#lPista::-webkit-scrollbar{display:none}
+.lLinea{display:none}
+.lPto{flex:1 0 22px;height:58px;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#dfe6f5;position:relative}
+.lPto i{width:7px;height:7px;border-radius:50%;background:#c8d6f5;transition:transform .2s,background .2s;margin-top:4px}
+.lPto span{font-size:10.5px;height:13px;white-space:nowrap;opacity:.9}
+.lPto.on span{font-weight:700;color:#fff;opacity:1}
+.lPto.mal i,.lPto.med i{width:5px;height:5px;background:#8fa5d6;opacity:.75}
+.lPto.fut i{background:none;border:1.5px solid #f2a7c8}
+.lPto.gale i{background:var(--acento2)}
+.lPto.geo i{background:#e0c9a0}
+.lPto:hover i{transform:scale(1.5)}
+.lPto.on i{width:20px;height:20px;background:#fff;opacity:1;border:0;box-shadow:0 0 0 4px #ffffff30;margin-top:-9px;margin-bottom:-4px}
+.lPto.on.gale i{background:var(--acento2);box-shadow:0 0 0 4px #ffb07040}
+.lCorte{flex:none;width:2px;height:22px;margin:0 6px;background:repeating-linear-gradient(#ffffff70 0 3px,transparent 3px 6px);align-self:center;margin-top:-14px}
+#lPlay,#lCerrar{flex:none;width:46px;height:46px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sombra)}
+#lPlay{background:var(--sup);color:var(--texto)}#lPlay svg,#lCerrar svg{width:24px;height:24px;fill:currentColor}
+#lPlay .pa{display:none}#lPlay.on .pa{display:block}#lPlay.on .pl{display:none}
+#lCerrar{background:#2a4f8f;color:#fff}
+#lCerrar:hover{background:#3563b3}
+#bLinea.on,body.lineaAbierta #bLinea{color:var(--acento2)}
+body.lineaAbierta #aviso{bottom:auto;top:80px}
+/* ── celular: riel abajo, cajón como hoja deslizable ── */
+@media (max-width:760px),(pointer:coarse) and (max-width:900px){
+  :root{--riel:0px}
+  #riel{top:auto;bottom:0;left:0;right:0;width:auto;height:calc(58px + var(--inf-seg));flex-direction:row;justify-content:space-around;padding:0 4px var(--inf-seg);border-right:0;border-top:1px solid #ffffff12}
+  #riel .logo,#riel .esp,#riel .solopc{display:none}
+  .rb{width:auto;flex:1;padding:6px 0;font-size:10.5px}
+  #busca{left:10px;right:10px;width:auto;max-width:none;top:calc(10px + var(--sup-seg))}
+  #cajaBusca{height:44px}
+  #lugares{width:auto}
+  body.cajonAbierto #busca{display:block}
+  body.cajonAbierto #lugares{display:none}
+  #cajon{left:0;right:0;width:auto;max-width:none;top:auto;bottom:calc(58px + var(--inf-seg));height:min(62vh,560px);border-radius:18px 18px 0 0;border-bottom:0}
+  #cajon.cerrado{transform:translateY(40px)}
+  #cajon.chico{height:150px}
+  #cajon.ancho{width:auto}
+  .rb{font-size:9.5px}
+  #asa{display:block;width:40px;height:5px;border-radius:3px;background:#ffffff40;margin:8px auto 0;cursor:grab}
+  #cajonCab{padding-top:4px}
+  #linea{left:8px;right:8px;bottom:calc(64px + var(--inf-seg));gap:8px}
+  #lFicha{width:auto;align-self:stretch;max-height:34vh;padding:10px 13px 8px;font-size:13px}
+  #lFicha h3{font-size:15.5px}
+  .lPto{flex:0 0 34px}
+  #lPlay,#lCerrar{width:40px;height:40px}
+  body.lineaAbierta #controles,body.lineaAbierta #estado,body.lineaAbierta #busca{display:none}
+  #controles{right:10px;bottom:calc(72px + var(--inf-seg))}
+  body.hoja #controles{display:none}
+  #estado{left:0;bottom:calc(58px + var(--inf-seg));height:26px;padding-bottom:0;background:none}
+  #estado .solopc{display:none}
+  #estado{justify-content:space-between;font-size:11px}
+  #fuentesBox{bottom:calc(88px + var(--inf-seg))}
+  #aviso{bottom:calc(92px + var(--inf-seg))}
+}
+</style>
+</head>
+<body>
+<div id="globo"></div>
+
+<div id="cargando"><div class="marca"><img src="capas/logo/logo-128.png" alt=""><div class="t">Gale Earth</div></div><div class="giro" role="progressbar" aria-label="Cargando"></div><div class="msj">Cargando Marte en 3D…</div><div class="cred">Render propio · mapa Viking (NASA/USGS)</div></div>
+
+<nav id="riel" aria-label="Menú principal">
+  <img class="logo" src="capas/logo/logo-128.png" alt="Gale Earth" title="Gale Earth · ver Marte entero" id="logoRiel">
+  <button class="rb" id="rBuscar" title="Buscar"><svg class="i" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>Buscar</button>
+  <button class="rb" data-t="explorar" title="Explorar Gale"><svg class="i" viewBox="0 0 24 24"><path d="M12 10.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1 1.1-.49 1.1-1.1-.49-1.1-1.1-1.1zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19z"/></svg>Explorar</button>
+  <button class="rb" data-t="base" title="Base en Gale"><svg class="i" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Base</button>
+  <button class="rb" data-t="orbita" title="Orbitadores"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-25 12 12)"/><circle cx="20.2" cy="8.2" r="1.6"/></svg>Órbitas</button>
+  <button class="rb" data-t="biblioteca" title="Biblioteca: toda la información guardada"><svg class="i" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>Biblioteca</button>
+  <button class="rb" data-t="capas" title="Capas y estilo del mapa"><svg class="i" viewBox="0 0 24 24"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg>Capas</button>
+  <div class="esp"></div>
+  <button class="rb solopc" id="rCel" title="Abrir en el celular"><svg class="i" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>Celular</button>
+  <button class="rb solopc" id="vAyuda" title="Controles y ayuda"><svg class="i" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>Ayuda</button>
+  <button class="rb solopc" id="rPantalla" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>Pantalla</button>
+</nav>
+
+<div id="busca">
+  <div id="cajaBusca">
+    <svg class="i" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Buscar en Marte: pozo, zona, lugar o coordenadas">
+    <button id="limpiarQ" class="oculto" title="Borrar"><svg class="i" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+  </div>
+  <div id="resultados" class="oculto"></div>
+  <div id="lugares">
+    <button class="chipb" id="vGale"><i style="background:#ff9f43"></i>Cráter Gale</button>
+    <button class="chipb" id="vRec"><i style="background:#4fa3d9"></i>Recorrido de Curiosity</button>
+    <button class="chipb" id="vHoy"><i style="background:#e5534b"></i>Curiosity hoy</button>
+    <button class="chipb" id="vMarte"><i style="background:#c46a3c"></i>Marte entero</button>
+  </div>
+</div>
+
+<aside id="cajon" class="cerrado" aria-label="Información">
+  <div id="asa" title="Agrandar o achicar"></div>
+  <div id="cajonCab"><h2 id="cajonTitulo">Explorar</h2>
+    <button id="cerrarCajon" title="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
+  <div id="reloj" class="oculto"><span id="hora">—</span><span class="seg" id="vel"><button data-x="1" class="on">×1</button><button data-x="60">×60</button><button data-x="600">×600</button></span><button class="btn" id="ahora">Ahora</button></div>
+  <div id="contenido"></div>
+</aside>
+
+<div id="linea" class="oculto" role="region" aria-label="Línea de tiempo">
+  <div id="lFicha"></div>
+  <div id="lBarra"><button id="lPlay" title="Reproducir"><svg viewBox="0 0 24 24"><path class="pl" d="M8 5v14l11-7z"/><path class="pa" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg></button>
+    <div id="lPista"></div>
+    <button id="lCerrar" title="Cerrar la línea de tiempo"><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
+</div>
+<div id="controles">
+  <button class="cb" id="brujula" title="Norte arriba (clic) · girar: Shift + arrastrar"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#ffffff22" stroke-width="1.5"/><path d="M20 5l5 15h-10z" fill="#e5534b"/><path d="M20 35l-5-15h10z" fill="#e8eaed"/><text x="20" y="4.6" font-size="0" fill="none">N</text></svg></button>
+  <button class="cb" id="b3d" title="Vista 2D / 3D">3D</button>
+  <button class="cb" id="bLinea" title="Línea de tiempo: de Galileo a hoy"><svg class="i" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9.1.1L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"/></svg></button>
+  <button class="cb" id="vRelieve" title="Relieve ×1 (escala real)"><svg class="i" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg><span class="badge oculto" id="relBadge"></span></button>
+  <div class="grupo">
+    <button class="cb" id="bMas" title="Acercar"><svg class="i" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+    <button class="cb" id="bMenos" title="Alejar"><svg class="i" viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg></button>
+  </div>
+</div>
+
+<footer id="estado">
+  <span id="coords" class="solopc"></span>
+  <span id="camara" class="solopc"></span>
+  <span id="escala"><i id="escalaBarra" style="width:60px"></i><span id="escalaTxt"></span></span>
+  <button id="creditos" title="Fuentes de los datos">Datos: NASA · ESA · USGS</button>
+</footer>
+<div id="fuentesBox" class="oculto"></div>
+
+<div id="ayuda" class="modal oculto"><div class="caja">
+  <h3>Controles <button class="btn" data-cerrar>Cerrar</button></h3>
+  <div class="solotact">
+    <div class="lin"><span>1 dedo</span><span>mover el mapa</span></div>
+    <div class="lin"><span>2 dedos: pellizcar</span><span>acercar / alejar</span></div>
+    <div class="lin"><span>2 dedos: arrastrar arriba o abajo</span><span>inclinar la vista</span></div>
+    <div class="lin"><span>2 dedos: girar</span><span>rotar</span></div>
+  </div>
+  <div class="solomouse">
+    <div class="lin"><span><kbd>arrastrar</kbd></span><span>mover el mapa</span></div>
+    <div class="lin"><span><kbd>Shift</kbd>+<kbd>arrastrar</kbd> · rueda apretada</span><span>girar alrededor del punto</span></div>
+    <div class="lin"><span><kbd>Alt</kbd>+<kbd>arrastrar</kbd></span><span>mirar alrededor sin moverse</span></div>
+    <div class="lin"><span><kbd>rueda</kbd> · clic derecho</span><span>acercar / alejar</span></div>
+    <div class="lin"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> · <kbd>Q</kbd><kbd>E</kbd></span><span>volar · bajar / subir</span></div>
+    <div class="lin"><span><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd></span><span>girar la vista (<kbd>Shift</kbd> más rápido)</span></div>
+    <div class="lin"><span><kbd>/</kbd></span><span>buscar</span></div>
+  </div>
+  <p class="sub">La brújula vuelve el norte arriba. El botón 3D alterna entre vista desde arriba e inclinada.</p>
+</div></div>
+
+<div id="celular" class="modal oculto"><div class="caja">
+  <h3>Abrir en el celular <button class="btn" data-cerrar>Cerrar</button></h3>
+  <div id="celInfo" class="sub">Buscando la dirección de esta computadora en la red…</div>
+</div></div>
+
+<div id="aviso" class="oculto"></div>

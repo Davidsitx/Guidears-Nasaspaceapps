@@ -16,6 +16,7 @@ Este archivo lo leen los asistentes Claude de los dos integrantes del equipo. Ma
 | Ciencia, rutas y motor de cálculo | David + su Claude | `docs/ciencia.md`, `docs/rover-salud.md`, `data/curiosity/`, `data/rutas/`, `prototipo/planificador/` |
 | Motor 3D (`escena3d/`: rover a escala, rutas, cámara, panel) | David + su Claude (acordado el 13/11) | `escena3d/` |
 | Capas satelitales y terreno (alimentan la escena por el contrato) | Compañero + su Claude | `data/terreno/` |
+| Gale Earth (globo de Marte estilo Google Earth, Biblioteca, línea de tiempo) | Compañero + su Claude | `gale-earth/` |
 | Compartido (cambiar solo avisando en docs/notas.md) | ambos | `CLAUDE.md`, `docs/contrato.md`, `data/parametros.json`, `docs/tareas.md` |
 
 Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/notas.md** (traspasos) y **docs/tareas.md**.
