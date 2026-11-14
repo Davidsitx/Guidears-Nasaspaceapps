@@ -107,6 +107,8 @@ Cada parada se ubicó **sobre el terreno real** (DEM USGS de 2 m y ortofoto HiRI
 | A4 | no | media | no | baja (p40) | baja | **muy baja (p13)** | Terreno claro casi "mudo" en todos los productos |
 | C4 | no | media | no | **nula** | **nula** | **muy baja (p7)** | Ídem, el más "mudo" de la zona |
 
+**Con HYD** (separa tipos de sulfato): en **S** la señal es de tipo **monohidratado** (BD2100 en el p96 de la zona); en **B1 y B2**, de tipo **polihidratado** (sulfato con agua y sin la banda de 2,1 µm); **C3** solo muestra agua, sin sulfatos; **A4 y C4** siguen sin señal.
+
 pN = percentil dentro de la zona (p94 = más fuerte que el 94% de la zona). Valores en bytes y parámetros aproximados en `muestras_paradas.json`.
 
 **Qué nos dice para las rutas.**
@@ -116,7 +118,7 @@ pN = percentil dentro de la zona (p94 = más fuerte que el 94% de la zona). Valo
 - **A2:** el leve indicio de hematita justifica una parada de cámara (Mastcam/ChemCam) al pasar, no una perforación.
 - Precedente que conviene citar: en Vera Rubin, CRISM marcó hematita fuerte, pero Curiosity después la encontró también donde CRISM casi no la veía (Fraeman et al. 2020, JGR Planets). Por eso la órbita **orienta** y el rover o el astronauta **confirman**.
 
-**Advertencias.** Son indicadores cualitativos y relativos al entorno del sitio de aterrizaje (en Gale la señal es mucho más sutil que en Mawrth Vallis o Nili Fossae). Pueden aparecer falsos positivos por polvo, bruma de hielo (tono azul en ALT e HYD), iluminación o pendiente. Las observaciones son de 2006–2012. Falta el producto **HYD**, que separa sulfatos mono y polihidratados, y el TRU llegó incompleto.
+**Advertencias.** Son indicadores cualitativos y relativos al entorno del sitio de aterrizaje (en Gale la señal es mucho más sutil que en Mawrth Vallis o Nili Fossae). Pueden aparecer falsos positivos por polvo, bruma de hielo (tono azul en ALT e HYD), iluminación o pendiente. Las observaciones son de 2006–2012. El TRU no se usa: el archivo de origen llega cortado.
 
 ## Limitaciones
 - Pendientes a 2 m: el DEM promedia; una roca de 1 m no aparece.

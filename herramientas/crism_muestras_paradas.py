@@ -14,7 +14,8 @@ meta=json.load(open(REPO+'data/terreno/sol5070/meta.json'))
 latN,latS,lonW,lonE=meta['lat_norte'],meta['lat_sur'],meta['lon_oeste'],meta['lon_este']
 LIM={'ALT':[('D2300',.01,.03),('SINDEX2',.01,.03),('BD1900_2',.005,.025)],
      'FM2':[('BD530',.18,.25),('BD920',.005,.02),('BDI1000VIS',.01,.022)],
-     'MAF':[('OLINDEX3',.025,.1),('LCPINDEX2',0,.02),('HCPINDEX2',0,.15)]}
+     'MAF':[('OLINDEX3',.025,.1),('LCPINDEX2',0,.02),('HCPINDEX2',0,.15)],
+     'HYD':[('SINDEX2',.01,.03),('BD2100_2',.008,.03),('BD1900_2',.005,.025)]}
 def load(p):
     ds=gdal.Open(D+p+'.tif'); a=ds.ReadAsArray(); gt=ds.GetGeoTransform()
     if a.ndim==2: a=a[None]
@@ -26,7 +27,7 @@ g=json.load(open(REPO+'data/rutas/rutas_sol5070_calculadas.geojson'))
 pts=[(f['properties']['parada'],f['geometry']['coordinates']) for f in g['features'] if f['geometry']['type']=='Point' and f['properties']['parada']!='C2']
 lines=[(f['properties']['ruta'],f['geometry']['coordinates']) for f in g['features'] if f['geometry']['type']=='LineString']
 out={}
-for p in ['ALT','FM2','MAF']:
+for p in ['ALT','FM2','MAF','HYD']:
     a,gt=load(p)
     valid=~np.all(a==255,axis=0)
     c0,r0=tocr(gt,latN,lonW); c1,r1=tocr(gt,latS,lonE)
@@ -49,7 +50,7 @@ for p in ['ALT','FM2','MAF']:
     # zone stats
     out[p+'_zona_media_dn']=[round(zone[b].mean(),1) for b in range(a.shape[0])]
 json.dump(out,open(REPO+'data/mineralogia/crism_sol5070/muestras_paradas.json','w'),indent=1,ensure_ascii=False)
-for p in ['ALT','FM2','MAF']:
+for p in ['ALT','FM2','MAF','HYD']:
     print('==',p,[x[0] for x in LIM[p]],'media zona DN',out[p+'_zona_media_dn'])
     for name,_ in pts:
         print(' ',name.ljust(3),'  '.join(f"{v['param']}: DN{v['dn']:6.1f} p_zona{v['pct_zona']:3d} p_mos{v['pct_mosaico']:3d}" for v in out[p][name]))

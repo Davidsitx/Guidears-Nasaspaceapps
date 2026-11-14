@@ -2,6 +2,17 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 madrugada · David (con Claude) · FICHAS DE PARADAS Y VISOR DEL ASTRONAUTA EN LA ESCENA 3D
+- Hizo, en `escena3d/plantilla.html` y `armar.py` (regenerado `index.html`, 7,1 MB, abre sin internet):
+  - **Paradas desplegables** (panel y carteles 3D) con "Qué vas a encontrar" (CRISM), suelo, radiación y motivo.
+  - **Visor del casco** en primera persona (tecla V): suelo, minerales bajo los pies, radiación, refugio, próxima parada con flecha y aviso de llegada.
+  - **Capa CRISM** (ALT, HYD, FM2, MAF). `armar.py` la toma sola de `data/mineralogia/crism_<zona>/`.
+  - Las rutas de `rutas_sol5070_calculadas.geojson` ya no salen como "a ojo"; el borrador cualitativo se carga oculto y sin paradas.
+  - Probado en navegador (1400×860 y 1024×768, tamaño tablet): sin errores; la lectura por parada coincide con la tabla de `docs/paradas.md`.
+- HYD sumado: S = sulfato monohidratado; B1/B2 = polihidratado.
+- **Para el compañero:** la capa CRISM entra a la escena por el mismo mecanismo que las otras (contrato). Si sumás más capas satelitales, conviene seguir el formato de `data/mineralogia/crism_sol5070/meta.json` (esquina noroeste, grados por píxel, leyenda).
+- Falta: textos en inglés del visor y las fichas para la entrega; probar en una tablet real.
+
 ## 2026-11-14 madrugada · David (con Claude) · MINERALOGÍA CRISM POR PARADA
 - Hizo: recorté los mosaicos CRISM GMWG 2012 (ALT, FM2, MAF, VNA, FAL) sobre la zona sol5070 y medí cada parada. Están en `data/mineralogia/crism_sol5070/`: PNG en la misma proyección que el terreno, `meta.json` con esquina noroeste, grados por píxel y leyenda, y `muestras_paradas.json`. Script en `herramientas/crism_muestras_paradas.py`. Figura e interpretación en `docs/paradas.md` (sección CRISM).
 - Resultado: los mosaicos **cubren** la zona. Alineación con HiRISE: ≤ 1 píxel (19 m). Hay sulfatos en la parte baja (S, A1, B1, B2); el terreno claro (A4, C4) da poca señal en todos los productos, lo que apoya, sin probar, que sea otra unidad. B2 es la parada con más señales y C3 la de más agua.

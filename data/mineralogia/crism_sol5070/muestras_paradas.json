@@ -640,5 +640,219 @@
   53.9,
   0.0,
   9.8
+ ],
+ "HYD": {
+  "S": [
+   {
+    "param": "SINDEX2",
+    "dn": 74.7,
+    "valor": 0.0159,
+    "pct_zona": 94,
+    "pct_mosaico": 99
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 25.0,
+    "valor": 0.0102,
+    "pct_zona": 96,
+    "pct_mosaico": 99
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 14.3,
+    "valor": 0.0061,
+    "pct_zona": 65,
+    "pct_mosaico": 90
+   }
+  ],
+  "A1": [
+   {
+    "param": "SINDEX2",
+    "dn": 47.6,
+    "valor": 0.0137,
+    "pct_zona": 87,
+    "pct_mosaico": 98
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 2.8,
+    "valor": 0.0082,
+    "pct_zona": 93,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 0.0,
+    "valor": 0.005,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   }
+  ],
+  "A2": [
+   {
+    "param": "SINDEX2",
+    "dn": 10.3,
+    "valor": 0.0108,
+    "pct_zona": 64,
+    "pct_mosaico": 93
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 2.9,
+    "valor": 0.0083,
+    "pct_zona": 93,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 0.0,
+    "valor": 0.005,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   }
+  ],
+  "A3": [
+   {
+    "param": "SINDEX2",
+    "dn": 7.1,
+    "valor": 0.0106,
+    "pct_zona": 62,
+    "pct_mosaico": 93
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 1.8,
+    "valor": 0.0082,
+    "pct_zona": 93,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 12.3,
+    "valor": 0.006,
+    "pct_zona": 64,
+    "pct_mosaico": 89
+   }
+  ],
+  "A4": [
+   {
+    "param": "SINDEX2",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 0.0,
+    "valor": 0.008,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 5.6,
+    "valor": 0.0054,
+    "pct_zona": 61,
+    "pct_mosaico": 88
+   }
+  ],
+  "B1": [
+   {
+    "param": "SINDEX2",
+    "dn": 36.4,
+    "valor": 0.0129,
+    "pct_zona": 81,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 0.0,
+    "valor": 0.008,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 18.0,
+    "valor": 0.0064,
+    "pct_zona": 66,
+    "pct_mosaico": 90
+   }
+  ],
+  "B2": [
+   {
+    "param": "SINDEX2",
+    "dn": 32.4,
+    "valor": 0.0126,
+    "pct_zona": 79,
+    "pct_mosaico": 97
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 0.0,
+    "valor": 0.008,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 28.3,
+    "valor": 0.0072,
+    "pct_zona": 72,
+    "pct_mosaico": 92
+   }
+  ],
+  "C3": [
+   {
+    "param": "SINDEX2",
+    "dn": 0.0,
+    "valor": 0.01,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 0.0,
+    "valor": 0.008,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 44.6,
+    "valor": 0.0085,
+    "pct_zona": 79,
+    "pct_mosaico": 94
+   }
+  ],
+  "C4": [
+   {
+    "param": "SINDEX2",
+    "dn": 0.3,
+    "valor": 0.01,
+    "pct_zona": 55,
+    "pct_mosaico": 91
+   },
+   {
+    "param": "BD2100_2",
+    "dn": 0.0,
+    "valor": 0.008,
+    "pct_zona": 0,
+    "pct_mosaico": 0
+   },
+   {
+    "param": "BD1900_2",
+    "dn": 15.4,
+    "valor": 0.0062,
+    "pct_zona": 65,
+    "pct_mosaico": 90
+   }
+  ]
+ },
+ "HYD_zona_media_dn": [
+  16.5,
+  2.1,
+  24.0
  ]
 }

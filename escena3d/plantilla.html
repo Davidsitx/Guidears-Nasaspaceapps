@@ -64,8 +64,45 @@
   #fp input[type=range] { width: 100%; }
   #fp .fila2 { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
 
-  #ficha { top: 12px; left: 50%; transform: translateX(-50%); width: min(340px, calc(100% - 24px)); }
+  #ficha { top: 12px; left: 50%; transform: translateX(-50%); width: min(400px, calc(100% - 24px)); max-height: calc(100% - 110px); overflow-y: auto; z-index: 5; }
   #ficha .cerrar { float: right; padding: 0 8px; }
+
+  /* fichas desplegables de paradas (panel y ventana) */
+  details { border: 1px solid var(--borde); border-radius: 7px; margin: 5px 0; padding: 0 8px; }
+  details > summary { cursor: pointer; padding: 6px 0; font-weight: 600; list-style: none; display: flex; gap: 6px; align-items: baseline; }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary::before { content: '▸'; color: var(--acento); transition: transform .15s; }
+  details[open] > summary::before { transform: rotate(90deg); }
+  details details { margin: 4px 0; }
+  .parada-cab { display: flex; gap: 6px; align-items: baseline; }
+  .chip { display: inline-block; min-width: 26px; text-align: center; border-radius: 10px; padding: 0 6px; font-weight: 700; color: #fff; font-size: 12px; }
+  .hall { margin: 4px 0 6px; padding-left: 8px; border-left: 3px solid var(--acento); }
+  .hall b { display: block; }
+  .hall .sub { display: block; }
+  .nivel { font-size: 10.5px; border-radius: 4px; padding: 0 4px; margin-left: 4px; border: 1px solid currentColor; font-weight: 500; }
+  .n-fuerte { color: #7bd88f; } .n-presente { color: #ffcf7a; } .n-rastro, .n-indicio { color: #a99d90; }
+  .tabla { width: 100%; border-collapse: collapse; font-size: 12px; } .tabla td { padding: 1px 0; vertical-align: top; }
+  .tabla td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* visor del astronauta (casco): datos sobre la vista en primera persona */
+  #visor { position: fixed; inset: 0; pointer-events: none; z-index: 3; font: 12.5px/1.35 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: #bff6ff; text-shadow: 0 0 6px rgba(0, 200, 255, .55), 0 1px 1px #000; }
+  #visor .marco { position: absolute; inset: 0; border-radius: 48% / 38%; box-shadow: inset 0 0 0 9999px transparent, inset 0 0 120px 40px rgba(10, 6, 4, .78);
+    outline: 1px solid rgba(150, 230, 255, .12); outline-offset: -26px; }
+  #visor .vb { position: absolute; background: rgba(0, 25, 35, .38); border: 1px solid rgba(150, 230, 255, .35); border-radius: 8px; padding: 7px 10px; min-width: 190px; backdrop-filter: blur(2px); }
+  #visor .vb h3 { margin: 0 0 3px; font-size: 10.5px; letter-spacing: .14em; color: #7fdcff; font-weight: 600; }
+  #visor .vb .fila b { font-weight: 700; }
+  #visor .alerta { color: #ff8f8f !important; text-shadow: 0 0 6px rgba(255, 60, 60, .7); }
+  #v-suelo { top: 70px; left: 7%; max-width: 270px; } #v-rad { top: 70px; right: 7%; }
+  #v-prox { top: 18px; left: 50%; transform: translateX(-50%); text-align: center; min-width: 240px; }
+  #v-prox .flecha { display: inline-block; font-size: 22px; line-height: 1; transition: transform .2s; }
+  #v-ref { bottom: 170px; left: 7%; } #v-mira { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px; border: 1px solid rgba(150,230,255,.5); border-radius: 50%; }
+  #v-aviso { bottom: 170px; left: 50%; transform: translateX(-50%); pointer-events: auto; cursor: pointer; text-align: center; border-color: #7bd88f !important; max-width: 360px; }
+  #v-min { margin-top: 3px; } #v-min div { white-space: normal; }
+  @media (max-width: 760px) {
+    #visor { font-size: 11px; } #visor .vb { min-width: 0; padding: 5px 7px; }
+    #v-suelo { left: 3%; top: 64px; max-width: 46%; } #v-rad { right: 3%; top: 64px; max-width: 46%; } #v-ref { left: 3%; bottom: 190px; } #v-aviso { bottom: 190px; }
+  }
   #abrir { position: fixed; top: 12px; left: 12px; display: flex; gap: 6px; }
   #cargando { position: fixed; inset: 0; display: grid; place-items: center; color: var(--tenue); }
   @media (max-width: 760px) {
@@ -92,7 +129,13 @@
   <label><input type="radio" name="capa" value="pendiente"> Pendiente vs. límites <span class="prov">provisorio</span></label>
   <label><input type="radio" name="capa" value="prohibidas"> Zonas prohibidas <span class="prov">provisorio</span></label>
   <label><input type="radio" name="capa" value="cielo"> Sombra de radiación (cielo tapado)</label>
+  <label id="l-crism"><input type="radio" name="capa" value="crism"> Mineralogía desde órbita (CRISM)
+    <select id="sCrism" aria-label="Producto CRISM"><option value="ALT">ALT alteración</option><option value="HYD">HYD sulfatos</option><option value="FM2">FM2 hierro</option><option value="MAF">MAF máficos</option></select></label>
   <div class="leyenda" id="leyenda"></div>
+
+  <h2>Paradas · qué hay en cada una</h2>
+  <div class="sub">Tocá una parada para desplegarla (también desde los carteles en 3D).</div>
+  <div id="paradas"></div>
 
   <h2>Rutas</h2>
   <div class="sub">Marcá paradas sobre el terreno y calculá rutas (barra de abajo). Las rutas trazadas a ojo se ven semitransparentes.</div>
@@ -143,10 +186,31 @@
   <label>Hora <input type="range" id="iHora" min="5.5" max="18.5" step="0.25" value="12"></label>
   <label>Ls <input type="number" id="iLs" min="0" max="359" value="21"></label>
   <label>Velocidad × <select id="sVel"><option>1</option><option>10</option><option selected>60</option><option>300</option></select></label>
-  <span id="msg">Teclas: G autonomía · WASD manejar · Espacio parar · 1–4 cámaras · C capa</span>
+  <span id="msg">Teclas: G autonomía · WASD manejar · Espacio parar · 1–4 cámaras · C capa · V visor (primera persona)</span>
 </div>
 
 <div id="ficha" class="caja oculto"><button class="cerrar" id="ficha-cerrar">×</button><div id="ficha-texto"></div></div>
+
+<div id="visor" class="oculto">
+  <div class="marco"></div><div id="v-mira"></div>
+  <div class="vb" id="v-prox"><h3>PRÓXIMA PARADA</h3><div><span class="flecha" id="v-flecha">↑</span> <b id="v-pnom">—</b></div><div id="v-pdist" class="sub" style="color:inherit"></div></div>
+  <div class="vb" id="v-suelo"><h3>SUELO</h3>
+    <div class="fila"><span>Pendiente</span><b id="v-pend">—</b></div>
+    <div class="fila"><span>Límite traje</span><b id="v-lim">—</b></div>
+    <div class="fila"><span>Elevación</span><b id="v-elev">—</b></div>
+    <div class="fila"><span>Terreno</span><b id="v-terr">—</b></div>
+    <div id="v-min"></div></div>
+  <div class="vb" id="v-rad"><h3>RADIACIÓN</h3>
+    <div class="fila"><span>Tasa ahora</span><b id="v-tasa">—</b></div>
+    <div class="fila"><span>Cielo tapado</span><b id="v-cielo">—</b></div>
+    <div class="fila"><span>Dosis salida</span><b id="v-dosis">—</b></div>
+    <div id="v-sombra" class="sub" style="color:inherit"></div></div>
+  <div class="vb" id="v-ref"><h3>REFUGIO</h3>
+    <div class="fila"><span>Distancia</span><b id="v-dref">—</b></div>
+    <div class="fila"><span>Tiempo afuera</span><b id="v-tiempo">—</b></div>
+    <div class="fila"><span>Hora solar</span><b id="v-hora">—</b></div></div>
+  <div class="vb oculto" id="v-aviso"></div>
+</div>
 
 <div id="fp" class="caja oculto">
   <div class="datos">
@@ -158,6 +222,7 @@
   <input type="range" id="f-barra" min="0" max="1000" value="0">
   <div class="fila2">
     <button id="f-play">▶ Recorrer</button>
+    <button id="f-visor" aria-pressed="true" title="Datos del casco sobre la vista (V)">Visor</button>
     <label style="margin:0">Duración <select id="f-vel"><option value="30">30 s</option><option value="90" selected>90 s</option><option value="240">4 min</option></select></label>
     <span class="sub" id="f-ruta" style="flex:1"></span>
     <button id="f-salir">Salir (Esc)</button>
@@ -237,6 +302,70 @@ const alturaEn = (x, z) => muestrear(Z, ...mundoAPix(x, z));
 const celdaDe = (x, z) => { const [px, py] = mundoAPix(x, z); return [Math.min(W - 1, Math.max(0, Math.floor(px))), Math.min(H - 1, Math.max(0, Math.floor(py)))]; };
 const centroDe = ([c, f]) => pixAMundo(c + 0.5, f + 0.5);
 
+// ---------- mineralogía orbital CRISM (data/mineralogia/crism_<zona>/, opcional) ----------
+// Mosaicos CRISM GMWG 2012 (Seelos et al., JHU/APL), 19,3 m/píxel, misma proyección que el terreno.
+// Bytes: 0 = sin señal (bajo el umbral del producto), 254 = señal al máximo del estiramiento, 255 = fondo.
+const CR = D.crism && D.crism.png ? { m: D.crism, img: {} } : null;
+if (CR) {
+  etapa('Leyendo mineralogía CRISM…');
+  for (const [prod, b] of Object.entries(CR.m.png)) {
+    const im = new Image();
+    await new Promise((ok, mal) => { im.onload = ok; im.onerror = () => mal(new Error('no se pudo leer CRISM ' + prod)); im.src = 'data:image/png;base64,' + b; });
+    const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);
+    CR.img[prod] = { w: im.width, h: im.height, d: x.getImageData(0, 0, im.width, im.height).data };
+  }
+  const V = CR.img.VNA;      // brillo de referencia: percentiles para decir "terreno claro / oscuro"
+  if (V) { const a = []; for (let k = 0; k < V.w * V.h; k++) if (V.d[4 * k] !== 255) a.push(V.d[4 * k]); a.sort((p, q) => p - q); CR.vnaOrden = a; }
+}
+function crismEn(prod, lon, lat, rad = 0) {
+  const I = CR?.img[prod]; if (!I) return null;
+  const c0 = Math.floor((lon - CR.m.lon_oeste) / CR.m.grados_por_px), f0 = Math.floor((CR.m.lat_norte - lat) / CR.m.grados_por_px);
+  const s = [0, 0, 0]; let n = 0;
+  for (let df = -rad; df <= rad; df++) for (let dc = -rad; dc <= rad; dc++) {
+    const c = c0 + dc, f = f0 + df; if (c < 0 || f < 0 || c >= I.w || f >= I.h) continue;
+    const k = 4 * (f * I.w + c); if (I.d[k] === 255 && I.d[k + 1] === 255 && I.d[k + 2] === 255) continue;
+    s[0] += I.d[k]; s[1] += I.d[k + 1]; s[2] += I.d[k + 2]; n++;
+  }
+  return n ? s.map(v => v / n) : null;
+}
+function brilloRelativo(lon, lat) {
+  const v = crismEn('VNA', lon, lat, 1); if (!v || !CR.vnaOrden) return null;
+  const a = CR.vnaOrden; let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < v[0]) lo = m + 1; else hi = m; }
+  return lo / a.length;      // 0 = lo más oscuro de la zona, 1 = lo más claro
+}
+// Traduce los productos CRISM a "qué vas a encontrar". Umbrales en bytes elegidos por el equipo (docs/paradas.md, sección CRISM):
+// son indicadores relativos, no identificación mineral.
+function lecturaMineral(lon, lat, rad = 1) {
+  if (!CR) return null;
+  const alt = crismEn('ALT', lon, lat, rad), hyd = crismEn('HYD', lon, lat, rad), fm2 = crismEn('FM2', lon, lat, rad), maf = crismEn('MAF', lon, lat, rad);
+  if (!alt && !hyd && !fm2 && !maf) return null;
+  const sind = hyd ? hyd[0] : (alt?.[1] ?? 0), mono = hyd?.[1] ?? 0, agua = alt?.[2] ?? hyd?.[2] ?? 0, arc = alt?.[0] ?? 0;
+  const ferr = fm2?.[1] ?? 0, fe = fm2?.[2] ?? 0, oli = maf?.[0] ?? 0;
+  const L = [];
+  if (sind >= 8) L.push({ k: 'sulfato', nivel: sind >= 30 ? 'fuerte' : 'presente', corto: 'Sulfatos con agua',
+    titulo: 'Sulfatos hidratados' + (mono >= 2 ? ' (tipo monohidratado)' : agua >= 8 ? ' (tipo polihidratado)' : ''),
+    que: 'Sales que quedan cuando el agua se evapora o circula por la roca.',
+    para: 'Registran cómo se secó Gale. Es la unidad que Curiosity estudia hoy: confirmar con muestra o imagen química.' });
+  if (agua >= 20 && sind < 8) L.push({ k: 'agua', nivel: agua >= 35 ? 'fuerte' : 'presente', corto: 'Mineral con agua',
+    titulo: 'Otro mineral con agua (no sulfato)', que: 'Fase hidratada que CRISM no separa desde órbita.',
+    para: 'Puede ser una capa o veta distinta: vale verla de cerca y muestrear.' });
+  if (arc >= 5) L.push({ k: 'arcilla', nivel: 'rastro', corto: 'Rastro de arcillas',
+    titulo: 'Rastro de arcillas de hierro y magnesio', que: 'Se forman con agua más duradera y menos ácida.',
+    para: 'Señal apenas sobre el umbral. Si se confirma, sería el ambiente más habitable de la zona.' });
+  if (ferr >= 40) L.push({ k: 'hematita', nivel: 'indicio', corto: 'Óxido de hierro',
+    titulo: 'Indicio de óxido de hierro cristalino (hematita)', que: 'Hierro oxidado; en Gale suele asociarse a agua oxidante.',
+    para: 'Foto y química al pasar. Desde órbita puede engañar (cresta Vera Rubin, Fraeman et al. 2020).' });
+  if (fe >= 90 || oli >= 60) L.push({ k: 'mafico', nivel: fe >= 130 || oli >= 85 ? 'fuerte' : 'presente', corto: 'Arena volcánica',
+    titulo: 'Material volcánico oscuro (hierro ferroso, olivino)', que: 'Probable arena basáltica o roca sin alterar por agua.',
+    para: 'Atención a la tracción en arena. Sirve de contraste frente a lo alterado por agua.' });
+  if (!L.some(i => ['sulfato', 'agua', 'mafico'].includes(i.k))) L.push({ k: 'mudo', nivel: 'presente', corto: 'Señal apagada',
+    titulo: 'Poca señal en todos los productos', que: 'Polvo encima, o una capa sin minerales con agua.',
+    para: 'Si es la capa de yardangs, marca el final del registro de agua. Se confirma tocando la roca.' });
+  return L;
+}
+const FUENTE_CRISM = 'CRISM (MRO), mosaicos GMWG 2012, 19 m/píxel (Seelos et al., JHU/APL). Indicador desde órbita, relativo a Gale: se confirma en el lugar.';
+
 // ---------- escena ----------
 const lienzo = $('lienzo');
 const renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, logarithmicDepthBuffer: true });
@@ -309,9 +438,23 @@ function colorCapa(capa, k) {
     if (noP) return [255, 150, 40, 170];              // naranja: solo para el astronauta
     return null;
   }
+  if (capa === 'crism') {
+    const i = Math.floor(k / W), j = k % W;
+    const v = crismEn($('sCrism').value, M.lon_oeste + (j + 0.5) * CS * M.grados_por_m, M.lat_norte - (i + 0.5) * CS * M.grados_por_m);
+    const mx = v ? Math.max(v[0], v[1], v[2]) : 0;
+    if (mx < 18) return null;                                 // sin señal o ruido: se ve la ortoimagen
+    // color normalizado (se lee el tono) y opacidad según la intensidad: la señal débil queda tenue
+    return [v[0] * 255 / mx, v[1] * 255 / mx, v[2] * 255 / mx, Math.min(200, 30 + (mx - 18) * 2.6)];
+  }
   const f = CIELO[k];
   return f > 0.05 ? [40, 120, 255, Math.min(210, (f - 0.05) * 700)] : null;
 }
+const LEY_CRISM = {
+  ALT: '<span><i style="background:#e33"></i>arcillas Fe/Mg</span><span><i style="background:#3d3"></i>sulfatos con agua</span><span><i style="background:#36f"></i>agua (otras fases)</span>',
+  HYD: '<span><i style="background:#e33"></i>sulfato con agua (sin separar)</span><span><i style="background:#ee3"></i>monohidratado</span><span><i style="background:#e3e"></i>polihidratado</span><span><i style="background:#36f"></i>otras fases con agua</span>',
+  FM2: '<span><i style="background:#e33"></i>polvo férrico</span><span><i style="background:#3d3"></i>hematita</span><span><i style="background:#36f"></i>hierro ferroso, máficos</span>',
+  MAF: '<span><i style="background:#e33"></i>olivino</span><span><i style="background:#3d3"></i>piroxeno bajo en Ca</span><span><i style="background:#36f"></i>piroxeno alto en Ca</span>',
+};
 let capaActual = 'ninguna';
 function dibujarCapa(capa) {
   capaActual = capa;
@@ -320,7 +463,7 @@ function dibujarCapa(capa) {
     const c2 = capaLienzo.getContext('2d'), img = c2.createImageData(W, H);
     for (let k = 0; k < W * H; k++) { const rgba = colorCapa(capa, k); if (rgba) img.data.set(rgba, 4 * k); }
     c2.putImageData(img, 0, 0);
-    ctxTex.imageSmoothingEnabled = capa === 'cielo';
+    ctxTex.imageSmoothingEnabled = capa === 'cielo' || capa === 'crism';
     ctxTex.drawImage(capaLienzo, 0, 0, lienzoTex.width, lienzoTex.height);
   }
   const lims = `Vehículo ${PR.rMax}°, astronauta ${PR.pMax}° (data/parametros.json)`;
@@ -332,7 +475,9 @@ function dibujarCapa(capa) {
       ? `<span><i style="background:#9632aa"></i>prohibido para los dos</span><span><i style="background:#dc323c"></i>solo para el rover</span><span><i style="background:#ff9628"></i>solo para el astronauta</span><span>${lims}. A 2 m mucho terreno supera 20°.</span>`
       : capa === 'cielo'
         ? `<span><i style="background:#2878ff"></i>más azul = más cielo tapado</span><span>Dosis local = ${PR.dosis} mSv/día × (1 − ${PR.k} × fracción tapada). Cálculo propio; en los bordes se subestima.</span>`
-        : '<span>HiRISE, USGS, 0,5 m por píxel</span>';
+        : capa === 'crism'
+          ? `${LEY_CRISM[$('sCrism').value]}<span>${CR?.m.leyenda?.[$('sCrism').value] || ''}</span><span>${FUENTE_CRISM} Sin color = sin señal; más opaco = señal más fuerte.</span>`
+          : '<span>HiRISE, USGS, 0,5 m por píxel</span>';
   textura.needsUpdate = true;
   document.querySelectorAll('input[name=capa]').forEach(el => { el.checked = el.value === capa; });
 }
@@ -395,13 +540,16 @@ const rutas = []; const paradasGeo = [];
 let paleta = 0;
 for (const archivo of D.rutas) for (const f of archivo.geojson.features || []) {
   const g = f.geometry, p = f.properties || {};
+  // los archivos "cualitativa" son borradores trazados a ojo: se cargan ocultos y sin paradas
+  const aOjo = /cualitativ|a_ojo/i.test(archivo.archivo);
   if (g?.type === 'LineString') {
-    const nombre = p.ruta || p.nombre || `${archivo.archivo} #${rutas.length + 1}`, tipo = tipoDe(p.ruta || p.nombre);
+    const nombre = p.nombre || p.ruta || `${archivo.archivo} #${rutas.length + 1}`, tipo = tipoDe(p.ruta || p.nombre);
     const base = g.coordinates.map(c => { const [x, z] = pixAMundo(...lonlatAPix(c[0], c[1])); return { x, z }; });
-    const r = procesar({ nombre: `${nombre} (a ojo)`, tipo, props: p, archivo: archivo.archivo, base, aOjo: true,
-      color: COLORES[tipo] || PALETA[paleta++ % PALETA.length] });
+    const r = procesar({ nombre: aOjo ? `${nombre} (a ojo)` : nombre, tipo, props: p, archivo: archivo.archivo, base, aOjo, fija: true, oculta: aOjo,
+      color: tipo === 'astronauta' && /caminata/i.test(p.nombre || '') ? '#ffb27a' : COLORES[tipo] || PALETA[paleta++ % PALETA.length] });
+    if (tipo === 'astronauta') { const p0 = r.pts[0]; r.maxRef = Math.max(...r.pts.map(q => Math.hypot(q.x - p0.x, q.z - p0.z))); r.idaVuelta = /vuelta|→.*→/i.test(p.nombre || ''); }
     dibujarRuta(r); rutas.push(r);
-  } else if (g?.type === 'Point') paradasGeo.push({ props: p, coord: g.coordinates, archivo: archivo.archivo });
+  } else if (g?.type === 'Point' && !aOjo) paradasGeo.push({ props: p, coord: g.coordinates, archivo: archivo.archivo });
 }
 
 // ---------- marcadores (sprites de tamaño constante en pantalla) ----------
@@ -426,16 +574,31 @@ function agregarMarcador(texto, color, x, z, datos, ancho) {
   const m = { sp, poste, x, y, z, datos }; sp.userData.marcador = m; marcadores.push(m);
   return m;
 }
+// color de cada parada según quién va (rover, astronauta, ambos)
+function colorParada(p) {
+  const q = (p.quien || p.ruta || '').toLowerCase();
+  if (q.includes('tripul')) return '#c98a3d';
+  if (q.includes('astronauta')) return COLORES.astronauta;
+  if (q.includes('rover') || q.includes('vehic')) return COLORES.vehiculo;
+  return '#8a7a6a';
+}
+// paradas en el mismo lugar (por ejemplo B2 y C2) comparten un solo cartel
+const paradasMarcadas = [];
 for (const pa of paradasGeo) {
-  if (pa.props.parada === 0) continue;              // la parada 0 es la posición de Curiosity
-  const r = rutas.find(r => r.props.ruta === pa.props.ruta) || rutas.find(r => r.archivo === pa.archivo);
+  if (pa.props.parada === 0 || pa.props.parada === '0') continue;   // la parada 0 es la posición de Curiosity
   const [x, z] = pixAMundo(...lonlatAPix(pa.coord[0], pa.coord[1]));
-  agregarMarcador(String(pa.props.parada ?? '•'), r ? r.color : '#888', x, z, { tipo: 'parada', parada: pa, ruta: r });
+  pa.x = x; pa.z = z;
+  const igual = paradasMarcadas.find(o => Math.hypot(o.x - x, o.z - z) < 3);
+  if (igual) { igual.mismas.push(pa); pa.marcador = igual.marcador; continue; }
+  pa.mismas = [];
+  const id = String(pa.props.parada ?? '•');
+  pa.marcador = agregarMarcador(id, colorParada(pa.props), x, z, { tipo: 'parada', parada: pa }, id.length > 1 ? 80 : 64);
+  paradasMarcadas.push(pa);
 }
 const posCur = D.posicion.features[0];
 let [CUR_X, CUR_Z] = pixAMundo(...lonlatAPix(...posCur.geometry.coordinates));
 const CUR_ADENTRO = Math.abs(CUR_X) < CX && Math.abs(CUR_Z) < CZ;
-if (CUR_ADENTRO) agregarMarcador('Curiosity · sol ' + (posCur.properties.sol ?? ''), '#c0392b', CUR_X, CUR_Z, { tipo: 'curiosity', f: posCur }, 300);
+if (CUR_ADENTRO && !paradasMarcadas.some(o => Math.hypot(o.x - CUR_X, o.z - CUR_Z) < 15)) agregarMarcador('Curiosity · sol ' + (posCur.properties.sol ?? ''), '#c0392b', CUR_X, CUR_Z, { tipo: 'curiosity', f: posCur }, 300);
 
 // recorrido real de Curiosity dentro de la zona (si la carpeta del terreno lo trae), punteado amarillo
 let textoRecorrido = '';
@@ -636,7 +799,7 @@ function marcaParada(x, z, n) {
 const decir = t => { $('msg').textContent = t; };
 
 // ---------- panel de rutas ----------
-let rutaSel = rutas[0] || null;
+let rutaSel = rutas.find(r => !r.aOjo) || rutas[0] || null;
 function filaRuta(r) {
   const el = document.createElement('div'); el.className = 'ruta';
   const filas = [
@@ -656,7 +819,7 @@ function filaRuta(r) {
     filas.push([`Soles (${PR.porSol[0]}–${PR.porSol[1]} m/sol)`, `${Math.ceil(r.largo3d / PR.porSol[1])}–${Math.ceil(r.largo3d / PR.porSol[0])}`]);
   } else filas.push(['Tiempo de manejo', `${fmtH(r.horas)} <span class="prov">supuesto</span>`]);
   el.innerHTML = `<div class="cab"><input type="checkbox" ${r.oculta ? '' : 'checked'} title="Mostrar"><span class="color" style="background:${r.color};opacity:${r.aOjo ? 0.55 : 1}"></span>${r.nombre}</div>
-    <div class="sub">${r.aOjo ? r.archivo + (r.props.nota ? ' · ' + r.props.nota : '') : 'Calculada con A* sobre el terreno real'}</div>
+    <div class="sub">${r.aOjo ? 'Borrador a ojo, superado por las rutas calculadas · ' + r.archivo : r.fija ? 'Calculada con A* sobre el terreno real · ' + r.archivo : 'Calculada ahora con A* sobre el terreno real'}</div>
     <table>${filas.map(f => `<tr><td>${f[0]}</td><td>${f[1]}</td></tr>`).join('')}</table>
     <div class="botones"><button data-a="perfil">Ver perfil</button><button data-a="fp">Primera persona</button></div>`;
   el.querySelector('input').onchange = e => { r.oculta = !e.target.checked; };
@@ -668,7 +831,7 @@ function listarRutas() {
   const cont = $('rutas'); cont.innerHTML = textoRecorrido;
   if (!rutas.length) cont.insertAdjacentHTML('beforeend', '<div class="sub">No hay rutas: marcá paradas y calculá.</div>');
   // primero las calculadas
-  [...rutas].sort((a, b) => (a.aOjo ? 1 : 0) - (b.aOjo ? 1 : 0)).forEach(r => cont.appendChild(filaRuta(r)));
+  [...rutas].sort((a, b) => (a.aOjo ? 2 : a.fija ? 1 : 0) - (b.aOjo ? 2 : b.fija ? 1 : 0)).forEach(r => cont.appendChild(filaRuta(r)));
   marcarSel(); dibujarPerfil();
 }
 function marcarSel() { rutas.forEach(r => r.el?.classList.toggle('sel', r === rutaSel)); }
@@ -680,7 +843,7 @@ $('bMarcar').onclick = () => {
 };
 $('bBorrar').onclick = () => {
   paradasUsuario.length = 0; objParadas.forEach(o => escena.remove(o)); objParadas.length = 0;
-  for (let k = rutas.length - 1; k >= 0; k--) if (!rutas[k].aOjo) { quitarRuta(rutas[k]); rutas.splice(k, 1); }
+  for (let k = rutas.length - 1; k >= 0; k--) if (!rutas[k].fija) { quitarRuta(rutas[k]); rutas.splice(k, 1); }
   if (!rutas.includes(rutaSel)) rutaSel = rutas[0] || null;
   elegirRecorridos(); listarRutas(); decir('Paradas y rutas calculadas borradas.');
 };
@@ -688,7 +851,7 @@ $('bCalcular').onclick = () => {
   if (paradasUsuario.length < 2) { decir('Marcá al menos una parada (botón Marcar paradas).'); return; }
   decir('Calculando…');
   setTimeout(() => {
-    for (let k = rutas.length - 1; k >= 0; k--) if (!rutas[k].aOjo) { quitarRuta(rutas[k]); rutas.splice(k, 1); }
+    for (let k = rutas.length - 1; k >= 0; k--) if (!rutas[k].fija) { quitarRuta(rutas[k]); rutas.splice(k, 1); }
     const rv = planificar('rover', paradasUsuario), pe = planificar('astro', paradasUsuario.concat([paradasUsuario[0]]));
     const nuevas = [];
     if (rv.camino) nuevas.push(procesar({ nombre: 'Vehículo (calculada)', tipo: 'vehiculo', color: COLORES.vehiculo, base: rv.camino.map(c => { const [x, z] = centroDe(c); return { x, z }; }) }));
@@ -707,7 +870,7 @@ $('bCalcular').onclick = () => {
 };
 // qué recorren el rover y el astronauta en autonomía: la ruta calculada si hay; si no, la trazada a ojo
 function elegirRecorridos() {
-  const de = t => rutas.find(r => !r.aOjo && r.tipo === t) || rutas.find(r => r.aOjo && r.tipo === t) || null;
+  const de = t => rutas.find(r => !r.fija && r.tipo === t) || rutas.find(r => r.fija && !r.aOjo && r.tipo === t) || rutas.find(r => r.aOjo && r.tipo === t) || null;
   rutaRover = de('vehiculo'); sRover = 0; est.dist = 0;
   if (rutaRover) { const p = rutaRover.pts[0]; est.x = p.x; est.z = p.z; }
   per.ruta = de('astronauta'); per.s = 0; per.dist = 0; per.tiempo = 0; per.dosis = 0; per.activo = !!per.ruta; astro.visible = per.activo;
@@ -776,10 +939,11 @@ function entrarFP(r) {
   $('f-ruta').textContent = `${r.nombre} · ojos a ${OJOS[r.tipo]} m`;
   $('f-dosis-et').textContent = r.tipo === 'astronauta' ? 'dosis acumulada' : r.tipo === 'vehiculo' ? 'soles de manejo' : '—';
   if (innerWidth < 760) mostrarPaneles(false);
+  prepararVisor(r);
   ubicarFP(true);
 }
 function salirFP(volver = true) {
-  fp = null; $('fp').classList.add('oculto'); $('ctrl').classList.remove('oculto');
+  fp = null; $('fp').classList.add('oculto'); $('ctrl').classList.remove('oculto'); $('visor').classList.add('oculto');
   controles.enabled = true;
   if (volver) { modoCam = 'libre'; $('sCam').value = 'libre'; vistaGeneral(); }
 }
@@ -798,7 +962,81 @@ function ubicarFP(salto = false) {
   const pm = $('f-pend'); pm.textContent = `${num(q.marcha || 0, 1)}°`; pm.style.color = r.lim != null && q.marcha > r.lim ? 'var(--peligro)' : '';
   $('f-dosis').textContent = r.tipo === 'astronauta' ? `${num(q.dosis, 1)} µSv` : r.tipo === 'vehiculo' ? `${Math.ceil(fp.d / PR.porSol[1])}–${Math.ceil(fp.d / PR.porSol[0])}` : '—';
   if (!$('panel').classList.contains('oculto')) dibujarPerfil(fp.d);
+  if (visorOn) actualizarVisor(q);
 }
+
+// ---------- visor del casco (lo que el astronauta ve sobre la vista) ----------
+let visorOn = true, ultLectura = null;
+function prepararVisor(r) {
+  // paradas que quedan sobre esta ruta, con su distancia a lo largo del recorrido
+  r.paradasRuta = [];
+  for (const pa of paradasGeo) {
+    if (pa.props.parada === 0 || pa.props.parada === '0') continue;
+    let dmin = Infinity, dd = 0; for (const q of r.pts) { const d = Math.hypot(q.x - pa.x, q.z - pa.z); if (d < dmin) { dmin = d; dd = q.d; } }
+    if (dmin < 30 && !r.paradasRuta.some(o => Math.abs(o.d - dd) < 5)) r.paradasRuta.push({ pa, d: dd });
+  }
+  r.paradasRuta.sort((a, b) => a.d - b.d);
+  if (visorOn) { $('visor').classList.remove('oculto'); mostrarPaneles(false); $('ficha').classList.add('oculto'); }
+  $('f-visor').setAttribute('aria-pressed', visorOn);
+  $('v-lim').textContent = r.tipo === 'vehiculo' ? `${PR.rMax}° (rover)` : `${PR.pMax}° (traje)`;
+  $('v-lim').previousElementSibling.textContent = r.tipo === 'vehiculo' ? 'Límite rover' : 'Límite traje';
+  ultLectura = null;
+}
+function actualizarVisor(q) {
+  const r = fp.r, [lon, lat] = mundoALonLat(q.x, q.z), [c, f] = celdaDe(q.x, q.z), k = f * W + c;
+  // suelo
+  const lim = r.tipo === 'vehiculo' ? PR.rMax : PR.pMax, pm = q.marcha || 0;
+  const vp = $('v-pend'); vp.textContent = `${num(pm, 1)}° (suelo ${num(PEND[k])}°)`; vp.classList.toggle('alerta', pm > lim);
+  $('v-elev').textContent = `${num(D.zmin + q.y)} m`;
+  const br = CR ? brilloRelativo(lon, lat) : null;
+  $('v-terr').textContent = br == null ? '—' : br > 0.7 ? 'claro' : br < 0.3 ? 'oscuro' : 'intermedio';
+  const L = lecturaMineral(lon, lat, 0), clave = L ? L.map(i => i.k + i.nivel).join() : '';
+  if (clave !== ultLectura) {        // el bloque de minerales solo se redibuja cuando cambia
+    ultLectura = clave;
+    $('v-min').innerHTML = L ? '<div style="color:#7fdcff;font-size:10.5px;letter-spacing:.12em;margin-top:4px">BAJO TUS PIES · CRISM</div>' + L.map(i => `<div>▸ ${i.corto} <span class="nivel n-${i.nivel}">${i.nivel}</span></div>`).join('') : '';
+  }
+  // radiación
+  const tasa = PR.dosis / 24 * 1000 * (1 - PR.k * q.cielo);
+  $('v-tasa').textContent = `${num(tasa, 1)} µSv/h`;
+  $('v-cielo').textContent = `${num(q.cielo * 100)} %`;
+  $('v-dosis').textContent = r.tipo === 'astronauta' ? `${num(q.dosis, 1)} µSv` : 'blindado';
+  $('v-sombra').textContent = q.cielo > 0.2 ? '◆ En sombra del relieve: buen lugar para pausas' : q.cielo > 0.12 ? 'Algo de reparo del relieve' : 'Cielo abierto';
+  // refugio (punto de salida de esta ruta) y tiempo
+  const p0 = r.pts[0], dRef = Math.hypot(q.x - p0.x, q.z - p0.z), vr = $('v-dref');
+  vr.textContent = `${fmtM(dRef)} / ${fmtM(PR.refMax)}`; vr.classList.toggle('alerta', r.tipo === 'astronauta' && dRef > PR.refMax);
+  $('v-tiempo').textContent = r.tipo === 'vehiculo' ? fmtH(q.t) + ' manejo' : fmtH(q.t);
+  $('v-hora').textContent = $('eHora').textContent;
+  // próxima parada: rumbo relativo a la mirada y distancia
+  const prox = (r.paradasRuta || []).find(o => o.d > fp.d + 3) || null;
+  const aqui = (r.paradasRuta || []).find(o => Math.abs(o.d - fp.d) <= 18) || null;
+  if (prox) {
+    const pa = prox.pa, adelante = new THREE.Vector3(); camara.getWorldDirection(adelante);
+    const ang = Math.atan2(pa.x - q.x, -(pa.z - q.z)) - Math.atan2(adelante.x, -adelante.z);
+    $('v-flecha').style.transform = `rotate(${ang}rad)`;
+    $('v-pnom').textContent = `${pa.props.parada} · ${nombreSinId(pa.props)}`;
+    $('v-pdist').textContent = `${fmtM(prox.d - fp.d)} por la ruta · ${fmtM(Math.hypot(pa.x - q.x, pa.z - q.z))} en línea recta`;
+  } else {
+    const fin = r.pts[r.pts.length - 1], adelante = new THREE.Vector3(); camara.getWorldDirection(adelante);
+    const vuelve = Math.hypot(fin.x - p0.x, fin.z - p0.z) < 30, falta = r.largo - fp.d;
+    $('v-flecha').style.transform = `rotate(${Math.atan2(fin.x - q.x, -(fin.z - q.z)) - Math.atan2(adelante.x, -adelante.z)}rad)`;
+    $('v-pnom').textContent = falta < 5 ? (vuelve ? 'De vuelta en el refugio' : 'Fin de la ruta') : vuelve ? 'Regreso al refugio' : 'Fin de la ruta';
+    $('v-pdist').textContent = falta < 5 ? '' : `${fmtM(falta)} por la ruta`;
+  }
+  const av = $('v-aviso');
+  if (aqui) {
+    if (av.dataset.p !== String(aqui.pa.props.parada)) {
+      const Lp = lecturaMineral(aqui.pa.coord[0], aqui.pa.coord[1], 1);
+      av.dataset.p = aqui.pa.props.parada;
+      av.innerHTML = `<b>Llegaste a ${aqui.pa.props.parada}</b> · ${nombreSinId(aqui.pa.props)}<br>${Lp ? Lp.map(i => i.corto).join(' · ') : ''}<br><span style="opacity:.8">Tocá para ver la ficha completa</span>`;
+      av.onclick = () => mostrarFicha(aqui.pa.marcador);
+    }
+    av.classList.remove('oculto');
+  } else { av.classList.add('oculto'); av.dataset.p = ''; }
+}
+$('f-visor').onclick = () => {
+  visorOn = !visorOn; $('f-visor').setAttribute('aria-pressed', visorOn); if (visorOn) mostrarPaneles(false);
+  $('visor').classList.toggle('oculto', !visorOn || !fp); ultLectura = null; if (fp) ubicarFP();
+};
 fBarra.oninput = () => { if (!fp) return; fp.d = fp.r.largo * fBarra.value / 1000; ubicarFP(true); };
 fPlay.onclick = () => { if (!fp) return; if (fp.d >= fp.r.largo) fp.d = 0; fp.jugando = !fp.jugando; fPlay.textContent = fp.jugando ? '❚❚ Pausa' : '▶ Recorrer'; };
 $('f-salir').onclick = () => salirFP();
@@ -827,18 +1065,80 @@ function dibujarPerfil(marca = null) {
 }
 
 // ---------- fichas de paradas ----------
+const quienTexto = q => { q = (q || '').toLowerCase(); return q.includes('tripul') ? 'Astronauta, bajando del rover tripulado' : q.includes('astronauta') ? 'Astronauta a pie' : q.includes('rover') || q.includes('vehic') ? 'Robot (Curiosity)' : q.includes('ambos') ? 'Robot y astronauta' : q || '—'; };
+const nombreSinId = p => (p.nombre || 'Parada').replace(new RegExp('^' + String(p.parada).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*·\\s*'), '');
+function htmlHallazgos(L, conPara = true) {
+  if (!L) return '<p class="sub">Sin datos de mineralogía para esta zona (falta data/mineralogia/crism_' + D.zona + ').</p>';
+  return L.map(i => `<div class="hall"><b>${i.titulo}<span class="nivel n-${i.nivel}">${i.nivel}</span></b><span class="sub">${i.que}${conPara ? ' ' + i.para : ''}</span></div>`).join('');
+}
+// contenido de una parada: lo mismo en el panel y en la ventana emergente
+function fichaParada(pa) {
+  const p = pa.props, [lon, lat] = pa.coord, x = pa.x, z = pa.z, [c, f] = celdaDe(x, z), k = f * W + c;
+  const cielo = CIELO[k], tasa0 = PR.dosis / 24 * 1000, tasa = tasa0 * (1 - PR.k * cielo);
+  const pend = PEND[k], pm = p.pendiente_media_10m != null ? +p.pendiente_media_10m : null;
+  const br = CR ? brilloRelativo(lon, lat) : null;
+  const terreno = br == null ? '—' : br > 0.7 ? 'claro (de lo más claro de la zona)' : br < 0.3 ? 'oscuro (arena o roca oscura)' : 'intermedio';
+  const otras = (pa.mismas || []).map(o => `${o.props.parada} (${quienTexto(o.props.quien).toLowerCase()})`).join(', ');
+  const filas = (L) => `<table class="tabla">${L.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>`;
+  return `
+    <div class="sub">${quienTexto(p.quien)}${otras ? ' · también ' + otras : ''} · ${lat.toFixed(5)}°, ${lon.toFixed(5)}° E</div>
+    <details open><summary>Qué vas a encontrar</summary>${htmlHallazgos(lecturaMineral(lon, lat, 1))}<p class="sub">${FUENTE_CRISM}</p></details>
+    <details><summary>Suelo y terreno</summary>${filas([
+      ['Elevación', `${num(D.zmin + alturaEn(x, z))} m`],
+      ...(p.sobre_salida_m != null ? [['Sobre la salida', `+${num(+p.sobre_salida_m)} m`]] : []),
+      ['Pendiente en el punto (celda de 2 m)', `${num(pend, 1)}°`],
+      ...(pm != null ? [['Pendiente media en 10 m', `${num(pm, 1)}°`]] : []),
+      ['Caminable con traje (≤ ' + PR.pMax + '°)', (pm ?? pend) <= PR.pMax ? 'sí' : '<span class="mal">no</span>'],
+      ['Apto para el rover (≤ ' + PR.rMax + '°)', (pm ?? pend) <= PR.rMax ? 'sí' : '<span class="mal">no</span>'],
+      ...(p.distancia_a_afloramiento_m != null ? [['Afloramiento más cercano', `${num(+p.distancia_a_afloramiento_m)} m`]] : []),
+      ['Tono del terreno desde órbita', terreno],
+    ])}<p class="sub">DEM USGS de 1 m llevado a 2 m (Calef y Parker 2016); límites de pendiente provisorios (data/parametros.json).</p></details>
+    <details><summary>Radiación</summary>${filas([
+      ['Cielo tapado por el relieve', `${num(cielo * 100)} %`],
+      ['Tasa de dosis estimada', `${num(tasa, 1)} µSv/h`],
+      ['Con el cielo abierto', `${num(tasa0, 1)} µSv/h`],
+      ['Ahorro por sombra del relieve', `${num(PR.k * cielo * 100, 1)} %`],
+    ])}<p class="sub">Medido por RAD en superficie: ${PR.dosis} mSv/día. Ahorro = ${PR.k} × cielo tapado: cálculo propio calibrado en Murray Buttes (Ehresmann et al. 2021); por encima de 19% de cielo tapado es extrapolación. Las paredes también reflejan algo de radiación.</p></details>
+    <details><summary>Por qué venimos</summary><p>${p.motivo_cientifico || '<i>Motivo científico pendiente (docs/contrato.md §2).</i>'}</p>${p.fuente_motivo ? `<p class="sub">Fuente: ${p.fuente_motivo}</p>` : ''}</details>
+    <div class="botones"><button data-ir="${p.parada}">Ver en 3D</button>${rutaConParada(pa) ? `<button data-fp="${p.parada}">Ir caminando (visor)</button>` : ''}</div>`;
+}
+// ruta del astronauta que pasa por la parada (o, si no hay, la del vehículo)
+function rutaConParada(pa) {
+  const cerca = r => !r.aOjo && !r.oculta && r.pts.some(q => Math.hypot(q.x - pa.x, q.z - pa.z) < 25);
+  return rutas.find(r => r.tipo === 'astronauta' && cerca(r)) || rutas.find(r => cerca(r)) || null;
+}
+function irAParada(pa) {
+  if (fp) salirFP(false);
+  const y = alturaEn(pa.x, pa.z); controles.target.set(pa.x, y, pa.z); camara.position.set(pa.x - 70, y + 55, pa.z + 70); controles.update();
+  modoCam = 'libre'; $('sCam').value = 'libre';
+}
+function caminarHasta(pa) {
+  const r = rutaConParada(pa); if (!r) return;
+  let mejor = 0, dmin = Infinity; r.pts.forEach(q => { const d = Math.hypot(q.x - pa.x, q.z - pa.z); if (d < dmin) { dmin = d; mejor = q.d; } });
+  entrarFP(r); fp.d = Math.max(0, mejor - 60); ubicarFP(true);
+}
+function conectarBotones(cont) {
+  cont.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => irAParada(paradasGeo.find(o => String(o.props.parada) === b.dataset.ir)));
+  cont.querySelectorAll('[data-fp]').forEach(b => b.onclick = () => { $('ficha').classList.add('oculto'); caminarHasta(paradasGeo.find(o => String(o.props.parada) === b.dataset.fp)); });
+}
+function listarParadas() {
+  const cont = $('paradas');
+  if (!paradasGeo.length) { cont.innerHTML = '<div class="sub">No hay paradas con motivo en data/rutas/.</div>'; return; }
+  cont.innerHTML = paradasGeo.filter(pa => pa.props.parada !== 0 && pa.props.parada !== '0').map(pa =>
+    `<details data-parada="${pa.props.parada}"><summary><span class="chip" style="background:${colorParada(pa.props)}">${pa.props.parada}</span>${nombreSinId(pa.props)}</summary>${fichaParada(pa)}</details>`).join('');
+  conectarBotones(cont);
+}
 function mostrarFicha(m) {
-  const d = m.datos, elev = `${num(D.zmin + m.y, 1)} m`; let html;
+  const d = m.datos; let html;
   if (d.tipo === 'curiosity') {
     const p = d.f.properties;
-    html = `<h1>Curiosity, sol ${p.sol}</h1><p>Elevación del terreno: ${elev}</p><p class="sub">Fuente: ${p.fuente || ''}</p>`;
+    html = `<h1>Curiosity, sol ${p.sol}</h1><p>Elevación del terreno: ${num(D.zmin + m.y, 1)} m</p><p class="sub">Fuente: ${p.fuente || ''}</p>`;
   } else {
-    const p = d.parada.props;
-    html = `<h1>${p.parada}. ${p.nombre || 'Parada'}</h1><p class="sub">Ruta ${p.ruta || ''} (a ojo) · elevación ${elev}</p>
-      <p>${p.motivo_cientifico || '<i>Motivo científico pendiente: falta en el GeoJSON (docs/contrato.md §2).</i>'}</p>
-      ${p.fuente_motivo ? `<p class="sub">Fuente: ${p.fuente_motivo}</p>` : ''}`;
+    const pa = d.parada, p = pa.props;
+    html = `<h1 class="parada-cab"><span class="chip" style="background:${colorParada(p)}">${p.parada}</span>${nombreSinId(p)}</h1>${fichaParada(pa)}`;
+    const det = document.querySelector(`#paradas details[data-parada="${p.parada}"]`); if (det) det.open = true;
   }
-  $('ficha-texto').innerHTML = html; $('ficha').classList.remove('oculto');
+  $('ficha-texto').innerHTML = html; $('ficha').classList.remove('oculto'); conectarBotones($('ficha-texto'));
 }
 $('ficha-cerrar').onclick = () => $('ficha').classList.add('oculto');
 
@@ -846,11 +1146,12 @@ $('ficha-cerrar').onclick = () => $('ficha').classList.add('oculto');
 let abajo = null;
 lienzo.addEventListener('pointerdown', e => { abajo = [e.clientX, e.clientY]; });
 lienzo.addEventListener('pointerup', e => {
-  if (!abajo || Math.hypot(e.clientX - abajo[0], e.clientY - abajo[1]) > 5 || fp) return;
+  if (!abajo || Math.hypot(e.clientX - abajo[0], e.clientY - abajo[1]) > 5) return;
   const r = lienzo.getBoundingClientRect();
   rayo.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camara);
   const hit = rayo.intersectObjects(marcadores.map(m => m.sp), false)[0];
   if (hit && !marcando) { mostrarFicha(hit.object.userData.marcador); return; }
+  if (fp) return;
   if (!marcando) return;
   const p = puntoTerreno(e); if (!p) return;
   if (!paradasUsuario.length) { paradasUsuario.push(celdaDe(est.x, est.z)); marcaParada(est.x, est.z, 0); }
@@ -872,14 +1173,17 @@ addEventListener('keydown', e => {
   if ((e.target.tagName === 'INPUT' && e.target.type === 'number') || e.target.tagName === 'SELECT') return;
   const k = e.key.toLowerCase(); teclas[k] = true;
   if (e.key === 'Escape' && fp) salirFP();
+  if (k === 'v' && fp) $('f-visor').click();
   if (e.key === ' ') { e.preventDefault(); if (fp) fPlay.click(); else setAuto(false); }
   if (fp) return;
   if (k === 'g') setAuto(!est.auto);
   if (['1', '2', '3', '4'].includes(e.key)) setCam(['libre', 'rover', 'astro', 'cenital'][+e.key - 1]);
-  if (k === 'c') { const capas = ['ninguna', 'pendiente', 'prohibidas', 'cielo']; dibujarCapa(capas[(capas.indexOf(capaActual) + 1) % capas.length]); }
+  if (k === 'c') { const capas = ['ninguna', 'pendiente', 'prohibidas', 'cielo', ...(CR ? ['crism'] : [])]; dibujarCapa(capas[(capas.indexOf(capaActual) + 1) % capas.length]); }
 });
 addEventListener('keyup', e => { teclas[e.key.toLowerCase()] = false; });
 document.querySelectorAll('input[name=capa]').forEach(el => el.onchange = () => dibujarCapa(el.value));
+$('sCrism').onchange = () => dibujarCapa('crism');
+if (!CR) $('l-crism').classList.add('oculto');
 
 // ---------- paneles (en celular arrancan cerrados) ----------
 function mostrarPaneles(si) {
@@ -899,7 +1203,8 @@ $('fuentes').innerHTML = `
   <p><b>Medido:</b> elevación ${(M.fuente_dem || '').split(', http')[0]}; imagen: ${(M.fuente_orto || 'sin ortoimagen').split(', http')[0]}.</p>
   ${CUR_ADENTRO ? `<p><b>Posición de Curiosity:</b> ${posCur.properties.fuente || ''}</p>` : ''}
   ${D.recorrido ? `<p><b>Recorrido real:</b> ${D.recorrido.fuente || ''}</p>` : ''}
-  <p><b>Rutas a ojo:</b> ${[...new Set(rutas.filter(r => r.aOjo).map(r => r.archivo))].join(', ') || 'ninguna en esta zona'} (propuesta del equipo).</p>
+  <p><b>Rutas:</b> calculadas con A* (${[...new Set(rutas.filter(r => r.fija && !r.aOjo).map(r => r.archivo))].join(', ') || 'ninguna'}); borrador a ojo oculto (${[...new Set(rutas.filter(r => r.aOjo).map(r => r.archivo))].join(', ') || 'ninguno'}).</p>
+  ${CR ? `<p><b>Mineralogía:</b> ${CR.m.fuente.split('. Descarga')[0]}. Indicadores cualitativos; umbrales del equipo (docs/paradas.md).</p>` : ''}
   <p><b>Supuestos (${P.estado || 'provisorio'}):</b> pendiente máx. vehículo ${PR.rMax}°, astronauta ${PR.pMax}°; alcance ${fmtM(PR.refMax)} desde el refugio (${P.astronauta?.fuente_radio || 'sin fuente'}); dosis ${PR.dosis} mSv/día y blindaje ${PR.k} (${P.radiacion?.fuente || 'sin fuente'}).</p>
   <p><b>Cálculo propio:</b> pendientes, cielo tapado (16 direcciones hasta 400 m), rutas A*, tiempos (Tobler normalizado a ${num(PR.vCam * 3.6, 1)} km/h en llano) y dosis. Sol: declinación con oblicuidad de 25,19° y Ls.</p>
   <p><b>Modelo del rover:</b> proporciones a escala, sin detalle de ingeniería; la suspensión se ajusta a los 6 contactos (no es la cinemática exacta del rocker-bogie).</p>
@@ -921,7 +1226,7 @@ function ubicarAstro(s) {
   piernas[0].rotation.z = Math.sin(s * 3) * 0.4; piernas[1].rotation.z = -Math.sin(s * 3) * 0.4;
   $('aCielo').textContent = `${Math.round(p.cielo * 100)} %`;
 }
-elegirRecorridos(); listarRutas(); ubicarRover(); vistaGeneral();
+elegirRecorridos(); listarRutas(); listarParadas(); ubicarRover(); vistaGeneral();
 
 // ---------- bucle ----------
 let ultimo = performance.now();
@@ -995,7 +1300,7 @@ renderer.setAnimationLoop(ahora => {
   renderer.render(escena, camara);
 });
 document.getElementById('cargando').remove();
-window.__escena = { rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
+window.__escena = { paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>
 </html>

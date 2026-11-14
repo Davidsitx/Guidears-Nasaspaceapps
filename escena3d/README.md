@@ -26,7 +26,17 @@ Es la fusión de dos trabajos del equipo:
   rover, naranja solo el astronauta) y sombra de radiación (cielo tapado).
 - **Cámaras** (teclas 1 a 4): libre, seguir al rover, seguir al astronauta, cenital. Además, **primera persona** desde
   cada ruta (botón de la ruta): recorre la ruta a la altura de los ojos con tiempo, pendiente y dosis acumulada.
-- **Paradas numeradas** de las rutas a ojo: al tocarlas, nombre, elevación y motivo científico (si el GeoJSON lo trae).
+- **Paradas desplegables** (panel izquierdo "Paradas" y carteles 3D): cada parada de `data/rutas/rutas_sol5070_calculadas.geojson`
+  se despliega en cuatro secciones: **Qué vas a encontrar** (lectura de CRISM: sulfatos, agua, arcillas, hematita,
+  arena volcánica o "señal apagada"), **Suelo y terreno** (elevación, pendiente, caminable o no, tono del terreno),
+  **Radiación** (cielo tapado, tasa estimada contra cielo abierto) y **Por qué venimos** (motivo y fuente). Botones
+  "Ver en 3D" e "Ir caminando (visor)". Las paradas en el mismo lugar (B2 y C2) comparten cartel.
+- **Visor del casco** (primera persona, botón "Visor" o tecla V): sobre la vista, **suelo** (pendiente contra el límite
+  del traje, elevación, tono, minerales CRISM bajo los pies), **radiación** (tasa ahora, cielo tapado, dosis de la
+  salida, aviso de sombra), **refugio** (distancia contra 1,38 km, tiempo afuera, hora) y **próxima parada** con
+  flecha de rumbo. Al llegar a una parada aparece un aviso que abre su ficha.
+- **Capa de mineralogía CRISM** (ALT, HYD, FM2, MAF), si existe `data/mineralogia/crism_<zona>/`.
+- El borrador "a ojo" (`ruta_sol5070_cualitativa.geojson`) se carga oculto: se puede prender desde su casilla.
 - En celular los paneles arrancan cerrados (botones "Panel" y "Datos").
 
 ## Cómo regenerarla
@@ -52,6 +62,7 @@ Archivos:
 | Posición de Curiosity | medido | NASA, "Where is Curiosity?" |
 | Recorrido real (zona Monte Sharp) | medido | MSL PLACES, `localized_interp.csv` |
 | Rutas a ojo y sus paradas | propuesta del equipo | `data/rutas/` |
+| Mineralogía por parada y en el visor | medido desde órbita (CRISM GMWG 2012) + lectura del equipo (umbrales) | `data/mineralogia/crism_sol5070/`, `docs/paradas.md` |
 | Límites de pendiente, velocidades, alcance de 1,38 km, dosis en superficie, blindaje | supuesto (**provisorio**) | `data/parametros.json` y sus fuentes |
 | Pendiente, cielo tapado, rutas A*, tiempos, dosis, inclinación del rover | cálculo propio | esta página y `armar.py` |
 | Modelo de Curiosity | aproximado | proporciones a escala, sin detalle de ingeniería |

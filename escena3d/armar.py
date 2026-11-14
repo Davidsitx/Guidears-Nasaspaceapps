@@ -9,6 +9,7 @@ Lee:
     data/rutas/*.geojson                                    (docs/contrato.md §2; todas las que haya)
     data/curiosity/posicion_sol5070.geojson
     data/parametros.json                                    (docs/contrato.md §3)
+    data/mineralogia/crism_<zona>/meta.json y *.png         (opcional: mineralogía CRISM por parada y en el visor)
     escena3d/vendor/three.module.min.js, OrbitControls.js   (three.js r170, MIT)
     escena3d/plantilla.html
 
@@ -160,8 +161,22 @@ def main():
         meta["fuente_orto"] = "sin ortoimagen: relieve sombreado calculado del DEM"
         print("sin orto.jpg: se usa relieve sombreado")
 
+    # mineralogía orbital CRISM recortada para la zona (data/mineralogia/crism_<zona>/: meta.json + PNG por producto)
+    crism = None
+    dm = os.path.join(RAIZ, "data", "mineralogia", f"crism_{a.zona}")
+    if os.path.exists(os.path.join(dm, "meta.json")):
+        crism = leer_json(os.path.join(dm, "meta.json"))
+        crism["png"] = {}
+        for prod in ["ALT", "HYD", "FM2", "MAF", "VNA"]:
+            f_png = os.path.join(dm, prod + ".png")
+            if os.path.exists(f_png):
+                with open(f_png, "rb") as f:
+                    crism["png"][prod] = b64(f.read())
+        print(f"mineralogía CRISM: {', '.join(crism['png'])}")
+
     datos = {
         "zona": a.zona,
+        "crism": crism,
         "meta": meta,
         "zmin": zmin,
         "cos_lat": cos_lat,
