@@ -9,6 +9,7 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
   - Elevación: DEM USGS de 1 m remuestreado a 4 m.
   - Recorrido: `MSL_traverse.json` de NASA.
   - Pozos: `MSL_waypoints.json`. Es la posición del rover estacionado, no la del pozo exacto.
+- **Gale Earth, dosis corregida a 0,64 mSv/día** (lo marcó David). En `gale-earth/capas/gale_5m/capas.json` se reescalaron `dosis_superficie`, `dosis_min` y `dosis_max` (× 0,64/0,67). La dosis es lineal en ese valor, así que el PNG de colores no cambia. **No rearmé `gale-earth/index.html`** para no chocar con `david/union-gale-earth`, que también lo modifica. Después de unir las dos ramas, correr `python _ensamblar.py` y `python armar.py` en `gale-earth/`. Al volver a procesar con `gale_datos.py`, ya toma 0,64 de `data/parametros.json`.
 - README: corregido "CRX" por "CTX" y ordenada la lista de fuentes. El resto del README sigue mezclado en castellano: se pasa al inglés mañana.
 - Sigue faltando: unir `david/union-gale-earth` a main (decide David), activar GitHub Pages y decidir qué hacemos con las teselas de Gale Earth. Propuesta: GALE-3D como demo principal y Gale Earth con menos capas.
 

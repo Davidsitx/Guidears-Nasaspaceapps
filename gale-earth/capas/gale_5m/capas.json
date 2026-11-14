@@ -26,11 +26,11 @@
  "parametros": {
   "pendiente_astronauta": 20,
   "pendiente_rover": 20,
-  "dosis_superficie": 0.67,
+  "dosis_superficie": 0.64,
   "blindaje": 0.25
  },
  "elev_min": -4625.818359375,
  "elev_max": -322.5602722167969,
- "dosis_min": 0.5211215019226074,
- "dosis_max": 0.6700000166893005
+ "dosis_min": 0.4977877033290578,
+ "dosis_max": 0.6400000159420184
 }
