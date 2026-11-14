@@ -133,3 +133,4 @@ Detalles:
 - **Imagen:** todo Marte lleva el mosaico Viking como textura (~2,6 km/píxel). Alrededor de Gale se suma la imagen **CTX** (la misma de Gale Earth): ~40 m/píxel en ±0,75° y ~330–650 m en la región, con el detalle de CTX y el color de Viking.
   - **Para que quede dentro del archivo** (sin internet y en el artifact): en una PC con internet, `pip install pillow`, `python herramientas/bajar_ctx.py` y después `python escena3d/armar.py`. Escribe `data/terreno/globo/ctx_*.jpg` (~2 MB en total).
   - **Si no está en el archivo**, la escena la baja sola en vivo cuando hay internet. Sin internet queda el Viking.
+- **Publicar en un sitio con tope por archivo** (el artifact acepta hasta 16 MB por página): `python escena3d/armar.py --globo-aparte --salida <carpeta>/index.html` deja el globo en `globo.json` al lado y la página lo pide al abrir.

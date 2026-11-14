@@ -1248,6 +1248,7 @@ pintarContexto('ninguna');
 // Tres capas que encajan sin costuras: cerca de la travesía una grilla de 1/128° (~460 m), alrededor de Gale 1/16° (~3,7 km)
 // y el resto del planeta cada 1°. Entre el borde del terreno de la travesía y la grilla cercana hay un "delantal" que une las dos
 // alturas. Todo va sobre la esfera de Marte (R = 3.396.190 m), con la curvatura real. Es fondo: no entra en ningún cálculo.
+if (typeof D.globo === 'string') D.globo = await fetch(D.globo).then(r => r.ok ? r.json() : null).catch(() => null);   // versión publicada: el globo viene aparte
 const GLOBO = D.globo && CTX ? await (async () => {
   const leer = async b => { const im = new Image(); await new Promise((ok, mal) => { im.onload = ok; im.onerror = mal; im.src = 'data:image/png;base64,' + b; });
     const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);

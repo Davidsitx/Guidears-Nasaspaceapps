@@ -80,6 +80,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--zona", default="sol5070")
     ap.add_argument("--salida", default=None, help="default: escena3d/index.html (sol5070) o escena3d/index_<zona>.html")
+    ap.add_argument("--globo-aparte", action="store_true", help="deja el globo de fondo en globo.json al lado de la salida (para publicar en sitios con tope de tamaño por archivo)")
     a = ap.parse_args()
     a.salida = a.salida or os.path.join(AQUI, "index.html" if a.zona == "sol5070" else f"index_{a.zona}.html")
 
@@ -262,6 +263,12 @@ def main():
     controles = texto(os.path.join(AQUI, "vendor", "OrbitControls.js"))
     plantilla = texto(os.path.join(AQUI, "plantilla.html")).replace("<\\/script", "</script")
 
+    if a.globo_aparte and datos.get("globo"):
+        ruta_globo = os.path.join(os.path.dirname(os.path.abspath(a.salida)), "globo.json")
+        with open(ruta_globo, "w", encoding="utf-8") as f:
+            json.dump(datos["globo"], f, ensure_ascii=False, separators=(",", ":"))
+        print(f"{ruta_globo}: {os.path.getsize(ruta_globo) / 1e6:.1f} MB (la página lo pide al abrir)")
+        datos["globo"] = "globo.json"
     json_datos = json.dumps(datos, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     html = (plantilla
             .replace("/*__THREE__*/", three)
