@@ -2,6 +2,12 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 · Compañero (con Claude) · PLAN DE ENTREGA
+- Hizo: `docs/entrega.md` con el recorrido del proyecto, lo que exige la guía oficial de entrega 2026, la lista de lo que falta por prioridad, un guion de video de 30 s y un reparto sugerido.
+- Requisitos clave de la guía: demo de **30 s o menos con subtítulos en inglés** (o hasta 7 diapositivas en inglés), página del proyecto toda en inglés, links públicos, **declarar el uso de IA**, enviar antes del **domingo 15 a las 23:59** hora local.
+- Para David: falta el archivo `LICENSE` (Apache 2.0) y la sección "License" del README está vacía. Publicar la escena con GitHub Pages para tener el link del proyecto final.
+- Falta: video, textos de la escena en inglés, README y referencias en inglés, página del proyecto.
+
 ## 2026-11-14 mañana · David (con Claude) · TRAVESÍA COMPLETA, PERFORACIONES, CAPAS Y ALERTAS
 - **Leer `docs/travesia.md`.** La escena ahora muestra todo el camino de Curiosity (aterrizaje → hoy) alrededor de la zona de detalle, con los archivos que bajó el equipo (los .tif y el .gpkg no se versionan: ver `data/README.md`).
 - Datos nuevos: `data/terreno/travesia_sur/`, `data/terreno/sol5070/orto_color.jpg` (la orto de 0,5 m con el color del mosaico; `armar.py` la usa si existe y deja `orto.jpg` intacta), `data/curiosity/recorrido_completo.geojson`, `perforaciones.geojson` y `perforaciones_hallazgos.json`.
