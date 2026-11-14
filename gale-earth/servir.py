@@ -135,6 +135,17 @@ class Manejador(SimpleHTTPRequestHandler):
     def __init__(self, *a, **k):
         super().__init__(*a, directory=AQUI, **k)
 
+    # La página y los datos se revalidan siempre: así una versión nueva se ve al recargar, sin limpiar la caché.
+    def send_header(self, k, v):
+        if k.lower() == "cache-control": self._cc = True
+        super().send_header(k, v)
+
+    def end_headers(self):
+        if not getattr(self, "_cc", False) and self.path.split("?")[0].endswith((".html", ".json", ".webmanifest", ".js", "/")):
+            super().send_header("Cache-Control", "no-cache")
+        self._cc = False
+        super().end_headers()
+
     def log_message(self, *a):
         pass
 
