@@ -203,6 +203,18 @@
   a.q:hover, a.q:focus-visible { background: var(--acento); color: #1b1210; outline: none; }
   @media (pointer: coarse) { a.q { width: 22px; height: 22px; font-size: 12px; } }
   select option { background: #2a201b; color: var(--texto); }
+  #vistas .corto { display: none; } #vistas button { white-space: nowrap; }
+  /* celular: la barra de abajo es una sola fila que se desliza; los mensajes salen como aviso breve */
+  @media (max-width: 760px) {
+    #vistas .largo { display: none; } #vistas .corto { display: inline; } #vistas button { padding: 6px 10px; font-size: 12.5px; }
+    #vistas { top: 58px; }
+    #ctrl { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 6px 8px; gap: 6px; -webkit-overflow-scrolling: touch; }
+    #ctrl::-webkit-scrollbar { display: none; }
+    #ctrl > *, #ctrl .grupo { flex: none; } #ctrl .grupo { flex-wrap: nowrap; }
+    #msg { position: fixed; left: 12px; right: 12px; bottom: 70px; width: auto !important; margin: 0; text-align: center; pointer-events: none; z-index: 5;
+      padding: 6px 10px; border-radius: 8px; background: rgba(22, 17, 15, .9); border: 1px solid var(--borde); opacity: 0; transition: opacity .3s; }
+    #msg.ver { opacity: 1; }
+  }
   /* unión con Gale Earth: fundido al cambiar de vista */
   #transicion { position: fixed; inset: 0; z-index: 60; background: #0b0d12; opacity: 0; pointer-events: none; transition: opacity .6s ease; display: grid; place-items: center; color: var(--tenue); font-size: 14px; }
   #transicion.on { opacity: 1; pointer-events: auto; }
@@ -468,7 +480,7 @@
   <div class="vb oculto" id="v-aviso"></div>
 </div>
 
-<div id="vistas" class="seg oculto"><button id="vMarteGE" class="oculto" title="Todo Marte en 3D (Gale Earth): el planeta, el cráter Gale y las órbitas">Marte completo ↗</button><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy">Travesía completa</button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo">Zona de hoy</button></div>
+<div id="vistas" class="seg oculto"><button id="vMarteGE" class="oculto" title="Todo Marte en 3D (Gale Earth): el planeta, el cráter Gale y las órbitas"><span class="largo">Marte completo</span><span class="corto">Marte</span> ↗</button><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy"><span class="largo">Travesía completa</span><span class="corto">Travesía</span></button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo"><span class="largo">Zona de hoy</span><span class="corto">Hoy</span></button></div>
 <div id="viaje" class="caja oculto">
   <div class="datos">
     <div><b id="vj-sol">Sol 0</b><span id="vj-fecha">agosto de 2012</span></div>
@@ -1838,7 +1850,7 @@ function marcaParada(x, z, n) {
   malla(new THREE.ConeGeometry(0.5, 0.9, 16), n === 0 ? MAT.alu : new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x553322 }), g, [0, 4.4, 0], [Math.PI, 0, 0]);
   g.position.set(x, y, z); escena.add(g); objParadas.push(g);
 }
-const decir = t => { $('msg').textContent = t; };
+const decir = t => { const m = $('msg'); m.textContent = t; m.classList.add('ver'); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove('ver'), 4500); };
 
 // ---------- panel de rutas ----------
 let rutaSel = rutas.find(r => !r.aOjo) || rutas[0] || null;
