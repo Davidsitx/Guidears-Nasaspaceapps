@@ -48,6 +48,7 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 ## Estado al 14 de noviembre de 2026
 - La escena suma toda la travesía de Curiosity (aterrizaje → hoy): terreno de contexto, recorrido real, 49 perforaciones con ficha y viaje por soles. Ver **docs/travesia.md**.
 - 37 de las 49 fichas de perforaciones están "a verificar": no presentarlas como dato hasta revisarlas contra su fuente.
+- Expedición sur (E1–E5, más allá de A4), perforación simulada (muestra ficticia, marcada como tal), clima según la fecha (Ls, REMS, Aeolus 2028) y círculos "?" con la fuente. Ver docs/notas.md y docs/paradas.md.
 
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).

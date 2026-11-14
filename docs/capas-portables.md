@@ -35,9 +35,11 @@ Si el mapa usa una proyección distinta, primero hay que reproyectar el PNG (por
 | Terreno de toda la travesía | `data/terreno/travesia_sur/` (`dem_12m_rg.png`, `color_*.jpg`, `cielo_12m.png`, `pend_12m.png`, `meta.json`) | PNG/JPG + `meta.json` | Elevación a 12 m, color a 3 m, cielo tapado y pendiente | Archivos del equipo del 14/11; `herramientas/travesia.py` |
 | Recorrido completo | `data/curiosity/recorrido_completo.geojson` | GeoJSON; `sol_aprox`, `cielo_tapado_pct` y `elevacion_m` por vértice | 37,5 km, del sol 0 al 5073 | GeoPackage del equipo; `herramientas/travesia_datos.py` |
 | Perforaciones | `data/curiosity/perforaciones.geojson` | GeoJSON: 49 puntos con etapa, hallazgo, fuente, `verificado`, cielo tapado y dosis | Qué se encontró en cada pozo | GeoPackage del equipo + `perforaciones_hallazgos.json` |
+| Expedición sur | `data/rutas/expedicion_sur.geojson` | GeoJSON: 5 puntos (E1–E5) con criterio, CRISM en percentil, tramos del rover y a pie; 2 líneas (rover y astronauta) | Cómo estirar el recorrido más allá de A4 | `herramientas/expedicion.py` (propuesta propia) |
+| CRISM de toda la travesía | `data/mineralogia/crism_contexto.png` + `.json` | 8 indicadores apilados, percentil por píxel de 24 m | Base de la perforación simulada | CRISM GMWG 2012, remuestreado |
 | Parámetros | `data/parametros.json` | JSON (contrato §3) | Límites de pendiente, velocidades, dosis, presupuesto de la salida (`eva`) | Ver fuentes de cada campo |
 
-Para regenerar las capas calculadas: `python herramientas/capas_peligro.py` y `python herramientas/crism_muestras_paradas.py <carpeta con los .tif>`.
+Para regenerar las capas calculadas: `python herramientas/expedicion.py <carpeta con los .tif CRISM>`, `python herramientas/capas_peligro.py` y `python herramientas/crism_muestras_paradas.py <carpeta con los .tif>`.
 
 ## Reglas que calcula la escena (para reproducirlas en el mapa)
 

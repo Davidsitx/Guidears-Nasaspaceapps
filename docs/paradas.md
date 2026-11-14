@@ -150,6 +150,24 @@ pN = percentil dentro de la zona (p94 = más fuerte que el 94% de la zona). Valo
 - **Desde S, A3, C3, A4, C4 y R1 quedan fuera del alcance seguro a pie.** Por eso la ruta C lleva el rover presurizado hasta A2, A3 y A4, y desde ahí las caminatas son cortas: el refugio viaja con el astronauta.
 - La escena calcula todo esto en vivo. Si te alejás demasiado, salta "A N min de la base"; cuando no alcanza el tiempo, "Hora de volver" (con el botón Volver); y "Volver a la base" traza el camino más rápido y lo camina.
 
+## Expedición sur (14/11 tarde): estirar el recorrido más allá de A4
+
+Lo que nos diferencia es poder **fijar recorridos nuevos**. Con el terreno de contexto (12 m) y los mosaicos CRISM completos, `herramientas/expedicion.py` elige cinco puntos al sur de A4, en un corredor de ±1,1 km, solo donde se llega sin pasar por más de 20°. Cada punto sale de un criterio distinto; el orden es el más corto en línea recta y E5 queda al final. **Son candidatos elegidos por datos orbitales, no destinos anunciados por la misión.**
+
+| Punto | Qué es | Elevación | Pendiente | Cielo tapado | Tramo rover | Tramo a pie | Por qué |
+|---|---|---|---|---|---|---|---|
+| E1 | Sulfato polihidratado | -3203.4 m | 8.8° | 9.8% | 1434 m | 45 min | La señal de sulfato con agua (polihidratado) más fuerte al sur de la zona, en terreno caminable. Seguir la sucesión de sulfatos hacia arriba es lo que hace hoy la misión: cada capa registra cómo se secaba Marte. |
+| E2 | Mirador alto | -3059.1 m | 9.2° | 9.4% | 2786 m | 101 min | El punto más elevado respecto de su entorno, con pendiente baja: panorámica para cartografiar las capas y elegir la próxima perforación. |
+| E3 | Refugio de relieve | -3010.3 m | 19.2° | 45.1% | 3366 m | 141 min | El lugar caminable con más cielo tapado al sur. Sirve de pausa con menos dosis y de reparo para una salida a pie larga. No protege de una tormenta solar. |
+| E4 | Rastro de arcilla | -3087.4 m | 6.2° | 20.8% | 1027 m | 36 min | El punto con más señal de arcilla Fe/Mg (D2300) y agua al sur. Si se confirma en el lugar, sería una pista de otra etapa con agua (hipótesis a probar). |
+| E5 | Terreno claro, frente sur | -3023.8 m | 2.0° | 15.7% | 472 m | 19 min | Lo más al sur que llega el terreno con datos, en un llano sin arena, ya dentro del terreno claro y estriado que creemos que es la capa de yardangs (a confirmar). Es el frente de avance: base para la campaña siguiente. |
+
+- **Rover:** 9084 m, +756 m de subida, 151–303 soles de manejo a 30–60 m por sol; evita arena probable.
+- **A pie:** 9680 m, 342 min (5.7 h) **solo de ida**, 144.7 µSv. No entra en una salida de 6 h con regreso: el astronauta hace estas misiones con el rover presurizado como base móvil, o tramo a tramo (lectura propia).
+- En la escena: botón **Expedición sur**, con selector **Rover / Astronauta** (el astronauta puede hacer las misiones del rover), parada automática en cada punto y **perforación simulada**.
+
+**Perforación simulada.** En cualquier parada, perforación o punto de la expedición se puede "perforar": la escena junta polvo, deja la marca del pozo y muestra una muestra **ficticia**. Las proporciones (feldespato, piroxeno, olivino, sulfatos, arcillas, hematita, amorfo) parten de una base basáltica fija y suben o bajan según los indicadores CRISM del lugar (`data/mineralogia/crism_contexto.png`). Es ilustrativo: lo dice la ficha con una banda "SIMULACIÓN". Al lado muestra la perforación real más cercana.
+
 ## Limitaciones
 - Pendientes a 2 m: el DEM promedia; una roca de 1 m no aparece.
 - Los límites (20° para ambos, velocidad de marcha, factor de blindaje) son **provisorios** (`data/parametros.json`).

@@ -190,7 +190,7 @@ def main():
 
     # contexto: toda la travesía de Curiosity alrededor de la zona (data/terreno/travesia_sur/, herramientas/travesia.py),
     # con el recorrido real y las 49 perforaciones (data/curiosity/, herramientas/travesia_datos.py)
-    contexto = travesia = pozos = None
+    contexto = travesia = pozos = expedicion = crism_ctx = None
     dctx = os.path.join(RAIZ, "data", "terreno", "travesia_sur")
     if a.zona == "sol5070" and os.path.exists(os.path.join(dctx, "meta.json")):
         leer_b64 = lambda n: b64(open(os.path.join(dctx, n), "rb").read())
@@ -206,6 +206,14 @@ def main():
         if os.path.exists(p_poz):
             g = leer_json(p_poz)
             pozos = {"nota": g.get("nota", ""), "lista": [dict(f["properties"], lon=f["geometry"]["coordinates"][0], lat=f["geometry"]["coordinates"][1]) for f in g["features"]]}
+        # expedición sur (herramientas/expedicion.py): puntos nuevos más allá de A4 y CRISM del contexto para la perforación simulada
+        p_exp = os.path.join(RAIZ, "data", "rutas", "expedicion_sur.geojson")
+        if os.path.exists(p_exp):
+            expedicion = leer_json(p_exp)
+            print(f"expedición sur: {sum(1 for f in expedicion['features'] if f['geometry']['type'] == 'Point')} puntos")
+        p_cc = os.path.join(RAIZ, "data", "mineralogia", "crism_contexto.png")
+        if os.path.exists(p_cc):
+            crism_ctx = {"meta": leer_json(p_cc.replace(".png", ".json")), "png": b64(open(p_cc, "rb").read())}
         print(f"contexto: travesía completa, {len(travesia['puntos']) if travesia else 0} puntos de recorrido, {len(pozos['lista']) if pozos else 0} perforaciones")
 
     datos = {
@@ -213,6 +221,8 @@ def main():
         "contexto": contexto,
         "travesia": travesia,
         "pozos": pozos,
+        "expedicion": expedicion,
+        "crism_ctx": crism_ctx,
         "crism": crism,
         "capas": capas,
         "meta": meta,

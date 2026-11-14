@@ -39,3 +39,24 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Siderita en la unidad de sulfatos (pozos 36 a 39) | Tutolo et al. 2025, Science, doi:10.1126/science.ado9966 |
 | Campaña del boxwork y pozos 43 a 48 | Blog de Curiosity: sols 4695-4701, 4709-4715, 4716-4722, 4798-4803, 4804-4811, 4879-4885, 4893-4899, 4900-4907, 5016-5021 |
 | Hallazgos de los otros 37 pozos | Citas de memoria en `data/curiosity/perforaciones_hallazgos.json`, marcadas "a verificar" |
+| Límites de inclinación del rover: aguanta 45° sin volcar, la protección de fallas lo frena antes de 30° | JPL, MSL "Planetary mobility" (copia de archivo): webarchive.library.unt.edu/eot2008/20090512223236/http://mars.jpl.nasa.gov/msl/mission/technology/planetarymobility |
+| Récord de pendiente de Curiosity: 31° (Greenheugh, marzo de 2020) | Space.com, space.com/mars-rover-curiosity-steepest-hill-selfie-photo.html |
+| Inclinación máxima de 25,3° en los primeros 7 años | JPL Robotics 2020, www-robotics.jpl.nasa.gov/media/documents/2020-mobility-trending.pdf |
+| Rocker-bogie limitado a menos de 15° en suelo suelto (regla de la arena) | JPL 2023, póster R22016 (scienceandtechnology.jpl.nasa.gov) |
+| Traje: pendientes de hasta 20°; Apolo 15 sobre ~17° | NASA EVA-EXP-0075, NTRS 20200001071 |
+| Límite de carrera de 600 mSv | NASA OCHMO, radiation-protection-technical-brief (NASA-STD-3001) |
+| Aviso de tormenta solar del orden de 30 min | Parker et al., NTRS 20210014156 |
+| Clima de Gale por estación (REMS): de +15,9 °C a −100 °C; invierno limpio, polvo en primavera y verano, viento en otoño | NASA/Astronomy (astronomy.com/?p=37721); ciclos estacionales: science.nasa.gov/photojournal/seasonal-cycles-in-curiositys-first-two-martian-years |
+| Temporada de polvo desde Ls 180; mes 11 del año marciano 33 (Ls 300–330): media −42 °C, máx. ≈ −9 °C, mín. ≈ −69 °C; año marciano 1 = 11/4/1955 | Centro de Astrobiología, informes REMS (cab.inta-csic.es/rems/weather-report-mars-year-33-month-11) |
+| Presión al aterrizar (Ls 151): ~685 a ~780 Pa en el día | Live Science 2012, citando a J. Gómez-Elvira (REMS) |
+| Temporadas de baja (Ls 60–140) y alta opacidad (Ls 180–360) | Vicente-Retortillo et al. 2017, GRL, doi:10.1002/2017GL072589 |
+| Hielo de agua ~25% de la opacidad en Ls 90–135 | Lemmon et al., registro de opacidad de MSL (arXiv:2309.07378) |
+| Tormenta global de 2018 en Gale: opacidad 8,5, ~97% del UV bloqueado | Guzewich et al. 2019, NTRS 20190001691 |
+| Remolinos de polvo con máximo cerca de Ls 300 | Dust lifting over six Mars years at Gale (Deep Blue, U. Michigan) |
+| Ls a partir de la fecha | Algoritmo de Allison y McEwen 2000 (el de Mars24 de NASA GISS); control: Ls 150,7 el día del aterrizaje (publicado: 151) |
+| Aeolus, orbitador del clima marciano (2028): viento, temperatura, polvo y nubes, al menos un año marciano | NASA, comunicado del 17/6/2026 (nasa.gov/news-release/nasa-announces-public-private-partnership-to-advance-mars-science); Space.com |
+| Humanos a Marte "ya en la década de 2030"; arquitectura Luna a Marte | nasa.gov/humans-in-space/humans-to-mars; nasa.gov/moontomarsarchitecture-components |
+| Dónde bajar datos de Curiosity | PDS Atmospheres Node (REMS); PDS Analyst's Notebook (an.rsl.wustl.edu); PDS Geosciences Node (pds-geosciences.wustl.edu/missions/msl) |
+| Mineralogía de Gale con CRISM (enlace del "?") | Seelos et al. 2014, GRL, doi:10.1002/2014GL060310 |
+
+En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).

@@ -2,6 +2,14 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 tarde · David (con Claude) · EXPEDICIÓN SUR, PERFORACIÓN SIMULADA, CLIMA Y FUENTES CON "?"
+- **Expedición sur:** 5 puntos nuevos (E1–E5) más allá de A4 con `herramientas/expedicion.py` (CRISM + DEM + cielo + arena). Rutas del rover y a pie en `data/rutas/expedicion_sur.geojson`. En la escena se elige quién hace la misión (rover o astronauta). Detalle en `docs/paradas.md`.
+- **Se detiene al llegar:** el viaje por soles frena en cada perforación, la primera persona en cada parada y la expedición en cada punto; aparece una tarjeta con "Ver la perforación / Ver la parada", "Perforación simulada" y "Seguir". Casilla "Detenerse…" para desactivarlo.
+- **Perforación simulada:** muestra ficticia armada con los indicadores CRISM del lugar (`data/mineralogia/crism_contexto.png`), marcada como SIMULACIÓN.
+- **Clima según la fecha:** panel con fecha → Ls (Allison y McEwen; da 150,7 el día del aterrizaje), estación austral, lo que midió REMS en esa época, Aeolus 2028, humanos en los 2030 y dónde bajar datos de Curiosity. El cielo 3D se enturbia en la temporada de polvo (visual).
+- **Botón "Manejar astronauta"** siempre visible a la derecha, con guía de teclas. **Círculos "?"** en cada capa, en las leyendas (pendiente, prohibidas, peligro, radiación) y en las fichas: abren la fuente. Movimiento más sobrio (fundidos cortos, respeta "reducir movimiento").
+- Falta: textos en inglés; probar en tablet real; que el equipo revise los cinco puntos E1–E5 sobre HiRISE.
+
 ## 2026-11-14 · Compañero (con Claude) · PLAN DE ENTREGA
 - Hizo: `docs/entrega.md` con el recorrido del proyecto, lo que exige la guía oficial de entrega 2026, la lista de lo que falta por prioridad, un guion de video de 30 s y un reparto sugerido.
 - Requisitos clave de la guía: demo de **30 s o menos con subtítulos en inglés** (o hasta 7 diapositivas en inglés), página del proyecto toda en inglés, links públicos, **declarar el uso de IA**, enviar antes del **domingo 15 a las 23:59** hora local.

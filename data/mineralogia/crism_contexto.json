@@ -1,0 +1,18 @@
+{
+ "claves": [
+  "HYD.SINDEX2",
+  "HYD.BD2100_2",
+  "HYD.BD1900_2",
+  "ALT.D2300",
+  "FM2.BDI1000VIS",
+  "FM2.BD920",
+  "MAF.OLINDEX3",
+  "MAF.HCPINDEX2"
+ ],
+ "ancho": 275,
+ "alto_cada": 725,
+ "m_por_px": 24,
+ "nota": "Percentil dentro del área de contexto (byte/254); 255 = sin dato. Apiladas en vertical en el orden de claves. Fuente: mosaicos CRISM GMWG 2012 (Seelos et al., JHU/APL), remuestreados por promedio.",
+ "lat_norte": -4.582056279464093,
+ "lon_oeste": 137.3452812104018
+}
