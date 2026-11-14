@@ -1,0 +1,45 @@
+{
+ "Nevado Sajama 2": [
+  {
+   "fecha": "2026-02-06",
+   "texto": "Se volvió a perforar a pocos centímetros del primer pozo para usar el último frasco de TMAH de SAM (un reactivo que hace visibles moléculas orgánicas). La perforación y la entrega a SAM salieron bien; APXS y MAHLI analizaron el polvo de perforación.",
+   "url": "https://science.nasa.gov/blog/curiosity-blog-sols-4798-4803-back-for-more-science/"
+  }
+ ],
+ "Campo Marte": [
+  {
+   "fecha": "2026-05-28",
+   "texto": "Perforación 47, después del intento fallido en el bloque Atacama (el bloque se levantó con la mecha). Las porciones se parecían a las de otros pozos y se entregó una a CheMin.",
+   "url": "https://science.nasa.gov/blog/curiosity-blog-sols-4900-4907-pasadena-we-have-a-drill-sample/"
+  },
+  {
+   "fecha": "2026-06-04",
+   "texto": "CheMin midió la mineralogía y SAM los gases; ChemCam, APXS, MAHLI y Mastcam documentaron el pozo y el polvo. Los números todavía no están publicados.",
+   "url": "https://science.nasa.gov/blog/curiosity-blog-sols-4908-4912-goodbye-campo-marte-its-been-fun/"
+  }
+ ],
+ "Basque Lakes": [
+  {
+   "fecha": "2026-09-25",
+   "texto": "Perforación 48, la primera por encima de la superficie de erosión de Valle Grande. APXS y ChemCam midieron la roca antes de perforar.",
+   "url": "https://science.nasa.gov/blog/curiosity-blog-sols-5022-5028-cashing-in-at-cache-creek/"
+  },
+  {
+   "fecha": "2026-10-01",
+   "texto": "Se terminó el análisis de CheMin y SAM midió el gas con el espectrómetro láser (TLS). ChemCam analizó el interior del pozo.",
+   "url": "https://science.nasa.gov/blog/curiosity-blog-sols-5029-5035-back-in-the-lab/"
+  }
+ ],
+ "Nazca": [
+  {
+   "fecha": "2026-10-16",
+   "texto": "El bloque tiene muchas formas como discos que podrían ser cristales; se planearon observaciones de detalle antes de perforar.",
+   "url": "https://science.nasa.gov/blog/curiosity-blog-sols-5043-5049-preparing-to-drill-at-nazca/"
+  },
+  {
+   "fecha": "2026-10-23",
+   "texto": "Perforación 49. Antes se midió con APXS, MAHLI y ChemCam; después ChemCam analizó el polvo y la pared del pozo. A principios de noviembre la campaña seguía en curso.",
+   "url": "https://science.nasa.gov/blog/curiosity-blog-sols-5050-5055-its-nazca-our-49th-drill-hole/"
+  }
+ ]
+}

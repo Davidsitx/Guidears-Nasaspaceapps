@@ -193,6 +193,53 @@ def revisar_sam(pozos, ruta=os.path.join(AQUI, "datos", "sam_revision.json")):
             p["sam"].sort(key=lambda x: (x["sol"], str(x["eid"])))
 
 
+def aplicar_apxs_pds(pozos, ruta=os.path.join(AQUI, "datos", "apxs_pds.json")):
+    """Química APXS de los pozos nuevos (después del sol 3712) desde los productos RDR del PDS (datos/apxs_pds.json)."""
+    if not os.path.exists(ruta):
+        return
+    nuevos = json.load(open(ruta, encoding="utf-8"))["pozos"]
+    for p in pozos:
+        a = nuevos.get(str(p.get("n")))
+        if a and not p.get("apxs"):
+            p["apxs"] = a
+            p["falta"] = [f for f in p["falta"] if not f.startswith("APXS")]
+
+
+def limpiar_faltas(pozos):
+    """Quita avisos viejos de 'falta' que ya se resolvieron (clima REMS y radiación RAD están en la Biblioteca)."""
+    for p in pozos:
+        p["falta"] = [f for f in p["falta"] if not f.startswith(("Radiación (RAD)", "Clima (REMS"))]
+
+
+def agregar_tmah(pozos, ruta=os.path.join(AQUI, "datos", "sam_tmah_ns2.json")):
+    """Experimento de química húmeda con TMAH sobre Nevado Sajama2 (soles 4798-4802): picos del cromatograma, sin especies identificadas en PDS."""
+    if not os.path.exists(ruta):
+        return
+    ex = json.load(open(ruta, encoding="utf-8"))
+    for p in pozos:
+        if p["nombre"] == "Nevado Sajama 2":
+            ya = {str(s["eid"]) for s in p["sam"]}
+            p["sam"] += [e for e in ex if e["eid"] not in ya]
+            p["falta"] = [f for f in p["falta"] if not f.startswith("SAM")]
+
+
+def agregar_blog(pozos, ruta=os.path.join(AQUI, "datos", "blog_pozos.json")):
+    """Lo que contó el equipo en el blog de Curiosity sobre los pozos cuyos datos todavía no están en el PDS (resumen propio)."""
+    blog = json.load(open(ruta, encoding="utf-8")) if os.path.exists(ruta) else {}
+    for p in pozos:
+        p["blog"] = blog.get(p["nombre"], [])
+        f = []
+        for x in p["falta"]:
+            if x.startswith("Bitácora"):
+                continue
+            if x.startswith("APXS: las tablas"):
+                x = "APXS: el PDS publicó la química hasta el sol 4842 (marzo de 2026); este pozo es posterior y sale en la próxima entrega."
+            if x.startswith("CheMin: no hay") and (p.get("sol") or 0) > 4748:
+                x = "CheMin: el PDS tiene los datos crudos hasta el sol 4748 y la mineralogía publicada es anterior; este pozo sale en una próxima entrega."
+            f.append(x)
+        p["falta"] = f
+
+
 def miniaturas(carpeta, s):
     d = os.path.join(carpeta, "Imagenes", "destacadas")
     if not os.path.isdir(d):
@@ -306,6 +353,10 @@ def main():
     os.makedirs(os.path.dirname(SALIDA_JSON), exist_ok=True)
     with open(SALIDA_JSON, "w", encoding="utf-8") as f:
         revisar_sam(pozos)
+        aplicar_apxs_pds(pozos)
+        agregar_tmah(pozos)
+        agregar_blog(pozos)
+        limpiar_faltas(pozos)
         json.dump({"version": 1, "origen": "Drive: Marte/Perforaciones Datos Crudos", "pozos": pozos, "temas_html": doc},
                   f, ensure_ascii=False, separators=(",", ":"))
     print(f"{len(pozos)} pozos · {os.path.getsize(SALIDA_JSON) // 1024} KB · miniaturas en capas/pozos/")

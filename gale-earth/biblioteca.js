@@ -6,7 +6,7 @@ const BIB = { datos: null, cargando: null, vista: 'inicio', pozo: null, orden: '
 const normB = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '');
 const escB = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const ESTADO_SAM = { confirmado: ['confirmado', 'var(--ok)'], probable: ['probable', '#d9a441'], sin_confirmar: ['sin confirmar', '#d9a441'], otra_muestra: ['de otra muestra', '#e5534b'], sin_muestra: ['no es muestra', '#9aa0a6'] };
-const TIPO_SAM = { spyr: 'pirólisis', sder: 'derivatización', scmb: 'combustión', csol: 'sólido', smet: 'metanol' };
+const TIPO_SAM = { tmah: 'química húmeda con TMAH', spyr: 'pirólisis', sder: 'derivatización', scmb: 'combustión', csol: 'sólido', smet: 'metanol' };
 const NOMBRE_GAS = { H2O: 'H₂O', CO2: 'CO₂', SO2: 'SO₂', O2: 'O₂', HCl: 'HCl', H2S: 'H₂S', NO: 'NO', H2: 'H₂', CH3Cl: 'CH₃Cl', CH2Cl2: 'CH₂Cl₂', OCS: 'OCS' };
 const OX = { SiO2: 'SiO₂', TiO2: 'TiO₂', Al2O3: 'Al₂O₃', FeO: 'FeO', MnO: 'MnO', MgO: 'MgO', CaO: 'CaO', Na2O: 'Na₂O', K2O: 'K₂O', P2O5: 'P₂O₅', Cr2O3: 'Cr₂O₃', SO3: 'SO₃', Cl: 'Cl' };
 const sci = v => v == null ? '—' : v.toExponential(2).replace('e', ' × 10^').replace(/\^\+?(-?\d+)/, (m, e) => '<sup>' + e + '</sup>');
@@ -27,7 +27,7 @@ async function cargarBiblioteca() {
         h2o: Math.max(0, ...p.sam.filter(s => s.estado === 'confirmado' && !s.dudoso.includes('H2O')).map(s => s.gases.H2O || 0)) || null,
         nsam: p.sam.filter(s => s.estado === 'confirmado').length };
     }
-    try { const [c, r] = await Promise.all([fetch('datos/clima_rems.json'), fetch('datos/radiacion.json')]); if (c.ok) BIB.clima = await c.json(); if (r.ok) BIB.rad = await r.json(); } catch {}
+    try { const [c, r, v] = await Promise.all([fetch('datos/clima_rems.json'), fetch('datos/radiacion.json'), fetch('datos/viento_humedad.json')]); if (c.ok) BIB.clima = await c.json(); if (r.ok) BIB.rad = await r.json(); if (v.ok) BIB.vh = await v.json(); } catch {}
     try { const e = await fetch('perforaciones/estado.json', { cache: 'no-store' }); BIB.drive = e.ok ? (await e.json()).ok : false; } catch { BIB.drive = false; }
     return (BIB.datos = d);
   })().catch(e => { BIB.cargando = null; throw e; });
@@ -119,7 +119,7 @@ function bibPozo() {
   }).join('') : '<p class="sub">NASA todavía no publicó la mineralogía de este pozo (ni en el PDS ni en la base ODR).</p>';
   // Química
   const ap = p.apxs;
-  const qui = ap ? `<div class="sub">${escB(ap.fuente)}${ap.sol ? ` · sol ${ap.sol}` : ''}${ap.objetivo ? ` · objetivo <code>${escB(ap.objetivo)}</code>` : ''}${ap.producto ? ` · <code>${escB(ap.producto)}</code>` : ''}</div>
+  const qui = ap ? `<div class="sub">${escB(ap.fuente)}${ap.sol ? ` · sol ${ap.sol}` : ''}${ap.objetivo ? ` · objetivo <code>${escB(ap.objetivo)}</code>` : ''}${ap.producto ? ` · <code>${escB(ap.producto)}</code>` : ''}</div>${ap.motivo ? `<div class="sub">Asignación al pozo: <b>${escB(ap.asignacion)}</b> — ${escB(ap.motivo)}${ap.url_blog ? ` (<a href="${ap.url_blog}" target="_blank" rel="noopener">blog</a>)` : ''}.</div>` : ''}
       <table class="tabq"><tr><th>Óxido</th><th>% en peso</th><th>±</th></tr>${Object.entries(ap.ox).map(([k, v]) => `<tr><td>${OX[k] || k}</td><td>${fmt(v[0], 2)}</td><td>${fmt(v[1], 2)}</td></tr>`).join('')}
       ${Object.entries(ap.tr || {}).map(([k, v]) => `<tr><td>${k}</td><td>${fmt(v[0])} ppm</td><td>${fmt(v[1])}</td></tr>`).join('')}</table>
       <p class="fuente">${p.apxs_mediciones} mediciones de APXS en la zona del pozo (${p.apxs_del_pozo} sobre el pozo o su polvo) en <code>Datos Crudos/APXS</code>.</p>`
@@ -131,7 +131,9 @@ function bibPozo() {
     const filas = Object.entries(s.gases).filter(([k]) => ['H2O', 'CO2', 'SO2', 'O2', 'HCl', 'H2S', 'NO', 'H2'].includes(k))
       .map(([k, v]) => `<tr${s.dudoso.includes(k) ? ' class="dudoso" title="Valor imposible en la fuente: no se usa"' : ''}><td>${NOMBRE_GAS[k] || k}</td><td>${sci(v)}${s.dudoso.includes(k) ? ' ⚠' : ''}</td><td>${(s.picos[k] || []).map(t => fmt(t)).join(', ') || '—'}</td></tr>`).join('');
     return `<div class="samx"><div><b>Sol ${s.sol}</b> · experimento ${s.eid} · ${TIPO_SAM[s.tipo] || s.tipo} <span class="tag" style="color:${ec}">${et}${s.otra ? ': ' + escB(s.otra) : ''}${s.conf_por ? ' · ' + escB(s.conf_por) : ''}</span></div>${s.motivo ? `<div class="sub">${escB(s.motivo)}</div>` : ''}${s.dudoso.length ? `<div class="sub" style="color:#e2b04a">⚠ ${s.dudoso.map(k => NOMBRE_GAS[k] || k).join(', ')}: la cantidad no es físicamente posible para una porción de ~45 mg (supuesto); posible error de unidades en la tabla de PDS. No se usa en los cálculos.</div>` : ''}
-      ${filas ? `<table><tr><th>Gas</th><th>mol</th><th>pico °C</th></tr>${filas}</table>` : '<div class="sub">Sin tabla de gases en este experimento (puede ser de calibración o de otro tipo).</div>'}</div>`;
+      ${s.paso ? `<div class="sub">${escB(s.paso)}. Picos del cromatógrafo (área en cuentas/s², tiempo en s); PDS todavía no publica qué molécula es cada pico. <a href="${s.cromatograma}" target="_blank" rel="noopener">Ver el cromatograma</a></div>
+        <table><tr><th>Pico</th><th>Área</th><th>Tiempo</th></tr>${(s.picos_gc || []).map(([n, a, t]) => `<tr><td>${escB(n)}</td><td>${sci(a)}</td><td>${fmt(t)} s</td></tr>`).join('')}</table>`
+      : filas ? `<table><tr><th>Gas</th><th>mol</th><th>pico °C</th></tr>${filas}</table>` : '<div class="sub">Sin tabla de gases en este experimento (puede ser de calibración o de otro tipo).</div>'}</div>`;
   }).join('') + (samNo.length ? `<p class="sub" style="margin-top:8px">Corridas de los mismos días que <b>no son muestra</b> (blancos del instrumento, limpieza de copa o atmósfera): ${samNo.map(s => `${s.eid} (sol ${s.sol}, ${escB(s.motivo || '')})`).join('; ')}.</p>` : '') : '<p class="sub">No hay experimentos de SAM asociados a este pozo.</p>';
   // Clima del día de la perforación (REMS)
   const climaDia = BIB.clima ? (() => { const D = BIB.clima.diario, c = D.find(r => r[0] >= (p.sol || 0) && r[3] != null); if (!c || c[0] - p.sol > 10) return '';
@@ -160,6 +162,7 @@ function bibPozo() {
     ${sec('Gases al calentar la muestra', 'medido · SAM', gas, false)}
     ${climaDia ? sec('Clima ese día', 'medido · REMS', climaDia, false) : ''}
     ${sec('Fotos del día de la perforación', 'NASA', fot)}
+    ${p.blog && p.blog.length ? sec('Lo que contó el equipo', 'blog de Curiosity · resumen propio', p.blog.map(x => `<div class="tarjeta" style="cursor:default"><div class="sub">${escB(x.fecha)}</div>${escB(x.texto)} <a href="${x.url}" target="_blank" rel="noopener">Leer</a></div>`).join('') + '<p class="fuente">Los números de laboratorio de este pozo todavía no están en el PDS: el blog dice qué se hizo, no los resultados.</p>', true) : ''}
     ${sec('Qué falta', '', p.falta.length ? '<ul>' + p.falta.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>' : '<p class="sub">Nada pendiente registrado.</p>', false)}
     ${p.cruce.length ? sec('Cruce con la base ODR', '', '<ul>' + p.cruce.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>', false) : ''}
     ${sec(`Archivos crudos (${p.archivos.length})`, 'Drive', arch, false)}
@@ -219,8 +222,8 @@ function bibFuentes() {
     <h2>Tomar con cuidado</h2><ul>
       <li>SAM: ${cnt('confirmado')} experimentos confirmados (ODR o designación de PDS), ${cnt('probable')} probables (misma semana que la perforación, sin designación publicada), ${cnt('otra_muestra')} de otra muestra (arenas de Gobabeb y Ogunquit Beach) y ${cnt('sin_muestra')} corridas que no son muestra (blancos, calibración, atmósfera).</li>
       <li>Valores de SAM imposibles para una porción de ~45 mg (supuesto) se marcan con ⚠ y no se usan: HCl, NO y H₂S en Mojave 2 y Telegraph Peak, HCl en un experimento de Cumberland y el H₂O de 7×10⁷ mol de Glen Etive (error de la tabla de PDS).</li>
-      <li>Los pozos 46 a 49 todavía no tienen datos de laboratorio publicados (CheMin, APXS ni SAM).</li>
-      <li>Clima: el resumen diario de REMS es de divulgación (CAB); lo verificamos contra los datos calibrados del PDS. El viento de REMS no funciona desde 2014 y la humedad casi no se publica.</li></ul>
+      <li>Pozos nuevos: Nevado Sajama 2 ya tiene química (APXS) y el experimento de orgánicos con TMAH; Campo Marte, Basque Lakes y Nazca solo tienen lo que contó el equipo en el blog: sus números salen en la próxima entrega del PDS (los datos actuales llegan hasta marzo de 2026).</li>
+      <li>Clima: el resumen diario de REMS es de divulgación (CAB); lo verificamos contra los datos calibrados del PDS. El viento y la humedad salen de leer nosotros los archivos crudos calibrados (muestreo propio); el sensor de viento funcionó hasta el sol 1491 (2016).</li></ul>
     <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> desde el Drive (${escB(BIB.datos.origen)}).</p>`;
   engancharBib();
 }
@@ -266,6 +269,7 @@ function bibClima() {
     <p class="sub">La presión sube y baja con las estaciones (el CO₂ se congela y se libera en los polos). La caída de fondo, de ${fm(c.anios[0].p)} Pa de promedio el primer año a ${fm(c.anios.at(-1).p)} Pa el último, coincide con lo que subió Curiosity por el Monte Sharp: unos 1.000 m, de −4.520 m en John Klein a −3.488 m en Nazca (cálculo propio con una altura de escala de ~11 km: unos 70 Pa menos).</p>
     <div class="tablaw"><table class="comp"><tr><th>Año marciano</th><th>Desde</th><th>Hasta</th><th>Mín.</th><th>Máx.</th><th>Presión</th></tr>
       ${c.anios.map(a => `<tr><td>${a.my}</td><td>${a.desde}</td><td>${a.hasta}</td><td>${fm(a.tmin)}°</td><td>${fm(a.tmax)}°</td><td>${fm(a.p)}</td></tr>`).join('')}</table></div>
+    ${BIB.vh ? vientoHumedad(BIB.vh) : ''}
     ${r ? `<h2>Radiación <span class="tag">medido · RAD</span></h2>
       ${r.medidos.map(x => `<div class="tarjeta" style="cursor:default"><b>${escB(x.t)}</b><div style="font-size:16px;margin:3px 0">${escB(x.v)}</div><div class="sub">${escB(x.eq)} · ${escB(x.cuando)}</div><div class="fuente">${escB(x.fuente)}</div></div>`).join('')}
       <h2>Qué significa para una misión <span class="tag">cálculo propio</span></h2>
@@ -273,4 +277,24 @@ function bibClima() {
       <p class="fuente">${escB(r.pds)}</p>` : ''}
     <p class="fuente">${escB(c.fuente)} ${escB(c.verificacion)} ${escB(c.descartados || '')}</p>`;
   engancharBib();
+}
+
+function vientoHumedad(v) {
+  const fm = x => x == null ? '—' : fmt(x, 1);
+  const W = 520, H = 150, bw = (W - 44) / 24, y = s => H - 18 - s / 12 * (H - 30);
+  const barras = v.viento_hora.map((h, i) => h.mediana == null ? '' : `<rect x="${34 + i * bw + 2}" y="${y(h.mediana)}" width="${bw - 4}" height="${H - 18 - y(h.mediana)}" fill="#9fd0ff"/><line x1="${34 + i * bw + bw / 2}" x2="${34 + i * bw + bw / 2}" y1="${y(h.mediana)}" y2="${y(h.p90)}" stroke="#e2b04a" stroke-width="2"/>`).join('');
+  const ejes = [0, 4, 8, 12].map(s => `<line x1="34" x2="${W - 10}" y1="${y(s)}" y2="${y(s)}" stroke="#ffffff14"/><text x="30" y="${y(s) + 4}" text-anchor="end" font-size="10" fill="#9aa0a6">${s}</text>`).join('')
+    + [0, 6, 12, 18].map(h => `<text x="${34 + h * bw + 2}" y="${H - 3}" font-size="10" fill="#9aa0a6">${h} h</text>`).join('');
+  const lin = v.hr_hora.map((h, i) => `${i ? 'L' : 'M'}${(34 + i * bw + bw / 2).toFixed(1)},${(H - 18 - h.mediana / 30 * (H - 30)).toFixed(1)}`).join('');
+  return `<h2>Viento y humedad <span class="tag">medido · datos crudos de REMS</span></h2>
+    <p class="sub">Leímos directamente los archivos calibrados de REMS en el PDS (unas ${fmt(v.soles.length)} jornadas repartidas en toda la misión). El sensor de viento quedó dañado al aterrizar y murió en 2016 (sol 1491), así que el viento llega hasta ahí; la humedad se mide toda la misión.</p>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;margin:6px 0">${ejes}${barras}</svg>
+    <div class="leyenda"><span><i class="cuad" style="background:#9fd0ff"></i>viento típico (mediana, m/s) por hora local</span><span><i class="cuad" style="background:#e2b04a"></i>ráfagas frecuentes (9 de cada 10 veces por debajo)</span></div>
+    <p class="sub">El viento es más fuerte al mediodía y a la tarde (unos 7 m/s, ráfagas de 9-10 m/s). En los soles medidos el máximo fue ${fm(Math.max(...v.soles.map(s => s.viento_max || 0)))} m/s; los estudios publicados mencionan rachas nocturnas de hasta ~20 m/s bajando por las laderas del cráter.</p>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;margin:6px 0">${[0, 10, 20, 30].map(s => `<line x1="34" x2="${W - 10}" y1="${H - 18 - s / 30 * (H - 30)}" y2="${H - 18 - s / 30 * (H - 30)}" stroke="#ffffff14"/><text x="30" y="${H - 14 - s / 30 * (H - 30)}" text-anchor="end" font-size="10" fill="#9aa0a6">${s}%</text>`).join('')}${[0, 6, 12, 18].map(h => `<text x="${34 + h * bw + 2}" y="${H - 3}" font-size="10" fill="#9aa0a6">${h} h</text>`).join('')}<path d="${lin}" fill="none" stroke="#7fd18b" stroke-width="2"/></svg>
+    <div class="leyenda"><span><i class="cuad" style="background:#7fd18b"></i>humedad relativa típica por hora (respecto del hielo)</span></div>
+    <div class="tablaw"><table class="comp"><tr><th>Mes</th><th>Estación</th><th>Viento de día</th><th>Ráfaga máx.</th><th>Humedad noche</th><th>Vapor noche</th></tr>
+      ${v.meses.map(m => `<tr><td>${m.mes}</td><td>${ESTACION[m.mes - 1]}</td><td>${fm(m.viento_dia)} m/s</td><td>${fm(m.viento_max)} m/s</td><td>${fm(m.hr)} %</td><td>${fm(m.vmr)} ppm</td></tr>`).join('')}</table></div>
+    <p class="sub">De noche, en invierno, la humedad relativa llega a 40-70 % porque el aire está muy frío, aunque tiene poca agua (decenas de partes por millón). En verano hay más vapor pero el aire es más cálido. Para una base: el aire de Marte casi no tiene agua para extraer; el agua está en el suelo (minerales hidratados de los pozos).</p>
+    <p class="fuente">${escB(v.fuente)} ${v.notas.map(escB).join(' ')}</p>`;
 }
