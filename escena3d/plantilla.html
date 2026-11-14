@@ -243,10 +243,19 @@ const etapa = t => { window.__etapa = t; const c = document.getElementById('carg
 addEventListener('error', e => etapa('Error: ' + e.message));
 addEventListener('unhandledrejection', e => etapa('Error: ' + (e.reason?.message || e.reason)));
 etapa('Cargando three.js…');
-const urlThree = URL.createObjectURL(new Blob([document.getElementById('src-three').textContent], { type: 'text/javascript' }));
-const THREE = await import(urlThree);
-const srcControles = document.getElementById('src-controles').textContent.replace(/from\s*['"]three['"]/, `from '${urlThree}'`);
-const { OrbitControls } = await import(URL.createObjectURL(new Blob([srcControles], { type: 'text/javascript' })));
+let THREE, OrbitControls;
+try {
+  // copia embebida (funciona sin internet, abriendo el archivo con doble clic)
+  const urlThree = URL.createObjectURL(new Blob([document.getElementById('src-three').textContent], { type: 'text/javascript' }));
+  THREE = await import(urlThree);
+  const srcControles = document.getElementById('src-controles').textContent.replace(/from\s*['"]three['"]/, `from '${urlThree}'`);
+  ({ OrbitControls } = await import(URL.createObjectURL(new Blob([srcControles], { type: 'text/javascript' }))));
+} catch (e) {
+  // donde la página no puede cargar módulos desde blob: (por ejemplo, publicada como artifact), la misma versión desde jsDelivr
+  etapa('Cargando three.js desde jsDelivr…');
+  THREE = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/+esm');
+  ({ OrbitControls } = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js/+esm'));
+}
 
 // ---------- datos ----------
 etapa('Leyendo datos…');
