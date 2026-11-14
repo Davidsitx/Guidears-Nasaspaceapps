@@ -2,6 +2,13 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 noche · Compañero (con Claude) · GALE EARTH: CLIMA, RADIACIÓN Y REVISIÓN DE SAM
+- **Clima (REMS):** hay datos hasta el **sol 4995 (25-08-2026)**, no solo hasta 2023. Biblioteca → "Clima y radiación": temperatura del aire y del suelo, presión y UV por estación, récords, el último año marciano en un gráfico y la tendencia por año. La presión media baja de 848 a 784 Pa porque Curiosity subió unos 1.000 m. Cada ficha de pozo muestra el clima del día de la perforación.
+- **Radiación (RAD):** los datos del PDS son cuentas sin calibrar, así que se usan los valores publicados: 0,64 mSv/día (Hassler 2014), +50 % hacia el mínimo solar (Guo 2021), efecto de la presión (Guo 2015) y la tormenta del 20-05-2024 (8.100 µGy, NASA). Hay cálculos propios marcados: salida de 6 h ≈ 0,16 mSv y 500 soles ≈ 330 mSv.
+- **SAM revisado con las notas de PDS:** 79 experimentos confirmados (antes 51), 6 probables, 8 de arenas (Gobabeb, Ogunquit Beach) y 11 que no son muestra (blancos, calibración, atmósfera). Los valores imposibles para una porción de ~45 mg (supuesto) se marcan ⚠: Mojave 2 y Telegraph Peak (HCl, NO, H₂S), un HCl de Cumberland y el H₂O de Glen Etive (error de tabla).
+- Línea de tiempo: nuevo evento, la tormenta solar de mayo de 2024 en Gale.
+- **Para David:** la escena usa 0,64 mSv/día. Los +50 % hacia el mínimo solar y el efecto de la presión pueden servir para la capa de radiación.
+
 ## 2026-11-14 tarde · Compañero (con Claude) · GALE EARTH SUBE AL REPO
 - **Carpeta nueva `gale-earth/`:** Marte en 3D estilo Google Earth (CesiumJS), para elegir dónde poner una base en Gale. Funciona en PC y celular. Se abre con `gale-earth/abrir.bat` (o `abrir.sh`); doble clic en `index.html` también anda, con menos capas. Ver `gale-earth/README.md`.
 - Tiene: recorrido y 49 perforaciones, tres sitios para la base, órbitas (MRO, Odyssey, Mars Express, TGO, Hope) y **Fobos y Deimos** con datos de JPL Horizons. También una **Biblioteca** con la ficha completa de cada pozo (CheMin, APXS, SAM, fotos, archivos crudos), una **línea de tiempo** de la exploración de Marte con fuente por evento, cielo con la Vía Láctea y pantalla de carga propia.

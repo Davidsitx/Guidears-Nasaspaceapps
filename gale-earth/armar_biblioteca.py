@@ -114,10 +114,83 @@ def sam_de(carpeta, R):
         if e["estado"] == "otra_muestra":
             e["otra"] = (meta.get(eid) or {}).get("odr_lo_asigna_a") or g.split("__")[-1].replace("_", " ")
         # valores imposibles (p. ej. H2O = 7,16E+07 mol en una tabla): se marcan y no se usan
-        e["dudoso"] = [k for k, v in e["gases"].items() if v > 1e-2]
+        e["dudoso"] = dudosos(e["gases"])
         del e["grupo"]
         lista.append(e)
     return lista
+
+
+# ---------- revisión de SAM: a qué muestra pertenece cada experimento ----------
+# datos/sam_revision.json sale de las notas de nivel 2 de SAM ("designated CB6", "designated VL1"…) y del nombre de cada
+# corrida en el registro de mensajes de nivel 0 (NASA PDS Geosciences). Una designación publicada confirma la muestra;
+# los blancos, calibraciones y medidas de atmósfera no son muestras y se separan.
+PORCION_MG = 45.0   # supuesto: porción típica entregada a un horno de SAM (unos 45-50 mg)
+MASA_MOLAR = {"H2O": 18.02, "CO2": 44.01, "SO2": 64.07, "O2": 32.0, "HCl": 36.46, "H2S": 34.08, "NO": 30.01, "H2": 2.02, "CH3Cl": 50.49, "CH2Cl2": 84.93}
+
+
+def _norm(t):
+    return re.sub(r"[^a-z0-9]", "", (t or "").lower())
+
+
+def dudosos(gases):
+    """Gases cuya masa liberada no es físicamente posible para una porción de ~45 mg (supuesto):
+    más del 5 % en peso (30 % para agua, CO2 y SO2, que los sulfatos y carbonatos pueden liberar en gran cantidad)."""
+    out = []
+    for k, v in gases.items():
+        mm = MASA_MOLAR.get(k)
+        if mm is None or v is None:
+            continue
+        pct = v * mm * 1000 / PORCION_MG * 100
+        if pct > (30 if k in ("H2O", "CO2", "SO2") else 5):
+            out.append(k)
+    return out
+
+
+def revisar_sam(pozos, ruta=os.path.join(AQUI, "datos", "sam_revision.json")):
+    if not os.path.exists(ruta):
+        return
+    rev = json.load(open(ruta, encoding="utf-8"))["experimentos"]
+    por_nombre = {_norm(p["nombre"]): p for p in pozos}
+    mover = []
+    for p in pozos:
+        nuevos = []
+        for s in p["sam"]:
+            s["dudoso"] = dudosos(s["gases"])
+            if s["estado"] == "confirmado":
+                s.setdefault("conf_por", "ODR")
+            r = rev.get(str(s["eid"]))
+            if not r:
+                nuevos.append(s)
+                continue
+            s["corrida"] = r.get("corrida", "")
+            if r.get("designacion"):
+                s["designacion"] = r["designacion"]
+            if r["clase"] == "sin_muestra":
+                s["estado"], s["motivo"] = "sin_muestra", r["motivo"]
+                s.pop("otra", None)
+            elif r["clase"] == "probable":
+                s["estado"], s["motivo"] = "probable", r["motivo"]
+                s.pop("otra", None)
+            else:
+                dest = _norm(r["muestra"])
+                # "Glen Etive" sin número: la nota de PDS no dice si es el pozo 1 o el 2; vale para los dos
+                es_este = dest == _norm(p["nombre"]) or (dest == "glenetive" and _norm(p["nombre"]).startswith("glenetive"))
+                if es_este:
+                    s["estado"], s["conf_por"] = "confirmado", "PDS: designación " + r["designacion"]
+                    s.pop("otra", None)
+                elif dest in por_nombre:
+                    s["estado"], s["conf_por"] = "confirmado", "PDS: designación " + r["designacion"]
+                    s.pop("otra", None)
+                    mover.append((por_nombre[dest], s))
+                    continue
+                else:
+                    s["estado"], s["otra"] = "otra_muestra", r["muestra"]
+            nuevos.append(s)
+        p["sam"] = nuevos
+    for p, s in mover:
+        if not any(str(x["eid"]) == str(s["eid"]) for x in p["sam"]):
+            p["sam"].append(s)
+            p["sam"].sort(key=lambda x: (x["sol"], str(x["eid"])))
 
 
 def miniaturas(carpeta, s):
@@ -232,6 +305,7 @@ def main():
         doc = md_a_html(open(md, encoding="utf-8").read())
     os.makedirs(os.path.dirname(SALIDA_JSON), exist_ok=True)
     with open(SALIDA_JSON, "w", encoding="utf-8") as f:
+        revisar_sam(pozos)
         json.dump({"version": 1, "origen": "Drive: Marte/Perforaciones Datos Crudos", "pozos": pozos, "temas_html": doc},
                   f, ensure_ascii=False, separators=(",", ":"))
     print(f"{len(pozos)} pozos · {os.path.getsize(SALIDA_JSON) // 1024} KB · miniaturas en capas/pozos/")
