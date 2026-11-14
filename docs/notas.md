@@ -2,6 +2,23 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 madrugada · David (con Claude) · ASTRONAUTA A MANO, ALERTAS, REGRESO A LA BASE Y CAPAS PORTABLES
+- **Para el compañero (importante):** `docs/capas-portables.md` tiene el inventario de capas para tu mapa: cada archivo, su formato, su fuente, las reglas de cálculo y un ejemplo con Leaflet. Las capas nuevas están en `data/capas/sol5070/` (PNG + `meta.json`, misma grilla que el terreno).
+- Datos:
+  - **Dosis corregida a 0,64 mSv/día** (Hassler 2014); antes usábamos 0,67. Actualicé `parametros.json`, el contrato, el GeoJSON y `paradas.md`.
+  - `parametros.json` suma `eva` (salida de 6 h nominales y 8 h máximas; 30 min a un refugio y 30 min de reserva, estos dos como supuestos) y los límites de 600 mSv y 250 mSv.
+  - Puntos nuevos R1, M1, Q1 y Z1 en `data/rutas/puntos_extra_sol5070.geojson`.
+- Escena:
+  - mover al astronauta (WASD o joystick), con alertas que avisan y no bloquean;
+  - volver a la base por el camino más rápido;
+  - capas de peligro, de alcance a pie y CRISM más nítido con modo interpretado;
+  - perfil en tarjeta flotante (el botón "Ver perfil" antes no mostraba nada a la vista);
+  - botones de brújula y "ubicarme";
+  - rutas como cintas con flechas;
+  - más detalle en Curiosity y en el astronauta.
+- **Hallazgo:** B2 queda a 33 min de caminata de S, más que la regla de 30 min. A3, C3, A4, C4 y R1 están a 33–48 min. Refuerza la ruta C (ver `docs/paradas.md`).
+- Falta: textos en inglés; probar en una tablet real.
+
 ## 2026-11-14 madrugada · David (con Claude) · VISUAL Y USO DE LA ESCENA 3D
 - Hizo (`escena3d/plantilla.html`; `index.html` regenerado):
   - astronauta articulado, con caminata y huellas;

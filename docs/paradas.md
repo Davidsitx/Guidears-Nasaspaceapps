@@ -9,11 +9,11 @@ Cada parada se ubicó **sobre el terreno real** (DEM USGS de 2 m y ortofoto HiRI
 | Ruta | Largo | Subida | Pendiente máx. | Tiempo | Dosis |
 |---|---|---|---|---|---|
 | A · Robot Curiosity | 1669 m | 198 m | 19.4° | 28–56 (30–60 m por sol) | — |
-| B · Astronauta a pie, ida y vuelta | 2605 m | 156 m | 19.9° | 84 min | 37.8 µSv |
+| B · Astronauta a pie, ida y vuelta | 2605 m | 156 m | 19.9° | 84 min | 36.1 µSv |
 | C · Rover presurizado tripulado (mismo trazado que A; supuesto: ~10 km/h, concepto SEV) | 1669 m | — m | —° | 10 min | — |
-| C · Caminata 1 (A2 → C2 → A2) | 962 m | 51 m | 19.6° | 30 min | 13.3 µSv |
-| C · Caminata 2 (A3 → C3 → A3) | 808 m | 14 m | 19.7° | 20 min | 9.1 µSv |
-| C · Caminata 3 (A4 → C4 → A4) | 759 m | 13 m | 19.6° | 19 min | 8.4 µSv |
+| C · Caminata 1 (A2 → C2 → A2) | 962 m | 51 m | 19.6° | 30 min | 12.7 µSv |
+| C · Caminata 2 (A3 → C3 → A3) | 808 m | 14 m | 19.7° | 20 min | 8.7 µSv |
+| C · Caminata 3 (A4 → C4 → A4) | 759 m | 13 m | 19.6° | 19 min | 8.0 µSv |
 
 ## Hacia dónde nos acerca la ruta
 - Todas las rutas **suben ~190 m** por el Monte Sharp, hacia capas más jóvenes. Desde órbita, el Monte Sharp muestra arcillas abajo, sulfatos encima y, en lo más alto, capas parecidas al polvo y sin minerales hidratados: la transición registraría cómo se secó Marte (Milliken y colaboradores, mapeo CRISM; Sheppard et al. 2021, JGR Planets, doi:10.1029/2020JE006372).
@@ -119,6 +119,36 @@ pN = percentil dentro de la zona (p94 = más fuerte que el 94% de la zona). Valo
 - Precedente que conviene citar: en Vera Rubin, CRISM marcó hematita fuerte, pero Curiosity después la encontró también donde CRISM casi no la veía (Fraeman et al. 2020, JGR Planets). Por eso la órbita **orienta** y el rover o el astronauta **confirman**.
 
 **Advertencias.** Son indicadores cualitativos y relativos al entorno del sitio de aterrizaje (en Gale la señal es mucho más sutil que en Mawrth Vallis o Nili Fossae). Pueden aparecer falsos positivos por polvo, bruma de hielo (tono azul en ALT e HYD), iluminación o pendiente. Las observaciones son de 2006–2012. El TRU no se usa: el archivo de origen llega cortado.
+
+## Puntos agregados (14/11) y cuánto puede caminar el astronauta
+
+**Puntos nuevos** (`data/rutas/puntos_extra_sol5070.geojson`, calculados con `herramientas/capas_peligro.py`):
+
+| Punto | Qué es | Por qué |
+|---|---|---|
+| R1 | Refugio natural junto a la caminata 3 | 27% de cielo tapado, el máximo junto a esa caminata y en pendiente caminable. Sirve para pausas; no protege de una tormenta solar |
+| M1 | Mirador sobre la ruta B | 14 m sobre el promedio de su entorno, con el cielo abierto: panorámica y orientación |
+| Q1 | Muestra de sulfato polihidratado | La señal HYD más fuerte de ese tipo junto a la ruta B, en terreno llano |
+| Z1 | Precaución por arena en la ruta del robot | El 36% de la ruta A cruza celdas con indicio de arena suelta (CRISM máfico más tono oscuro en HiRISE) |
+
+**Límites de radiación (fuentes en `docs/fuentes.md`):**
+- La dosis en la superficie es de 0,64 ± 0,12 mSv/día (RAD, Hassler et al. 2014). Corregimos el 0,67 que veníamos usando.
+- El límite de carrera de NASA es de 600 mSv; el límite por tormenta solar, de 250 mSv (NASA-STD-3001).
+
+**Lo que eso significa (cálculo propio):**
+- **Una salida casi no pesa en dosis.** La ruta B completa da unos 36 µSv, el 0,006% del límite de carrera.
+- **El presupuesto de radiación lo consume el viaje.** Solo la ida y la vuelta, 360 días a 1,84 mSv/día, suman unos 662 mSv: más que el límite de carrera.
+- **Lo que limita una salida es otra cosa:** el tiempo del traje (salidas de 6 ± 2 h, hasta 8 h, xEMU) y llegar a tiempo a un refugio ante una tormenta solar (aviso de 30 min, NASA).
+
+**Minutos de caminata hasta la base S** (camino más rápido, capa "Alcance a pie"):
+
+| Parada | S | Z1 | A1 | B1 | Q1 | A2 | B2 / C2 | M1 | A3 | C3 | A4 | R1 | C4 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Minutos | 0 | 13 | 12 | 18 | 18 | 24 | 33 | 33 | 33 | 39 | 42 | 45 | 48 |
+
+- **La ruta B queda en el límite:** B2 y M1 están a 33 min de la base, 3 más que la regla de 30 min. Es un margen chico pero real: hay que decirlo en la presentación.
+- **Desde S, A3, C3, A4, C4 y R1 quedan fuera del alcance seguro a pie.** Por eso la ruta C lleva el rover presurizado hasta A2, A3 y A4, y desde ahí las caminatas son cortas: el refugio viaja con el astronauta.
+- La escena calcula todo esto en vivo. Si te alejás demasiado, salta "A N min de la base"; cuando no alcanza el tiempo, "Hora de volver" (con el botón Volver); y "Volver a la base" traza el camino más rápido y lo camina.
 
 ## Limitaciones
 - Pendientes a 2 m: el DEM promedia; una roca de 1 m no aparece.

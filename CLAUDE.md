@@ -48,9 +48,11 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).
 - Pendiente máxima astronauta: 20° (requisito lunar Artemis, a validar). Velocidad astronauta en llano: 2,5 km/h. Velocidad rover: 100 m/h en conducción; 30–60 m por sol de manejo según el blog.
-- Dosis de rayos cósmicos en superficie: 0,67 mSv/día (RAD). Reducción por relieve: factor 0,25 sobre la fracción de cielo bloqueado (calibrado con Murray Buttes).
+- Dosis de rayos cósmicos en superficie: 0,64 mSv/día (RAD, Hassler et al. 2014; antes usamos 0,67 por error). Reducción por relieve: factor 0,25 sobre la fracción de cielo bloqueado (calibrado con Murray Buttes).
+- Salida a pie: 6 h nominales, 8 h máximas (traje xEMU); supuestos: no más de 30 min de un refugio y 30 min de reserva. Límite de carrera de 600 mSv (NASA-STD-3001).
 
 ## Documentos
+- docs/capas-portables.md: inventario de capas (archivo, formato, fuente y reglas) para pasarlas al mapa del compañero.
 - docs/ciencia.md: qué investiga hoy el equipo de Curiosity y por qué elegimos cada parada.
 - docs/rover-salud.md: energía, ruedas y cómo eso limita la capa vehículo.
 - docs/fuentes.md: índice de fuentes; el registro completo está en el documento compartido del equipo.

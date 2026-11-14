@@ -10,6 +10,7 @@ Lee:
     data/curiosity/posicion_sol5070.geojson
     data/parametros.json                                    (docs/contrato.md §3)
     data/mineralogia/crism_<zona>/meta.json y *.png         (opcional: mineralogía CRISM por parada y en el visor)
+    data/capas/<zona>/peligro_clases.png y meta.json        (opcional: zonas de peligro; herramientas/capas_peligro.py)
     escena3d/vendor/three.module.min.js, OrbitControls.js   (three.js r170, MIT)
     escena3d/plantilla.html
 
@@ -174,9 +175,18 @@ def main():
                     crism["png"][prod] = b64(f.read())
         print(f"mineralogía CRISM: {', '.join(crism['png'])}")
 
+    # capas calculadas (data/capas/<zona>/): clases de peligro por celda, en la misma grilla que el DEM
+    capas = None
+    dc = os.path.join(RAIZ, "data", "capas", a.zona)
+    if os.path.exists(os.path.join(dc, "peligro_clases.png")):
+        with open(os.path.join(dc, "peligro_clases.png"), "rb") as f:
+            capas = {"peligro_clases": b64(f.read()), "meta": leer_json(os.path.join(dc, "meta.json"))}
+        print("capas: peligro_clases")
+
     datos = {
         "zona": a.zona,
         "crism": crism,
+        "capas": capas,
         "meta": meta,
         "zmin": zmin,
         "cos_lat": cos_lat,

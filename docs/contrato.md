@@ -33,7 +33,7 @@ GeoJSON FeatureCollection. Una `LineString` por ruta y un `Point` por parada.
 {
   "vehiculo":  { "pendiente_max_deg": 20, "velocidad_m_h": 100, "avance_por_sol_m": [30, 60] },
   "astronauta":{ "pendiente_max_deg": 25, "velocidad_llano_km_h": 2.5 },
-  "radiacion": { "dosis_superficie_mSv_dia": 0.67, "factor_blindaje_relieve": 0.25 },
+  "radiacion": { "dosis_superficie_mSv_dia": 0.64, "factor_blindaje_relieve": 0.25 },
   "estado": "provisorio"
 }
 ```

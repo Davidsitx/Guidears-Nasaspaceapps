@@ -12,7 +12,7 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Ortoimagen de Gale de 25 cm (HiRISE, escala de grises) | USGS Astrogeology, MSL_Gale_Orthophoto_Mosaic_25cm_v3 (Calef y Parker, 2016), planetarymaps.usgs.gov/mosaic/Mars/MSL/. Usada como `orto.jpg` (0,5 m) del terreno del sol 5070 |
 | Posición del sol 5070 | NASA, "Where is Curiosity?" |
 | Blog de la misión (2025–2026) | science.nasa.gov/blog (ver docs/ciencia.md) |
-| Dosis de radiación en superficie | Hassler et al., 2014, Science (RAD) |
+| Dosis de radiación en superficie (0,64 ± 0,12 mSv/día; antes usamos 0,67 por error) | Hassler et al., 2014, Science (RAD), doi:10.1126/science.1244797 |
 | Blindaje por relieve | DLR, JGR Planets 2026 (elib.dlr.de/224554) |
 | Energía y ruedas del rover | ver docs/rover-salud.md |
 | MMGIS | NASA-AMMOS/MMGIS (Apache 2.0) |
@@ -28,3 +28,7 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Mineralogía orbital del Monte Sharp (CRISM) | Sheppard et al. 2021, JGR Planets, doi:10.1029/2020JE006372; Rice et al. 2015, AGU P43D-2144 |
 | Mosaicos CRISM de Gale para el aterrizaje (VNA, TRU, FM2, MAF, IRA, FAL, HYD, ALT; 19,3 m/píxel, equirectangular R=3396190) | Seelos, Seelos, Viviano y Murchie (JHU/APL), CRISM GMWG, 24/7/2012: crism.jhuapl.edu/msl_landing_sites/2012July_Mosaics/CRISM_GMWG_7-24-12_v2.pdf. Cubre la zona sol 5070 (verificado). Recortes y valores por parada en data/mineralogia/crism_sol5070/ |
 | Hematita de Vera Rubin: CRISM frente a mediciones de Curiosity | Fraeman et al. 2020, JGR Planets, doi:10.1029/2019JE006294 |
+| Límite de dosis de carrera (600 mSv) y por tormenta solar (250 mSv) | NASA-STD-3001 Vol. 1 [V1 4030] y [V1 4031]; resumen OCHMO-TB-020 (nasa.gov) |
+| Dosis en el viaje (1,84 mSv/día; misión de referencia ~1,01 Sv) | RAD en crucero (Zeitlin et al. 2013), citado con Hassler et al. 2014 |
+| Duración de una salida con traje (hasta 8 h, 6 ± 2 h) | NASA EVA-EXP-0075 (NTRS 20200001071); NTRS 20210000827 |
+| Aviso ante tormentas solares (10 a 30 min; mínimo 30 min) | Parker et al., NASA Helio2050 (NTRS 20210014156). Base de nuestra regla "a no más de 30 min de un refugio" (supuesto) |

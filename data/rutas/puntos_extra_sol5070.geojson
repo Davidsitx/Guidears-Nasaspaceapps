@@ -1,0 +1,99 @@
+{
+ "type": "FeatureCollection",
+ "name": "puntos_extra_sol5070",
+ "nota": "Puntos agregados el 14/11: refugio, mirador, muestra y precaución. Mismo formato que las paradas (contrato §2) más el campo tipo.",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.407171,
+     -4.843215
+    ]
+   },
+   "properties": {
+    "parada": "R1",
+    "tipo": "refugio",
+    "ruta": "rover tripulado + caminata",
+    "quien": "astronauta (desde rover tripulado)",
+    "nombre": "R1 · Refugio natural junto a la caminata 3",
+    "motivo_cientifico": "El lugar con más cielo tapado (27%) a menos de 25 m de la caminata hacia C4, en pendiente caminable (14.9°). Sirve para pausas: el relieve baja algo la dosis. No es un refugio contra una tormenta solar: para eso hay que volver al rover presurizado.",
+    "fuente_motivo": "Cálculo propio de cielo tapado (16 direcciones, 400 m). Murray Buttes: 19% de cielo tapado baja la dosis 4-5% (Ehresmann et al. 2021, JGR Planets). Por encima de 19% es extrapolación.",
+    "elevacion_m": -3276.4,
+    "pendiente_celda": 14.9,
+    "cielo_tapado_pct": 27,
+    "calculado_con": "herramientas/capas_peligro.py"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.399208,
+     -4.831877
+    ]
+   },
+   "properties": {
+    "parada": "M1",
+    "tipo": "mirador",
+    "ruta": "astronauta",
+    "quien": "astronauta",
+    "nombre": "M1 · Mirador sobre la ruta B",
+    "motivo_cientifico": "El punto más alto respecto de su entorno junto a la ruta B: 14.3 m sobre el promedio de los 60 m alrededor, con el cielo casi abierto (2%). Desde acá se ve la loma de B2, el butte de C3 y el terreno claro: lugar para una panorámica y para ubicarse, como las panorámicas que hace Curiosity desde puntos altos.",
+    "fuente_motivo": "Prominencia calculada sobre el DEM USGS (Calef y Parker 2016). Práctica de la misión: panorámica del sol 4982 hacia la unidad de yardangs (NASA/JPL-Caltech/MSSS).",
+    "elevacion_m": -3327.7,
+    "pendiente_celda": 14.7,
+    "cielo_tapado_pct": 2,
+    "calculado_con": "herramientas/capas_peligro.py"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.394754,
+     -4.83019
+    ]
+   },
+   "properties": {
+    "parada": "Q1",
+    "tipo": "muestra",
+    "ruta": "astronauta",
+    "quien": "astronauta",
+    "nombre": "Q1 · Muestra de sulfato polihidratado",
+    "motivo_cientifico": "La señal más fuerte de sulfato polihidratado junto a la ruta B (CRISM HYD: sulfato y agua altos, sin la banda de los monohidratados), en terreno casi llano. Es la misma unidad de sulfatos que Curiosity estudia hoy: vale tomar una muestra a mano, que el robot no puede elegir con esa libertad.",
+    "fuente_motivo": "Mosaico CRISM HYD (Seelos et al., JHU/APL, 2012), 19 m/píxel: indicador desde órbita, se confirma en el lugar. Campaña de la unidad de sulfatos: blog de Curiosity (sols 4867-4878).",
+    "elevacion_m": -3386.0,
+    "pendiente_celda": 6.2,
+    "cielo_tapado_pct": 9,
+    "calculado_con": "herramientas/capas_peligro.py"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.393337,
+     -4.830427
+    ]
+   },
+   "properties": {
+    "parada": "Z1",
+    "tipo": "precaucion",
+    "ruta": "vehiculo",
+    "quien": "rover",
+    "nombre": "Z1 · Posible arena en la ruta del robot",
+    "motivo_cientifico": "El 36% de la ruta A cruza celdas con indicio de arena suelta: material volcánico oscuro fuerte en CRISM más tono oscuro en HiRISE. Acá conviene reducir la velocidad y revisar con las cámaras de navegación: Curiosity esquiva la arena y las pendientes al planear cada tramo.",
+    "fuente_motivo": "CRISM FM2 y MAF (Seelos et al. 2012): suelen marcar regolito o arena. Tono HiRISE (Calef y Parker 2016). Blog de Curiosity, sols 4818-4824 (manejar esquivando arena y pendientes).",
+    "elevacion_m": -3404.2,
+    "pendiente_celda": 10.9,
+    "cielo_tapado_pct": 13,
+    "calculado_con": "herramientas/capas_peligro.py"
+   }
+  }
+ ]
+}

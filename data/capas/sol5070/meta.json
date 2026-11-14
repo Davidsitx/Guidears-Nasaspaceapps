@@ -1,0 +1,25 @@
+{
+ "zona": "sol5070",
+ "ancho": 801,
+ "alto": 831,
+ "m_por_px": 2.0,
+ "lat_norte": -4.81998369,
+ "lat_sur": -4.848022635274187,
+ "lon_oeste": 137.38498606,
+ "lon_este": 137.4120127689827,
+ "grados_por_px": 3.374120971623043e-05,
+ "proyeccion": "Equirectangular, paralelo estándar 0, R=3396190 m (igual que data/terreno)",
+ "nota": "lat_norte/lon_oeste = esquina noroeste del píxel (0,0). Para un mapa 2D (Leaflet, MapLibre): imagen sobre el rectángulo [lat_sur, lon_oeste]-[lat_norte, lon_este].",
+ "capas": {
+  "peligro_clases.png": "Un byte por celda: 0 sin peligro, 1 precaución (pendiente 15-20°), 2 peligro (20-30°, sobre el límite del traje y del rover), 3 crítico (más de 30°, supuesto de riesgo de caída), 4 posible arena suelta.",
+  "peligro.png": "Las mismas clases en color: amarillo 1, naranja 2, rojo 3, violeta 4 (transparente = 0).",
+  "pendiente.png": "Pendiente del terreno: amarillo 15-20°, naranja 20-30°, rojo más de 30°.",
+  "cielo_tapado.png": "Fracción de cielo tapada por el relieve (más azul = más tapado = menos radiación). Cálculo propio: 16 direcciones hasta 400 m."
+ },
+ "fuentes": {
+  "pendiente": "Cálculo propio sobre el DEM USGS de Gale de 1 m (Calef y Parker 2016) llevado a 2 m.",
+  "limites": "Límite de 20° para traje (requisito lunar Artemis, NTRS 20210026296) y rover (provisorio, data/parametros.json). 30° crítico: SUPUESTO del equipo.",
+  "arena": "Indicio: CRISM FM2 (hierro ferroso) o MAF (olivino) fuerte, que suele marcar regolito o arena (guía de los mosaicos CRISM GMWG 2012), más tono oscuro en HiRISE (percentil < 35 de la zona). No es una medición de arena."
+ },
+ "armado_con": "herramientas/capas_peligro.py"
+}

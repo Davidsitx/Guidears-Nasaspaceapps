@@ -15,12 +15,18 @@
     "radio_max_desde_refugio_km": 1.38,
     "fuente_radio": "Ejemplo de EVA lunar caminando: alcance máximo 1,38 km desde el módulo (NASA NTRS 20210026296). Referencia, no requisito marciano.",
     "radio_alerta_km": null,
-    "nota_radio": "El radio de alerta debe salir del tiempo de regreso con la reserva del traje, no de la longitud de nuestras salidas (385 m no es un estándar)."
+    "nota_radio": "El radio de alerta sale del tiempo de regreso por el terreno (A*) contra la regla de 30 min a refugio y la reserva del traje (ver eva)."
   },
   "radiacion": {
-    "dosis_superficie_mSv_dia": 0.67,
+    "dosis_superficie_mSv_dia": 0.64,
     "factor_blindaje_relieve": 0.25,
-    "fuente": "Dosis 0,67 mSv/día: Hassler et al. 2014. Murray Buttes, 19% de cielo bloqueado: dosis -4% a -5% y partículas neutras -7,5% (Ehresmann et al. 2021, JGR Planets, doi:10.1029/2021JE006851; Guo et al. 2021, GRL, doi:10.1029/2021GL093912). Hasta -19% en otros terrenos (DLR, JGR Planets 2026). Cerca de un acantilado aumenta la radiación reflejada (albedo)."
+    "fuente": "Dosis equivalente en la superficie de Gale: 0,64 ± 0,12 mSv/día (RAD, Hassler et al. 2014, Science, doi:10.1126/science.1244797; antes usábamos 0,67 por error). Murray Buttes, 19% de cielo bloqueado: dosis -4% a -5% y partículas neutras -7,5% (Ehresmann et al. 2021, JGR Planets, doi:10.1029/2021JE006851; Guo et al. 2021, GRL, doi:10.1029/2021GL093912). Hasta -19% en otros terrenos (DLR, JGR Planets 2026). Cerca de un acantilado aumenta la radiación reflejada (albedo).",
+    "limite_carrera_mSv": 600,
+    "fuente_limite_carrera": "NASA-STD-3001 Vol. 1 [V1 4030]: dosis efectiva de carrera menor a 600 mSv, igual para todas las edades y sexos.",
+    "limite_tormenta_solar_mSv": 250,
+    "fuente_tormenta_solar": "NASA-STD-3001 Vol. 1 [V1 4031]: 250 mSv por evento de partículas solares (OCHMO-TB-020).",
+    "dosis_transito_mSv_dia": 1.84,
+    "fuente_transito": "RAD en el viaje a Marte: 1,84 mSv/día (Zeitlin et al. 2013; citado con Hassler et al. 2014). Misión de referencia 180 + 500 + 180 días: ~1,01 Sv."
   },
   "estado": "provisorio",
   "notas": "Reemplazar cada valor por uno con fuente (ver docs/fuentes.md y CLAUDE.md).",
@@ -30,6 +36,16 @@
     "alcance_km": 125,
     "pendiente_max_deg": null,
     "fuente": "NASA Space Exploration Vehicle (concepto lunar 2008; ficha FS-2011-08-045-JSC). A validar para Marte.",
+    "estado": "provisorio"
+  },
+  "eva": {
+    "duracion_max_h": 8,
+    "duracion_nominal_h": 6,
+    "fuente_duracion": "Traje lunar xEMU: salidas de hasta 8 h (6 ± 2 h). NASA EVA-EXP-0075 (NTRS 20200001071) y NTRS 20210000827. Es lunar: a validar para Marte.",
+    "tiempo_max_a_refugio_min": 30,
+    "fuente_refugio": "SUPUESTO del equipo basado en NASA (Parker et al., Helio2050, NTRS 20210014156): pedir 10 a 30 min de aviso y al menos 30 min de anticipación ante partículas solares. Regla: no alejarse a más de 30 min de caminata de un refugio.",
+    "reserva_regreso_min": 30,
+    "nota_reserva": "SUPUESTO: margen de 30 min sobre el tiempo de regreso calculado.",
     "estado": "provisorio"
   }
 }

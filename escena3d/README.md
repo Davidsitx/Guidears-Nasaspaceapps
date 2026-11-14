@@ -44,6 +44,22 @@ Es la fusión de dos trabajos del equipo:
 - **Astronauta articulado:** traje genérico sin marcas (casco de burbuja con visera dorada, mochila de soporte vital,
   módulo de pecho, juntas). Camina con paso largo de baja gravedad (1,4 m por ciclo), se inclina en las subidas y
   respira en reposo. **Rover:** ruedas con 24 garras en V; el mástil escanea el paisaje cuando está quieto.
+- **Mover al astronauta** como al rover: "Manejar: Rover / Astronauta" en la barra, teclas WASD o joystick táctil. Baja al
+  lado del rover (la base) y nada lo bloquea: las **alertas** avisan en pantalla y en el visor (pendiente sobre 20°, más de
+  30°, posible arena, lo que viene en 16 m, minutos hasta la base contra 30 min, margen de la salida contra 6 y 8 h).
+  **Volver a la base** traza el camino más rápido y lo camina solo (también desde la primera persona).
+- **Presupuesto de la salida:** tiempo afuera, regreso a pie y margen en el visor y en el panel "Datos"
+  (`data/parametros.json` → `eva`; ver `docs/paradas.md`).
+- **Capas nuevas:** zonas de peligro (`data/capas/sol5070/`), alcance a pie (curvas de 10, 20 y 30 min hasta S) y
+  CRISM más nítido (suavizado, fusión con HiRISE y modo "Interpretado: qué hay").
+- **Perfil de ruta** en tarjeta flotante (botón "Ver perfil" de cada ruta): pendiente por color, posible arena, paradas, y
+  tocar el gráfico lleva la cámara a ese punto.
+- **Botones de mapa:** brújula (orienta al norte), ubicarme (centra y sigue al astronauta o al rover) y Volver a la base.
+- **Rutas como cintas** apoyadas en el terreno, con flechas que avanzan en el sentido de la marcha.
+- **Detalle con el método Anatomy** (piezas reales, chicas y precisas): Curiosity con brazo plegado y torreta (taladro,
+  cepillo, MAHLI, APXS, CHIMRA), barra diferencial, actuadores de dirección, hazcams, radiadores del MMRTG, tomas de SAM y
+  CheMin, blancos de calibración; astronauta con mangueras, guantes con dedos, muñequera, martillo y bolsa de muestras,
+  rodamientos, fuelles de rodilla y suelas con tacos.
 - **Huellas y polvo:** botas del astronauta y bandas de las ruedas del rover hasta donde llegó cada uno (acompañan la
   barra de tiempo), y polvo al pisar y al rodar. Reflejos del cielo en metales y visera; cielo con degradé.
 - El borrador "a ojo" (`ruta_sol5070_cualitativa.geojson`) se carga oculto: se puede prender desde su casilla.

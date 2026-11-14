@@ -20,10 +20,20 @@
   .sub { color: var(--tenue); font-size: 12px; }
   .prov { color: var(--acento); font-size: 10.5px; border: 1px solid var(--acento); border-radius: 4px; padding: 0 4px; margin-left: 4px; white-space: nowrap; }
   label { display: flex; align-items: center; gap: 6px; cursor: pointer; margin: 2px 0; }
-  button, select { font: inherit; color: var(--texto); background: #2a211c; border: 1px solid var(--borde); border-radius: 6px; padding: 5px 9px; cursor: pointer; }
+  button, select { font: inherit; font-weight: 500; color: var(--texto); background: linear-gradient(#3a2d25, #2a201b); border: 1px solid rgba(233, 226, 214, .22);
+    border-radius: 8px; padding: 6px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 32px;
+    box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 1px 2px rgba(0,0,0,.35); transition: background .15s, border-color .15s, transform .08s; }
   button:hover, select:hover { border-color: var(--acento); }
-  button[aria-pressed=true] { border-color: var(--acento); background: #4a3526; }
-  button.pri { background: #b4532a; border-color: #b4532a; }
+  button:active { transform: translateY(1px); }
+  button:focus-visible, select:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+  button:disabled { opacity: .45; cursor: default; }
+  button[aria-pressed=true] { border-color: var(--acento); background: linear-gradient(#5a4130, #46321f); color: #fff; }
+  button.pri { background: linear-gradient(#cc6233, #a8482a); border-color: #d9733f; color: #fff; }
+  button svg { width: 16px; height: 16px; flex: none; }
+  .seg { display: inline-flex; border-radius: 8px; overflow: hidden; border: 1px solid rgba(233, 226, 214, .22); }
+  .seg button { border: 0; border-radius: 0; box-shadow: none; }
+  .seg button + button { border-left: 1px solid rgba(233, 226, 214, .18); }
+  .etq { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--tenue); }
   input[type=number] { width: 54px; font: inherit; background: #2a211c; color: var(--texto); border: 1px solid var(--borde); border-radius: 4px; padding: 3px 4px; }
 
   /* panel izquierdo: capas, rutas, perfil, fuentes */
@@ -52,6 +62,39 @@
 
   /* barra inferior de controles */
   #ctrl { bottom: 12px; left: 12px; right: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 8px 10px; }
+  /* botones flotantes (como en un mapa): brújula, ubicarme, volver a la base */
+  #flot { position: fixed; right: 16px; bottom: 120px; display: flex; flex-direction: column; gap: 10px; z-index: 4; }
+  #flot button { width: 46px; height: 46px; padding: 0; justify-content: center; border-radius: 50%; background: rgba(28, 21, 18, .92); box-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  #flot button svg { width: 22px; height: 22px; }
+  #flot #bVolver { width: auto; border-radius: 23px; padding: 0 14px; background: linear-gradient(#2f8a55, #23683f); border-color: #4fbf7d; color: #fff; font-weight: 600; }
+  #flot #bUbicar[aria-pressed=true] { background: #1d4f7a; border-color: #6bb7ff; }
+  #bNorte svg { transition: transform .1s linear; }
+  /* joystick táctil */
+  #joy { position: fixed; left: 22px; bottom: 120px; width: 124px; height: 124px; border-radius: 50%; z-index: 4; touch-action: none;
+    background: radial-gradient(circle, rgba(255,255,255,.06) 0 55%, rgba(255,255,255,.12) 56% 58%, rgba(0,0,0,.25) 59%); border: 1px solid rgba(233,226,214,.25); }
+  #joy i { position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin: -25px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #6b5444, #3a2c23); border: 1px solid rgba(255,207,122,.6); box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+  #joy span { position: absolute; left: 0; right: 0; bottom: -20px; text-align: center; font-size: 11px; color: var(--tenue); }
+  /* alertas: no frenan, avisan */
+  #alertas { position: fixed; top: 108px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center; z-index: 6; pointer-events: none; width: min(520px, calc(100% - 24px)); }
+  .alerta-p { pointer-events: auto; display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 10px; font-weight: 600; font-size: 13px;
+    background: rgba(25, 18, 15, .93); border: 1px solid; box-shadow: 0 4px 14px rgba(0,0,0,.45); animation: entra .25s ease-out; }
+  .alerta-p small { display: block; font-weight: 400; color: var(--tenue); font-size: 11.5px; }
+  .alerta-p b.ic { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: #1b1210; font-size: 15px; }
+  .al-precaucion { border-color: #ffcf5a; } .al-precaucion b.ic { background: #ffcf5a; }
+  .al-peligro { border-color: #ff8a3d; } .al-peligro b.ic { background: #ff8a3d; }
+  .al-critico { border-color: #ff4d4d; animation: entra .25s ease-out, late 1s ease-in-out infinite; } .al-critico b.ic { background: #ff4d4d; color: #fff; }
+  .al-info { border-color: #6bb7ff; } .al-info b.ic { background: #6bb7ff; }
+  @keyframes entra { from { opacity: 0; transform: translateY(-6px); } }
+  @keyframes late { 50% { box-shadow: 0 0 0 4px rgba(255,77,77,.35), 0 4px 14px rgba(0,0,0,.45); } }
+  @media (prefers-reduced-motion: reduce) { .alerta-p { animation: none !important; } }
+  /* perfil de la ruta (tarjeta flotante) */
+  #perfilCard { left: 50%; transform: translateX(-50%); bottom: 112px; width: min(820px, calc(100% - 24px)); z-index: 5; }
+  #perfilCard .cab { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  #perfilCard .cab h1 { flex: 1; font-size: 14px; }
+  #pcLienzo { width: 100%; height: 170px; display: block; background: #120c0a; border-radius: 8px; cursor: crosshair; touch-action: none; }
+  #pcDato { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-top: 6px; text-align: center; font-size: 11px; color: var(--tenue); }
+  #pcDato b { display: block; font-size: 15px; color: var(--texto); font-variant-numeric: tabular-nums; }
+  @media (max-width: 600px) { #pcDato { grid-template-columns: repeat(3, minmax(0, 1fr)); } #pcLienzo { height: 140px; } }
   #ctrl label { color: var(--tenue); margin: 0; }
   #ctrl input[type=range] { width: 110px; }
   #msg { color: var(--tenue); margin-left: auto; font-size: 12px; }
@@ -150,8 +193,10 @@
   <label><input type="radio" name="capa" value="pendiente"> Pendiente vs. límites <span class="prov">provisorio</span></label>
   <label><input type="radio" name="capa" value="prohibidas"> Zonas prohibidas <span class="prov">provisorio</span></label>
   <label><input type="radio" name="capa" value="cielo"> Sombra de radiación (cielo tapado)</label>
+  <label id="l-peligro"><input type="radio" name="capa" value="peligro"> Zonas de peligro (pendiente y arena)</label>
+  <label><input type="radio" name="capa" value="alcance"> Alcance a pie: minutos hasta la base</label>
   <label id="l-crism"><input type="radio" name="capa" value="crism"> Mineralogía desde órbita (CRISM)
-    <select id="sCrism" aria-label="Producto CRISM"><option value="ALT">ALT alteración</option><option value="HYD">HYD sulfatos</option><option value="FM2">FM2 hierro</option><option value="MAF">MAF máficos</option></select></label>
+    <select id="sCrism" aria-label="Producto CRISM"><option value="INT">Interpretado: qué hay</option><option value="ALT">ALT alteración</option><option value="HYD">HYD sulfatos</option><option value="FM2">FM2 hierro</option><option value="MAF">MAF máficos</option></select></label>
   <div class="leyenda" id="leyenda"></div>
 
   <h2>Paradas · qué hay en cada una</h2>
@@ -186,6 +231,8 @@
   <div class="fila"><span>Tiempo afuera</span><b id="aTiempo">0 min</b></div>
   <div class="fila"><span>Dosis estimada</span><b id="aDosis">0,0 µSv</b></div>
   <div class="fila"><span>Cielo tapado aquí</span><b id="aCielo">—</b></div>
+  <div class="fila"><span>Regreso a la base</span><b id="aRegreso">—</b></div>
+  <div class="fila"><span>Margen de la salida</span><b id="aMargen">—</b></div>
   <h2>Entorno</h2>
   <div class="fila"><span>Hora solar local</span><b id="eHora">12:00</b></div>
   <div class="fila"><span>Elevación del Sol</span><b id="eSol">—</b></div>
@@ -200,10 +247,16 @@
     <button id="bSeguir" title="Ruta A del robot, con la cámara detrás">Seguir al rover</button>
     <button id="bAyuda" title="Cómo usar" aria-label="Cómo usar">?</button>
   </div>
-  <button id="bMarcar" aria-pressed="false">Marcar paradas</button>
-  <button id="bCalcular">Calcular rutas</button>
-  <button id="bAuto" aria-pressed="false">Autonomía (G)</button>
-  <button id="bBorrar">Borrar</button>
+  <div class="grupo">
+    <span class="etq">Manejar</span>
+    <div class="seg"><button id="cRover" aria-pressed="true" title="WASD o joystick mueven al rover">Rover</button><button id="cAstro" aria-pressed="false" title="WASD o joystick mueven al astronauta">Astronauta</button></div>
+    <button id="bAuto" aria-pressed="false" title="El rover y el astronauta recorren sus rutas solos (G)">Autonomía</button>
+  </div>
+  <div class="grupo">
+    <button id="bMarcar" aria-pressed="false">Marcar paradas</button>
+    <button id="bCalcular">Calcular rutas</button>
+    <button id="bBorrar">Borrar</button>
+  </div>
   <select id="sCam" aria-label="Cámara">
     <option value="libre">Cámara: libre</option>
     <option value="rover">Cámara: seguir rover</option>
@@ -230,10 +283,25 @@
   <ul>
     <li>Arrastrar: girar la vista. Rueda o pellizco: acercar. Tocar un cartel: ficha de la parada.</li>
     <li>En primera persona: arrastrar para mirar alrededor, doble toque para centrar, B cambia la vista y V el visor.</li>
+    <li>Manejar: Rover o Astronauta (abajo), con WASD o el joystick. Nada se bloquea: las alertas avisan pendiente, arena y cuándo volver. El botón de la mira centra en tu ubicación.</li>
     <li>Los datos marcados como <span class="prov">provisorio</span> son supuestos del equipo; el resto tiene fuente (panel, abajo).</li>
   </ul>
 </div></div>
 
+<div id="alertas" aria-live="polite"></div>
+<div id="flot">
+  <button id="bNorte" title="Brújula: tocá para orientar el mapa al norte" aria-label="Orientar al norte"><svg viewBox="0 0 24 24"><path d="M12 2 16 12 12 10.5 8 12z" fill="#ff6b5a"/><path d="M12 22 8 12 12 13.5 16 12z" fill="#ece4da"/></svg></button>
+  <button id="bUbicar" aria-pressed="false" title="Centrar en mi ubicación (tocá dos veces para seguir)" aria-label="Centrar en mi ubicación"><svg viewBox="0 0 24 24" fill="none" stroke="#9fd2ff" stroke-width="2"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="#9fd2ff"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg></button>
+  <button id="bVolver" class="oculto" title="Calcular el camino de regreso más corto y caminarlo">Volver a la base</button>
+</div>
+<div id="joy" class="oculto" aria-label="Joystick para mover"><i></i><span id="joyEt">Rover</span></div>
+<div id="perfilCard" class="caja oculto">
+  <div class="cab"><span class="color" id="pcColor" style="width:13px;height:13px;border-radius:3px"></span><h1 id="pcTitulo">Perfil</h1>
+    <button id="pcFP">Recorrer en primera persona</button><button id="pcCerrar" aria-label="Cerrar">×</button></div>
+  <canvas id="pcLienzo"></canvas>
+  <div id="pcDato"></div>
+  <div class="sub" id="pcNota" style="margin-top:4px"></div>
+</div>
 <div id="visor" class="oculto">
   <div class="marco"></div><div id="v-mira"></div>
   <div class="vb" id="v-prox"><h3>PRÓXIMA PARADA</h3><div><span class="flecha" id="v-flecha">↑</span> <b id="v-pnom">—</b></div><div id="v-pdist" class="sub" style="color:inherit"></div></div>
@@ -251,6 +319,8 @@
   <div class="vb" id="v-ref"><h3>REFUGIO</h3>
     <div class="fila"><span>Distancia</span><b id="v-dref">—</b></div>
     <div class="fila"><span>Tiempo afuera</span><b id="v-tiempo">—</b></div>
+    <div class="fila"><span>Regreso a pie</span><b id="v-regreso">—</b></div>
+    <div class="fila"><span>Margen de la salida</span><b id="v-margen">—</b></div>
     <div class="fila"><span>Hora solar</span><b id="v-hora">—</b></div></div>
   <div class="vb oculto" id="v-aviso"></div>
 </div>
@@ -423,6 +493,18 @@ function lecturaMineral(lon, lat, rad = 1) {
     para: 'Si es la capa de yardangs, marca el final del registro de agua. Se confirma tocando la roca.' });
   return L;
 }
+// ---------- zonas de peligro por celda (data/capas/<zona>/peligro_clases.png; si falta, solo por pendiente) ----------
+// 0 sin peligro · 1 precaución 15-20° · 2 peligro 20-30° · 3 crítico > 30° (supuesto) · 4 posible arena suelta (indicio CRISM + HiRISE)
+const CLASE = new Uint8Array(W * H);
+if (D.capas?.peligro_clases) {
+  etapa('Leyendo zonas de peligro…');
+  const im = new Image();
+  await new Promise((ok, mal) => { im.onload = ok; im.onerror = () => mal(new Error('no se pudo leer peligro_clases')); im.src = 'data:image/png;base64,' + D.capas.peligro_clases; });
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H).data; for (let k = 0; k < W * H; k++) CLASE[k] = d[4 * k];
+} else for (let k = 0; k < W * H; k++) CLASE[k] = PEND[k] >= 30 ? 3 : PEND[k] >= 20 ? 2 : PEND[k] >= 15 ? 1 : 0;
+const NOMBRE_CLASE = ['', 'pendiente cerca del límite', 'pendiente sobre el límite', 'pendiente crítica', 'posible arena suelta'];
 const FUENTE_CRISM = 'CRISM (MRO), mosaicos GMWG 2012, 19 m/píxel (Seelos et al., JHU/APL). Indicador desde órbita, relativo a Gale: se confirma en el lugar.';
 
 // ---------- escena ----------
@@ -520,6 +602,19 @@ function colorCapa(capa, k) {
     if (noP) return [255, 150, 40, 170];              // naranja: solo para el astronauta
     return null;
   }
+  if (capa === 'peligro') {
+    const c = CLASE[k];
+    return c === 1 ? [255, 214, 60, 110] : c === 2 ? [255, 120, 20, 165] : c === 3 ? [220, 30, 40, 200] : c === 4 ? [150, 90, 220, 150] : null;
+  }
+  if (capa === 'alcance') {
+    const T = campoAlcance?.T; if (!T) return null; const m = T[k] / 60;
+    if (!isFinite(m)) return null;
+    // curvas de nivel cada 10 min (borde donde cambia el tramo) y relleno suave
+    const tramo = Math.floor(m / 10), j = k % W, i = (k / W) | 0;
+    const borde = (j + 1 < W && Math.floor(T[k + 1] / 600) !== tramo) || (i + 1 < H && Math.floor(T[k + W] / 600) !== tramo);
+    if (borde && tramo < 6) return tramo < 3 ? [255, 255, 255, 230] : [255, 120, 100, 220];
+    return m <= 10 ? [60, 200, 120, 90] : m <= 20 ? [170, 210, 70, 85] : m <= 30 ? [255, 200, 60, 90] : [230, 60, 50, 105];
+  }
   if (capa === 'crism') {
     const i = Math.floor(k / W), j = k % W;
     const v = crismEn($('sCrism').value, M.lon_oeste + (j + 0.5) * CS * M.grados_por_m, M.lat_norte - (i + 0.5) * CS * M.grados_por_m);
@@ -531,17 +626,107 @@ function colorCapa(capa, k) {
   const f = CIELO[k];
   return f > 0.05 ? [40, 120, 255, Math.min(210, (f - 0.05) * 700)] : null;
 }
+const CLASES_CRISM = [
+  { k: 'arcilla', c: [255, 77, 77], t: 'Arcillas Fe/Mg (rastro)' },
+  { k: 'mono', c: [242, 212, 59], t: 'Sulfato monohidratado' },
+  { k: 'poli', c: [226, 75, 216], t: 'Sulfato polihidratado' },
+  { k: 'sulfato', c: [240, 138, 60], t: 'Sulfato con agua (sin separar)' },
+  { k: 'agua', c: [63, 184, 255], t: 'Otro mineral con agua' },
+  { k: 'hematita', c: [61, 220, 132], t: 'Óxido de hierro (hematita)' },
+  { k: 'mafico', c: [110, 110, 255], t: 'Material volcánico oscuro / arena' },
+];
 const LEY_CRISM = {
+  INT: CLASES_CRISM.map(c => `<span><i style="background:rgb(${c.c})"></i>${c.t}</span>`).join('') + '<span>Clases del equipo sobre los productos CRISM: se pinta solo la señal fuerte de la zona (umbral fijo de las fichas o percentil alto, el mayor). Sin color: señal débil o nula.</span>',
   ALT: '<span><i style="background:#e33"></i>arcillas Fe/Mg</span><span><i style="background:#3d3"></i>sulfatos con agua</span><span><i style="background:#36f"></i>agua (otras fases)</span>',
   HYD: '<span><i style="background:#e33"></i>sulfato con agua (sin separar)</span><span><i style="background:#ee3"></i>monohidratado</span><span><i style="background:#e3e"></i>polihidratado</span><span><i style="background:#36f"></i>otras fases con agua</span>',
   FM2: '<span><i style="background:#e33"></i>polvo férrico</span><span><i style="background:#3d3"></i>hematita</span><span><i style="background:#36f"></i>hierro ferroso, máficos</span>',
   MAF: '<span><i style="background:#e33"></i>olivino</span><span><i style="background:#3d3"></i>piroxeno bajo en Ca</span><span><i style="background:#36f"></i>piroxeno alto en Ca</span>',
 };
 let capaActual = 'ninguna';
+// ---------- CRISM más nítido: suavizado + fusión con HiRISE ----------
+// Los mosaicos tienen 19 m por píxel. Se suaviza cada canal con un núcleo gaussiano 3×3 (baja el ruido de píxel suelto),
+// se agranda con interpolación y se pinta con el modo de mezcla "color": el tono y la saturación vienen de CRISM y la
+// luminosidad de HiRISE (0,5 m), así se ven las formas del terreno debajo. Es una fusión visual, no más resolución espectral.
+const cacheCrism = {};
+function suavizado(I) {                      // gaussiano 3×3 por canal, sin mezclar el fondo (255,255,255)
+  const { w, h, d } = I, o = new Float32Array(w * h * 3), K = [1, 2, 1];
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const s = [0, 0, 0]; let n = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+      const k = 4 * (yy * w + xx); if (d[k] === 255 && d[k + 1] === 255 && d[k + 2] === 255) continue;
+      const p = K[dx + 1] * K[dy + 1]; s[0] += d[k] * p; s[1] += d[k + 1] * p; s[2] += d[k + 2] * p; n += p;
+    }
+    const k = 3 * (y * w + x); if (n) { o[k] = s[0] / n; o[k + 1] = s[1] / n; o[k + 2] = s[2] / n; } else o[k] = o[k + 1] = o[k + 2] = -1;
+  }
+  return o;
+}
+// Para el mapa se pinta solo la señal fuerte de la zona: cada umbral es el mayor entre el fijo de las fichas y un
+// percentil alto de la zona (en Gale la señal es sutil y, con umbrales fijos, casi todo quedaba pintado).
+function claseCrism(alt, hyd, fm2, maf, U) {
+  const sind = hyd[0], mono = hyd[1], agua = alt[2], arc = alt[0], ferr = fm2[1], fe = fm2[2], oli = maf[0];
+  if (arc >= U.arc) return 0;
+  if (sind >= U.sind) return mono >= U.mono ? 1 : agua >= U.aguaS ? 2 : 3;
+  if (agua >= U.agua) return 4;
+  if (ferr >= U.ferr) return 5;
+  if (fe >= U.fe || oli >= U.oli) return 6;
+  return -1;
+}
+function percentil(S, ch, q) {
+  const v = []; for (let k = ch; k < S.length; k += 3) if (S[k - ch] >= 0) v.push(S[k]);
+  v.sort((a, b) => a - b); return v.length ? v[Math.min(v.length - 1, Math.floor(q * v.length))] : 0;
+}
+function lienzoCrism(prod) {
+  if (cacheCrism[prod]) return cacheCrism[prod];
+  const ref = CR.img.ALT, w = ref.w, h = ref.h, c = document.createElement('canvas'); c.width = w; c.height = h;
+  const x = c.getContext('2d'), img = x.createImageData(w, h);
+  if (prod === 'INT') {
+    const S = {}; for (const p of ['ALT', 'HYD', 'FM2', 'MAF']) S[p] = CR.img[p] ? suavizado(CR.img[p]) : new Float32Array(w * h * 3);
+    const U = {
+      arc: Math.max(8, percentil(S.ALT, 0, 0.97)), sind: Math.max(8, percentil(S.HYD, 0, 0.82)), mono: Math.max(3, percentil(S.HYD, 1, 0.85)),
+      aguaS: Math.max(8, percentil(S.ALT, 2, 0.6)), agua: Math.max(20, percentil(S.ALT, 2, 0.94)), ferr: Math.max(40, percentil(S.FM2, 1, 0.95)),
+      fe: Math.max(90, percentil(S.FM2, 2, 0.92)), oli: Math.max(60, percentil(S.MAF, 0, 0.92)),
+    };
+    CR.umbralesMapa = U;
+    for (let k = 0; k < w * h; k++) {
+      const g = p => [S[p][3 * k], S[p][3 * k + 1], S[p][3 * k + 2]];
+      if (S.ALT[3 * k] < 0) continue;
+      const cl = claseCrism(g('ALT'), g('HYD'), g('FM2'), g('MAF'), U); if (cl < 0) continue;
+      img.data.set([...CLASES_CRISM[cl].c, 235], 4 * k);
+    }
+  } else {
+    const S = suavizado(CR.img[prod]);
+    for (let k = 0; k < w * h; k++) {
+      const v = [S[3 * k], S[3 * k + 1], S[3 * k + 2]], mx = Math.max(...v); if (mx < 14) continue;
+      img.data.set([v[0] * 255 / mx, v[1] * 255 / mx, v[2] * 255 / mx, Math.min(235, 50 + (mx - 14) * 3)], 4 * k);
+    }
+  }
+  x.putImageData(img, 0, 0); return (cacheCrism[prod] = c);
+}
+function dibujarCrismSobre(prod) {
+  if (!CR) return;
+  const m = CR.m, lonSpan = W * CS * M.grados_por_m, latSpan = H * CS * M.grados_por_m, tw = lienzoTex.width, th = lienzoTex.height;
+  const dx = (m.lon_oeste - M.lon_oeste) / lonSpan * tw, dy = (M.lat_norte - m.lat_norte) / latSpan * th;
+  const dw = m.ancho * m.grados_por_px / lonSpan * tw, dh = m.alto * m.grados_por_px / latSpan * th;
+  const cv = lienzoCrism(prod);
+  ctxTex.save(); ctxTex.imageSmoothingEnabled = true; ctxTex.imageSmoothingQuality = 'high';
+  ctxTex.globalCompositeOperation = 'color'; ctxTex.drawImage(cv, dx, dy, dw, dh);      // tono de CRISM, detalle de HiRISE
+  ctxTex.globalCompositeOperation = 'source-over'; ctxTex.globalAlpha = 0.28; ctxTex.drawImage(cv, dx, dy, dw, dh);   // un poco de color pleno para que se lea
+  ctxTex.restore();
+}
+let campoAlcance = null;
 function dibujarCapa(capa) {
+  if (capa === 'alcance' && !campoAlcance) {
+    decir('Calculando minutos hasta la base…');
+    setTimeout(() => { campoAlcance = campoRegreso(BASE_S); dibujarCapa('alcance'); decir('Alcance a pie listo: minutos hasta la base (S).'); }, 30);
+    capa = capaActual === 'alcance' ? 'ninguna' : capaActual;
+    document.querySelectorAll('input[name=capa]').forEach(el => { el.checked = el.value === 'alcance'; });
+    return;
+  }
   capaActual = capa;
   ctxTex.drawImage(orto, 0, 0, lienzoTex.width, lienzoTex.height);
-  if (capa !== 'ninguna') {
+  if (capa === 'crism') dibujarCrismSobre($('sCrism').value);
+  else if (capa !== 'ninguna') {
     const c2 = capaLienzo.getContext('2d'), img = c2.createImageData(W, H);
     for (let k = 0; k < W * H; k++) { const rgba = colorCapa(capa, k); if (rgba) img.data.set(rgba, 4 * k); }
     c2.putImageData(img, 0, 0);
@@ -557,6 +742,10 @@ function dibujarCapa(capa) {
       ? `<span><i style="background:#9632aa"></i>prohibido para los dos</span><span><i style="background:#dc323c"></i>solo para el rover</span><span><i style="background:#ff9628"></i>solo para el astronauta</span><span>${lims}. A 2 m mucho terreno supera 20°.</span>`
       : capa === 'cielo'
         ? `<span><i style="background:#2878ff"></i>más azul = más cielo tapado</span><span>Dosis local = ${PR.dosis} mSv/día × (1 − ${PR.k} × fracción tapada). Cálculo propio; en los bordes se subestima.</span>`
+        : capa === 'peligro'
+          ? `<span><i style="background:#ffd63c"></i>15–20° precaución</span><span><i style="background:#ff7814"></i>20–30° sobre el límite</span><span><i style="background:#dc1e28"></i>más de 30° (supuesto: caída)</span><span><i style="background:#965adc"></i>posible arena suelta</span><span>Pendiente: cálculo propio sobre el DEM USGS. Arena: indicio de CRISM (máficos) y tono oscuro en HiRISE, no medido. Las rutas no se bloquean: avisan.</span>`
+        : capa === 'alcance'
+          ? `<span><i style="background:#3cc878"></i>hasta 10 min</span><span><i style="background:#aad246"></i>10–20 min</span><span><i style="background:#ffc83c"></i>20–30 min</span><span><i style="background:#e63c32"></i>más de 30 min</span><span>Minutos de caminata hasta la base (S), por el camino más rápido. Líneas cada 10 min. Regla del equipo (supuesto): no alejarse a más de ${P.eva?.tiempo_max_a_refugio_min ?? 30} min de un refugio, por el aviso ante tormentas solares (NASA, NTRS 20210014156).</span>`
         : capa === 'crism'
           ? `${LEY_CRISM[$('sCrism').value]}<span>${CR?.m.leyenda?.[$('sCrism').value] || ''}</span><span>${FUENTE_CRISM} Sin color = sin señal; más opaco = señal más fuerte.</span>`
           : '<span>HiRISE, USGS, 0,5 m por píxel</span>';
@@ -607,16 +796,32 @@ function procesar(r) {
   Object.assign(r, { pts, largo: d, largo3d: d3, sube, baja, horas: t, dosis, maxTerr, maxMarcha, sobre, cieloMedio: d > 0 ? cieloSum / d : 0 });
   return r;
 }
-function dibujarRuta(r) {
-  const opac = r.aOjo ? 0.5 : 1;
-  const mat = new THREE.MeshBasicMaterial({ color: r.color, transparent: opac < 1, opacity: opac, depthWrite: opac === 1 });
-  const curva = new THREE.CatmullRomCurve3(r.pts.map(q => new THREE.Vector3(q.x, q.y + 1.2, q.z)), false, 'centripetal');
-  r.tubo = new THREE.Mesh(new THREE.TubeGeometry(curva, Math.max(8, r.pts.length), 2.2, 6), mat);
-  const curvaSuelo = new THREE.CatmullRomCurve3(r.pts.map(q => new THREE.Vector3(q.x, q.y + 0.15, q.z)), false, 'centripetal');
-  r.fino = new THREE.Mesh(new THREE.TubeGeometry(curvaSuelo, Math.max(8, r.pts.length * 2), 0.07, 5), new THREE.MeshBasicMaterial({ color: r.color, transparent: true, opacity: 0.75, depthWrite: false }));
-  escena.add(r.tubo, r.fino);
+// textura de la cinta: cuerpo claro y una flecha más oscura por tramo (el color de la ruta la tiñe)
+const texCinta = (() => {
+  const c = document.createElement('canvas'); c.width = 128; c.height = 32; const x = c.getContext('2d');
+  x.fillStyle = '#ffffff'; x.fillRect(0, 0, 128, 32); x.fillStyle = '#b8b8b8'; x.fillRect(0, 0, 128, 3); x.fillRect(0, 29, 128, 3);
+  x.fillStyle = '#5c5c5c'; x.beginPath(); x.moveTo(52, 6); x.lineTo(76, 16); x.lineTo(52, 26); x.lineTo(42, 26); x.lineTo(64, 16); x.lineTo(42, 6); x.closePath(); x.fill();
+  const t = new THREE.CanvasTexture(c); t.wrapS = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+})();
+// cinta apoyada sobre la malla: cada borde sigue la altura exacta del terreno
+function cinta(r, ancho, alto) {
+  const P2 = r.pts, n = P2.length, pos = new Float32Array(n * 6), uv = new Float32Array(n * 4), idx = [];
+  for (let k = 0; k < n; k++) {
+    const a = P2[Math.max(0, k - 2)], b = P2[Math.min(n - 1, k + 2)]; let dx = b.x - a.x, dz = b.z - a.z; const L = Math.hypot(dx, dz) || 1; dx /= L; dz /= L;
+    const q = P2[k], px = -dz * ancho / 2, pz = dx * ancho / 2, xl = q.x + px, zl = q.z + pz, xr = q.x - px, zr = q.z - pz;
+    pos.set([xl, alturaMalla(xl, zl) + alto, zl, xr, alturaMalla(xr, zr) + alto, zr], 6 * k);
+    const u = q.d / (ancho * 2.4); uv.set([u, 1, u, 0], 4 * k);
+    if (k < n - 1) { const i = 2 * k; idx.push(i, i + 1, i + 2, i + 1, i + 3, i + 2); }
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); g.setIndex(idx);
+  const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: r.color, map: texCinta, transparent: true, opacity: 0.9, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  m.renderOrder = 3; m.frustumCulled = false; m.visible = false; return m;
 }
-function quitarRuta(r) { for (const o of [r.tubo, r.fino]) { escena.remove(o); o.geometry.dispose(); } }
+function dibujarRuta(r) {
+  r.cintas = [cinta(r, 10, 1.2), cinta(r, 2.6, 0.25), cinta(r, 0.65, 0.05)];
+  r.cintas.forEach(m => escena.add(m)); r.tubo = r.cintas[0]; r.fino = r.cintas[2];
+}
+function quitarRuta(r) { for (const o of r.cintas || [r.tubo, r.fino]) { escena.remove(o); o.geometry.dispose(); o.material.dispose(); } }
 
 const rutas = []; const paradasGeo = [];
 let paleta = 0;
@@ -656,8 +861,15 @@ function agregarMarcador(texto, color, x, z, datos, ancho) {
   const m = { sp, poste, x, y, z, datos }; sp.userData.marcador = m; marcadores.push(m);
   return m;
 }
-// color de cada parada según quién va (rover, astronauta, ambos)
+// orden de lectura: salida, ruta A, ruta B, ruta C y después los puntos agregados (refugio, mirador, muestra, precaución)
+{ const ord = id => { id = String(id); const i = 'SABCQMRZ'.indexOf(id[0]); return (i < 0 ? 9 : i) * 100 + (parseInt(id.slice(1)) || 0); };
+  paradasGeo.sort((a, b) => ord(a.props.parada) - ord(b.props.parada)); }
+// color de cada parada según quién va (rover, astronauta, ambos) o qué es
 function colorParada(p) {
+  if (p.tipo === 'refugio') return '#2a9d8f';
+  if (p.tipo === 'mirador') return '#d98a2b';
+  if (p.tipo === 'muestra') return '#c04fb5';
+  if (p.tipo === 'precaucion') return '#c9a227';
   const q = (p.quien || p.ruta || '').toLowerCase();
   if (q.includes('tripul')) return '#c98a3d';
   if (q.includes('astronauta')) return COLORES.astronauta;
@@ -734,12 +946,91 @@ const rtg = new THREE.Group(); rtg.position.set(-1.38, 1.18, 0); rtg.rotation.z 
 malla(new THREE.CylinderGeometry(0.27, 0.27, 0.66, 28), MAT.rtg, rtg);
 for (let f = 0; f < 8; f++) { const a = f / 8 * Math.PI * 2; malla(new THREE.BoxGeometry(0.2, 0.6, 0.012), MAT.rtg, rtg, [Math.cos(a) * 0.36, 0, Math.sin(a) * 0.36], [0, -a, 0]); }
 for (const z of [-0.28, 0.28]) malla(new THREE.BoxGeometry(0.34, 0.03, 0.03), MAT.gris, chasis, [-1.1, 1.0, z]);
-malla(new THREE.CylinderGeometry(0.07, 0.07, 0.12, 16), MAT.gris, chasis, [1.0, 1.08, 0.4], [0, 0, Math.PI / 2]);  // brazo plegado
-malla(new THREE.CylinderGeometry(0.04, 0.04, 0.9, 12), MAT.blanco, chasis, [1.32, 1.12, 0.04], [Math.PI / 2, 0, 0.15]);
-malla(new THREE.CylinderGeometry(0.13, 0.13, 0.18, 6), MAT.gris, chasis, [1.42, 0.92, -0.36]);
-malla(new THREE.CylinderGeometry(0.03, 0.02, 0.16, 10), MAT.alu, chasis, [1.42, 0.76, -0.36]);
 malla(new THREE.BoxGeometry(0.06, 0.1, 0.5), MAT.oscuro, chasis, [0.97, 0.7, 0]);                           // hazcams
 malla(new THREE.BoxGeometry(0.3, 0.1, 0.36), MAT.oscuro, chasis, [-0.65, 0.62, -0.1]);                      // DAN
+
+// ---------- detalle de Curiosity con el método Anatomy: piezas reales, chicas y precisas, cada una apoyada en otra ----------
+// Lista de piezas: brazo robótico plegado (hombro, codo, antebrazo, muñeca y torreta con taladro, cepillo DRT, cámara MAHLI,
+// APXS y CHIMRA); cabeza del mástil (articulación, dos pares de Navcam, telescopio de ChemCam, sensores REMS); cubierta (tomas
+// de SAM y CheMin, blancos de calibración, antenas UHF y LGA, cardán de la antena de alta ganancia); barra diferencial del
+// rocker-bogie con sus bielas; hazcams delanteras y traseras; radiadores del MMRTG; actuadores de dirección en las 4 esquinas.
+// Medidas aproximadas a partir de fotos públicas de NASA/JPL: es una maqueta explicativa, no un modelo de ingeniería.
+MAT.cubierta = new THREE.MeshStandardMaterial({ color: 0xe8e2d6, roughness: 0.55, metalness: 0.15 });
+MAT.lente = new THREE.MeshStandardMaterial({ color: 0x0a0d12, roughness: 0.04, metalness: 0.8, envMapIntensity: 2 });
+MAT.cobre = new THREE.MeshStandardMaterial({ color: 0xb8733e, roughness: 0.35, metalness: 0.9 });
+MAT.led = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff0d0, emissiveIntensity: 1.2 });
+// barra entre dos puntos (cilindro), en el marco de un grupo
+function barraEntre(a, b, r, mat, padre) {
+  const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), d = B.clone().sub(A), m = malla(new THREE.CylinderGeometry(r, r, d.length(), 12), mat, padre);
+  m.position.copy(A).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); return m;
+}
+// brazo robótico, plegado delante del cuerpo
+{
+  const H0 = [1.0, 1.05, 0.5], CODO = [1.12, 1.07, -0.3], MU = [1.33, 1.0, -0.34];
+  malla(new THREE.CylinderGeometry(0.08, 0.08, 0.12, 20), MAT.gris, chasis, H0, [0, 0, Math.PI / 2]);              // azimut del hombro
+  malla(new THREE.CylinderGeometry(0.07, 0.07, 0.15, 20), MAT.oscuro, chasis, [1.08, 1.05, 0.5], [Math.PI / 2, 0, 0]); // elevación del hombro
+  barraEntre([1.1, 1.07, 0.44], CODO, 0.036, MAT.cubierta, chasis);                                                    // brazo superior
+  for (const z of [0.3, 0.05, -0.18]) malla(new THREE.TorusGeometry(0.038, 0.006, 6, 16), MAT.gris, chasis, [1.106, 1.07, z], [0, 0, 0]);   // abrazaderas del cable
+  malla(new THREE.CylinderGeometry(0.06, 0.06, 0.13, 18), MAT.gris, chasis, CODO, [0, 0, Math.PI / 2]);              // codo
+  barraEntre(CODO, MU, 0.032, MAT.cubierta, chasis);                                                                     // antebrazo
+  malla(new THREE.CylinderGeometry(0.05, 0.05, 0.09, 16), MAT.gris, chasis, MU, [Math.PI / 2, 0, 0]);                 // muñeca 1
+  malla(new THREE.CylinderGeometry(0.045, 0.045, 0.08, 16), MAT.oscuro, chasis, [1.39, 0.96, -0.34]);                 // muñeca 2
+  const tor = new THREE.Group(); tor.position.set(1.42, 0.88, -0.34); chasis.add(tor);
+  malla(new THREE.CylinderGeometry(0.1, 0.1, 0.06, 24), MAT.gris, tor);                                                // torreta
+  const pos = a => [Math.cos(a) * 0.13, -0.02, Math.sin(a) * 0.13];
+  // taladro con broca y dos estabilizadores
+  const t = new THREE.Group(); t.position.set(...pos(0)); tor.add(t);
+  malla(new THREE.CylinderGeometry(0.05, 0.055, 0.17, 18), MAT.cubierta, t, [0, -0.06, 0]);
+  malla(new THREE.CylinderGeometry(0.009, 0.004, 0.1, 10), MAT.alu, t, [0, -0.19, 0]);
+  for (const z of [-0.045, 0.045]) malla(new THREE.CylinderGeometry(0.007, 0.007, 0.14, 8), MAT.alu, t, [0, -0.12, z]);
+  // cepillo DRT
+  const d = new THREE.Group(); d.position.set(...pos(1.25)); tor.add(d);
+  malla(new THREE.CylinderGeometry(0.03, 0.03, 0.08, 14), MAT.gris, d, [0, -0.05, 0]);
+  malla(new THREE.CylinderGeometry(0.038, 0.038, 0.012, 16), MAT.oscuro, d, [0, -0.095, 0]);
+  // cámara MAHLI con lente y dos LED
+  const mh = new THREE.Group(); mh.position.set(...pos(2.5)); tor.add(mh);
+  malla(new THREE.BoxGeometry(0.07, 0.08, 0.06), MAT.cubierta, mh, [0, -0.04, 0]);
+  malla(new THREE.CylinderGeometry(0.021, 0.021, 0.02, 14), MAT.lente, mh, [0, -0.09, 0]);
+  for (const x of [-0.025, 0.025]) malla(new THREE.BoxGeometry(0.008, 0.004, 0.008), MAT.led, mh, [x, -0.082, 0.022]);
+  // APXS con anillo de contacto
+  const ap = new THREE.Group(); ap.position.set(...pos(3.75)); tor.add(ap);
+  malla(new THREE.CylinderGeometry(0.028, 0.028, 0.1, 14), MAT.gris, ap, [0, -0.06, 0]);
+  malla(new THREE.TorusGeometry(0.028, 0.005, 6, 16), MAT.alu, ap, [0, -0.11, 0], [Math.PI / 2, 0, 0]);
+  // CHIMRA (procesa la muestra) con su tolva
+  const ch = new THREE.Group(); ch.position.set(...pos(5.0)); tor.add(ch);
+  malla(new THREE.BoxGeometry(0.1, 0.07, 0.08), MAT.cubierta, ch, [0, -0.04, 0]);
+  malla(new THREE.CylinderGeometry(0.025, 0.012, 0.04, 4), MAT.gris, ch, [0, -0.095, 0]);
+}
+// cabeza del mástil: articulación, segundo par de Navcam, telescopio de ChemCam, puntas de los sensores REMS
+malla(new THREE.CylinderGeometry(0.055, 0.055, 0.36, 16), MAT.gris, cabeza, [-0.06, -0.13, 0], [Math.PI / 2, 0, 0]);
+for (const z of [0.13, 0.17]) malla(new THREE.CylinderGeometry(0.016, 0.016, 0.04, 12), MAT.lente, cabeza, [0.17, -0.0, z], [0, 0, Math.PI / 2]);
+malla(new THREE.CylinderGeometry(0.06, 0.07, 0.2, 20), MAT.cubierta, cabeza, [0.02, 0.05, 0.02], [0, 0, Math.PI / 2]);
+malla(new THREE.TorusGeometry(0.085, 0.008, 8, 28), MAT.gris, cabeza, [0.198, 0.05, 0.02], [0, Math.PI / 2, 0]);
+for (const [x, z] of [[MASTX - 0.21, MASTZ], [MASTX, MASTZ + 0.21]]) malla(new THREE.CylinderGeometry(0.012, 0.012, 0.05, 10), MAT.gris, chasis, [x, 1.66, z]);
+malla(new THREE.CylinderGeometry(0.04, 0.04, 0.05, 16), MAT.gris, chasis, [MASTX, 1.94, MASTZ]);                       // azimut del mástil
+// cubierta: tomas de SAM y CheMin, blancos de calibración, antenas
+for (const z of [-0.06, 0.07]) { malla(new THREE.BoxGeometry(0.08, 0.03, 0.06), MAT.cubierta, chasis, [0.45, 1.275, z]); malla(new THREE.BoxGeometry(0.085, 0.008, 0.065), MAT.gris, chasis, [0.43, 1.297, z], [0, 0, 0.35]); }
+malla(new THREE.BoxGeometry(0.1, 0.035, 0.1), MAT.cubierta, chasis, [0.25, 1.28, 0.26]);
+malla(new THREE.CylinderGeometry(0.045, 0.015, 0.05, 4), MAT.gris, chasis, [0.25, 1.32, 0.26]);                        // embudo de CheMin
+malla(new THREE.BoxGeometry(0.1, 0.012, 0.1), MAT.oscuro, chasis, [0.6, 1.266, -0.2]);
+for (const [i, c] of [0xd24a3a, 0x3f9b55, 0x3a5fcf, 0x9a9a9a].entries()) malla(new THREE.BoxGeometry(0.022, 0.006, 0.022), new THREE.MeshStandardMaterial({ color: c, roughness: 0.6 }), chasis, [0.577 + (i % 2) * 0.045, 1.275, -0.223 + (i >> 1) * 0.045]);
+malla(new THREE.CylinderGeometry(0.035, 0.035, 0.05, 14), MAT.cubierta, chasis, [-0.7, 1.55, -0.4]);                  // tapa de la UHF
+malla(new THREE.ConeGeometry(0.045, 0.12, 14), MAT.cubierta, chasis, [-0.86, 1.34, 0.18]);                               // antena de baja ganancia
+malla(new THREE.CylinderGeometry(0.05, 0.05, 0.06, 14), MAT.oscuro, chasis, [-0.4, 1.29, 0.48]);                       // cardán de la HGA
+for (const x of [-0.45, 0.1]) malla(new THREE.BoxGeometry(0.006, 0.004, 1.5), MAT.oscuro, chasis, [x, 1.262, 0]);      // juntas del panel de la cubierta
+// barra diferencial del rocker-bogie y sus bielas a los balancines
+malla(new THREE.BoxGeometry(0.06, 0.05, 1.72), MAT.gris, chasis, [0.2, 1.31, 0]);
+malla(new THREE.CylinderGeometry(0.05, 0.05, 0.06, 16), MAT.oscuro, chasis, [0.2, 1.345, 0]);
+for (const l of [1, -1]) barraEntre([0.2, 1.3, l * 0.86], [0.2, 0.98, l * 0.96], 0.018, MAT.alu, chasis);
+// hazcams: dos pares adelante, un par atrás bajo el MMRTG
+for (const z of [-0.2, -0.08, 0.08, 0.2]) malla(new THREE.CylinderGeometry(0.018, 0.018, 0.03, 12), MAT.lente, chasis, [1.005, 0.7, z], [0, 0, Math.PI / 2]);
+malla(new THREE.BoxGeometry(0.06, 0.08, 0.36), MAT.oscuro, chasis, [-0.97, 0.72, 0]);
+for (const z of [-0.12, 0.12]) malla(new THREE.CylinderGeometry(0.018, 0.018, 0.03, 12), MAT.lente, chasis, [-1.005, 0.72, z], [0, 0, Math.PI / 2]);
+// radiadores del MMRTG (paneles a los lados) y caños de refrigeración
+for (const z of [-0.45, 0.45]) {
+  const r = malla(new THREE.BoxGeometry(0.55, 0.018, 0.32), MAT.cubierta, chasis, [-1.12, 1.06, z]); r.rotation.z = -0.95;
+  barraEntre([-0.92, 1.0, z * 0.6], [-1.15, 1.2, z * 0.9], 0.012, MAT.cobre, chasis);
+}
 const PIV = lado => new THREE.Vector3(0.2, 0.98, lado * 0.96);
 for (const lado of [1, -1]) malla(new THREE.CylinderGeometry(0.08, 0.08, 0.12, 16), MAT.gris, chasis, [0.2, 0.98, lado * 0.96], [Math.PI / 2, 0, 0]);
 const ruedas = [];
@@ -762,6 +1053,10 @@ for (let w = 0; w < 6; w++) {
   for (let q = 0; q < 6; q++) malla(new THREE.BoxGeometry(0.02, RUEDA_R * 0.86, 0.01), MAT.alu, giro, [0, 0, lado * (RUEDA_A / 2 + 0.005)], [0, 0, q / 6 * Math.PI * 2]).geometry.translate(0, RUEDA_R * 0.43, 0);
   malla(new THREE.CylinderGeometry(0.07, 0.07, 0.05, 16), MAT.oscuro, g, [0, 0, lado * (RUEDA_A / 2 + 0.02)], [Math.PI / 2, 0, 0]);
   malla(new THREE.CylinderGeometry(0.075, 0.075, 0.2, 14), MAT.gris, g, [0, 0, -lado * (RUEDA_A / 2 + 0.08)], [Math.PI / 2, 0, 0]);   // motor
+  if (w % 3 !== 1) {                                                                // actuador de dirección (ruedas de las esquinas)
+    malla(new THREE.CylinderGeometry(0.055, 0.055, 0.16, 14), MAT.oscuro, g, [0, RUEDA_R * 0.55 + 0.1, -lado * (RUEDA_A / 2 + 0.12)]);
+    malla(new THREE.BoxGeometry(0.1, 0.03, 0.12), MAT.gris, g, [0, RUEDA_R * 0.55 + 0.19, -lado * (RUEDA_A / 2 + 0.12)]);
+  }
   ruedas.push({ g, giro, lado, xi, zi: lado * WZ });
 }
 const geoBrazo = new THREE.CylinderGeometry(1, 1, 1, 10);
@@ -826,7 +1121,16 @@ const brazos = [-1, 1].map(lado => {
   malla(new THREE.TorusGeometry(0.06, 0.018, 8, 18), MT.junta, codo, [0, 0, 0], [Math.PI / 2, 0, 0]);
   malla(new THREE.CapsuleGeometry(0.062, 0.18, 6, 14), MT.traje, codo, [0, -0.14, 0]);
   malla(new THREE.CylinderGeometry(0.066, 0.066, 0.035, 14), MT.junta, codo, [0, -0.26, 0]);   // muñeca
-  const g = malla(new THREE.SphereGeometry(0.06, 14, 10), MT.guante, codo, [0.01, -0.32, 0]); g.scale.set(1, 1.3, 0.8);
+  const mano = new THREE.Group(); mano.position.set(0.01, -0.3, 0); codo.add(mano);              // guante: palma, cuatro dedos y pulgar
+  malla(new THREE.BoxGeometry(0.075, 0.085, 0.045), MT.guante, mano, [0, -0.02, 0]);
+  for (let i = 0; i < 4; i++) malla(new THREE.CapsuleGeometry(0.011, 0.045, 3, 8), MT.guante, mano, [0.026 - i * 0.017, -0.09, 0], [0, 0, 0.12 - i * 0.04]);
+  malla(new THREE.CapsuleGeometry(0.012, 0.035, 3, 8), MT.guante, mano, [0.035, -0.035, lado * 0.03], [0.5 * lado, 0, -0.6]);
+  malla(new THREE.TorusGeometry(0.045, 0.01, 6, 18), MT.junta, mano, [0, 0.03, 0], [Math.PI / 2, 0, 0]);   // anillo de la muñeca
+  malla(new THREE.TorusGeometry(0.07, 0.012, 6, 20), MT.junta, hombro, [0, -0.06, 0], [Math.PI / 2, 0, 0]);   // rodamiento del brazo
+  if (lado < 0) {                                                                                  // muñequera con pantalla (lista de tareas)
+    malla(new THREE.BoxGeometry(0.06, 0.07, 0.1), MT.junta, codo, [0.06, -0.2, 0]);
+    malla(new THREE.BoxGeometry(0.006, 0.05, 0.075), MT.pantalla, codo, [0.093, -0.2, 0]);
+  }
   return { hombro, codo, lado };
 });
 // piernas: cadera → muslo → rodilla → pierna → bota
@@ -842,6 +1146,42 @@ const piernas = [-1, 1].map(lado => {
   malla(new THREE.CylinderGeometry(0.085, 0.09, 0.12, 14), MT.bota, tobillo, [-0.01, 0.05, 0]);
   return { muslo, rodilla, tobillo, lado };
 });
+// ---------- detalle del astronauta con el método Anatomy ----------
+// Lista de piezas: mangueras umbilicales de la mochila al módulo del pecho, perillas del módulo, parche, asas y rejillas de
+// la mochila, visera parasol y cámara del casco, rodamientos de cadera, fuelles de rodilla, anillos de tobillo, suelas con
+// tacos, puntera, estuche de herramientas con martillo de geólogo y bolsa de muestras en el muslo. Traje genérico, sin marcas.
+{
+  const manguera = (lado) => {
+    const c = new THREE.CatmullRomCurve3([[-0.21, 0.5, lado * 0.19], [-0.08, 0.55, lado * 0.3], [0.12, 0.42, lado * 0.27], [0.2, 0.33, lado * 0.12]].map(p => new THREE.Vector3(...p)));
+    malla(new THREE.TubeGeometry(c, 24, 0.017, 8), MT.junta, torso);
+    for (const t of [0.02, 0.98]) { const p = c.getPoint(t); malla(new THREE.CylinderGeometry(0.026, 0.026, 0.03, 12), MT.franja, torso, [p.x, p.y, p.z]); }   // conectores
+  };
+  manguera(1); manguera(-1);
+  for (const z of [-0.07, 0.07]) malla(new THREE.CylinderGeometry(0.016, 0.016, 0.03, 12), MT.junta, torso, [0.22, 0.385, z]);   // perillas del módulo
+  malla(new THREE.CylinderGeometry(0.035, 0.035, 0.006, 20), MT.franja, torso, [0.155, 0.47, 0.13], [0, 0, Math.PI / 2 + 0.2]);   // parche
+  for (const z of [-0.12, 0.12]) malla(new THREE.TorusGeometry(0.035, 0.008, 6, 14, Math.PI), MT.junta, torso, [-0.3, 0.72, z], [0, Math.PI / 2, 0]);   // asas de la mochila
+  for (let i = 0; i < 4; i++) malla(new THREE.BoxGeometry(0.004, 0.012, 0.18), MT.suela, torso, [-0.413, 0.17 + i * 0.025, 0]);   // rejilla de ventilación
+  malla(new THREE.BoxGeometry(0.004, 0.42, 0.006), MT.junta, torso, [-0.413, 0.33, 0.21]); malla(new THREE.BoxGeometry(0.004, 0.42, 0.006), MT.junta, torso, [-0.413, 0.33, -0.21]);
+  // casco: visera parasol y cámara
+  malla(new THREE.SphereGeometry(0.183, 28, 10, Math.PI - 1.1, 2.2, 0.3, 0.32), MT.duro, casco);
+  malla(new THREE.CylinderGeometry(0.018, 0.018, 0.05, 12), MT.junta, casco, [0.06, 0.16, -0.06], [0, 0, Math.PI / 2]);
+  malla(new THREE.CylinderGeometry(0.012, 0.012, 0.006, 12), MT.pantalla, casco, [0.088, 0.16, -0.06], [0, 0, Math.PI / 2]);
+  // cintura: estuche de herramientas con martillo de geólogo
+  malla(new THREE.BoxGeometry(0.07, 0.12, 0.08), MT.junta, cadera, [0.02, -0.02, 0.22]);
+  malla(new THREE.CylinderGeometry(0.009, 0.009, 0.3, 8), MT.suela, cadera, [0.02, -0.14, 0.27]);
+  malla(new THREE.BoxGeometry(0.1, 0.03, 0.03), MT.junta, cadera, [0.02, 0.01, 0.27]);
+}
+for (const p of piernas) {
+  malla(new THREE.TorusGeometry(0.095, 0.014, 6, 20), MT.junta, p.muslo, [0, -0.03, 0], [Math.PI / 2, 0, 0]);    // rodamiento de cadera
+  for (const y of [0.05, -0.05]) malla(new THREE.TorusGeometry(0.083, 0.012, 6, 20), MT.traje, p.rodilla, [0, y, 0], [Math.PI / 2, 0, 0]);   // fuelle de rodilla
+  malla(new THREE.TorusGeometry(0.088, 0.012, 6, 20), MT.junta, p.tobillo, [-0.01, 0.12, 0], [Math.PI / 2, 0, 0]);   // anillo de tobillo
+  for (let i = 0; i < 4; i++) malla(new THREE.BoxGeometry(0.02, 0.012, 0.14), MT.suela, p.tobillo, [-0.07 + i * 0.07, -0.108, 0]);   // tacos de la suela
+  malla(new THREE.SphereGeometry(0.07, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), MT.bota, p.tobillo, [0.15, -0.06, 0]).scale.set(0.8, 0.7, 1);   // puntera
+  if (p.lado < 0) {                                                                      // bolsa de muestras en el muslo
+    malla(new THREE.BoxGeometry(0.06, 0.13, 0.1), MT.duro, p.muslo, [0.09, -0.2, -0.03]);
+    malla(new THREE.BoxGeometry(0.065, 0.03, 0.105), MT.junta, p.muslo, [0.09, -0.13, -0.03]);
+  }
+}
 // pose de caminata. fase en radianes (una vuelta = un paso de cada pie); mov 0 = quieto, 1 = caminando.
 // Paso largo y saltado, como en la Luna y Marte con poca gravedad (1,4 m por ciclo).
 const ZANCADA = 1.4;
@@ -973,9 +1313,24 @@ function moverPolvo(dt) {
 }
 
 // ---------- planificador A* (de GALE-3D) ----------
-class Monticulo { constructor() { this.k = []; this.v = []; } get n() { return this.k.length; }
-  push(key, val) { const k = this.k, v = this.v; let i = k.length; k.push(key); v.push(val); while (i > 0) { const p = (i - 1) >> 1; if (k[p] <= k[i]) break; [k[p], k[i]] = [k[i], k[p]]; [v[p], v[i]] = [v[i], v[p]]; i = p; } }
-  pop() { const k = this.k, v = this.v, top = v[0], lk = k.pop(), lv = v.pop(); if (k.length) { k[0] = lk; v[0] = lv; let i = 0; for (;;) { const l = 2 * i + 1, r = l + 1; let m = i; if (l < k.length && k[l] < k[m]) m = l; if (r < k.length && k[r] < k[m]) m = r; if (m === i) break; [k[m], k[i]] = [k[i], k[m]]; [v[m], v[i]] = [v[i], v[m]]; i = m; } } return top; } }
+// montículo binario de prioridades (A* y campo de regreso), sin crear memoria en cada intercambio
+class Monticulo {
+  constructor() { this.k = []; this.v = []; } get n() { return this.k.length; }
+  push(key, val) {
+    const k = this.k, v = this.v; let i = k.length; k.push(key); v.push(val);
+    while (i > 0) { const p = (i - 1) >> 1; if (k[p] <= key) break; k[i] = k[p]; v[i] = v[p]; i = p; }
+    k[i] = key; v[i] = val;
+  }
+  pop() {
+    const k = this.k, v = this.v, top = v[0], lk = k.pop(), lv = v.pop(), n = k.length;
+    if (n) {
+      let i = 0;
+      for (;;) { const l = 2 * i + 1, r = l + 1; let m = l; if (l >= n) break; if (r < n && k[r] < k[l]) m = r; if (k[m] >= lk) break; k[i] = k[m]; v[i] = v[m]; i = m; }
+      k[i] = lk; v[i] = lv;
+    }
+    return top;
+  }
+}
 const DXs = [1, -1, 0, 0, 1, 1, -1, -1], DYs = [0, 0, 1, -1, 1, -1, 1, -1];
 const PASO = DXs.map((dx, q) => Math.hypot(dx * CS * COS, DYs[q] * CS));
 function astar(clase, a, b) {      // a, b = [columna, fila]
@@ -1016,6 +1371,47 @@ function planificar(clase, paradas) {
   for (let k = 1; k < paradas.length; k++) { const r = astar(clase, paradas[k - 1], paradas[k]); if (r.err) return { err: `tramo ${k}: ${r.err}` }; todo = todo.concat(k > 1 ? r.camino.slice(1) : r.camino); }
   return { camino: todo };
 }
+
+// ---------- tiempo de regreso a pie hasta una base ----------
+// Dijkstra desde la base, una sola vez por base: da el tiempo de caminata (Tobler, a la velocidad de data/parametros.json)
+// desde cualquier celda hasta la base y el siguiente paso del camino más rápido. Las celdas sobre el límite del traje no
+// se prohíben (el astronauta puede estar ahí), pero cuestan 4 veces más: el camino de regreso las evita si puede.
+const camposBase = new Map();
+// Se calcula en una grilla de 4 m (bloques de 2 × 2 celdas): cuatro veces más rápido y suficiente para minutos de regreso.
+const W2 = Math.ceil(W / 2), H2 = Math.ceil(H / 2), Z2 = new Float32Array(W2 * H2), P2B = new Float32Array(W2 * H2);
+for (let i = 0; i < H2; i++) for (let j = 0; j < W2; j++) {
+  let z = 0, n = 0, pm = 0;
+  for (let di = 0; di < 2; di++) for (let dj = 0; dj < 2; dj++) { const y = 2 * i + di, x = 2 * j + dj; if (y < H && x < W) { z += Z[y * W + x]; pm = Math.max(pm, PEND[y * W + x]); n++; } }
+  Z2[i * W2 + j] = z / n; P2B[i * W2 + j] = pm;
+}
+const PASO2 = PASO.map(d => d * 2);
+const bloque = ([c, f]) => (f >> 1) * W2 + (c >> 1);
+function campoRegreso(base) {
+  const bI = bloque(base); if (camposBase.has(bI)) return camposBase.get(bI);
+  const N = W2 * H2, T2 = new Float32Array(N).fill(Infinity), sig = new Int32Array(N).fill(-1), cerrado = new Uint8Array(N), h = new Monticulo();
+  T2[bI] = 0; h.push(0, bI);
+  while (h.n) {
+    const i = h.pop(); if (cerrado[i]) continue; cerrado[i] = 1;
+    const x = i % W2, y = (i / W2) | 0;
+    for (let q = 0; q < 8; q++) {
+      const nx = x + DXs[q], ny = y + DYs[q]; if (nx < 0 || ny < 0 || nx >= W2 || ny >= H2) continue;
+      const j = ny * W2 + nx; if (cerrado[j]) continue;
+      const d = PASO2[q]; let t = d / (PR.vCam * tobler((Z2[i] - Z2[j]) / d));     // caminar de j hacia i
+      if (P2B[j] > PR.pMax) t *= 4;
+      const nt = T2[i] + t; if (nt < T2[j]) { T2[j] = nt; sig[j] = i; h.push(nt, j); }
+    }
+  }
+  // T por celda de 2 m (para capas y consultas directas)
+  const T = new Float32Array(W * H); for (let f = 0; f < H; f++) for (let c = 0; c < W; c++) T[f * W + c] = T2[(f >> 1) * W2 + (c >> 1)];
+  const c = { T, T2, sig, base: bI }; camposBase.set(bI, c); return c;
+}
+// camino de regreso desde una celda, como lista de celdas de 2 m (centro de cada bloque)
+function caminoRegreso(campo, desde) {
+  const camino = [desde]; let b = bloque(desde), guarda = W2 * H2;
+  while (b !== -1 && guarda--) { camino.push([Math.min(W - 1, (b % W2) * 2 + 1), Math.min(H - 1, ((b / W2) | 0) * 2 + 1)]); if (b === campo.base) break; b = campo.sig[b]; }
+  return camino;
+}
+const BASE_S = (() => { const s = paradasGeo.find(pa => String(pa.props.parada) === 'S'); return s ? celdaDe(s.x, s.z) : celdaDe(CUR_X, CUR_Z); })();
 
 // ---------- marcar paradas sobre el terreno ----------
 // elegir un punto del terreno: se avanza por el rayo y se busca el cruce con la superficie (más liviano que intersectar 1,3 M triángulos)
@@ -1070,7 +1466,7 @@ function filaRuta(r) {
     <table>${filas.map(f => `<tr><td>${f[0]}</td><td>${f[1]}</td></tr>`).join('')}</table>
     <div class="botones"><button data-a="perfil">Ver perfil</button><button data-a="fp">Primera persona</button></div>`;
   el.querySelector('input').onchange = e => { r.oculta = !e.target.checked; };
-  el.querySelector('[data-a=perfil]').onclick = () => { rutaSel = r; marcarSel(); dibujarPerfil(); };
+  el.querySelector('[data-a=perfil]').onclick = () => { rutaSel = r; marcarSel(); dibujarPerfil(); abrirPerfil(r); };
   el.querySelector('[data-a=fp]').onclick = () => entrarFP(r);
   r.el = el; return el;
 }
@@ -1117,7 +1513,7 @@ $('bCalcular').onclick = () => {
 };
 // qué recorren el rover y el astronauta en autonomía: la ruta calculada si hay; si no, la trazada a ojo
 function elegirRecorridos() {
-  const de = t => rutas.find(r => !r.fija && r.tipo === t) || rutas.find(r => r.fija && !r.aOjo && r.tipo === t) || rutas.find(r => r.aOjo && r.tipo === t) || null;
+  const de = t => rutas.find(r => !r.fija && !r.regreso && r.tipo === t) || rutas.find(r => r.fija && !r.aOjo && r.tipo === t) || rutas.find(r => r.aOjo && r.tipo === t) || null;
   rutaRover = de('vehiculo'); sRover = 0; est.dist = 0;
   if (rutaRover) { const p = rutaRover.pts[0]; est.x = p.x; est.z = p.z; }
   per.ruta = de('astronauta'); per.s = 0; per.dist = 0; per.tiempo = 0; per.dosis = 0; per.activo = !!per.ruta; astro.visible = per.activo;
@@ -1196,6 +1592,7 @@ function entrarFP(r, vista = 'ojos') {
   prepararVisor(r);
   aplicarVista();
   ubicarFP(true);
+  setTimeout(actualizarFlot, 0);
 }
 function aplicarVista() {
   const r = fp.r, ojos = fp.vista === 'ojos';
@@ -1210,8 +1607,8 @@ function salirFP(volver = true) {
   if (!fp) return;
   const g = fp.est; fp = null;
   est.x = g.x; est.z = g.z; est.yaw = g.yaw; ubicarRover();
-  astro.visible = per.activo; if (per.activo) ubicarAstro(per.s);
-  aire.visible = false;
+  astro.visible = per.activo || yo.activo; if (yo.activo) { ubicarYo(); poseAstro(yo.fase, 0, 0, relojEscena); } else if (per.activo) ubicarAstro(per.s);
+  aire.visible = false; setTimeout(actualizarFlot, 0);
   $('fp').classList.add('oculto'); $('ctrl').classList.remove('oculto'); $('visor').classList.add('oculto');
   controles.enabled = true;
   if (volver) { modoCam = 'libre'; $('sCam').value = 'libre'; vistaGeneral(true); }
@@ -1284,6 +1681,12 @@ lienzo.addEventListener('dblclick', () => { if (fp) { fp.mirar.yaw = 0; fp.mirar
 // ---------- visor del casco (lo que el astronauta ve sobre la vista) ----------
 let visorOn = true, ultLectura = null;
 function prepararVisor(r) {
+  // base de la salida a pie: el comienzo de la ruta (o el final, si es un regreso) y su campo de tiempos de regreso
+  if (r.tipo === 'astronauta') {
+    const p = r.regreso ? r.pts[r.pts.length - 1] : r.pts[0], b = celdaDe(p.x, p.z);
+    fp.base = b; fp.campo = camposBase.get(bloque(b)) || null;
+    if (!fp.campo) setTimeout(() => { if (fp && fp.r === r) fp.campo = campoRegreso(b); }, 60);
+  }
   // paradas que quedan sobre esta ruta, con su distancia a lo largo del recorrido
   r.paradasRuta = [];
   for (const pa of paradasGeo) {
@@ -1322,6 +1725,7 @@ function actualizarVisor(q) {
   vr.textContent = `${fmtM(dRef)} / ${fmtM(PR.refMax)}`; vr.classList.toggle('alerta', r.tipo === 'astronauta' && dRef > PR.refMax);
   $('v-tiempo').textContent = r.tipo === 'vehiculo' ? fmtH(q.t) + ' manejo' : fmtH(q.t);
   $('v-hora').textContent = $('eHora').textContent;
+  pintarRegreso(r.tipo === 'astronauta' ? fp.campo : null, k, q.t * 60);
   // próxima parada: rumbo relativo a la mirada y distancia
   const prox = (r.paradasRuta || []).find(o => o.d > fp.d + 3) || null;
   const aqui = (r.paradasRuta || []).find(o => Math.abs(o.d - fp.d) <= 18) || null;
@@ -1507,7 +1911,7 @@ addEventListener('keydown', e => {
   if (fp) return;
   if (k === 'g') setAuto(!est.auto);
   if (['1', '2', '3', '4'].includes(e.key)) setCam(['libre', 'rover', 'astro', 'cenital'][+e.key - 1]);
-  if (k === 'c') { const capas = ['ninguna', 'pendiente', 'prohibidas', 'cielo', ...(CR ? ['crism'] : [])]; dibujarCapa(capas[(capas.indexOf(capaActual) + 1) % capas.length]); }
+  if (k === 'c') { const capas = ['ninguna', 'pendiente', 'prohibidas', 'cielo', 'peligro', 'alcance', ...(CR ? ['crism'] : [])]; dibujarCapa(capas[(capas.indexOf(capaActual) + 1) % capas.length]); }
 });
 addEventListener('keyup', e => { teclas[e.key.toLowerCase()] = false; });
 document.querySelectorAll('input[name=capa]').forEach(el => el.onchange = () => dibujarCapa(el.value));
@@ -1583,6 +1987,317 @@ $('ayuda').querySelectorAll('[data-ay]').forEach(b => b.onclick = () => {
 });
 try { if (!localStorage.getItem('gale3d-ayuda')) $('ayuda').classList.remove('oculto'); } catch (e) { $('ayuda').classList.remove('oculto'); }
 
+// ---------- presupuesto de la salida a pie (data/parametros.json → eva) ----------
+const EVA = { nom: P.eva?.duracion_nominal_h ?? 6, max: P.eva?.duracion_max_h ?? 8, refugio: P.eva?.tiempo_max_a_refugio_min ?? 30, reserva: P.eva?.reserva_regreso_min ?? 30 };
+// minutos de regreso y margen: margen = duración nominal − (tiempo afuera + regreso + reserva)
+function regresoYMargen(campo, k, minAfuera) {
+  if (!campo) return null;
+  const tr = campo.T[k] / 60; if (!isFinite(tr)) return null;
+  return { tr, margen: EVA.nom * 60 - (minAfuera + tr + EVA.reserva), sobreMax: minAfuera + tr + EVA.reserva > EVA.max * 60 };
+}
+const fmtMin = m => m >= 60 ? fmtH(m / 60) : `${Math.round(m)} min`;
+function pintarRegreso(campo, k, minAfuera) {
+  const rm = regresoYMargen(campo, k, minAfuera), a = $('v-regreso'), b = $('v-margen');
+  if (!rm) { a.textContent = campo === null ? '—' : 'calculando…'; b.textContent = '—'; return; }
+  a.textContent = `${fmtMin(rm.tr)} / ${EVA.refugio} min`; a.classList.toggle('alerta', rm.tr > EVA.refugio);
+  b.textContent = rm.margen < 0 ? 'volver ya' : fmtMin(rm.margen); b.classList.toggle('alerta', rm.margen < 30);
+}
+
+// ---------- control manual: rover o astronauta (teclado WASD o joystick táctil) ----------
+// Nada se bloquea por pendiente: se avisa (alertas). El tiempo de la misión del astronauta corre ×1 a ×20 según la velocidad elegida.
+let control = 'rover', perActivoAntes = false;
+const yo = { activo: false, x: 0, z: 0, yaw: 0, t: 0, dosis: 0, dist: 0, fase: 0, mov: 0, base: null, campo: null, auto: null, paso: 0 };
+const joy = { x: 0, y: 0, activo: false };
+function capaLibre(n, geo, op) { const h = capaHuellas(n, geo, op); h.i = 0; return h; }
+const huellasLibres = capaLibre(2000, geoPie, 0.6), bandasLibres = capaLibre(4000, geoBanda, 0.33);
+function marcarLibre(h, x, z, yaw) {
+  _p.set(x, alturaMalla(x, z) + 0.035, z);
+  _q.setFromUnitVectors(_up, normalEn(x, z)).multiply(_qy.setFromAxisAngle(_up, yaw));
+  h.m.setMatrixAt(h.i, _m4.compose(_p, _q, _uno)); h.i = (h.i + 1) % h.n; h.m.count = Math.min(h.n, h.m.count + 1);
+  h.m.instanceMatrix.needsUpdate = true;
+}
+const dentro = (x, z) => [Math.max(-CX + 3, Math.min(CX - 3, x)), Math.max(-CZ + 3, Math.min(CZ - 3, z))];
+function ubicarYo() { astro.position.set(yo.x, alturaMalla(yo.x, yo.z), yo.z); astro.rotation.y = yo.yaw; }
+function setControl(c) {
+  if (fp) salirFP(false);
+  control = c;
+  $('cRover').setAttribute('aria-pressed', c === 'rover'); $('cAstro').setAttribute('aria-pressed', c === 'astro');
+  $('joyEt').textContent = c === 'astro' ? 'Astronauta' : 'Rover';
+  if (c === 'astro') {
+    setAuto(false);
+    const nuevaBase = celdaDe(est.x, est.z);
+    if (!yo.activo) {                                     // baja del rover: aparece a su lado
+      const [x, z] = dentro(...localAMundo(0.3, 2.7));
+      Object.assign(yo, { activo: true, x, z, yaw: est.yaw, t: 0, dosis: 0, dist: 0, fase: 0, mov: 0, auto: null, paso: 0 });
+      huellasLibres.m.count = 0; huellasLibres.i = 0;
+      perActivoAntes = per.activo; per.activo = false;
+    }
+    if (!yo.base || Math.hypot(nuevaBase[0] - yo.base[0], nuevaBase[1] - yo.base[1]) * CS > 10) {   // la base es el rover
+      yo.base = nuevaBase; yo.campo = camposBase.get(bloque(nuevaBase)) || null;
+      if (!yo.campo) { decir('Calculando el camino de regreso a la base…'); setTimeout(() => { yo.campo = campoRegreso(yo.base); decir('Astronauta afuera: WASD o joystick para caminar. La base es el rover.'); }, 40); }
+    }
+    astro.visible = true; ubicarYo(); seguir('astro');
+  } else seguir('rover');
+  actualizarFlot();
+}
+$('cRover').onclick = () => setControl('rover');
+$('cAstro').onclick = () => setControl('astro');
+function terminarSalida(motivo) {
+  decir(`${motivo}: salida de ${fmtH(yo.t / 3600)}, ${fmtM(yo.dist)} caminados, ${num(yo.dosis, 1)} µSv.`);
+  yo.activo = false; yo.auto = null; astro.visible = false; per.activo = perActivoAntes;
+  if (per.activo) ubicarAstro(per.s);
+  quitarRegreso(); setControl('rover');
+}
+function moverYo(dtReal, vel) {
+  const fac = Math.min(vel, 20), dtm = dtReal * fac;          // segundos de misión
+  const f = Math.max(-1, Math.min(1, (teclas.w ? 1 : 0) - (teclas.s ? 1 : 0) - joy.y));
+  const g = Math.max(-1, Math.min(1, (teclas.a ? 1 : 0) - (teclas.d ? 1 : 0) - joy.x));
+  if ((Math.abs(f) > 0.05 || Math.abs(g) > 0.05) && yo.auto) { yo.auto = null; decir('Regreso automático cancelado: lo manejás vos.'); }
+  let avance = 0, pend = 0;
+  if (yo.auto) {                                            // caminando solo por el camino de regreso
+    const r = yo.auto.r, p0 = puntoEn(r, yo.auto.s), p1 = puntoEn(r, Math.min(r.largo, yo.auto.s + 1));
+    pend = Math.atan2(p1.y - p0.y, 1); avance = PR.vCam * tobler(p1.y - p0.y) * dtm;
+    yo.auto.s = Math.min(r.largo, yo.auto.s + avance);
+    const q = puntoEn(r, yo.auto.s), ad = puntoEn(r, Math.min(r.largo, yo.auto.s + 1.5));
+    yo.x = q.x; yo.z = q.z; if (Math.hypot(ad.x - q.x, ad.z - q.z) > 0.01) yo.yaw = Math.atan2(-(ad.z - q.z), ad.x - q.x);
+    if (yo.auto.s >= r.largo) { yo.t += dtm; terminarSalida('De vuelta en la base'); return; }
+  } else if (Math.abs(f) > 0.05 || Math.abs(g) > 0.05) {
+    yo.yaw += g * 1.8 * dtReal;
+    const cx = Math.cos(yo.yaw), cz = -Math.sin(yo.yaw), h0 = alturaEn(yo.x, yo.z), h1 = alturaEn(yo.x + cx * Math.sign(f || 1), yo.z + cz * Math.sign(f || 1));
+    pend = Math.atan2(h1 - h0, 1);
+    const v = PR.vCam * tobler(h1 - h0) * f * (f < 0 ? 0.5 : 1), [nx, nz] = dentro(yo.x + cx * v * dtm, yo.z + cz * v * dtm);
+    avance = Math.hypot(nx - yo.x, nz - yo.z); yo.x = nx; yo.z = nz;
+  }
+  const [c, fi] = celdaDe(yo.x, yo.z), k = fi * W + c;
+  yo.t += dtm; yo.dist += avance; yo.dosis += dtm / 86400 * PR.dosis * (1 - PR.k * CIELO[k]) * 1000;
+  yo.fase += avance / ZANCADA * Math.PI * 2; yo.mov += ((avance > 0 ? 1 : 0) - yo.mov) * Math.min(1, dtReal * 6);
+  yo.paso += avance;
+  if (yo.paso >= ZANCADA / 2) {                             // una huella por medio paso, alternando pies
+    yo.paso = 0; yo.pie = -(yo.pie || 0.11);
+    const hx = yo.x + Math.sin(yo.yaw) * yo.pie, hz = yo.z + Math.cos(yo.yaw) * yo.pie;
+    marcarLibre(huellasLibres, hx, hz, yo.yaw); soplarPolvo(new THREE.Vector3(hx, alturaEn(hx, hz), hz), 5, 0.35);
+  }
+  ubicarYo(); poseAstro(yo.fase, yo.mov, pend, relojEscena);
+}
+
+// ---------- joystick táctil ----------
+{
+  const el = $('joy'), pom = el.querySelector('i');
+  const mover = e => {
+    const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), R = r.width / 2 - 20, L = Math.hypot(dx, dy), k = L > R ? R / L : 1;
+    joy.x = dx * k / R; joy.y = dy * k / R; pom.style.transform = `translate(${dx * k}px, ${dy * k}px)`;
+  };
+  const soltar = () => { joy.activo = false; joy.x = joy.y = 0; pom.style.transform = ''; };
+  el.addEventListener('pointerdown', e => { joy.activo = true; el.setPointerCapture(e.pointerId); vuelo = null; mover(e); e.preventDefault(); });
+  el.addEventListener('pointermove', e => { if (joy.activo) mover(e); });
+  el.addEventListener('pointerup', soltar); el.addEventListener('pointercancel', soltar);
+}
+const tactil = matchMedia('(pointer: coarse)').matches;
+function actualizarFlot() {
+  $('bVolver').classList.toggle('oculto', !((yo.activo && !fp) || (fp && fp.r.tipo === 'astronauta' && !fp.r.regreso)));
+  $('joy').classList.toggle('oculto', !!fp || !(tactil || control === 'astro'));
+  $('joy').style.left = !$('panel').classList.contains('oculto') && innerWidth > 760 ? '362px' : '22px';    // al lado del panel, no debajo
+}
+
+// ---------- volver a la base: camino más rápido desde donde está el astronauta ----------
+let rRegreso = null;
+function quitarRegreso() { if (!rRegreso) return; quitarRuta(rRegreso); rutas.splice(rutas.indexOf(rRegreso), 1); rRegreso = null; listarRutas(); }
+function volverABase() {
+  let campo, desde, vista = null;
+  if (fp && fp.r.tipo === 'astronauta') { if (!fp.campo) { decir('Calculando el regreso…'); return; } campo = fp.campo; const q = puntoEn(fp.r, fp.d); desde = celdaDe(q.x, q.z); vista = fp.vista; }
+  else if (yo.activo) { if (!yo.campo) { decir('Calculando el regreso…'); return; } campo = yo.campo; desde = celdaDe(yo.x, yo.z); }
+  else return;
+  const cam = caminoRegreso(campo, desde);
+  if (cam.length < 3) { if (yo.activo && !fp) terminarSalida('Ya en la base'); else decir('Ya estás en la base.'); return; }
+  quitarRegreso();
+  const r = procesar({ nombre: 'Regreso a la base', tipo: 'astronauta', color: '#4fbf7d', regreso: true, base: cam.map(c => { const [x, z] = centroDe(c); return { x, z }; }) });
+  dibujarRuta(r); rutas.push(r); rRegreso = r; listarRutas();
+  if (vista) { entrarFP(r, vista); fp.jugando = true; fPlay.textContent = '❚❚ Pausa'; }
+  else { yo.auto = { r, s: 0 }; seguir('astro'); }
+  decir(`Regreso a la base: ${fmtM(r.largo)}, ${fmtH(r.horas)} caminando, por el camino más rápido.`);
+}
+$('bVolver').onclick = volverABase;
+
+// ---------- seguir, ubicarme y brújula (como en un mapa) ----------
+let seguirTras = null;
+function seguir(q) {
+  const obj = q === 'astro' ? astro.position : rover.position, yaw = q === 'astro' ? yo.yaw : est.yaw;
+  const lejos = q === 'astro' ? 8 : 13, alto = q === 'astro' ? 4.5 : 7;
+  const t = new THREE.Vector3(obj.x, obj.y + 1.1, obj.z), p = t.clone().add(new THREE.Vector3(-Math.cos(yaw) * lejos, alto, Math.sin(yaw) * lejos));
+  modoCam = 'libre'; volarA(p, t, 1.1); seguirTras = q; $('bUbicar').setAttribute('aria-pressed', 'true');
+}
+$('bUbicar').onclick = () => {
+  if (fp) { fp.mirar.yaw = 0; fp.mirar.pitch = 0; return; }
+  const q = (yo.activo && control === 'astro') || (astro.visible && modoCam === 'astro') ? 'astro' : 'rover';
+  if (modoCam === q && !seguirTras) { modoCam = 'libre'; $('sCam').value = 'libre'; $('bUbicar').setAttribute('aria-pressed', 'false'); decir('Cámara libre.'); }
+  else { seguir(q); decir(q === 'astro' ? 'Siguiendo al astronauta. Tocá de nuevo para soltar.' : 'Siguiendo al rover. Tocá de nuevo para soltar.'); }
+};
+$('bNorte').onclick = () => {
+  if (fp) return;
+  const t = controles.target.clone(), v = camara.position.clone().sub(t), d = Math.hypot(v.x, v.z);
+  volarA(t.clone().add(new THREE.Vector3(0, v.y, d)), t, 0.8);    // cámara al sur del punto, mirando al norte
+};
+const _vcam = new THREE.Vector3();
+function girarBrujula() {
+  camara.getWorldDirection(_vcam); const rumbo = Math.atan2(_vcam.x, -_vcam.z);      // 0 = mirando al norte
+  $('bNorte').firstElementChild.style.transform = `rotate(${-rumbo}rad)`;
+}
+
+// ---------- alertas: no frenan, avisan (pantalla y visor) ----------
+const alertasVivas = new Map(), NIVEL = { info: 0, precaucion: 1, peligro: 2, critico: 3 };
+function alertar(clave, nivel, titulo, detalle = '', accion = null) {
+  let a = alertasVivas.get(clave);
+  if (!a) { const el = document.createElement('div'); $('alertas').appendChild(el); a = { el }; alertasVivas.set(clave, a); }
+  a.hasta = performance.now() + 2600; a.nivel = nivel;
+  const html = `<b class="ic">${nivel === 'info' ? 'i' : '!'}</b><div>${titulo}<small>${detalle}</small></div>${accion ? `<button>${accion}</button>` : ''}`;
+  if (a.html !== html) { a.html = html; a.el.className = `alerta-p al-${nivel}`; a.el.innerHTML = html; const b = a.el.querySelector('button'); if (b) b.onclick = volverABase; }
+}
+function limpiarAlertas() {
+  const ahora = performance.now();
+  for (const [k, a] of alertasVivas) if (a.hasta < ahora) { a.el.remove(); alertasVivas.delete(k); }
+  [...alertasVivas.values()].sort((p, q) => NIVEL[q.nivel] - NIVEL[p.nivel]).forEach((a, i) => { a.el.style.order = i; a.el.style.display = i < 3 ? '' : 'none'; });
+}
+// quién está "en el terreno" ahora: primera persona, astronauta a mano o rover en marcha
+let roverAndando = 0;
+function agente() {
+  if (fp) {
+    const q = puntoEn(fp.r, fp.d), qa = puntoEn(fp.r, Math.min(fp.r.largo, fp.d + 2));
+    return { tipo: fp.r.tipo, x: q.x, z: q.z, yaw: Math.atan2(-(qa.z - q.z), qa.x - q.x), min: q.t * 60, campo: fp.campo, base: fp.base, ruta: fp.r, d: fp.d };
+  }
+  if (yo.activo && control === 'astro') return { tipo: 'astronauta', x: yo.x, z: yo.z, yaw: yo.yaw, min: yo.t / 60, campo: yo.campo, base: yo.base };
+  if (control === 'rover' && (est.auto || performance.now() - roverAndando < 1500)) return { tipo: 'vehiculo', x: est.x, z: est.z, yaw: est.yaw };
+  return null;
+}
+// lo que viene adelante (16 m): por la ruta si hay, si no en la dirección de marcha
+function adelante(ag) {
+  for (let s = 4; s <= 16; s += 2) {
+    let x, z;
+    if (ag.ruta) { const q = puntoEn(ag.ruta, Math.min(ag.ruta.largo, ag.d + s)); x = q.x; z = q.z; }
+    else { x = ag.x + Math.cos(ag.yaw) * s; z = ag.z - Math.sin(ag.yaw) * s; }
+    const [c, f] = celdaDe(x, z), k = f * W + c;
+    if (CLASE[k] >= 2) return { s, clase: CLASE[k], pend: PEND[k] };
+  }
+  return null;
+}
+function evaluarAlertas() {
+  const ag = agente(); if (!ag || ag.tipo === 'tripulado') return;
+  const [c, f] = celdaDe(ag.x, ag.z), k = f * W + c, cl = CLASE[k], pd = Math.round(PEND[k]);
+  if (ag.tipo === 'astronauta') {
+    if (cl === 3) alertar('pend', 'critico', `Pendiente de ${pd}°: riesgo de caída`, 'Más de 30° (supuesto del equipo). No bloquea: buscá otro paso.');
+    else if (cl === 2) alertar('pend', 'peligro', `Pendiente de ${pd}°, sobre el límite del traje (${PR.pMax}°)`, 'Requisito lunar Artemis: subir, bajar y cruzar 20° (NTRS 20210026296).');
+    else if (cl === 1) alertar('pend', 'precaucion', `Pendiente de ${pd}°: cerca del límite del traje`, `Límite ${PR.pMax}°.`);
+    if (cl === 4) alertar('arena', 'precaucion', 'Posible arena suelta', 'Indicio de CRISM y tono oscuro en HiRISE: pisá con cuidado.');
+    const ad = adelante(ag);
+    if (ad && cl < 2) alertar('adelante', 'precaucion', `Adelante, a ${ad.s} m: ${NOMBRE_CLASE[ad.clase]} (${Math.round(ad.pend)}°)`, 'Avisa con tiempo para rodear o ir con cuidado.');
+    const rm = regresoYMargen(ag.campo, k, ag.min);
+    if (rm) {
+      if (rm.tr > EVA.refugio) alertar('refugio', 'peligro', `A ${fmtMin(rm.tr)} de la base: más de ${EVA.refugio} min`, `Regla del equipo (supuesto): estar a menos de ${EVA.refugio} min de un refugio, por el aviso ante tormentas solares (NASA, NTRS 20210014156).`, 'Volver');
+      else if (rm.tr > EVA.refugio * 0.8) alertar('refugio', 'precaucion', `A ${fmtMin(rm.tr)} de la base`, `Cerca del límite de ${EVA.refugio} min a un refugio.`);
+      if (rm.sobreMax) alertar('eva', 'critico', 'No alcanza el traje: volvé ahora', `Afuera ${fmtMin(ag.min)} + regreso ${fmtMin(rm.tr)} + reserva ${EVA.reserva} min supera ${EVA.max} h (traje xEMU).`, 'Volver');
+      else if (rm.margen < 0) alertar('eva', 'peligro', 'Hora de volver a la base', `Afuera ${fmtMin(ag.min)} + regreso ${fmtMin(rm.tr)} + reserva ${EVA.reserva} min supera ${EVA.nom} h de salida nominal (xEMU: 6 ± 2 h).`, 'Volver');
+      else if (rm.margen < 30) alertar('eva', 'precaucion', `Quedan ${fmtMin(rm.margen)} antes de tener que volver`, `Salida nominal de ${EVA.nom} h con ${EVA.reserva} min de reserva.`);
+    }
+  } else if (ag.tipo === 'vehiculo') {
+    if (PEND[k] > PR.rMax || est.incl > PR.rMax) alertar('pend', cl === 3 ? 'critico' : 'peligro', `Inclinación ${num(Math.max(PEND[k], est.incl), 0)}°: sobre el límite del rover (${PR.rMax}°)`, 'Curiosity llegó a 24° como máximo (agosto de 2026). No bloquea: avisa.');
+    if (cl === 4) alertar('arena', 'peligro', 'Posible arena: riesgo de quedar atascado', 'Indicio de CRISM y HiRISE. Curiosity esquiva la arena al planear cada tramo.');
+    const ad = adelante(ag);
+    if (ad && cl < 2) alertar('adelante', 'precaucion', `Adelante, a ${ad.s} m: ${NOMBRE_CLASE[ad.clase]} (${Math.round(ad.pend)}°)`, 'Conviene rodear.');
+  }
+}
+
+// ---------- perfil de la ruta (tarjeta flotante, interactiva) ----------
+let pcRuta = null, pcHover = null;
+const pcL = $('pcLienzo');
+const pcMarca = new THREE.Mesh(new THREE.RingGeometry(1.2, 1.8, 32).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, depthTest: false }));
+pcMarca.visible = false; pcMarca.renderOrder = 12; escena.add(pcMarca);
+function paradasDe(r) {
+  if (r.paradasRuta) return r.paradasRuta;
+  const out = [];
+  for (const pa of paradasGeo) {
+    if (pa.props.parada === 0 || pa.props.parada === '0') continue;
+    let dmin = Infinity, dd = 0; for (const q of r.pts) { const d = Math.hypot(q.x - pa.x, q.z - pa.z); if (d < dmin) { dmin = d; dd = q.d; } }
+    if (dmin < 30 && !out.some(o => Math.abs(o.d - dd) < 5)) out.push({ pa, d: dd });
+  }
+  return (r.paradasRuta = out.sort((a, b) => a.d - b.d));
+}
+function abrirPerfil(r) {
+  pcRuta = r; pcHover = null;
+  $('pcTitulo').textContent = r.nombre; $('pcColor').style.background = r.color;
+  $('perfilCard').classList.remove('oculto'); $('ficha').classList.add('oculto');
+  $('pcNota').textContent = `Total: ${fmtM(r.largo3d)} · +${num(r.sube)} / −${num(r.baja)} m · ${r.tipo === 'astronauta' ? fmtH(r.horas) + ' a pie · ' + num(r.dosis, 1) + ' µSv' : r.tipo === 'vehiculo' ? `${Math.ceil(r.largo3d / PR.porSol[1])}–${Math.ceil(r.largo3d / PR.porSol[0])} soles` : fmtH(r.horas)}. Color de la línea: pendiente de marcha; franjas violetas: posible arena. Tocá el gráfico para ir a ese punto.`;
+  dibujarPC(); datosPC(null);
+}
+$('pcCerrar').onclick = () => { $('perfilCard').classList.add('oculto'); pcRuta = null; pcMarca.visible = false; };
+$('pcFP').onclick = () => { if (pcRuta) { const r = pcRuta; $('perfilCard').classList.add('oculto'); pcMarca.visible = false; entrarFP(r); } };
+function dibujarPC() {
+  const r = pcRuta; if (!r) return;
+  const dpr = devicePixelRatio, w = pcL.clientWidth, h = pcL.clientHeight; if (!w) return;
+  pcL.width = w * dpr; pcL.height = h * dpr;
+  const c = pcL.getContext('2d'); c.scale(dpr, dpr); c.clearRect(0, 0, w, h);
+  let ymin = Infinity, ymax = -Infinity; for (const q of r.pts) { ymin = Math.min(ymin, q.y); ymax = Math.max(ymax, q.y); }
+  const L = 46, Rm = 10, T = 18, B = 22, X = d => L + (w - L - Rm) * d / r.largo, Y = y => h - B - (h - T - B) * (y - ymin) / Math.max(1, ymax - ymin);
+  // franjas de arena
+  c.fillStyle = 'rgba(150, 90, 220, .22)';
+  for (let k = 1; k < r.pts.length; k++) { const q = r.pts[k], [cc, ff] = celdaDe(q.x, q.z); if (CLASE[ff * W + cc] === 4) c.fillRect(X(r.pts[k - 1].d), T, Math.max(1, X(q.d) - X(r.pts[k - 1].d)), h - T - B); }
+  // grilla y ejes
+  c.strokeStyle = 'rgba(255,255,255,.07)'; c.fillStyle = '#a99d90'; c.font = '10px system-ui'; c.lineWidth = 1;
+  for (let i = 0; i <= 3; i++) { const y = ymin + (ymax - ymin) * i / 3, yy = Y(y); c.beginPath(); c.moveTo(L, yy); c.lineTo(w - Rm, yy); c.stroke(); c.textAlign = 'right'; c.fillText(`${num(D.zmin + y)} m`, L - 4, yy + 3); }
+  const paso = r.largo > 2000 ? 500 : r.largo > 800 ? 250 : 100; c.textAlign = 'center';
+  for (let d = 0; d <= r.largo; d += paso) c.fillText(d >= 1000 ? `${num(d / 1000, 1)} km` : `${d} m`, X(d), h - 6);
+  // relleno y línea coloreada por pendiente de marcha
+  c.beginPath(); c.moveTo(X(0), h - B); for (const q of r.pts) c.lineTo(X(q.d), Y(q.y)); c.lineTo(X(r.largo), h - B); c.closePath();
+  const gr = c.createLinearGradient(0, T, 0, h - B); gr.addColorStop(0, r.color + '55'); gr.addColorStop(1, r.color + '05'); c.fillStyle = gr; c.fill();
+  c.lineWidth = 2.4;
+  for (let k = 1; k < r.pts.length; k++) {
+    const a = r.pts[k - 1], b = r.pts[k];
+    c.strokeStyle = r.lim != null && b.marcha > r.lim ? '#ff5a4f' : b.marcha > 15 ? '#ffd63c' : r.color;
+    c.beginPath(); c.moveTo(X(a.d), Y(a.y)); c.lineTo(X(b.d), Y(b.y)); c.stroke();
+  }
+  // paradas sobre la ruta
+  for (const o of paradasDe(r)) {
+    const x = X(o.d); c.strokeStyle = 'rgba(255,255,255,.35)'; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(x, T); c.lineTo(x, h - B); c.stroke(); c.setLineDash([]);
+    const id = String(o.pa.props.parada); c.font = 'bold 10px system-ui'; const tw = c.measureText(id).width + 8;
+    c.fillStyle = colorParada(o.pa.props); c.beginPath(); c.roundRect(x - tw / 2, 2, tw, 14, 7); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText(id, x, 12.5);
+  }
+  // posición actual (primera persona) y puntero
+  const marca = (d, col) => { const q = puntoEn(r, d); c.strokeStyle = col; c.lineWidth = 1.5; c.beginPath(); c.moveTo(X(d), T); c.lineTo(X(d), h - B); c.stroke(); c.fillStyle = col; c.beginPath(); c.arc(X(d), Y(q.y), 4.5, 0, 7); c.fill(); };
+  if (fp && fp.r === r) marca(fp.d, '#ffffff');
+  if (pcHover != null) marca(pcHover, '#9fd2ff');
+  pcL._X = { L, Rm, w };
+}
+function datosPC(d) {
+  const r = pcRuta; if (!r) return;
+  const q = d == null ? null : puntoEn(r, d), v = (a, b) => `<div><b>${a}</b>${b}</div>`;
+  $('pcDato').innerHTML = q
+    ? v(fmtM(d), 'distancia') + v(`${num(D.zmin + q.y)} m`, 'elevación') + v(`${num(q.marcha || 0, 1)}°`, 'pendiente de marcha') +
+      v(r.tipo === 'vehiculo' ? fmtH(q.t) : fmtH(q.t), r.tipo === 'vehiculo' ? 'de manejo' : 'tiempo') + v(r.tipo === 'astronauta' ? `${num(q.dosis, 1)} µSv` : `${num(q.cielo * 100)} %`, r.tipo === 'astronauta' ? 'dosis acumulada' : 'cielo tapado')
+    : v(fmtM(r.largo3d), 'largo') + v(`+${num(r.sube)} m`, 'subida') + v(`${num(r.maxMarcha, 1)}°`, 'pendiente máx.') + v(fmtM(r.sobre), `sobre ${r.lim ?? '—'}°`) + v(r.tipo === 'astronauta' ? fmtH(r.horas) : `${Math.ceil(r.largo3d / PR.porSol[1])}–${Math.ceil(r.largo3d / PR.porSol[0])}`, r.tipo === 'astronauta' ? 'a pie' : 'soles');
+}
+const dDePC = e => { const b = pcL.getBoundingClientRect(), X = pcL._X; if (!X) return null; return Math.max(0, Math.min(pcRuta.largo, (e.clientX - b.left - X.L) / (X.w - X.L - X.Rm) * pcRuta.largo)); };
+pcL.addEventListener('pointermove', e => { if (!pcRuta) return; pcHover = dDePC(e); dibujarPC(); datosPC(pcHover); });
+pcL.addEventListener('pointerleave', () => { pcHover = null; dibujarPC(); datosPC(null); });
+pcL.addEventListener('pointerdown', e => {
+  if (!pcRuta) return; const d = dDePC(e); if (d == null) return;
+  if (fp && fp.r === pcRuta) { fp.d = d; ubicarFP(true); dibujarPC(); return; }
+  const q = puntoEn(pcRuta, d); pcMarca.position.set(q.x, q.y + 0.3, q.z); pcMarca.visible = true;
+  const t = new THREE.Vector3(q.x, q.y, q.z), dir = camara.position.clone().sub(controles.target).setY(0); if (dir.lengthSq() < 1) dir.set(-1, 0, 1); dir.normalize();
+  volarA(t.clone().addScaledVector(dir, 55).add(new THREE.Vector3(0, 38, 0)), t, 1.0);
+});
+addEventListener('resize', () => dibujarPC());
+
+// panel derecho: datos del astronauta a mano
+function hudAstronauta() {
+  if (!yo.activo) { $('aRegreso').textContent = '—'; $('aMargen').textContent = '—'; return; }
+  const dRef = Math.hypot(yo.x - est.x, yo.z - est.z), [c, f] = celdaDe(yo.x, yo.z), rm = regresoYMargen(yo.campo, f * W + c, yo.t / 60);
+  $('aDist').textContent = fmtM(yo.dist); $('aRef').textContent = fmtM(dRef); $('aRef').style.color = dRef > PR.refMax ? 'var(--peligro)' : '';
+  $('bRef').style.width = `${Math.min(100, dRef / PR.refMax * 100)}%`; $('bRef').style.background = dRef > PR.refMax ? 'var(--peligro)' : 'var(--ok)';
+  $('aTiempo').textContent = fmtMin(yo.t / 60); $('aDosis').textContent = `${num(yo.dosis, 1)} µSv`;
+  $('aCielo').textContent = `${Math.round(CIELO[f * W + c] * 100)} %`;
+  $('aRegreso').textContent = rm ? `${fmtMin(rm.tr)} / ${EVA.refugio} min` : 'calculando…'; $('aRegreso').style.color = rm && rm.tr > EVA.refugio ? 'var(--peligro)' : '';
+  $('aMargen').textContent = rm ? (rm.margen < 0 ? 'volver ya' : fmtMin(rm.margen)) : '—'; $('aMargen').style.color = rm && rm.margen < 30 ? 'var(--peligro)' : '';
+}
+let ultAlertas = 0;
+
 // ---------- bucle ----------
 let ultimo = performance.now();
 renderer.setAnimationLoop(ahora => {
@@ -1595,13 +2310,20 @@ renderer.setAnimationLoop(ahora => {
     if (fp.jugando) { fp.d = Math.min(fp.r.largo, fp.d + fp.r.largo * dtReal / +$('f-vel').value); if (fp.d >= fp.r.largo) { fp.jugando = false; fPlay.textContent = '▶ Recorrer'; } }
     ubicarFP();
   } else {
-    // manejo manual (WASD)
-    const f = (teclas.w ? 1 : 0) - (teclas.s ? 1 : 0), t = (teclas.a ? 1 : 0) - (teclas.d ? 1 : 0);
-    if (f || t) {
-      setAuto(false); const v = 0.04 * f; est.yaw += t * 0.03 * dt;
-      const nx = est.x + Math.cos(est.yaw) * v * dt, nz = est.z - Math.sin(est.yaw) * v * dt, [c, fi] = celdaDe(nx, nz);
-      if (PEND[fi * W + c] <= PR.rMax + 4) { movido = Math.hypot(nx - est.x, nz - est.z); est.x = nx; est.z = nz; }
+    // manejo manual: el rover o el astronauta, según "Manejar". Nada se bloquea por pendiente: se avisa.
+    let f = 0, t = 0;
+    if (control === 'rover') {
+      f = Math.max(-1, Math.min(1, (teclas.w ? 1 : 0) - (teclas.s ? 1 : 0) - joy.y)); t = Math.max(-1, Math.min(1, (teclas.a ? 1 : 0) - (teclas.d ? 1 : 0) - joy.x));
+      if (Math.abs(f) < 0.05) f = 0; if (Math.abs(t) < 0.05) t = 0;
     }
+    if (f || t) {
+      setAuto(false); roverAndando = performance.now(); const v = 0.04 * f; est.yaw += t * 0.03 * dt;
+      const [nx, nz] = dentro(est.x + Math.cos(est.yaw) * v * dt, est.z - Math.sin(est.yaw) * v * dt);
+      movido = Math.hypot(nx - est.x, nz - est.z); est.x = nx; est.z = nz;
+      est.paso = (est.paso || 0) + movido;
+      if (est.paso > 0.5) { est.paso = 0; for (const lz of [-WZ, WZ]) { const [bx, bz] = localAMundo(-1.1, lz); marcarLibre(bandasLibres, bx, bz, est.yaw); } }
+    }
+    if (yo.activo) moverYo(dtReal, vel);
     $('hModo').textContent = est.auto ? (rutaRover && sRover < rutaRover.largo ? 'autónomo' : 'autónomo · llegó') : (f || t ? 'manual' : 'detenido');
     // autonomía: el rover a ~4 cm/s reales (Curiosity), el astronauta a su ritmo (Tobler)
     if (est.auto && rutaRover && sRover < rutaRover.largo) {
@@ -1624,12 +2346,12 @@ renderer.setAnimationLoop(ahora => {
     // bandas del rover y polvo al rodar (solo en autonomía: el manejo manual no deja bandas)
     for (const q of huellasHasta(huellasRover, rutaRover, sRover, false)) if (est.auto && Math.random() < 0.5) soplarPolvo(q, 3, 0.25);
     if (!per.activo) huellasHasta(huellasAstro, null, 0, true);
-    else if (!est.auto) poseAstro(per.s / ZANCADA * Math.PI * 2, 0, 0, relojEscena);
+    else if (!est.auto && !yo.activo) poseAstro(per.s / ZANCADA * Math.PI * 2, 0, 0, relojEscena);
     // vuelo suave de la cámara (paradas, recorrido guiado)
     if (vuelo) {
       vuelo.t = Math.min(1, vuelo.t + dtReal / vuelo.dur); const e = suave(vuelo.t);
       camara.position.lerpVectors(vuelo.p0, vuelo.p1, e); controles.target.lerpVectors(vuelo.t0, vuelo.t1, e);
-      if (vuelo.t >= 1) vuelo = null;
+      if (vuelo.t >= 1) { vuelo = null; if (seguirTras) { modoCam = seguirTras; $('sCam').value = seguirTras; seguirTras = null; } }
     }
     if (modoCam === 'rover' || modoCam === 'astro') {
       const obj = modoCam === 'astro' && astro.visible ? astro.position : rover.position;
@@ -1643,9 +2365,10 @@ renderer.setAnimationLoop(ahora => {
   cieloDomo.position.copy(camara.position);
   // sombra del sol alrededor del rover
   sol.target.position.set(est.x, rover.position.y, est.z); sol.position.copy(sol.target.position).addScaledVector(dirSol, 400);
-  // rutas: tubo grueso de lejos, línea fina de cerca o en primera persona
-  const cerca = fp || camara.position.distanceTo(controles.target) < 160;
-  for (const r of rutas) { r.tubo.visible = !r.oculta && !cerca; r.fino.visible = fp ? r === fp.r : !r.oculta && !!cerca; }
+  // rutas: cinta ancha de lejos, media y fina de cerca (en primera persona solo la ruta activa); las flechas avanzan
+  const dcam = camara.position.distanceTo(controles.target), cerca = fp || dcam < 160, nivel = fp ? 2 : dcam > 520 ? 0 : dcam > 90 ? 1 : 2;
+  texCinta.offset.x -= dtReal * 0.8;
+  for (const r of rutas) (r.cintas || []).forEach((m, i) => { m.visible = i === nivel && (fp ? r === fp.r : !r.oculta); m.material.opacity = r.aOjo ? 0.4 : fp || r === rutaSel ? 0.97 : 0.8; });
   terreno.castShadow = !!cerca;      // el relieve proyecta sombra solo de cerca (de lejos no se ve y cuesta mucho)
   // marcadores con tamaño constante en pantalla
   for (const m of marcadores) {
@@ -1666,11 +2389,13 @@ renderer.setAnimationLoop(ahora => {
     $('bRef').style.width = `${Math.min(100, dRef / PR.refMax * 100)}%`; $('bRef').style.background = dRef > PR.refMax ? 'var(--peligro)' : 'var(--ok)';
     $('aTiempo').textContent = `${num(per.tiempo / 60)} min`; $('aDosis').textContent = `${num(per.dosis * 1000, 1)} µSv`;
   }
+  hudAstronauta(); girarBrujula();
+  if (ahora - ultAlertas > 350) { ultAlertas = ahora; evaluarAlertas(); limpiarAlertas(); actualizarFlot(); if (pcRuta && fp && fp.r === pcRuta) dibujarPC(); }   // en tiempo real, aunque haya pocos cuadros por segundo
   actualizarCursor();
   renderer.render(escena, camara);
 });
 document.getElementById('cargando').remove();
-window.__escena = { huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
+window.__escena = { BASE_S, fijarCamara: (p, t) => { vuelo = null; seguirTras = null; modoCam = 'libre'; camara.position.set(...p); controles.target.set(...t); controles.update(); }, dibujarCapa, evaluarAlertas, yo, setControl, volverABase, abrirPerfil, agente, alertasVivas, campoRegreso, get control() { return control; }, huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>
 </html>
