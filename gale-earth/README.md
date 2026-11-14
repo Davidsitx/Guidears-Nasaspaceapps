@@ -86,4 +86,4 @@ Si no encuentra las teselas, o si abrís `index.html` con doble clic, se usa Ces
 - El color es aproximado: brillo real de CTX con una paleta de Marte más el color de Viking. No es una foto en color.
 - Las alturas están referidas al areoide en los datos originales; en el globo se pasan al elipsoide de Cesium sin corregir el areoide. Es una aproximación visual.
 
-Las teselas se regeneran con los scripts de `gale-earth/herramientas/` (`teselas_terreno*.py`, `teselas_hirise.py`, `teselas_orto.py`). Para publicar una demo hay que subirlas a un hosting aparte (por ejemplo una Release de GitHub o un bucket): GitHub no acepta archivos de más de 100 MB.
+Las teselas se regeneran con los scripts de `gale-earth/herramientas/` (`teselas_terreno*.py`, `teselas_hirise.py`, `teselas_orto.py`). Para la página publicada, las teselas se sirven desde Cloudflare R2 con un service worker (`sw.js`): ver **NUBE.md**.

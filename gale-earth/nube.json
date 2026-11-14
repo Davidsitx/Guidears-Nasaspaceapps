@@ -1,0 +1,4 @@
+{
+ "teselas": "",
+ "nota": "Dirección pública del bucket de Cloudflare R2 con las teselas (por ejemplo https://pub-xxxx.r2.dev/). Vacío = usar las teselas de la PC con abrir.bat o, si no hay, Cesium Mars."
+}
