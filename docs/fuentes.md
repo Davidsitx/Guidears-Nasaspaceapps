@@ -73,3 +73,5 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Pozos 43 a 47 y entrada a la unidad de sulfatos | Blog de Curiosity, sols 4709-4715, 4804-4811, 4893-4899 y 4845-4851 (science.nasa.gov/blog) |
 
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
+| Relieve de todo Marte (fondo de la escena: alrededores de Gale y el planeta) | MOLA MEGDR 16 píxeles/grado, megt90n000eb.img (MGS MOLA, Smith et al. 2003, NASA PDS Geosciences Node). Copia pública: github.com/benbrittain/Barsoom (data/MEGDR). Control: −4509 m en el sitio de aterrizaje (publicado −4501 m); contra el DEM de la travesía, +5 ± 41 m |
+| Color de todo Marte (fondo de la escena) | Viking MDIM 2.1 en color (NASA/USGS, Mars Trek), `gale-earth/capas/viking_color_8k.jpg` (2,6 km/píxel), con realce de color propio |

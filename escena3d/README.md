@@ -125,3 +125,8 @@ Detalles:
 - En la barra de vistas de arriba aparece **"Marte completo ↗"** cuando la escena está al lado de `gale-earth/` (repo, `gale-earth/servir.py` o GitHub Pages). Lleva a `../gale-earth/index.html#curiosity`. En una copia suelta (por ejemplo el artifact publicado) el botón no aparece.
 - Si la escena se abre con `#desde-gale-earth` (el botón "Misión Curiosity · 3D" de Gale Earth), arranca con un descenso desde lo alto hasta la zona de hoy y no abre la ayuda.
 - No cambia nada de la lógica de la misión: es solo navegación.
+
+## Globo de Marte de fondo
+- Alrededor del terreno de la travesía ya no queda gris: hay relieve MOLA (16 píxeles/grado, ~3,7 km) con color Viking, sobre la esfera de Marte con su curvatura. Cerca de la travesía la grilla es de 1/128° (~460 m, interpolada), alrededor de Gale de 1/16° y en el resto del planeta de 1°. Un "delantal" une el borde del terreno de 12 m con el fondo.
+- El botón **"Marte completo"** aleja la cámara hasta ver el planeta; la rueda o el pellizco vuelven a acercar. Funciona también en el artifact publicado. **"Gale Earth ↗"** abre la app del compañero cuando está al lado.
+- Es solo fondo: no entra en rutas, alertas ni capas. Datos: `data/terreno/globo/` (`python herramientas/globo.py /ruta/megt90n000eb.img`).

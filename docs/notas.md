@@ -2,6 +2,12 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 tarde (4) · David (con Claude) · GLOBO DE MARTE EN LA ESCENA (rama `david/union-gale-earth`)
+- **Ya no queda gris a los costados:** alrededor de la travesía hay relieve MOLA y color Viking sobre la esfera de Marte, hasta el horizonte. Desde muy alto el cielo se vuelve negro y se ve el planeta entero (botón "Marte completo"; "Gale Earth ↗" abre la app del compañero).
+- Datos: `data/terreno/globo/` (~0,5 MB), armados con `herramientas/globo.py` desde MOLA MEGDR 16 ppd y el Viking 8k de `gale-earth/capas/`. MOLA coincide con el DEM de la travesía (+5 ± 41 m).
+- Es fondo visual: no toca rutas, alertas ni cálculos. El color tiene realce (tono, contraste y saturación) para que combine con el mosaico de la travesía: está dicho en la leyenda con su "?".
+- Límite: el fondo es de ~3,7 km por punto (MOLA). Con el relieve de 200 m del compañero (`terreno_gale_n8-15.zip` en el Drive) se vería más detallado cerca de Gale.
+
 ## 2026-11-14 tarde (3) · David (con Claude) · UNIÓN GALE EARTH ↔ GALE-3D (rama `david/union-gale-earth`)
 - **Qué se hizo:** navegación de ida y vuelta, sin tocar la lógica de ninguna de las dos apps. Gale Earth (todo Marte) tiene el botón **"Misión Curiosity · 3D"** (y "Entrar a la misión en 3D" en la ficha de Valle Grande); GALE-3D tiene **"Marte completo ↗"** en la barra de vistas. Al entrar a la misión hay un descenso desde lo alto hasta la zona de hoy.
 - **Para el compañero (tu carpeta):** cambié `gale-earth/cabecera.html` (botón y estilo), `interfaz.js` (función `entrarMision`), `_cuerpo.html` (vuelo directo con `#curiosity` y botón en la ficha de Valle Grande) y `servir.py` (sirve también `/escena3d/` y `/gale-earth/`). Rearmé con `_ensamblar.py` y `armar.py`. Revisalo en el PR.

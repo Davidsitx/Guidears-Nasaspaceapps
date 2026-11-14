@@ -34,6 +34,8 @@ Generado con `python herramientas/listar_fuentes.py` a partir de `FUENTES_URL` e
 | `remsPds` | PDS Atmospheres Node: datos de REMS (presión, temperatura, viento, humedad, UV) | https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems.html |
 | `an` | PDS Analyst's Notebook: datos de Curiosity por sol, lugar e instrumento | https://an.rsl.wustl.edu/ |
 | `pdsGeo` | PDS Geosciences Node: archivo de la misión MSL | https://pds-geosciences.wustl.edu/missions/msl/ |
+| `mola` | MOLA MEGDR 16 píxeles/grado (MGS, Smith et al. 2003, NASA PDS): relieve de todo Marte. Copia pública usada para la escena | https://github.com/benbrittain/Barsoom/tree/HEAD/data/MEGDR |
+| `viking` | Viking MDIM 2.1 en color (NASA/USGS), servido por Mars Trek: color de todo Marte a ~2,6 km/píxel | https://trek.nasa.gov/mars/ |
 | `vaniman` | Vaniman et al. 2014 (Science): mineralogía de la lutita de Yellowknife Bay (pozos John Klein y Cumberland) | https://doi.org/10.1126/science.1243480 |
 | `sheppard` | Sheppard et al. 2021 (JGR Planets): en el Monte Sharp, arcillas abajo y sulfatos encima, vistos con CRISM | https://doi.org/10.1029/2020JE006372 |
 | `tutolo` | Tutolo et al. 2025 (Science): siderita en la unidad de sulfatos | https://doi.org/10.1126/science.ado9966 |

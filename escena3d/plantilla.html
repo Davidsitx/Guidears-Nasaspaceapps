@@ -480,7 +480,7 @@
   <div class="vb oculto" id="v-aviso"></div>
 </div>
 
-<div id="vistas" class="seg oculto"><button id="vMarteGE" class="oculto" title="Todo Marte en 3D (Gale Earth): el planeta, el cráter Gale y las órbitas"><span class="largo">Marte completo</span><span class="corto">Marte</span> ↗</button><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy"><span class="largo">Travesía completa</span><span class="corto">Travesía</span></button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo"><span class="largo">Zona de hoy</span><span class="corto">Hoy</span></button></div>
+<div id="vistas" class="seg oculto"><button id="vPlaneta" class="oculto" aria-pressed="false" title="Alejarse hasta ver todo Marte (relieve MOLA y color Viking)"><span class="largo">Marte completo</span><span class="corto">Marte</span></button><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy"><span class="largo">Travesía completa</span><span class="corto">Travesía</span></button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo"><span class="largo">Zona de hoy</span><span class="corto">Hoy</span></button><button id="vMarteGE" class="oculto" title="Abrir Gale Earth: Marte estilo Google Earth, con órbitas, base y biblioteca"><span class="largo">Gale Earth</span><span class="corto">Earth</span> ↗</button></div>
 <div id="viaje" class="caja oculto">
   <div class="datos">
     <div><b id="vj-sol">Sol 0</b><span id="vj-fecha">agosto de 2012</span></div>
@@ -602,6 +602,8 @@ const FUENTES_URL = {
   remsPds: ['PDS Atmospheres Node: datos de REMS (presión, temperatura, viento, humedad, UV)', 'https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems.html'],
   an: ["PDS Analyst's Notebook: datos de Curiosity por sol, lugar e instrumento", 'https://an.rsl.wustl.edu/'],
   pdsGeo: ['PDS Geosciences Node: archivo de la misión MSL', 'https://pds-geosciences.wustl.edu/missions/msl/'],
+  mola: ['MOLA MEGDR 16 píxeles/grado (MGS, Smith et al. 2003, NASA PDS): relieve de todo Marte. Copia pública usada para la escena', 'https://github.com/benbrittain/Barsoom/tree/HEAD/data/MEGDR'],
+  viking: ['Viking MDIM 2.1 en color (NASA/USGS), servido por Mars Trek: color de todo Marte a ~2,6 km/píxel', 'https://trek.nasa.gov/mars/'],
   vaniman: ['Vaniman et al. 2014 (Science): mineralogía de la lutita de Yellowknife Bay (pozos John Klein y Cumberland)', 'https://doi.org/10.1126/science.1243480'],
   sheppard: ['Sheppard et al. 2021 (JGR Planets): en el Monte Sharp, arcillas abajo y sulfatos encima, vistos con CRISM', 'https://doi.org/10.1029/2020JE006372'],
   tutolo: ['Tutolo et al. 2025 (Science): siderita en la unidad de sulfatos', 'https://doi.org/10.1126/science.ado9966'],
@@ -640,13 +642,13 @@ const INFO_CAPA = {
     ['Velocidad y pendiente del traje: concepto de operaciones de NASA.', 'evaConops'],
   ],
   crism: [['Mosaicos CRISM de Gale: indicadores desde órbita a ~19 m por píxel. Orientan; se confirma en el lugar.', 'crism']],
-  ninguna: [['Mosaico HiRISE de Gale (USGS, Calef y Parker 2016).', 'usgsOrto']],
+  ninguna: [['Mosaico HiRISE de Gale (USGS, Calef y Parker 2016).', 'usgsOrto'], ['Fuera de la travesía, el paisaje es relieve MOLA (~3,7 km) con color Viking (~2,6 km), con realce de color. Es fondo: no entra en ningún cálculo.', 'mola'], ['Color de fondo: Viking MDIM 2.1.', 'viking']],
 };
 INFO_CAPA.prohibidas = [...INFO_CAPA.pendiente, ['Cada color dice para quién está prohibido: los límites salen de data/parametros.json (provisorio).', null]];
 const htmlInfoCapa = capa => (INFO_CAPA[capa] || []).length
   ? `<div class="info-capa">${INFO_CAPA[capa].map(([t, id]) => `<p><span>${t}</span>${id ? fq(id) : ''}</p>`).join('')}</div>` : '';
 // polvo típico por época (0 limpio … 1 polvoriento): solo visual, no medido
-let kPolvo = 0;
+let kPolvo = 0, cieloBase = null;
 function polvoDeLs(ls) { return ls >= 180 ? 0.55 + 0.45 * Math.sin((ls - 180) / 180 * Math.PI) : ls >= 60 && ls <= 140 ? 0.1 : ls < 60 ? 0.35 - 0.25 * ls / 60 : 0.1 + 0.45 * (ls - 140) / 40; }
 function fq(id) {
   const f = FUENTES_URL[id]; if (!f) return '';
@@ -1241,6 +1243,113 @@ function pintarContexto(capa) {
   }
 }
 pintarContexto('ninguna');
+
+// ---------- globo de Marte de fondo: relieve MOLA y color Viking alrededor de la travesía (data/terreno/globo) ----------
+// Tres capas que encajan sin costuras: cerca de la travesía una grilla de 1/128° (~460 m), alrededor de Gale 1/16° (~3,7 km)
+// y el resto del planeta cada 1°. Entre el borde del terreno de la travesía y la grilla cercana hay un "delantal" que une las dos
+// alturas. Todo va sobre la esfera de Marte (R = 3.396.190 m), con la curvatura real. Es fondo: no entra en ningún cálculo.
+const GLOBO = D.globo && CTX ? await (async () => {
+  const leer = async b => { const im = new Image(); await new Promise((ok, mal) => { im.onload = ok; im.onerror = mal; im.src = 'data:image/png;base64,' + b; });
+    const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);
+    return { d: x.getImageData(0, 0, im.width, im.height).data, w: im.width, h: im.height }; };
+  const [MR, CRg, MG, CG] = await Promise.all([leer(D.globo.mola_region), leer(D.globo.color_region), leer(D.globo.mola_global), leer(D.globo.color_global)]);
+  const meta = D.globo.meta, gan = meta.ganancia_color.map(g => Math.sqrt(g)), RG = meta.region, CONTR = 1.25;   // realce visual: tono cercano al mosaico de la travesía y más contraste
+  const lin = v => { v = Math.min(1, v); return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };   // los colores por vértice van en espacio lineal
+  const altImg = (im, i, j) => { const k = 4 * (i * im.w + j); return im.d[k] * 256 + im.d[k + 1] - 10000; };
+  const MEDIA = [115, 90, 89];
+  const SAT = 1.6;   // realce visual de saturación: el Viking a 2,6 km/píxel es más apagado que el mosaico de la travesía
+  const colImg = (im, i, j, o, q) => { const k = 4 * (i * im.w + j), v = [0, 1, 2].map(c => (MEDIA[c] + (im.d[k + c] - MEDIA[c]) * CONTR) * gan[c]), g = (v[0] + v[1] + v[2]) / 3;
+    for (let c = 0; c < 3; c++) o[q + c] = lin(Math.max(0, g + (v[c] - g) * SAT) / 255); };
+  // marco local: el origen del mundo (centro de la zona) y sus ejes este, norte y arriba sobre la esfera
+  const RM = 3396190, rad = Math.PI / 180, [lon0, lat0] = mundoALonLat(0, 0);
+  const sa = Math.sin(lat0 * rad), ca = Math.cos(lat0 * rad), sb = Math.sin(lon0 * rad), cb = Math.cos(lon0 * rad);
+  const E = [-sb, cb, 0], N = [-sa * cb, -sa * sb, ca], U = [ca * cb, ca * sb, sa];
+  const enu = (lat, lon, h, o, k) => {
+    const a = lat * rad, b = lon * rad, r = RM + h, X = r * Math.cos(a) * Math.cos(b) - RM * U[0], Y = r * Math.cos(a) * Math.sin(b) - RM * U[1], Z = r * Math.sin(a) - RM * U[2];
+    o[k] = X * E[0] + Y * E[1] + Z * E[2]; o[k + 1] = X * U[0] + Y * U[1] + Z * U[2] - D.zmin; o[k + 2] = -(X * N[0] + Y * N[1] + Z * N[2]);
+  };
+  // altura y color de la región en cualquier lat/lon (bilineal sobre los vértices de 1/16°)
+  const regional = (lat, lon, o, q) => {
+    const f = (RG.lat_norte - lat) * 16, c = (lon - RG.lon_oeste) * 16, i = Math.min(RG.alto - 2, Math.max(0, Math.floor(f))), j = Math.min(RG.ancho - 2, Math.max(0, Math.floor(c))), u = f - i, v = c - j;
+    const w = [(1 - u) * (1 - v), (1 - u) * v, u * (1 - v), u * v], ij = [[i, j], [i, j + 1], [i + 1, j], [i + 1, j + 1]];
+    let h = 0; const cc = [0, 0, 0], t = [0, 0, 0];
+    ij.forEach(([a, b], n) => { h += w[n] * altImg(MR, a, b); colImg(CRg, a, b, t, 0); cc[0] += w[n] * t[0]; cc[1] += w[n] * t[1]; cc[2] += w[n] * t[2]; });
+    if (o) { o[q] = cc[0]; o[q + 1] = cc[1]; o[q + 2] = cc[2]; }
+    return h;
+  };
+  const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0, side: THREE.DoubleSide });
+  const malla = (pos, col, idx) => {
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    g.setIndex(new THREE.BufferAttribute(Uint32Array.from(idx), 1)); g.computeVertexNormals();
+    const m = new THREE.Mesh(g, mat); m.frustumCulled = false; m.renderOrder = -0.5; escena.add(m); return m;
+  };
+  // grilla lat/lon genérica: nodos (nf × nc), con celdas que se saltean (huecos donde hay una capa más fina)
+  const grilla = (nf, nc, nodo, saltear) => {
+    const pos = new Float32Array(nf * nc * 3), col = new Float32Array(nf * nc * 3), idx = [];
+    for (let i = 0; i < nf; i++) for (let j = 0; j < nc; j++) nodo(i, j, pos, col, 3 * (i * nc + j));
+    for (let i = 0; i < nf - 1; i++) for (let j = 0; j < nc - 1; j++) { if (saltear(i, j)) continue; const a = i * nc + j, b = a + 1, c = a + nc, d = c + 1; idx.push(a, c, b, b, c, d); }
+    return { pos, col, idx };
+  };
+  const s16 = v => Math.round(v * 16) / 16, s128 = v => Math.round(v * 128) / 128;
+  // capa cercana: ±0,75° alrededor de la zona, alineada a la grilla de 1/16°
+  const cN = s16(lat0 + 0.75), cS = s16(lat0 - 0.75), cW = s16(lon0 - 0.75 / ca), cE = s16(lon0 + 0.75 / ca);
+  // hueco de la capa cercana: el terreno de la travesía más un margen de 450 m (lo cubre el delantal)
+  const mc = CTX.mc, mg = 450 / RM / rad;
+  const hN = Math.ceil((mc.lat_norte + mg) * 128) / 128, hS = Math.floor((mc.lat_sur - mg) * 128) / 128, hW = Math.floor((mc.lon_oeste - mg / ca) * 128) / 128, hE = Math.ceil((mc.lon_este + mg / ca) * 128) / 128;
+  const capas = [];
+  // 1) todo Marte cada 1°, con hueco en la región
+  { const im = MG, G = grilla(181, 361, (i, j, p, c, k) => { enu(90 - i, j, altImg(im, i, j), p, k); colImg(CG, i, j, c, k); },
+      (i, j) => j >= RG.lon_oeste && j + 1 <= RG.lon_este && 90 - i <= RG.lat_norte && 90 - i - 1 >= RG.lat_sur);
+    capas.push(malla(G.pos, G.col, G.idx)); }
+  // 2) región de Gale cada 1/16°, con hueco en la capa cercana; más una pollera hacia abajo en su borde (tapa rendijas con la capa global)
+  const altGlobal = (lat, lon) => { const f = 90 - lat, c = lon, i = Math.min(179, Math.floor(f)), j = Math.min(359, Math.floor(c)), u = f - i, v = c - j;
+    return altImg(MG, i, j) * (1 - u) * (1 - v) + altImg(MG, i, j + 1) * (1 - u) * v + altImg(MG, i + 1, j) * u * (1 - v) + altImg(MG, i + 1, j + 1) * u * v; };
+  { const nf = RG.alto, nc = RG.ancho, latI = i => RG.lat_norte - i / 16, lonJ = j => RG.lon_oeste + j / 16;
+    const altR = (i, j) => { const d = Math.min(i, j, nf - 1 - i, nc - 1 - j) / 16, w = Math.min(1, d / 2.5), s = w * w * (3 - 2 * w), hg = altGlobal(latI(i), lonJ(j)); return hg + (altImg(MR, i, j) - hg) * s; };
+    const G = grilla(nf, nc, (i, j, p, c, k) => { enu(latI(i), lonJ(j), altR(i, j), p, k); colImg(CRg, i, j, c, k); },
+      (i, j) => latI(i) <= cN && latI(i + 1) >= cS && lonJ(j) >= cW && lonJ(j + 1) <= cE);
+    const borde = []; for (let j = 0; j < nc; j++) borde.push([0, j]); for (let i = 1; i < nf; i++) borde.push([i, nc - 1]); for (let j = nc - 2; j >= 0; j--) borde.push([nf - 1, j]); for (let i = nf - 2; i >= 0; i--) borde.push([i, 0]);
+    const n0 = nf * nc, pos = new Float32Array((n0 + borde.length) * 3), col = new Float32Array((n0 + borde.length) * 3); pos.set(G.pos); col.set(G.col);
+    borde.forEach(([i, j], n) => { enu(latI(i), lonJ(j), altR(i, j) - 4000, pos, 3 * (n0 + n)); colImg(CRg, i, j, col, 3 * (n0 + n)); });
+    for (let n = 0; n < borde.length; n++) { const a = borde[n][0] * nc + borde[n][1], b = borde[(n + 1) % borde.length][0] * nc + borde[(n + 1) % borde.length][1], c = n0 + n, d = n0 + (n + 1) % borde.length; G.idx.push(a, c, b, b, c, d); }
+    capas.push(malla(pos, col, G.idx)); }
+  // 3) capa cercana cada 1/128°, con hueco donde está la travesía
+  { const nf = Math.round((cN - cS) * 128) + 1, nc = Math.round((cE - cW) * 128) + 1, latI = i => cN - i / 128, lonJ = j => cW + j / 128;
+    const G = grilla(nf, nc, (i, j, p, c, k) => { enu(latI(i), lonJ(j), regional(latI(i), lonJ(j), c, k), p, k); },
+      (i, j) => latI(i) <= hN + 1e-9 && latI(i + 1) >= hS - 1e-9 && lonJ(j) >= hW - 1e-9 && lonJ(j + 1) <= hE + 1e-9);
+    capas.push(malla(G.pos, G.col, G.idx)); }
+  // 4) delantal: une el borde del terreno de la travesía (sus mismos vértices) con el borde del hueco de la capa cercana
+  { const { Wc, Hc, Zc, X0c, Z0c } = CTX, st = LIVIANO ? 2 : 1, dxc = CTX.ancho / Wc, dzc = CTX.alto / Hc;
+    const jm = Math.floor((Wc - 1) / st) * st, im = Math.floor((Hc - 1) / st) * st, adentro = [];
+    for (let j = 0; j <= jm; j += st) adentro.push([0, j]); for (let i = st; i <= im; i += st) adentro.push([i, jm]);
+    for (let j = jm - st; j >= 0; j -= st) adentro.push([im, j]); for (let i = im - st; i > 0; i -= st) adentro.push([i, 0]);
+    // color del borde: el mismo mosaico de la travesía, leído a la resolución de la malla
+    const muestra = CTX.tiles.map(t => { const c = document.createElement('canvas'); c.width = Wc; c.height = t.hh; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(t.im, 0, 0, Wc, t.hh); return x.getImageData(0, 0, Wc, t.hh).data; });
+    const colCtx = (i, j, o, q) => { const t = i < Hc / 2 ? 0 : 1, ii = Math.min(Math.floor(Hc / 2) - 1, i - t * Hc / 2), k = 4 * (ii * Wc + j), d = muestra[t]; o[q] = lin(d[k] / 255); o[q + 1] = lin(d[k + 1] / 255); o[q + 2] = lin(d[k + 2] / 255); };
+    const n128 = (a, b) => Math.round((a - b) * 128), afuera = [];
+    for (let j = 0; j <= n128(hE, hW); j++) afuera.push([hN, hW + j / 128]); for (let i = 1; i <= n128(hN, hS); i++) afuera.push([hN - i / 128, hE]);
+    for (let j = n128(hE, hW) - 1; j >= 0; j--) afuera.push([hS, hW + j / 128]); for (let i = n128(hN, hS) - 1; i > 0; i--) afuera.push([hN - i / 128, hW]);
+    const nA = adentro.length, nB = afuera.length, pos = new Float32Array((nA + nB) * 3), col = new Float32Array((nA + nB) * 3);
+    adentro.forEach(([i, j], n) => { pos.set([X0c + (j + 0.5) * dxc, Zc[i * Wc + j], Z0c + (i + 0.5) * dzc], 3 * n); colCtx(i, j, col, 3 * n); });
+    { const tmp = col.slice(0, 3 * nA), R2 = 20;                 // promedio a lo largo del borde: el delantal es un degradé, sin vetas
+      for (let n = 0; n < nA; n++) for (let c = 0; c < 3; c++) { let s = 0; for (let d = -R2; d <= R2; d++) s += tmp[3 * ((n + d + nA) % nA) + c]; col[3 * n + c] = s / (2 * R2 + 1); } }
+    afuera.forEach(([la, lo], n) => { enu(la, lo, regional(la, lo, col, 3 * (nA + n)), pos, 3 * (nA + n)); });
+    // cierre lado por lado (de esquina a esquina): en cada lado avanza el borde que esté más atrasado
+    const esqA = [0, jm / st, jm / st + im / st, 2 * jm / st + im / st, nA], nx = n128(hE, hW), nz = n128(hN, hS), esqB = [0, nx, nx + nz, 2 * nx + nz, nB], idx = [];
+    const largo = (n0, n, i0, i1) => { const t = [0]; for (let k = i0 + 1; k <= i1; k++) { const a = 3 * (n0 + (k - 1) % n), b = 3 * (n0 + k % n); t.push(t[t.length - 1] + Math.hypot(pos[b] - pos[a], pos[b + 2] - pos[a + 2])); } const L = t[t.length - 1] || 1; return t.map(v => v / L); };
+    for (let s = 0; s < 4; s++) {
+      const a0 = esqA[s], a1 = esqA[s + 1], b0 = esqB[s], b1 = esqB[s + 1], tA = largo(0, nA, a0, a1), tB = largo(nA, nB, b0, b1);
+      let a = 0, b = 0;
+      while (a < a1 - a0 || b < b1 - b0) {
+        if (b >= b1 - b0 || (a < a1 - a0 && tA[a + 1] <= tB[b + 1])) { idx.push((a0 + a) % nA, (a0 + a + 1) % nA, nA + (b0 + b) % nB); a++; }
+        else { idx.push((a0 + a) % nA, nA + (b0 + b + 1) % nB, nA + (b0 + b) % nB); b++; }
+      }
+    }
+    capas.push(malla(pos, col, idx)); }
+  return { capas, centro: new THREE.Vector3(0, -RM - D.zmin, 0), RM, meta };
+})().catch(e => { console.warn('globo de fondo:', e); return null; }) : null;
+const NEGRO_ESPACIO = new THREE.Color(0.012, 0.012, 0.02);
+if (GLOBO) { camara.far = 3.2e7; camara.updateProjectionMatrix(); controles.maxDistance = 1.4e7; }
 
 // ---------- recorrido real completo (data/curiosity/recorrido_completo.geojson) ----------
 const TR = D.travesia ? (() => {
@@ -1946,7 +2055,7 @@ function actualizarSol() {
   const cielo = new THREE.Color().setRGB(0.12 + 0.66 * dia, 0.10 + 0.52 * dia, 0.10 + 0.36 * dia);
   if (el < 0.2 && el > -0.05) cielo.lerp(new THREE.Color(0.35, 0.45, 0.6), 0.35);     // atardecer azulado de Marte
   kPolvo = polvoDeLs(+$('iLs').value); cielo.lerp(new THREE.Color(0.62, 0.45, 0.32).multiplyScalar(0.35 + 0.65 * dia), 0.3 * kPolvo);   // más polvo, cielo más turbio (visual)
-  escena.background = cielo; escena.fog.color.copy(cielo); cieloDomo.material.color.copy(cielo);
+  escena.background = cielo; escena.fog.color.copy(cielo); cieloDomo.material.color.copy(cielo); cieloBase = cielo.clone();
   const hh = Math.floor(hora), mm = Math.round((hora - hh) * 60);
   $('eHora').textContent = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
   $('eSol').textContent = `${num(el * 180 / Math.PI)}°`;
@@ -3381,6 +3490,17 @@ function visorManual() {
   } else { av.classList.add('oculto'); av.dataset.p = ''; }
 }
 
+// vista "Marte completo": alejarse hasta ver el planeta, con Gale al centro
+let vistaAct = '';
+if (GLOBO) {
+  $('vPlaneta').classList.remove('oculto');
+  $('vPlaneta').onclick = () => {
+    if (fp) salirFP(false); if (viaje.activo) salirViaje(); if (expe.activo) salirExpe();
+    modoCam = 'libre'; $('sCam').value = 'libre'; seguirTras = null;
+    volarA(new THREE.Vector3(0, 7.5e6, 4.2e6), new THREE.Vector3(0, 0, 0), 3.2);
+    decir('Marte completo: relieve MOLA y color Viking. Gale está en el centro; acercate con la rueda o el pellizco.');
+  };
+}
 // ---------- bucle ----------
 let ultimo = performance.now();
 renderer.setAnimationLoop(ahora => {
@@ -3467,10 +3587,14 @@ renderer.setAnimationLoop(ahora => {
   cintasTR.forEach((c, i) => { c.fondo.visible = c.hecho.visible = i === nivTR; });
   if (EXP) for (const L of Object.values(EXP.lineas)) L.cintas.forEach((m, i) => { m.visible = i === nivTR; });
   const kAsp = Math.max(1, 0.75 / camara.aspect), lejos = fp ? 0 : dcam;
-  escena.fog.near = Math.max(2500 * kAsp, lejos * 1.6) * (1 - 0.35 * kPolvo); escena.fog.far = Math.max(CTX ? 9000 : 6000 * kAsp, lejos * 4.5) * (1 - 0.25 * kPolvo);
+  if (GLOBO) {      // con el globo de fondo la vista llega al horizonte; desde muy alto el cielo se vuelve el negro del espacio
+    escena.fog.near = Math.max(9000 * kAsp, lejos * 2) * (1 - 0.35 * kPolvo); escena.fog.far = Math.max(90000, lejos * 8) * (1 - 0.25 * kPolvo);
+    const alt = camara.position.distanceTo(GLOBO.centro) - GLOBO.RM, kEsp = Math.min(1, Math.max(0, (alt - 40000) / 360000));
+    if (cieloBase) { escena.background.copy(cieloBase).lerp(NEGRO_ESPACIO, kEsp * kEsp * (3 - 2 * kEsp)); escena.fog.color.copy(escena.background); cieloDomo.material.color.copy(escena.background); }
+  } else { escena.fog.near = Math.max(2500 * kAsp, lejos * 1.6) * (1 - 0.35 * kPolvo); escena.fog.far = Math.max(CTX ? 9000 : 6000 * kAsp, lejos * 4.5) * (1 - 0.25 * kPolvo); }
   tickViaje(dtReal);
   if (pinViaje && pinViaje.visible) pinViaje.scale.setScalar(Math.max(1.5, camara.position.distanceTo(pinViaje.position) * 0.012));
-  if (CTX) { const enTrav = dcam > 5000 && !fp; if (enTrav !== ($('vTrav').getAttribute('aria-pressed') === 'true')) { $('vTrav').setAttribute('aria-pressed', enTrav); $('vZona').setAttribute('aria-pressed', !enTrav); } }
+  if (CTX) { const v = fp ? 'z' : dcam > 400000 ? 'p' : dcam > 5000 ? 't' : 'z'; if (v !== vistaAct) { vistaAct = v; $('vPlaneta').setAttribute('aria-pressed', v === 'p'); $('vTrav').setAttribute('aria-pressed', v === 't'); $('vZona').setAttribute('aria-pressed', v === 'z'); } }
   // marcadores con tamaño constante en pantalla
   for (const m of marcadores) {
     const dist = camara.position.distanceTo(tA.set(m.x, m.y, m.z)), s = Math.min(m.pozo && !fp ? 1200 : CTX ? 260 : 80, Math.max(0.3, dist * 0.035)) * (m.k || 1) * (m === carHover ? 1.22 : 1), alto = Math.max(3, s * 1.2) / (m === carHover ? 1.22 : 1);
@@ -3518,7 +3642,7 @@ document.getElementById('cargando').remove();
     history.replaceState(null, '', location.pathname + location.search);
   }
 }
-window.__escena = { expe, EXP, entrarExpe, salirExpe, perforar, lsDeFecha, pintarClima, muestraOrbital, llegadaParada, paradasDeRuta, get kPolvo() { return kPolvo; }, AL, get cartel() { return cartelClave; }, get CTX() { return CTX; }, TR, POZOS, viaje, entrarViaje, salirViaje, vistaTravesia, mostrarPozo, controles, BASE_S, fijarCamara: (p, t) => { vuelo = null; seguirTras = null; modoCam = 'libre'; camara.position.set(...p); controles.target.set(...t); controles.update(); }, dibujarCapa, evaluarAlertas, yo, setControl, volverABase, abrirPerfil, agente, campoRegreso, get control() { return control; }, huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
+window.__escena = { GLOBO, expe, EXP, entrarExpe, salirExpe, perforar, lsDeFecha, pintarClima, muestraOrbital, llegadaParada, paradasDeRuta, get kPolvo() { return kPolvo; }, AL, get cartel() { return cartelClave; }, get CTX() { return CTX; }, TR, POZOS, viaje, entrarViaje, salirViaje, vistaTravesia, mostrarPozo, controles, BASE_S, fijarCamara: (p, t) => { vuelo = null; seguirTras = null; modoCam = 'libre'; camara.position.set(...p); controles.target.set(...t); controles.update(); }, dibujarCapa, evaluarAlertas, yo, setControl, volverABase, abrirPerfil, agente, campoRegreso, get control() { return control; }, huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>
 </html>

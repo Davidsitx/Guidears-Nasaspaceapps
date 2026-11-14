@@ -12,3 +12,7 @@ No versionados (descargar a `data/raw/`):
 - USGS Gale DEM 1 m: https://planetarymaps.usgs.gov/mosaic/Mars/MSL/MSL_Gale_DEM_Mosaic_1m_v3.tif (3,6 GB; no hace falta bajarlo: `herramientas/recortar_terreno.py` lee solo la ventana necesaria por HTTP).
 - USGS Gale ortoimagen 25 cm: https://planetarymaps.usgs.gov/mosaic/Mars/MSL/MSL_Gale_Orthophoto_Mosaic_25cm_v3.tif (24 GB; mismo script).
 - Travesía completa (14/11): `travesia_sur_elevacion_4m.tif` (4 m), `travesia_sur_color_3m.tif` (3 m) y `curiosity_recorrido_y_pozos.gpkg`, bajados por el equipo (origen exacto a confirmar). No se versionan los .tif ni el .gpkg. Para regenerar lo derivado: copiarlos a una carpeta como `elev.tif`, `color.tif` y `datos.gpkg`; sacar `rec.geojson` y `poz.geojson` con `ogr2ogr` (ver el encabezado de `herramientas/travesia_datos.py`); correr `python herramientas/travesia.py <carpeta>`, después `python herramientas/travesia_datos.py <carpeta>` y `python herramientas/capas_peligro.py`.
+
+## Globo de fondo (data/terreno/globo/)
+- Se arma con `python herramientas/globo.py megt90n000eb.img`. El archivo MOLA (33 MB, no se versiona) es el MEGDR de 16 píxeles/grado del PDS; una copia pública está en https://raw.githubusercontent.com/benbrittain/Barsoom/HEAD/data/MEGDR/mgsl_300x/meg016/megt90n000eb.img
+- El color sale de `gale-earth/capas/viking_color_8k.jpg`.

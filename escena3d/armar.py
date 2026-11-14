@@ -190,7 +190,7 @@ def main():
 
     # contexto: toda la travesía de Curiosity alrededor de la zona (data/terreno/travesia_sur/, herramientas/travesia.py),
     # con el recorrido real y las 49 perforaciones (data/curiosity/, herramientas/travesia_datos.py)
-    contexto = travesia = pozos = expedicion = crism_ctx = None
+    contexto = travesia = pozos = expedicion = crism_ctx = globo = None
     dctx = os.path.join(RAIZ, "data", "terreno", "travesia_sur")
     if a.zona == "sol5070" and os.path.exists(os.path.join(dctx, "meta.json")):
         leer_b64 = lambda n: b64(open(os.path.join(dctx, n), "rb").read())
@@ -214,6 +214,13 @@ def main():
         p_cc = os.path.join(RAIZ, "data", "mineralogia", "crism_contexto.png")
         if os.path.exists(p_cc):
             crism_ctx = {"meta": leer_json(p_cc.replace(".png", ".json")), "png": b64(open(p_cc, "rb").read())}
+        # globo de Marte de fondo (herramientas/globo.py): relieve MOLA y color Viking alrededor de la travesía
+        dg = os.path.join(RAIZ, "data", "terreno", "globo")
+        if os.path.exists(os.path.join(dg, "meta.json")):
+            globo = {"meta": leer_json(os.path.join(dg, "meta.json"))}
+            for n in ("mola_region", "color_region", "mola_global", "color_global"):
+                globo[n] = b64(open(os.path.join(dg, n + ".png"), "rb").read())
+            print("globo: MOLA + Viking alrededor de Gale y todo Marte")
         print(f"contexto: travesía completa, {len(travesia['puntos']) if travesia else 0} puntos de recorrido, {len(pozos['lista']) if pozos else 0} perforaciones")
 
     datos = {
@@ -223,6 +230,7 @@ def main():
         "pozos": pozos,
         "expedicion": expedicion,
         "crism_ctx": crism_ctx,
+        "globo": globo,
         "crism": crism,
         "capas": capas,
         "meta": meta,
