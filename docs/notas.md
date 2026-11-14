@@ -2,6 +2,16 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 noche · Compañero (con Claude) · LICENCIA Y ORIGEN DE LOS DATOS DE LA TRAVESÍA
+- **`LICENSE` agregado** (texto oficial de Apache 2.0, bajado de apache.org). La sección "License" del README ya está completa, con las licencias de terceros: three.js (MIT), CesiumJS (Apache 2.0) y d3-celestial (BSD).
+- **Resuelto el pendiente 1 de David** (de dónde salen el mosaico de color y el GeoPackage). Está en `docs/fuentes.md` y en `data/README.md`, con los comandos para volver a bajarlos:
+  - Color: mosaico HiRISE LRGB de USGS/ASC (`MSL_Gale_HiRISE-LRGB_78quads_sharp_cog.tif`).
+  - Elevación: DEM USGS de 1 m remuestreado a 4 m.
+  - Recorrido: `MSL_traverse.json` de NASA.
+  - Pozos: `MSL_waypoints.json`. Es la posición del rover estacionado, no la del pozo exacto.
+- README: corregido "CRX" por "CTX" y ordenada la lista de fuentes. El resto del README sigue mezclado en castellano: se pasa al inglés mañana.
+- Sigue faltando: unir `david/union-gale-earth` a main (decide David), activar GitHub Pages y decidir qué hacemos con las teselas de Gale Earth. Propuesta: GALE-3D como demo principal y Gale Earth con menos capas.
+
 ## 2026-11-14 tarde (2) · David (con Claude) · QA: FUENTES "?", CINTA AL PISO, CARTELES, E1–E5, VISOR AL MANEJAR
 - **"?" en cada ítem:** capas, leyendas, fichas de paradas y perforaciones, panel derecho, clima, expedición y "¿Por qué perforar en Gale?". Al tocarlo se abre una ventanita con la fuente y "Abrir la fuente". Lista completa de enlaces: `docs/fuentes-enlaces.md` (`herramientas/listar_fuentes.py`).
 - **Cinta amarilla del recorrido:** de cerca ahora sigue el piso, angosta y con flechas, como las rutas guiadas; ya no corta al astronauta.
