@@ -203,6 +203,10 @@
   a.q:hover, a.q:focus-visible { background: var(--acento); color: #1b1210; outline: none; }
   @media (pointer: coarse) { a.q { width: 22px; height: 22px; font-size: 12px; } }
   select option { background: #2a201b; color: var(--texto); }
+  /* unión con Gale Earth: fundido al cambiar de vista */
+  #transicion { position: fixed; inset: 0; z-index: 60; background: #0b0d12; opacity: 0; pointer-events: none; transition: opacity .6s ease; display: grid; place-items: center; color: var(--tenue); font-size: 14px; }
+  #transicion.on { opacity: 1; pointer-events: auto; }
+  #transicion.sale { opacity: 1; transition: none; }
   @media (max-height: 1000px) { #hud { max-height: calc(100% - 400px); } }
   body:has(#ficha:not(.oculto)) #hud, body:has(#llegada:not(.oculto)) #hud { visibility: hidden; }
   /* ficha y llegada arriba a la derecha: el punto queda a la vista */
@@ -407,6 +411,7 @@
 </div></div>
 
 <div id="alertas" aria-live="polite"></div>
+<div id="transicion" aria-hidden="true"><span>Volviendo a Marte completo…</span></div>
 <div id="llegada" class="oculto" role="status"><span class="etq" id="ll-etq">Llegada</span><b id="ll-tit"></b><span class="sub" id="ll-sub"></span><div id="ll-prog" class="oculto"><i></i></div><div class="botones" id="ll-bot"></div></div>
 <div id="fuente-pop" class="oculto" role="dialog" aria-label="Fuente"><span class="etq">Fuente del dato</span><button id="fp-cerrar" style="float:right;min-height:0;padding:0 7px" aria-label="Cerrar">×</button><b id="fp-tit"></b><span class="url" id="fp-url"></span><a class="abrir" id="fp-abrir" target="_blank" rel="noopener">Abrir la fuente ↗</a></div>
 <div id="tip-marcador" class="oculto"></div>
@@ -463,7 +468,7 @@
   <div class="vb oculto" id="v-aviso"></div>
 </div>
 
-<div id="vistas" class="seg oculto"><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy">Travesía completa</button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo">Zona de hoy</button></div>
+<div id="vistas" class="seg oculto"><button id="vMarteGE" class="oculto" title="Todo Marte en 3D (Gale Earth): el planeta, el cráter Gale y las órbitas">Marte completo ↗</button><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy">Travesía completa</button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo">Zona de hoy</button></div>
 <div id="viaje" class="caja oculto">
   <div class="datos">
     <div><b id="vj-sol">Sol 0</b><span id="vj-fecha">agosto de 2012</span></div>
@@ -2395,7 +2400,8 @@ $('ayuda').querySelectorAll('[data-ay]').forEach(b => b.onclick = () => {
   try { localStorage.setItem('gale3d-ayuda', 'vista'); } catch (e) {}
   ({ tour: () => tourIr(0), caminar: () => { visorOn = true; caminar(); }, seguir: seguirRover, libre: () => {}, viaje: () => entrarViaje(0), expe: () => entrarExpe('vehiculo'), manejar: () => $('bManejar').click() })[b.dataset.ay]();
 });
-try { if (!localStorage.getItem('gale3d-ayuda')) $('ayuda').classList.remove('oculto'); } catch (e) { $('ayuda').classList.remove('oculto'); }
+const DESDE_GE = /desde-gale-earth/.test(location.hash);
+try { if (!localStorage.getItem('gale3d-ayuda') && !DESDE_GE) $('ayuda').classList.remove('oculto'); } catch (e) { if (!DESDE_GE) $('ayuda').classList.remove('oculto'); }
 
 // ---------- presupuesto de la salida a pie (data/parametros.json → eva) ----------
 const EVA = { nom: P.eva?.duracion_nominal_h ?? 6, max: P.eva?.duracion_max_h ?? 8, refugio: P.eva?.tiempo_max_a_refugio_min ?? 30, reserva: P.eva?.reserva_regreso_min ?? 30 };
@@ -3479,6 +3485,27 @@ renderer.setAnimationLoop(ahora => {
   renderer.render(escena, camara);
 });
 document.getElementById('cargando').remove();
+// ---------- unión con Gale Earth (../gale-earth/index.html): ida y vuelta entre Marte completo y la misión ----------
+// Solo se ofrece cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages); en una copia suelta no hay a dónde ir.
+{
+  const alLado = location.protocol === 'file:' ? /\/escena3d\/[^/]*$/.test(location.pathname) : /\/escena3d\//.test(location.pathname);
+  if (alLado && TR) {
+    $('vMarteGE').classList.remove('oculto');
+    $('vMarteGE').onclick = () => {
+      if (viaje.activo) salirViaje(); if (expe.activo) salirExpe();
+      vistaTravesia(); setTimeout(() => $('transicion').classList.add('on'), 1300);
+      setTimeout(() => { location.href = '../gale-earth/index.html#curiosity'; }, 1950);
+    };
+  }
+  if (DESDE_GE && CTX) {                                  // llegada desde Gale Earth: se baja desde lo alto hasta la zona de hoy
+    $('transicion').querySelector('span').textContent = 'Misión Curiosity · sol 5070';
+    $('transicion').classList.add('sale'); setTimeout(() => { $('transicion').classList.remove('sale'); }, 80);
+    vuelo = null; camara.position.set(CTX.cx, 42000, CTX.cz + 16000); controles.target.set(CTX.cx, 0, CTX.cz); controles.update();
+    vistaTravesia(); setTimeout(() => vistaGeneral(true), 2400);
+    decir('Llegaste a la misión: Curiosity hoy, sol 5070. Probá "Recorrido guiado" o "Manejar astronauta".');
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+}
 window.__escena = { expe, EXP, entrarExpe, salirExpe, perforar, lsDeFecha, pintarClima, muestraOrbital, llegadaParada, paradasDeRuta, get kPolvo() { return kPolvo; }, AL, get cartel() { return cartelClave; }, get CTX() { return CTX; }, TR, POZOS, viaje, entrarViaje, salirViaje, vistaTravesia, mostrarPozo, controles, BASE_S, fijarCamara: (p, t) => { vuelo = null; seguirTras = null; modoCam = 'libre'; camara.position.set(...p); controles.target.set(...t); controles.update(); }, dibujarCapa, evaluarAlertas, yo, setControl, volverABase, abrirPerfil, agente, campoRegreso, get control() { return control; }, huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>

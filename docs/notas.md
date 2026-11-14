@@ -2,6 +2,13 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 tarde (3) · David (con Claude) · UNIÓN GALE EARTH ↔ GALE-3D (rama `david/union-gale-earth`)
+- **Qué se hizo:** navegación de ida y vuelta, sin tocar la lógica de ninguna de las dos apps. Gale Earth (todo Marte) tiene el botón **"Misión Curiosity · 3D"** (y "Entrar a la misión en 3D" en la ficha de Valle Grande); GALE-3D tiene **"Marte completo ↗"** en la barra de vistas. Al entrar a la misión hay un descenso desde lo alto hasta la zona de hoy.
+- **Para el compañero (tu carpeta):** cambié `gale-earth/cabecera.html` (botón y estilo), `interfaz.js` (función `entrarMision`), `_cuerpo.html` (vuelo directo con `#curiosity` y botón en la ficha de Valle Grande) y `servir.py` (sirve también `/escena3d/` y `/gale-earth/`). Rearmé con `_ensamblar.py` y `armar.py`. Revisalo en el PR.
+- **Entrada del proyecto:** `index.html` en la raíz redirige a Gale Earth (sirve para GitHub Pages).
+- **Ojo (para el compañero):** `gale-earth/capas/gale_5m/capas.json` calcula la dosis con 0,67 mSv/día; el valor medido por RAD es 0,64 (Hassler et al. 2014, ver CLAUDE.md).
+- Probado con `servir.py`: Gale Earth → misión → Marte completo, ida y vuelta. Sin internet, Gale Earth no carga Cesium, pero el botón a la misión funciona igual (es un enlace).
+
 ## 2026-11-14 tarde (2) · David (con Claude) · QA: FUENTES "?", CINTA AL PISO, CARTELES, E1–E5, VISOR AL MANEJAR
 - **"?" en cada ítem:** capas, leyendas, fichas de paradas y perforaciones, panel derecho, clima, expedición y "¿Por qué perforar en Gale?". Al tocarlo se abre una ventanita con la fuente y "Abrir la fuente". Lista completa de enlaces: `docs/fuentes-enlaces.md` (`herramientas/listar_fuentes.py`).
 - **Cinta amarilla del recorrido:** de cerca ahora sigue el piso, angosta y con flechas, como las rutas guiadas; ya no corta al astronauta.

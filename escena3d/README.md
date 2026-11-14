@@ -119,3 +119,9 @@ Detalles:
 - Probada en el navegador integrado (escritorio y celular emulado) y abierta desde archivo (`file://`) con Edge, sin
   errores. Zona Monte Sharp también probada.
 - Falta: celular real, y medir fluidez en una computadora con placa de video común.
+
+
+## Unión con Gale Earth (todo Marte)
+- En la barra de vistas de arriba aparece **"Marte completo ↗"** cuando la escena está al lado de `gale-earth/` (repo, `gale-earth/servir.py` o GitHub Pages). Lleva a `../gale-earth/index.html#curiosity`. En una copia suelta (por ejemplo el artifact publicado) el botón no aparece.
+- Si la escena se abre con `#desde-gale-earth` (el botón "Misión Curiosity · 3D" de Gale Earth), arranca con un descenso desde lo alto hasta la zona de hoy y no abre la ayuda.
+- No cambia nada de la lógica de la misión: es solo navegación.

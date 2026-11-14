@@ -32,6 +32,13 @@ Las teselas de Marte (varios GB) están en la PC o en Google Drive: por eso el c
 - **Línea de tiempo** (estilo Google Earth): desde la formación de Gale y los primeros telescopios hasta hoy, cada misión que llegó o intentó llegar a Marte, los sitios de aterrizaje que aparecen en el globo y los hallazgos de Curiosity. Datos y fuentes en `datos/linea_tiempo.json`; las edades geológicas están marcadas como estimadas.
 - **Capas**: mostrar u ocultar elementos, colorear los pozos por recurso, exagerar el relieve y cargar una clave propia de Cesium ion.
 
+## Unión con GALE-3D (misión de Curiosity en 3D)
+- Arriba a la derecha (abajo a la izquierda en el celular) está **"Misión Curiosity · 3D"**: vuela hasta Curiosity y abre `../escena3d/index.html`, la escena con las rutas del rover y del astronauta. Es un enlace común: funciona aunque Cesium no cargue.
+- En la ficha del sitio "Valle Grande · Curiosity hoy" (pestaña Base) está "Entrar a la misión en 3D".
+- Desde GALE-3D, el botón **"Marte completo ↗"** vuelve acá con `#curiosity`: Gale Earth arranca y vuela directo a la posición de hoy.
+- `servir.py` ahora también sirve `/escena3d/` (la carpeta hermana, solo lectura) y acepta `/gale-earth/...`, así la ida y vuelta funciona con `abrir.bat`. En GitHub Pages y con doble clic funciona por rutas relativas.
+- `index.html` en la raíz del repo redirige a Gale Earth: es la entrada del proyecto.
+
 ## Clave de Cesium ion
 Funciona con la clave de evaluación que trae Cesium. Para la presentación conviene una propia (gratis):
 1. Entrar a https://ion.cesium.com (se puede iniciar sesión con GitHub).

@@ -140,6 +140,29 @@ class Manejador(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         ruta = self.path.split("?")[0]
+        # unión con GALE-3D: /gale-earth/... es esta misma carpeta y /escena3d/... es la misión de Curiosity en 3D (carpeta hermana)
+        if ruta.startswith("/gale-earth/"):
+            self.path = self.path[len("/gale-earth"):]
+            ruta = ruta[len("/gale-earth"):]
+        if ruta.startswith("/escena3d/"):
+            from urllib.parse import unquote
+            base = os.path.realpath(os.path.join(AQUI, "..", "escena3d"))
+            rel = unquote(ruta[len("/escena3d/"):]) or "index.html"
+            real = os.path.realpath(os.path.join(base, rel))
+            if not real.startswith(base + os.sep) or not os.path.isfile(real):
+                self.send_error(404, "No está en escena3d")
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", (mimetypes.guess_type(real)[0] or "application/octet-stream") + ("; charset=utf-8" if real.endswith(".html") else ""))
+            self.send_header("Content-Length", str(os.path.getsize(real)))
+            self.end_headers()
+            with open(real, "rb") as f:
+                while True:
+                    trozo = f.read(1 << 20)
+                    if not trozo:
+                        break
+                    self.wfile.write(trozo)
+            return
         if ruta.startswith("/teselas/"):
             clave = ruta[len("/teselas/"):]
             ruta_zip = ZIPS.get(clave)
