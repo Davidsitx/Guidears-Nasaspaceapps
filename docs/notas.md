@@ -2,6 +2,30 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 noche (4) · Compañero (con Claude) · GALE EARTH: EXPEDICIÓN CON RUTAS SEGURAS (20 km)
+- **Pestaña nueva "Expedición"** en Gale Earth. Es un círculo de 20 km alrededor de Curiosity: se elige el inicio del rover presurizado y una o varias muestras (tocando el mapa, al azar o un pozo). Calcula:
+  - la ruta del rover;
+  - dónde estacionar para que el astronauta quede a ≤ 30 min a pie;
+  - la ida y la vuelta a pie, la salida con traje y la dosis.
+  Trae también una comparación "solo a pie" y "si lo hiciera Curiosity" (en soles), y una **simulación en vivo** con posición, pendiente, dosis y tiempo fuera del rover.
+- **Relieve:** `gale-earth/capas/expedicion/` (5,5 MB), armado por `herramientas/zona_expedicion.py` desde el DEM USGS de 1 m llevado a 5 m. Es una grilla de 20 m con:
+  - pendiente media;
+  - cuántos tramos de 5 m pasan los 20°;
+  - cielo tapado, con el mismo método que `herramientas/travesia.py`.
+  El DEM fino cubre el 100% de los primeros 10 km y el 73% del círculo. **Donde no hay DEM fino no se rutea** (no se rellena con el de 200 m).
+- **Reglas:** las de `data/parametros.json` (20° del traje, Tobler a 2,5 km/h, 0,64 mSv/día con 0,25 × cielo tapado, 30 min a un refugio, salida de 6/8 h, rover SEV a 10 km/h). No cambié el archivo compartido. Se suman:
+  - **Rover:** pendiente media ≤ 20° y como mucho 6 de 16 tramos de 5 m sobre 20°. El umbral está calibrado con el recorrido real: el 99% de las celdas que pisó Curiosity cumple, y con un umbral de 0 se bloqueaba el 5% de su camino real.
+  - **Suitport:** 10 min por salida (ficha NASA SEV).
+  - **Minutos por muestra:** 30, como supuesto; se cambia en el panel.
+- **Validación:** sobre el recorrido real de Curiosity la pendiente media es 7,9° y el 99% está bajo 20,8° (el blog da 99% bajo 17,4° en el boxwork). Los cálculos tardan 0,3 a 4 s.
+- **Falta (sin dato para toda la zona):**
+  - arena y megaripples;
+  - rocas que dañan ruedas;
+  - blindaje del rover presurizado (dentro se cuenta la misma dosis que afuera);
+  - velocidad del rover según la pendiente;
+  - gasto del traje según el esfuerzo;
+  - pendiente máxima de un rover presurizado en Marte (se usa 20°, con el Apollo LRV de 20–23° como referencia).
+
 ## 2026-11-14 noche (3) · Compañero (con Claude) · TESELAS EN LA NUBE: HUGGING FACE
 - Las teselas (6,5 GB) están en el dataset público **huggingface.co/datasets/ChuchuTEA/gale-earth-teselas**, que es gratis y no pide tarjeta. Cloudflare R2 no aceptó la tarjeta, así que quedó como alternativa.
 - `gale-earth/nube.json` ya apunta a ese dataset. `sw.js` no cambió: Hugging Face responde pedidos por rangos de bytes y desde otros sitios (CORS). Se probó una tesela HiRISE y una de relieve, menos de 1 s cada una.

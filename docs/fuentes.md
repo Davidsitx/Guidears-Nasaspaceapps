@@ -75,3 +75,7 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 
 En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).
 | Gale Earth: alojamiento de las teselas (copia de nuestros datos derivados del USGS, sin datos nuevos) | Hugging Face, dataset público ChuchuTEA/gale-earth-teselas. Las fuentes de cada capa siguen en `terreno/meta.json` y en las filas USGS de arriba. |
+| Gale Earth · Expedición: relieve de la zona de 20 km | USGS Astrogeology, MSL_Gale_DEM_Mosaic_1m_v3 (Calef y Parker 2016), llevado a 5 m y resumido a 20 m (`gale-earth/herramientas/zona_expedicion.py`). Pendiente y cielo tapado: cálculo propio. |
+| Gale Earth · Expedición: pendiente de referencia de un rover tripulado | NASA NTRS 20250011301 (Apollo LRV as-traversed performance): el LRV fue diseñado para 20–23° en condiciones favorables, 25° máx., 9–13 km/h. Lunar y sin presurizar: solo referencia. https://ntrs.nasa.gov/citations/20250011301 |
+| Gale Earth · Expedición: tiempo de suitport | NASA, ficha Space Exploration Vehicle FS-2011-08-045-JSC: los suitports permiten ponerse el traje y salir en menos de 10 min. https://www.nasa.gov/wp-content/uploads/2015/08/464826main_sev_factsheet_508.pdf |
+| Gale Earth · Expedición: por qué falta la capa de arena | Arvidson et al. 2017 (cruces de megaripples hasta el sol 710) y Bryk et al. 2021, JGR Planets (Hidden Valley, 2014: Curiosity abandonó el cruce por el patinaje de las ruedas). La arena es un peligro real que no tenemos mapeado para toda la zona. |

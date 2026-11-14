@@ -554,12 +554,13 @@ viewer.screenSpaceEventHandler.setInputAction(m => {
 let pestaña = 'explorar';
 function abrir(t, mostrar = true) {
   pestaña = t; document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.toggle('on', mostrar && b.dataset.t === t));
-  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca' })[t];
+  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca', expedicion: 'Expedición: rutas seguras' })[t];
   $('cajon').classList.remove('ancho');
   $('reloj').classList.toggle('oculto', t !== 'orbita');
+  if (t !== 'expedicion') try { EXP.modo = null; expMostrarZona(false); } catch {}
   if (mostrar && window.abrirCajon) abrirCajon();
   $('contenido').scrollTop = 0;
-  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca })[t](); }
+  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca, expedicion: vistaExpedicion })[t](); }
 const cont = () => $('contenido');
 
 function vistaExplorar() {
