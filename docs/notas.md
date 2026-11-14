@@ -2,6 +2,16 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 mañana · David (con Claude) · TRAVESÍA COMPLETA, PERFORACIONES, CAPAS Y ALERTAS
+- **Leer `docs/travesia.md`.** La escena ahora muestra todo el camino de Curiosity (aterrizaje → hoy) alrededor de la zona de detalle, con los archivos que bajó el equipo (los .tif y el .gpkg no se versionan: ver `data/README.md`).
+- Datos nuevos: `data/terreno/travesia_sur/`, `data/terreno/sol5070/orto_color.jpg` (la orto de 0,5 m con el color del mosaico; `armar.py` la usa si existe y deja `orto.jpg` intacta), `data/curiosity/recorrido_completo.geojson`, `perforaciones.geojson` y `perforaciones_hallazgos.json`.
+- Escena: vista "Travesía completa / Zona de hoy", viaje por soles con las 12 etapas, fichas de las 49 perforaciones, capa de radiación en bandas (también en la travesía), peligro limpio con arena por color, alertas sin ruido, modo de calidad liviana para tablets. `index.html` pesa 13,6 MB.
+- **Pendiente del equipo:**
+  1. confirmar de dónde se bajaron el mosaico de color y el GeoPackage, para citarlos;
+  2. verificar las 37 fichas de perforaciones que dicen "a verificar";
+  3. confirmar el punto exacto de la medición de RAD en Murray Buttes.
+- Corrección: el pozo 47 es Campo Marte, no Atacama (ver `docs/travesia.md`).
+
 ## 2026-11-14 madrugada · David (con Claude) · ASTRONAUTA A MANO, ALERTAS, REGRESO A LA BASE Y CAPAS PORTABLES
 - **Para el compañero (importante):** `docs/capas-portables.md` tiene el inventario de capas para tu mapa: cada archivo, su formato, su fuente, las reglas de cálculo y un ejemplo con Leaflet. Las capas nuevas están en `data/capas/sol5070/` (PNG + `meta.json`, misma grilla que el terreno).
 - Datos:

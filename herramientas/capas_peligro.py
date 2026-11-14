@@ -8,7 +8,8 @@ Escribe: data/capas/sol5070/ (PNG + meta.json, misma grilla que el terreno: 2 m 
          data/rutas/puntos_extra_sol5070.geojson
 Clases de peligro (peligro_clases.png, un byte por celda):
   0 sin peligro · 1 precaución (pendiente 15-20°) · 2 peligro (20-30°: sobre el límite del traje y del rover)
-  3 crítico (más de 30°: supuesto de riesgo de caída) · 4 posible arena suelta (CRISM máfico fuerte + tono oscuro en HiRISE)
+  3 crítico (más de 30°: supuesto de riesgo de caída) · 4 posible arena suelta (tono azulado en el color HiRISE, en menos de 15°)
+La pendiente de las clases es la media en 6 m y se descartan las manchas de pocas celdas.
 """
 import json, math, os
 import numpy as np
@@ -42,12 +43,29 @@ def crism(p):
 fm2, maf, hyd = crism('FM2'), crism('MAF'), crism('HYD')
 mafico = (fm2[..., 2] >= 130) | (maf[..., 0] >= 85)
 
+# Pendiente para las clases: media en 3×3 celdas (6 m). La pendiente celda a celda del DEM tiene ruido y hacía saltar alertas.
+from scipy import ndimage as ndi
+pend_s = ndi.uniform_filter(pend, 3)
+def limpiar(m, minimo):
+    """Saca manchas sueltas: abre la máscara y descarta las de menos de `minimo` celdas."""
+    m = ndi.binary_closing(ndi.binary_opening(m), iterations=1); lab, n = ndi.label(m)
+    if not n: return m
+    tam = ndi.sum(m, lab, np.arange(1, n + 1)); return np.isin(lab, 1 + np.flatnonzero(tam >= minimo))
+# Arena: tono azulado en el color HiRISE (la arena basáltica se ve azul oscura, con ondas), en terreno de menos de 15°.
+# El color viene de orto_color.jpg (mosaico de 3 m, herramientas/travesia.py). CRISM queda como apoyo, no como criterio.
+p_col = os.path.join(T, 'orto_color.jpg'); arena = np.zeros((H, W), bool); indice = None
+if os.path.exists(p_col):
+    c = np.asarray(Image.open(p_col).convert('RGB').resize((W, H), Image.BOX), float)
+    indice = ndi.gaussian_filter((c[..., 2] - c[..., 0]) / (c[..., 2] + c[..., 0] + 1), 1.5)
+    arena = limpiar((indice > -0.06) & (pend_s < 15), 40)
+else:
+    arena = limpiar(mafico & (tono < 0.35) & (pend < 20), 40)
 clases = np.zeros((H, W), np.uint8)
-clases[(pend >= 15) & (pend < 20)] = 1
-arena = mafico & (tono < 0.35) & (pend < 20)
+clases[limpiar(pend_s >= 15, 12)] = 1
 clases[arena] = 4
-clases[(pend >= 20) & (pend < 30)] = 2
-clases[pend >= 30] = 3
+clases[limpiar(pend_s >= 20, 8)] = 2
+clases[limpiar(pend_s >= 30, 4)] = 3
+if indice is not None: print('arena por color: %.1f%% de la zona; con CRISM máfico fuerte: %.0f%% de esa arena' % (100 * arena.mean(), 100 * (arena & mafico).sum() / max(1, arena.sum())))
 n = W * H
 print('área por clase: ' + ', '.join(f'{k}: {100 * (clases == k).sum() / n:.1f}%' for k in range(5)))
 
@@ -77,9 +95,9 @@ json.dump({
         'cielo_tapado.png': 'Fracción de cielo tapada por el relieve (más azul = más tapado = menos radiación). Cálculo propio: 16 direcciones hasta 400 m.',
     },
     'fuentes': {
-        'pendiente': 'Cálculo propio sobre el DEM USGS de Gale de 1 m (Calef y Parker 2016) llevado a 2 m.',
+        'pendiente': 'Cálculo propio sobre el DEM USGS de Gale de 1 m (Calef y Parker 2016) llevado a 2 m; para las clases se usa la media en 3×3 celdas (6 m) y se descartan manchas de pocas celdas.',
         'limites': 'Límite de 20° para traje (requisito lunar Artemis, NTRS 20210026296) y rover (provisorio, data/parametros.json). 30° crítico: SUPUESTO del equipo.',
-        'arena': 'Indicio: CRISM FM2 (hierro ferroso) o MAF (olivino) fuerte, que suele marcar regolito o arena (guía de los mosaicos CRISM GMWG 2012), más tono oscuro en HiRISE (percentil < 35 de la zona). No es una medición de arena.',
+        'arena': 'Indicio: tono azulado en el color HiRISE de 3 m (índice (B−R)/(B+R) > −0,06, suavizado), en pendiente menor a 15° y en manchas de más de 160 m². La arena basáltica de Gale se ve azul oscura en estos mosaicos. No es una medición de arena; CRISM (máficos) se usa solo como apoyo.',
     },
     'armado_con': 'herramientas/capas_peligro.py',
 }, open(os.path.join(OUT, 'meta.json'), 'w'), indent=1, ensure_ascii=False)
@@ -130,3 +148,15 @@ if en_arena:
     (i, j), _ = en_arena[len(en_arena) // 2]; z1 = ficha(i, j); z1['frac'] = len(en_arena) / len(cand)
 for nombre, v in [('R1', r1), ('M1', m1), ('Q1', q1), ('Z1', z1)]: print(nombre, v)
 json.dump({'R1': r1, 'M1': m1, 'Q1': q1, 'Z1': z1}, open('/tmp/puntos_extra.json', 'w'), indent=1)
+# el punto Z1 depende de la capa de arena: se actualiza en el GeoJSON de puntos (el resto no cambia)
+p_ext = os.path.join(R, 'data/rutas/puntos_extra_sol5070.geojson')
+if z1 and os.path.exists(p_ext):
+    ge = json.load(open(p_ext))
+    for ft in ge['features']:
+        if ft['properties']['parada'] == 'Z1':
+            ft['geometry']['coordinates'] = [round(z1['lon'], 6), round(z1['lat'], 6)]
+            ft['properties'].update(elevacion_m=round(z1['elev'], 1), pendiente_celda=round(z1['pend'], 1), cielo_tapado_pct=round(z1['cielo'] * 100),
+                motivo_cientifico=f"El {round(z1['frac'] * 100)}% de la ruta A cruza terreno con indicio de arena suelta: tono azulado y ondas en el color HiRISE. Acá conviene reducir la velocidad y revisar con las cámaras de navegación: Curiosity esquiva la arena y las pendientes al planear cada tramo.",
+                fuente_motivo='Color HiRISE de 3 m (mosaico de la travesía) sobre el DEM USGS (Calef y Parker 2016); apoyo: CRISM FM2 y MAF (Seelos et al. 2012). Blog de Curiosity, sols 4818-4824 (manejar esquivando arena y pendientes).')
+    json.dump(ge, open(p_ext, 'w'), indent=1, ensure_ascii=False)
+

@@ -143,7 +143,12 @@ def main():
         recorrido = leer_json(p_rec)
         recorrido["puntos"] = [q[:3] for q in recorrido["puntos"][::2]]
 
-    p_orto = os.path.join(dz, "orto.jpg")
+    # ortoimagen: si existe la versión en color (orto_color.jpg, herramientas/travesia.py), se usa esa
+    p_orto = os.path.join(dz, "orto_color.jpg")
+    if os.path.exists(p_orto):
+        meta["fuente_orto"] = (meta.get("fuente_orto") or "") + " · color: mosaico HiRISE de 3 m de la travesía (detalle de la orto de 0,5 m, color del mosaico)"
+    else:
+        p_orto = os.path.join(dz, "orto.jpg")
     if os.path.exists(p_orto):
         with open(p_orto, "rb") as f:
             orto = b64(f.read())
@@ -183,8 +188,31 @@ def main():
             capas = {"peligro_clases": b64(f.read()), "meta": leer_json(os.path.join(dc, "meta.json"))}
         print("capas: peligro_clases")
 
+    # contexto: toda la travesía de Curiosity alrededor de la zona (data/terreno/travesia_sur/, herramientas/travesia.py),
+    # con el recorrido real y las 49 perforaciones (data/curiosity/, herramientas/travesia_datos.py)
+    contexto = travesia = pozos = None
+    dctx = os.path.join(RAIZ, "data", "terreno", "travesia_sur")
+    if a.zona == "sol5070" and os.path.exists(os.path.join(dctx, "meta.json")):
+        leer_b64 = lambda n: b64(open(os.path.join(dctx, n), "rb").read())
+        mc = leer_json(os.path.join(dctx, "meta.json"))
+        contexto = {"meta": mc, "dem_png": leer_b64(mc["dem"]["archivo"]), "color_jpg": [leer_b64(n) for n in mc["color"]["archivos"]],
+                    "cielo_png": leer_b64(mc["cielo"]["archivo"]), "pend_png": leer_b64(mc["pendiente"]["archivo"])}
+        p_rec2 = os.path.join(RAIZ, "data", "curiosity", "recorrido_completo.geojson")
+        if os.path.exists(p_rec2):
+            f = leer_json(p_rec2)["features"][0]; pr = f["properties"]
+            travesia = {"puntos": [[c[0], c[1], s, k] for c, s, k in zip(f["geometry"]["coordinates"], pr["sol_aprox"], pr["cielo_tapado_pct"])],
+                        "props": {k: v for k, v in pr.items() if k not in ("sol_aprox", "cielo_tapado_pct", "elevacion_m")}}
+        p_poz = os.path.join(RAIZ, "data", "curiosity", "perforaciones.geojson")
+        if os.path.exists(p_poz):
+            g = leer_json(p_poz)
+            pozos = {"nota": g.get("nota", ""), "lista": [dict(f["properties"], lon=f["geometry"]["coordinates"][0], lat=f["geometry"]["coordinates"][1]) for f in g["features"]]}
+        print(f"contexto: travesía completa, {len(travesia['puntos']) if travesia else 0} puntos de recorrido, {len(pozos['lista']) if pozos else 0} perforaciones")
+
     datos = {
         "zona": a.zona,
+        "contexto": contexto,
+        "travesia": travesia,
+        "pozos": pozos,
         "crism": crism,
         "capas": capas,
         "meta": meta,

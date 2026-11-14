@@ -32,6 +32,9 @@ Si el mapa usa una proyección distinta, primero hay que reproyectar el PNG (por
 | Sombra de radiación | `data/capas/sol5070/cielo_tapado.png` y `data/terreno/sol5070/cielo_bloqueado_u8.bin` | PNG / un byte por celda | Fracción de cielo tapada por el relieve | Cálculo propio (16 direcciones, 400 m) |
 | Mineralogía | `data/mineralogia/crism_sol5070/{ALT,HYD,FM2,MAF,VNA,FAL}.png` | PNG + `meta.json` (19,3 m) | Productos CRISM | CRISM GMWG 2012 (Seelos et al., JHU/APL) |
 | Mineralogía por parada | `data/mineralogia/crism_sol5070/muestras_paradas.json` | JSON | Valores 3 × 3 píxeles y percentiles | `herramientas/crism_muestras_paradas.py` |
+| Terreno de toda la travesía | `data/terreno/travesia_sur/` (`dem_12m_rg.png`, `color_*.jpg`, `cielo_12m.png`, `pend_12m.png`, `meta.json`) | PNG/JPG + `meta.json` | Elevación a 12 m, color a 3 m, cielo tapado y pendiente | Archivos del equipo del 14/11; `herramientas/travesia.py` |
+| Recorrido completo | `data/curiosity/recorrido_completo.geojson` | GeoJSON; `sol_aprox`, `cielo_tapado_pct` y `elevacion_m` por vértice | 37,5 km, del sol 0 al 5073 | GeoPackage del equipo; `herramientas/travesia_datos.py` |
+| Perforaciones | `data/curiosity/perforaciones.geojson` | GeoJSON: 49 puntos con etapa, hallazgo, fuente, `verificado`, cielo tapado y dosis | Qué se encontró en cada pozo | GeoPackage del equipo + `perforaciones_hallazgos.json` |
 | Parámetros | `data/parametros.json` | JSON (contrato §3) | Límites de pendiente, velocidades, dosis, presupuesto de la salida (`eva`) | Ver fuentes de cada campo |
 
 Para regenerar las capas calculadas: `python herramientas/capas_peligro.py` y `python herramientas/crism_muestras_paradas.py <carpeta con los .tif>`.

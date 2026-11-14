@@ -44,6 +44,14 @@ Es la fusión de dos trabajos del equipo:
 - **Astronauta articulado:** traje genérico sin marcas (casco de burbuja con visera dorada, mochila de soporte vital,
   módulo de pecho, juntas). Camina con paso largo de baja gravedad (1,4 m por ciclo), se inclina en las subidas y
   respira en reposo. **Rover:** ruedas con 24 garras en V; el mástil escanea el paisaje cuando está quieto.
+- **Travesía completa** (si existe `data/terreno/travesia_sur/`): terreno de 6,6 × 17,4 km alrededor de la zona, con color
+  a 3 m; recorrido real en amarillo; 49 perforaciones con ficha (qué se encontró, fuente y si está verificada); botones
+  "Travesía completa / Zona de hoy"; y **Viaje de Curiosity**: línea de tiempo del sol 0 a hoy, con 12 etapas, que frena
+  en cada perforación. La zona de detalle usa `orto_color.jpg` si existe.
+- **Radiación en bandas** (5–10, 10–20, 20–30 y más de 30% de cielo tapado, con su dosis en µSv/h), en la zona y en toda
+  la travesía. **Peligro** con pendiente media en 6 m y arena por color. **Alertas sin ruido:** un cartel a la vez, con
+  espera, pastillas para lo menor y × para silenciar.
+- **Calidad liviana** (panel, abajo; automática en pantallas táctiles): terreno lejano con la mitad de detalle.
 - **Mover al astronauta** como al rover: "Manejar: Rover / Astronauta" en la barra, teclas WASD o joystick táctil. Baja al
   lado del rover (la base) y nada lo bloquea: las **alertas** avisan en pantalla y en el visor (pendiente sobre 20°, más de
   30°, posible arena, lo que viene en 16 m, minutos hasta la base contra 30 min, margen de la salida contra 6 y 8 h).

@@ -32,3 +32,10 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Dosis en el viaje (1,84 mSv/día; misión de referencia ~1,01 Sv) | RAD en crucero (Zeitlin et al. 2013), citado con Hassler et al. 2014 |
 | Duración de una salida con traje (hasta 8 h, 6 ± 2 h) | NASA EVA-EXP-0075 (NTRS 20200001071); NTRS 20210000827 |
 | Aviso ante tormentas solares (10 a 30 min; mínimo 30 min) | Parker et al., NASA Helio2050 (NTRS 20210014156). Base de nuestra regla "a no más de 30 min de un refugio" (supuesto) |
+| Terreno y color de toda la travesía (4 m y 3 m) | Archivos del equipo del 14/11 (`travesia_sur_*.tif`). La elevación coincide con el DEM USGS de Gale (Calef y Parker 2016). **Origen exacto del mosaico de color: a confirmar** |
+| Recorrido completo y 49 perforaciones (posición, sol, altura) | GeoPackage del equipo del 14/11 (`curiosity_recorrido_y_pozos.gpkg`). **Origen exacto: a confirmar** |
+| Qué es una perforación y qué se analiza (pozo de 16 mm; CheMin y SAM); pozo 42, Kings Canyon | NASA/JPL-Caltech/MSSS, PIA26403, "Curiosity's 42 Drill Holes" (27/8/2024) |
+| Lutita de lago en Yellowknife Bay (pozos 1 y 2) | Vaniman et al. 2014, Science |
+| Siderita en la unidad de sulfatos (pozos 36 a 39) | Tutolo et al. 2025, Science, doi:10.1126/science.ado9966 |
+| Campaña del boxwork y pozos 43 a 48 | Blog de Curiosity: sols 4695-4701, 4709-4715, 4716-4722, 4798-4803, 4804-4811, 4879-4885, 4893-4899, 4900-4907, 5016-5021 |
+| Hallazgos de los otros 37 pozos | Citas de memoria en `data/curiosity/perforaciones_hallazgos.json`, marcadas "a verificar" |

@@ -77,8 +77,8 @@
    "geometry": {
     "type": "Point",
     "coordinates": [
-     137.393337,
-     -4.830427
+     137.392831,
+     -4.829954
     ]
    },
    "properties": {
@@ -87,11 +87,11 @@
     "ruta": "vehiculo",
     "quien": "rover",
     "nombre": "Z1 · Posible arena en la ruta del robot",
-    "motivo_cientifico": "El 36% de la ruta A cruza celdas con indicio de arena suelta: material volcánico oscuro fuerte en CRISM más tono oscuro en HiRISE. Acá conviene reducir la velocidad y revisar con las cámaras de navegación: Curiosity esquiva la arena y las pendientes al planear cada tramo.",
-    "fuente_motivo": "CRISM FM2 y MAF (Seelos et al. 2012): suelen marcar regolito o arena. Tono HiRISE (Calef y Parker 2016). Blog de Curiosity, sols 4818-4824 (manejar esquivando arena y pendientes).",
-    "elevacion_m": -3404.2,
-    "pendiente_celda": 10.9,
-    "cielo_tapado_pct": 13,
+    "motivo_cientifico": "El 22% de la ruta A cruza terreno con indicio de arena suelta: tono azulado y ondas en el color HiRISE. Acá conviene reducir la velocidad y revisar con las cámaras de navegación: Curiosity esquiva la arena y las pendientes al planear cada tramo.",
+    "fuente_motivo": "Color HiRISE de 3 m (mosaico de la travesía) sobre el DEM USGS (Calef y Parker 2016); apoyo: CRISM FM2 y MAF (Seelos et al. 2012). Blog de Curiosity, sols 4818-4824 (manejar esquivando arena y pendientes).",
+    "elevacion_m": -3409.6,
+    "pendiente_celda": 2.6,
+    "cielo_tapado_pct": 12,
     "calculado_con": "herramientas/capas_peligro.py"
    }
   }

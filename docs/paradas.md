@@ -97,7 +97,7 @@ Cada parada se ubicó **sobre el terreno real** (DEM USGS de 2 m y ortofoto HiRI
 
 | Parada | Sulfatos hidratados (SINDEX2) | Agua (BD1900) | Arcillas Fe/Mg (D2300) | Fe ferroso / máficos (BDI1000VIS) | Férricos cristalinos (BD920) | Olivino (OLINDEX3) | Lectura (indicador, no identificación) |
 |---|---|---|---|---|---|---|---|
-| S | **alta (p94)** | media | no | **alta (p84)** | media | alta | Banda oscura con sulfatos: coincide con lo que mide Curiosity (perforación Atacama, primer bedrock de sulfatos después del boxwork) |
+| S | **alta (p94)** | media | no | **alta (p84)** | media | alta | Banda oscura con sulfatos: coincide con la unidad de sulfatos en capas que Curiosity perforó 1 km antes (pozo Campo Marte, n.º 47) |
 | A1 | **alta (p87)** | no | no | **muy alta (p95)** | media | **muy alta (p94)** | Sulfatos + material máfico oscuro (probable arena basáltica) |
 | B1 | **alta (p81)** | media | no | **muy alta (p93)** | **alta (p88)** | **muy alta (p95)** | Igual que A1, con algo más de férricos |
 | A2 | media (p64) | no | no | alta (p77) | **alta (p88)** | alta | Posible óxido férrico cristalino (hematita); débil |

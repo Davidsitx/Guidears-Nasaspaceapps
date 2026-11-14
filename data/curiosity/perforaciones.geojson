@@ -1,0 +1,1281 @@
+{
+ "type": "FeatureCollection",
+ "name": "perforaciones",
+ "nota": "Qué se sacó y qué se encontró en cada perforación de Curiosity. En todas, el taladro saca roca en polvo que analizan CheMin (minerales, por difracción de rayos X) y SAM (gases y orgánicos); fuente: NASA, PIA26403. 'verificado: true' = lo confirmamos el 14/11 contra la fuente citada. 'false' = redactado de memoria por el asistente: el equipo debe verificarlo contra la fuente antes de presentarlo. Posición, sol y altura: GeoPackage del equipo. Cielo tapado, pendiente y dosis: cálculo propio sobre el DEM de 4 m.",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4491296,
+     -4.5894849
+    ]
+   },
+   "properties": {
+    "pozo": 1,
+    "nombre": "John Klein",
+    "sol": 182,
+    "elevacion_m": -4520.5,
+    "campana": "Yellowknife Bay",
+    "campana_id": "yellowknife",
+    "idea_campana": "Un lago de agua dulce: el primer ambiente habitable.",
+    "unidad": "Yellowknife Bay, lutita Sheepbed",
+    "hallazgo": "Primer pozo de la misión. Arcillas y sulfatos en un barro de lago poco profundo: agua ni muy ácida ni muy salada. Es la primera prueba de un ambiente habitable.",
+    "fuente": "Vaniman et al. 2014, Science (Mineralogy of a Mudstone at Yellowknife Bay)",
+    "verificado": true,
+    "cielo_tapado_pct": 5.2,
+    "pendiente": 5.8,
+    "dosis_uSv_h": 26.32
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4491125,
+     -4.5894787
+    ]
+   },
+   "properties": {
+    "pozo": 2,
+    "nombre": "Cumberland",
+    "sol": 279,
+    "elevacion_m": -4520.4,
+    "campana": "Yellowknife Bay",
+    "campana_id": "yellowknife",
+    "idea_campana": "Un lago de agua dulce: el primer ambiente habitable.",
+    "unidad": "Yellowknife Bay, lutita Sheepbed",
+    "hallazgo": "La misma lutita, con menos vetas de sulfato. Acá SAM detectó moléculas orgánicas (clorobenceno) y, en un estudio de 2025, cadenas largas de carbono.",
+    "fuente": "Vaniman et al. 2014, Science; orgánicos: Freissinet et al. 2015 (JGR Planets) y 2025 (PNAS)",
+    "verificado": false,
+    "cielo_tapado_pct": 5.5,
+    "pendiente": 5.1,
+    "dosis_uSv_h": 26.3
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.40201,
+     -4.6388429
+    ]
+   },
+   "properties": {
+    "pozo": 3,
+    "nombre": "Windjana",
+    "sol": 621,
+    "elevacion_m": -4479.2,
+    "campana": "Kimberley",
+    "campana_id": "kimberley",
+    "idea_campana": "Arenas traídas por ríos desde rocas volcánicas.",
+    "unidad": "Kimberley, arenisca",
+    "hallazgo": "Arenisca muy rica en feldespato de potasio y magnetita: el sedimento vino de rocas volcánicas evolucionadas.",
+    "fuente": "Treiman et al. 2016, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 11.0,
+    "pendiente": 11.3,
+    "dosis_uSv_h": 25.93
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3774636,
+     -4.6626993
+    ]
+   },
+   "properties": {
+    "pozo": 4,
+    "nombre": "Confidence Hills",
+    "sol": 759,
+    "elevacion_m": -4460.6,
+    "campana": "Pahrump Hills y Marias Pass",
+    "campana_id": "pahrump",
+    "idea_campana": "La base del Monte Sharp: barro de lago y agua que cambia de química.",
+    "unidad": "Pahrump Hills, formación Murray",
+    "hallazgo": "Primer pozo en el Monte Sharp. Barro de lago con hematita y arcillas.",
+    "fuente": "Rampe et al. 2017, Earth and Planetary Science Letters",
+    "verificado": false,
+    "cielo_tapado_pct": 9.6,
+    "pendiente": 6.5,
+    "dosis_uSv_h": 26.03
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3774497,
+     -4.6628638
+    ]
+   },
+   "properties": {
+    "pozo": 5,
+    "nombre": "Mojave 2",
+    "sol": 882,
+    "elevacion_m": -4459.7,
+    "campana": "Pahrump Hills y Marias Pass",
+    "campana_id": "pahrump",
+    "idea_campana": "La base del Monte Sharp: barro de lago y agua que cambia de química.",
+    "unidad": "Pahrump Hills, formación Murray",
+    "hallazgo": "Jarosita, un sulfato que se forma en agua ácida, junto con hematita.",
+    "fuente": "Rampe et al. 2017, EPSL",
+    "verificado": false,
+    "cielo_tapado_pct": 8.6,
+    "pendiente": 5.4,
+    "dosis_uSv_h": 26.09
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3774523,
+     -4.6635273
+    ]
+   },
+   "properties": {
+    "pozo": 6,
+    "nombre": "Telegraph Peak",
+    "sol": 908,
+    "elevacion_m": -4453.5,
+    "campana": "Pahrump Hills y Marias Pass",
+    "campana_id": "pahrump",
+    "idea_campana": "La base del Monte Sharp: barro de lago y agua que cambia de química.",
+    "unidad": "Pahrump Hills, formación Murray",
+    "hallazgo": "Más sílice (cristobalita y ópalo) y casi sin arcillas: la química del agua cambió hacia arriba.",
+    "fuente": "Rampe et al. 2017, EPSL",
+    "verificado": false,
+    "cielo_tapado_pct": 10.4,
+    "pendiente": 12.4,
+    "dosis_uSv_h": 25.97
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3702986,
+     -4.668025
+    ]
+   },
+   "properties": {
+    "pozo": 7,
+    "nombre": "Buckskin",
+    "sol": 1060,
+    "elevacion_m": -4446.8,
+    "campana": "Pahrump Hills y Marias Pass",
+    "campana_id": "pahrump",
+    "idea_campana": "La base del Monte Sharp: barro de lago y agua que cambia de química.",
+    "unidad": "Marias Pass, formación Murray",
+    "hallazgo": "Tridimita, un mineral de sílice de alta temperatura, inesperado en un sedimento de lago.",
+    "fuente": "Morris et al. 2016, PNAS",
+    "verificado": false,
+    "cielo_tapado_pct": 6.1,
+    "pendiente": 6.9,
+    "dosis_uSv_h": 26.26
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3685829,
+     -4.6731358
+    ]
+   },
+   "properties": {
+    "pozo": 8,
+    "nombre": "Big Sky",
+    "sol": 1119,
+    "elevacion_m": -4434.7,
+    "campana": "Dunas antiguas (Stimson)",
+    "campana_id": "stimson",
+    "idea_campana": "Agua que circuló por fracturas mucho después del lago.",
+    "unidad": "Formación Stimson (dunas antiguas)",
+    "hallazgo": "Arenisca de dunas sin alterar: la referencia para comparar con Greenhorn.",
+    "fuente": "Yen et al. 2017, EPSL",
+    "verificado": false,
+    "cielo_tapado_pct": 5.5,
+    "pendiente": 6.6,
+    "dosis_uSv_h": 26.3
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3686468,
+     -4.6731459
+    ]
+   },
+   "properties": {
+    "pozo": 9,
+    "nombre": "Greenhorn",
+    "sol": 1137,
+    "elevacion_m": -4434.5,
+    "campana": "Dunas antiguas (Stimson)",
+    "campana_id": "stimson",
+    "idea_campana": "Agua que circuló por fracturas mucho después del lago.",
+    "unidad": "Formación Stimson, halo de una fractura",
+    "hallazgo": "Roca blanqueada junto a una fractura, enriquecida en sílice: agua que circuló mucho después de que el lago se secara.",
+    "fuente": "Yen et al. 2017, EPSL",
+    "verificado": false,
+    "cielo_tapado_pct": 5.5,
+    "pendiente": 7.3,
+    "dosis_uSv_h": 26.3
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3592342,
+     -4.6782607
+    ]
+   },
+   "properties": {
+    "pozo": 10,
+    "nombre": "Lubango",
+    "sol": 1320,
+    "elevacion_m": -4429.0,
+    "campana": "Dunas antiguas (Stimson)",
+    "campana_id": "stimson",
+    "idea_campana": "Agua que circuló por fracturas mucho después del lago.",
+    "unidad": "Formación Stimson, meseta Naukluft (halo)",
+    "hallazgo": "Otro halo de alteración junto a una fractura, para repetir la comparación de Greenhorn.",
+    "fuente": "Yen et al. 2017, EPSL",
+    "verificado": false,
+    "cielo_tapado_pct": 2.7,
+    "pendiente": 2.9,
+    "dosis_uSv_h": 26.49
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3591733,
+     -4.6782403
+    ]
+   },
+   "properties": {
+    "pozo": 11,
+    "nombre": "Okoruso",
+    "sol": 1332,
+    "elevacion_m": -4429.3,
+    "campana": "Dunas antiguas (Stimson)",
+    "campana_id": "stimson",
+    "idea_campana": "Agua que circuló por fracturas mucho después del lago.",
+    "unidad": "Formación Stimson, meseta Naukluft",
+    "hallazgo": "La arenisca sin alterar al lado de Lubango: su par de referencia.",
+    "fuente": "Yen et al. 2017, EPSL",
+    "verificado": false,
+    "cielo_tapado_pct": 4.0,
+    "pendiente": 5.3,
+    "dosis_uSv_h": 26.4
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3577064,
+     -4.6786705
+    ]
+   },
+   "properties": {
+    "pozo": 12,
+    "nombre": "Oudam",
+    "sol": 1361,
+    "elevacion_m": -4435.6,
+    "campana": "Murray Buttes",
+    "campana_id": "murray",
+    "idea_campana": "Más arcillas hacia arriba, y la primera medición de sombra de radiación.",
+    "unidad": "Formación Murray, Hartmann's Valley",
+    "hallazgo": "Lutita con hematita y pocas arcillas.",
+    "fuente": "Bristow et al. 2018, Science Advances",
+    "verificado": false,
+    "cielo_tapado_pct": 5.7,
+    "pendiente": 7.7,
+    "dosis_uSv_h": 26.29
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3544745,
+     -4.6871848
+    ]
+   },
+   "properties": {
+    "pozo": 13,
+    "nombre": "Marimba",
+    "sol": 1422,
+    "elevacion_m": -4410.4,
+    "campana": "Murray Buttes",
+    "campana_id": "murray",
+    "idea_campana": "Más arcillas hacia arriba, y la primera medición de sombra de radiación.",
+    "unidad": "Formación Murray, Karasburg",
+    "hallazgo": "Lutita con más arcillas, hematita y sulfato de calcio.",
+    "fuente": "Bristow et al. 2018, Science Advances",
+    "verificado": false,
+    "cielo_tapado_pct": 7.6,
+    "pendiente": 7.4,
+    "dosis_uSv_h": 26.16
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3530064,
+     -4.6952022
+    ]
+   },
+   "properties": {
+    "pozo": 14,
+    "nombre": "Quela",
+    "sol": 1464,
+    "elevacion_m": -4379.5,
+    "campana": "Murray Buttes",
+    "campana_id": "murray",
+    "idea_campana": "Más arcillas hacia arriba, y la primera medición de sombra de radiación.",
+    "unidad": "Formación Murray, al pie de los Murray Buttes",
+    "hallazgo": "Lutita parecida a Marimba. En esta zona, con el rover junto a un butte, RAD midió menos radiación: con 19% del cielo tapado, la dosis bajó 4 a 5%. Nuestro modelo da 17,5% de cielo tapado en el lugar exacto del pozo.",
+    "fuente": "Ehresmann et al. 2021, JGR Planets (doi:10.1029/2021JE006851); cálculo propio de cielo tapado. El sitio exacto de la medición de RAD está por confirmar",
+    "verificado": false,
+    "cielo_tapado_pct": 17.5,
+    "pendiente": 11.7,
+    "dosis_uSv_h": 25.5
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3549486,
+     -4.6996032
+    ]
+   },
+   "properties": {
+    "pozo": 15,
+    "nombre": "Sebina",
+    "sol": 1495,
+    "elevacion_m": -4360.8,
+    "campana": "Murray Buttes",
+    "campana_id": "murray",
+    "idea_campana": "Más arcillas hacia arriba, y la primera medición de sombra de radiación.",
+    "unidad": "Formación Murray, Sutton Island",
+    "hallazgo": "Lutita con arcillas. Último pozo antes de la falla del mecanismo de avance del taladro.",
+    "fuente": "Bristow et al. 2018, Science Advances",
+    "verificado": false,
+    "cielo_tapado_pct": 3.9,
+    "pendiente": 6.3,
+    "dosis_uSv_h": 26.4
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3772471,
+     -4.7241962
+    ]
+   },
+   "properties": {
+    "pozo": 16,
+    "nombre": "Duluth",
+    "sol": 2057,
+    "elevacion_m": -4192.5,
+    "campana": "Cresta Vera Rubin",
+    "campana_id": "veraRubin",
+    "idea_campana": "La hematita vista desde órbita, confirmada en el lugar.",
+    "unidad": "Formación Murray, Blunts Point",
+    "hallazgo": "Primer pozo con la técnica nueva: perforar empujando con el brazo, tras más de un año sin taladro.",
+    "fuente": "NASA/JPL, mayo de 2018",
+    "verificado": false,
+    "cielo_tapado_pct": 10.6,
+    "pendiente": 14.3,
+    "dosis_uSv_h": 25.96
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.378061,
+     -4.7255926
+    ]
+   },
+   "properties": {
+    "pozo": 17,
+    "nombre": "Stoer",
+    "sol": 2136,
+    "elevacion_m": -4169.9,
+    "campana": "Cresta Vera Rubin",
+    "campana_id": "veraRubin",
+    "idea_campana": "La hematita vista desde órbita, confirmada en el lugar.",
+    "unidad": "Cresta Vera Rubin, Pettegrove Point",
+    "hallazgo": "Hematita abundante: confirma en el lugar lo que CRISM veía desde órbita.",
+    "fuente": "Rampe et al. 2020 y Fraeman et al. 2020, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 10.9,
+    "pendiente": 14.4,
+    "dosis_uSv_h": 25.94
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3775707,
+     -4.7285135
+    ]
+   },
+   "properties": {
+    "pozo": 18,
+    "nombre": "Highfield",
+    "sol": 2224,
+    "elevacion_m": -4146.9,
+    "campana": "Cresta Vera Rubin",
+    "campana_id": "veraRubin",
+    "idea_campana": "La hematita vista desde órbita, confirmada en el lugar.",
+    "unidad": "Cresta Vera Rubin, Jura (roca gris)",
+    "hallazgo": "Roca gris con hematita de grano más grueso que la roca roja vecina.",
+    "fuente": "Rampe et al. 2020, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 6.5,
+    "pendiente": 4.9,
+    "dosis_uSv_h": 26.23
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3781597,
+     -4.7284142
+    ]
+   },
+   "properties": {
+    "pozo": 19,
+    "nombre": "Rock Hall",
+    "sol": 2261,
+    "elevacion_m": -4143.8,
+    "campana": "Cresta Vera Rubin",
+    "campana_id": "veraRubin",
+    "idea_campana": "La hematita vista desde órbita, confirmada en el lugar.",
+    "unidad": "Cresta Vera Rubin, Jura (roca roja)",
+    "hallazgo": "Akaganeíta y jarosita: señal de fluidos tardíos, salados y ácidos.",
+    "fuente": "Rampe et al. 2020, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 2.9,
+    "pendiente": 5.6,
+    "dosis_uSv_h": 26.47
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3836534,
+     -4.7260789
+    ]
+   },
+   "properties": {
+    "pozo": 20,
+    "nombre": "Aberlady",
+    "sol": 2370,
+    "elevacion_m": -4157.9,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon (unidad de arcillas)",
+    "hallazgo": "El mayor contenido de arcillas de toda la misión.",
+    "fuente": "Thorpe et al. 2022, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 8.4,
+    "pendiente": 3.4,
+    "dosis_uSv_h": 26.11
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3836548,
+     -4.7260737
+    ]
+   },
+   "properties": {
+    "pozo": 21,
+    "nombre": "Kilmarie",
+    "sol": 2384,
+    "elevacion_m": -4157.9,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon (unidad de arcillas)",
+    "hallazgo": "A centímetros de Aberlady: confirma el récord de arcillas.",
+    "fuente": "Thorpe et al. 2022, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 8.4,
+    "pendiente": 3.4,
+    "dosis_uSv_h": 26.11
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3835412,
+     -4.7303091
+    ]
+   },
+   "properties": {
+    "pozo": 22,
+    "nombre": "Glen Etive 1",
+    "sol": 2488,
+    "elevacion_m": -4133.4,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon, Knockfarril Hill",
+    "hallazgo": "Arenisca con arcillas, depositada donde un río entraba al lago.",
+    "fuente": "Thorpe et al. 2022, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 7.1,
+    "pendiente": 14.4,
+    "dosis_uSv_h": 26.19
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3835412,
+     -4.7303091
+    ]
+   },
+   "properties": {
+    "pozo": 23,
+    "nombre": "Glen Etive 2",
+    "sol": 2529,
+    "elevacion_m": -4133.4,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon, Knockfarril Hill",
+    "hallazgo": "Segundo pozo en la misma roca, para un experimento de química húmeda de SAM que busca moléculas orgánicas.",
+    "fuente": "NASA/JPL, 2019",
+    "verificado": false,
+    "cielo_tapado_pct": 7.1,
+    "pendiente": 14.4,
+    "dosis_uSv_h": 26.19
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3808989,
+     -4.7365848
+    ]
+   },
+   "properties": {
+    "pozo": 24,
+    "nombre": "Hutton",
+    "sol": 2671,
+    "elevacion_m": -4095.4,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon, bajo el pedimento Greenheugh",
+    "hallazgo": "Roca alterada justo debajo del contacto con la arenisca que la cubre.",
+    "fuente": "Thorpe et al. 2022, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 17.5,
+    "pendiente": 15.3,
+    "dosis_uSv_h": 25.5
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3807898,
+     -4.7370607
+    ]
+   },
+   "properties": {
+    "pozo": 25,
+    "nombre": "Edinburgh",
+    "sol": 2714,
+    "elevacion_m": -4088.7,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Pedimento Greenheugh (arenisca)",
+    "hallazgo": "La arenisca de dunas que tapa la unidad de arcillas: un clima más seco y más tardío.",
+    "fuente": "NASA/JPL, 2020",
+    "verificado": false,
+    "cielo_tapado_pct": 6.4,
+    "pendiente": 12.0,
+    "dosis_uSv_h": 26.24
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3810584,
+     -4.7352366
+    ]
+   },
+   "properties": {
+    "pozo": 26,
+    "nombre": "Glasgow",
+    "sol": 2754,
+    "elevacion_m": -4107.9,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon, miembro Glasgow",
+    "hallazgo": "Lutita con arcillas y señales de alteración posterior.",
+    "fuente": "Thorpe et al. 2022, JGR Planets",
+    "verificado": false,
+    "cielo_tapado_pct": 8.4,
+    "pendiente": 7.8,
+    "dosis_uSv_h": 26.11
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3911375,
+     -4.7293066
+    ]
+   },
+   "properties": {
+    "pozo": 27,
+    "nombre": "Mary Anning",
+    "sol": 2838,
+    "elevacion_m": -4128.1,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon, Knockfarril Hill",
+    "hallazgo": "Sitio elegido para buscar orgánicos con los experimentos de química húmeda de SAM.",
+    "fuente": "NASA/JPL, 2020",
+    "verificado": false,
+    "cielo_tapado_pct": 5.6,
+    "pendiente": 6.6,
+    "dosis_uSv_h": 26.3
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3911375,
+     -4.7293066
+    ]
+   },
+   "properties": {
+    "pozo": 28,
+    "nombre": "Mary Anning 3",
+    "sol": 2870,
+    "elevacion_m": -4128.1,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon, Knockfarril Hill",
+    "hallazgo": "Primer uso del reactivo TMAH de SAM, que vuelve detectables moléculas orgánicas que de otro modo no se ven.",
+    "fuente": "NASA/JPL, 2020",
+    "verificado": false,
+    "cielo_tapado_pct": 5.6,
+    "pendiente": 6.6,
+    "dosis_uSv_h": 26.3
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3911433,
+     -4.7293201
+    ]
+   },
+   "properties": {
+    "pozo": 29,
+    "nombre": "Groken",
+    "sol": 2910,
+    "elevacion_m": -4127.9,
+    "campana": "Glen Torridon",
+    "campana_id": "glenTorridon",
+    "idea_campana": "La unidad de arcillas: el mayor contenido de toda la misión.",
+    "unidad": "Glen Torridon, Knockfarril Hill",
+    "hallazgo": "Nódulos oscuros ricos en manganeso y fósforo, a pocos metros de Mary Anning.",
+    "fuente": "NASA/JPL, 2020",
+    "verificado": false,
+    "cielo_tapado_pct": 5.6,
+    "pendiente": 6.6,
+    "dosis_uSv_h": 26.3
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.412544,
+     -4.7353856
+    ]
+   },
+   "properties": {
+    "pozo": 30,
+    "nombre": "Nontron",
+    "sol": 3057,
+    "elevacion_m": -4072.9,
+    "campana": "De arcillas a sulfatos",
+    "campana_id": "transicion",
+    "idea_campana": "El clima se seca: menos arcillas, más sales.",
+    "unidad": "Mont Mercou (base del acantilado)",
+    "hallazgo": "Base de un acantilado de unos 6 m: empieza la transición de arcillas a sulfatos.",
+    "fuente": "NASA/JPL, 2021",
+    "verificado": false,
+    "cielo_tapado_pct": 13.4,
+    "pendiente": 12.8,
+    "dosis_uSv_h": 25.77
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4123813,
+     -4.7357279
+    ]
+   },
+   "properties": {
+    "pozo": 31,
+    "nombre": "Bardou",
+    "sol": 3094,
+    "elevacion_m": -4066.5,
+    "campana": "De arcillas a sulfatos",
+    "campana_id": "transicion",
+    "idea_campana": "El clima se seca: menos arcillas, más sales.",
+    "unidad": "Mont Mercou (cima del acantilado)",
+    "hallazgo": "Cima del mismo acantilado, para comparar con Nontron.",
+    "fuente": "NASA/JPL, 2021",
+    "verificado": false,
+    "cielo_tapado_pct": 5.9,
+    "pendiente": 7.6,
+    "dosis_uSv_h": 26.27
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4035017,
+     -4.7419253
+    ]
+   },
+   "properties": {
+    "pozo": 32,
+    "nombre": "Pontours",
+    "sol": 3170,
+    "elevacion_m": -4041.2,
+    "campana": "De arcillas a sulfatos",
+    "campana_id": "transicion",
+    "idea_campana": "El clima se seca: menos arcillas, más sales.",
+    "unidad": "Transición de arcillas a sulfatos",
+    "hallazgo": "Menos arcillas que más abajo: el ambiente se iba secando.",
+    "fuente": "NASA/JPL, 2021",
+    "verificado": false,
+    "cielo_tapado_pct": 8.6,
+    "pendiente": 6.2,
+    "dosis_uSv_h": 26.09
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3963954,
+     -4.7440407
+    ]
+   },
+   "properties": {
+    "pozo": 33,
+    "nombre": "Maria Gordon",
+    "sol": 3229,
+    "elevacion_m": -4015.2,
+    "campana": "De arcillas a sulfatos",
+    "campana_id": "transicion",
+    "idea_campana": "El clima se seca: menos arcillas, más sales.",
+    "unidad": "Transición de arcillas a sulfatos",
+    "hallazgo": "Otro punto de la transición, camino a la unidad de sulfatos.",
+    "fuente": "NASA/JPL, 2021",
+    "verificado": false,
+    "cielo_tapado_pct": 14.5,
+    "pendiente": 10.1,
+    "dosis_uSv_h": 25.7
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3950252,
+     -4.7467534
+    ]
+   },
+   "properties": {
+    "pozo": 34,
+    "nombre": "Zechstein",
+    "sol": 3289,
+    "elevacion_m": -3991.1,
+    "campana": "De arcillas a sulfatos",
+    "campana_id": "transicion",
+    "idea_campana": "El clima se seca: menos arcillas, más sales.",
+    "unidad": "Transición, cerca del pedimento Greenheugh",
+    "hallazgo": "Roca cercana al contacto con la arenisca del pedimento.",
+    "fuente": "NASA/JPL, 2021",
+    "verificado": false,
+    "cielo_tapado_pct": 16.4,
+    "pendiente": 11.5,
+    "dosis_uSv_h": 25.57
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.396825,
+     -4.7556165
+    ]
+   },
+   "properties": {
+    "pozo": 35,
+    "nombre": "Avanavero",
+    "sol": 3512,
+    "elevacion_m": -3910.0,
+    "campana": "De arcillas a sulfatos",
+    "campana_id": "transicion",
+    "idea_campana": "El clima se seca: menos arcillas, más sales.",
+    "unidad": "Transición de arcillas a sulfatos",
+    "hallazgo": "Último pozo antes de entrar en la unidad de sulfatos.",
+    "fuente": "NASA/JPL, 2022",
+    "verificado": false,
+    "cielo_tapado_pct": 13.0,
+    "pendiente": 11.8,
+    "dosis_uSv_h": 25.8
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3992771,
+     -4.7607771
+    ]
+   },
+   "properties": {
+    "pozo": 36,
+    "nombre": "Canaima",
+    "sol": 3612,
+    "elevacion_m": -3879.8,
+    "campana": "Unidad de sulfatos",
+    "campana_id": "sulfatos",
+    "idea_campana": "Carbonato de hierro: un ciclo del carbono en el Marte antiguo.",
+    "unidad": "Unidad de sulfatos, Paso Paraitepuy",
+    "hallazgo": "Primer pozo en la unidad de sulfatos. Es uno de los cuatro del estudio del ciclo del carbono; fue el único de los cuatro sin siderita.",
+    "fuente": "Tutolo et al. 2025, Science (doi:10.1126/science.ado9966)",
+    "verificado": true,
+    "cielo_tapado_pct": 13.4,
+    "pendiente": 1.2,
+    "dosis_uSv_h": 25.77
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3982095,
+     -4.7656997
+    ]
+   },
+   "properties": {
+    "pozo": 37,
+    "nombre": "Tapo Caparo",
+    "sol": 3752,
+    "elevacion_m": -3853.2,
+    "campana": "Unidad de sulfatos",
+    "campana_id": "sulfatos",
+    "idea_campana": "Carbonato de hierro: un ciclo del carbono en el Marte antiguo.",
+    "unidad": "Unidad de sulfatos",
+    "hallazgo": "Siderita (carbonato de hierro), entre 4,8 y 10,5% en peso en los tres pozos donde apareció: el CO2 de la atmósfera antigua quedó atrapado en la roca.",
+    "fuente": "Tutolo et al. 2025, Science (doi:10.1126/science.ado9966)",
+    "verificado": true,
+    "cielo_tapado_pct": 19.1,
+    "pendiente": 8.3,
+    "dosis_uSv_h": 25.4
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3986082,
+     -4.7680748
+    ]
+   },
+   "properties": {
+    "pozo": 38,
+    "nombre": "Ubajara",
+    "sol": 3823,
+    "elevacion_m": -3826.1,
+    "campana": "Unidad de sulfatos",
+    "campana_id": "sulfatos",
+    "idea_campana": "Carbonato de hierro: un ciclo del carbono en el Marte antiguo.",
+    "unidad": "Unidad de sulfatos",
+    "hallazgo": "Siderita en capas ricas en sulfato de magnesio: evidencia de un ciclo del carbono en el Marte antiguo.",
+    "fuente": "Tutolo et al. 2025, Science (doi:10.1126/science.ado9966)",
+    "verificado": true,
+    "cielo_tapado_pct": 14.7,
+    "pendiente": 14.4,
+    "dosis_uSv_h": 25.69
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4045524,
+     -4.7764748
+    ]
+   },
+   "properties": {
+    "pozo": 39,
+    "nombre": "Sequoia",
+    "sol": 3982,
+    "elevacion_m": -3764.3,
+    "campana": "Unidad de sulfatos",
+    "campana_id": "sulfatos",
+    "idea_campana": "Carbonato de hierro: un ciclo del carbono en el Marte antiguo.",
+    "unidad": "Unidad de sulfatos",
+    "hallazgo": "Tercer pozo con siderita. Parte del carbonato se destruyó después, devolviendo CO2 a la atmósfera: un ciclo incompleto.",
+    "fuente": "Tutolo et al. 2025, Science (doi:10.1126/science.ado9966)",
+    "verificado": true,
+    "cielo_tapado_pct": 13.8,
+    "pendiente": 9.9,
+    "dosis_uSv_h": 25.75
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4073539,
+     -4.7801177
+    ]
+   },
+   "properties": {
+    "pozo": 40,
+    "nombre": "Mineral King",
+    "sol": 4110,
+    "elevacion_m": -3730.0,
+    "campana": "Gediz Vallis",
+    "campana_id": "gediz",
+    "idea_campana": "Un canal tardío y piedras de azufre puro.",
+    "unidad": "Unidad de sulfatos, cerca de Gediz Vallis",
+    "hallazgo": "Roca clara de la unidad de sulfatos, antes de entrar al canal.",
+    "fuente": "NASA/JPL, 2024",
+    "verificado": false,
+    "cielo_tapado_pct": 14.4,
+    "pendiente": 13.9,
+    "dosis_uSv_h": 25.71
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4088596,
+     -4.7857191
+    ]
+   },
+   "properties": {
+    "pozo": 41,
+    "nombre": "Mammoth Lakes 2",
+    "sol": 4218,
+    "elevacion_m": -3688.2,
+    "campana": "Gediz Vallis",
+    "campana_id": "gediz",
+    "idea_campana": "Un canal tardío y piedras de azufre puro.",
+    "unidad": "Canal Gediz Vallis",
+    "hallazgo": "Roca del canal, cerca de las piedras de azufre puro que Curiosity rompió al pasar con las ruedas.",
+    "fuente": "NASA/JPL, 2024",
+    "verificado": false,
+    "cielo_tapado_pct": 12.6,
+    "pendiente": 11.9,
+    "dosis_uSv_h": 25.83
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4091284,
+     -4.7873187
+    ]
+   },
+   "properties": {
+    "pozo": 42,
+    "nombre": "Kings Canyon",
+    "sol": 4263,
+    "elevacion_m": -3673.3,
+    "campana": "Gediz Vallis",
+    "campana_id": "gediz",
+    "idea_campana": "Un canal tardío y piedras de azufre puro.",
+    "unidad": "Canal Gediz Vallis",
+    "hallazgo": "Último pozo en el canal, el 3 de agosto de 2024. Cierra la grilla de 42 pozos que publicó NASA.",
+    "fuente": "NASA/JPL-Caltech/MSSS, PIA26403",
+    "verificado": true,
+    "cielo_tapado_pct": 10.7,
+    "pendiente": 8.9,
+    "dosis_uSv_h": 25.95
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3835414,
+     -4.7998472
+    ]
+   },
+   "properties": {
+    "pozo": 43,
+    "nombre": "Altadena",
+    "sol": 4564,
+    "elevacion_m": -3647.2,
+    "campana": "Boxwork",
+    "campana_id": "boxwork",
+    "idea_campana": "Crestas en telaraña: agua subterránea al final de la historia húmeda.",
+    "unidad": "Borde de la unidad boxwork",
+    "hallazgo": "Primer pozo de la campaña del boxwork: cierra la fase de primer acercamiento (mayo y junio de 2025).",
+    "fuente": "Blog de Curiosity, sols 4804-4811",
+    "verificado": true,
+    "cielo_tapado_pct": 7.5,
+    "pendiente": 7.1,
+    "dosis_uSv_h": 26.17
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3810354,
+     -4.8078391
+    ]
+   },
+   "properties": {
+    "pozo": 44,
+    "nombre": "Valle de la Luna",
+    "sol": 4695,
+    "elevacion_m": -3610.4,
+    "campana": "Boxwork",
+    "campana_id": "boxwork",
+    "idea_campana": "Crestas en telaraña: agua subterránea al final de la historia húmeda.",
+    "unidad": "Boxwork, hueco Monte Grande",
+    "hallazgo": "Pozo 44, en el piso de un hueco. Se analizó para comparar el hueco con la cresta de al lado y entender cómo se formó el boxwork.",
+    "fuente": "Blog de Curiosity, sols 4695-4701 y 4709-4715",
+    "verificado": true,
+    "cielo_tapado_pct": 13.0,
+    "pendiente": 15.8,
+    "dosis_uSv_h": 25.8
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.381004,
+     -4.8080075
+    ]
+   },
+   "properties": {
+    "pozo": 45,
+    "nombre": "Nevado Sajama",
+    "sol": 4718,
+    "elevacion_m": -3607.7,
+    "campana": "Boxwork",
+    "campana_id": "boxwork",
+    "idea_campana": "Crestas en telaraña: agua subterránea al final de la historia húmeda.",
+    "unidad": "Boxwork, cresta junto a Monte Grande",
+    "hallazgo": "En la cresta, apenas 2 m más arriba que el hueco. Con vetas finas: fluidos que pudieron endurecer las crestas.",
+    "fuente": "Blog de Curiosity, sols 4709-4715 y 4716-4722",
+    "verificado": true,
+    "cielo_tapado_pct": 10.4,
+    "pendiente": 12.3,
+    "dosis_uSv_h": 25.97
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3809924,
+     -4.8080055
+    ]
+   },
+   "properties": {
+    "pozo": 46,
+    "nombre": "Nevado Sajama 2",
+    "sol": 4795,
+    "elevacion_m": -3608.0,
+    "campana": "Boxwork",
+    "campana_id": "boxwork",
+    "idea_campana": "Crestas en telaraña: agua subterránea al final de la historia húmeda.",
+    "unidad": "Boxwork, cresta junto a Monte Grande",
+    "hallazgo": "Segundo pozo al lado del anterior, para usar el segundo y último frasco del reactivo TMAH de SAM, que vuelve detectables moléculas orgánicas.",
+    "fuente": "Blog de Curiosity, sols 4798-4803",
+    "verificado": true,
+    "cielo_tapado_pct": 10.4,
+    "pendiente": 12.3,
+    "dosis_uSv_h": 25.97
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3815812,
+     -4.8143971
+    ]
+   },
+   "properties": {
+    "pozo": 47,
+    "nombre": "Campo Marte",
+    "sol": 4897,
+    "elevacion_m": -3569.6,
+    "campana": "Boxwork",
+    "campana_id": "boxwork",
+    "idea_campana": "Crestas en telaraña: agua subterránea al final de la historia húmeda.",
+    "unidad": "Unidad de sulfatos en capas, al salir del boxwork",
+    "hallazgo": "Pozo 47. Reemplazó a Atacama, un bloque suelto que quedó enganchado al taladro y cuya muestra se perdió. Sedimento de láminas finas.",
+    "fuente": "Blog de Curiosity, sols 4879-4885, 4893-4899 y 4900-4907",
+    "verificado": true,
+    "cielo_tapado_pct": 5.6,
+    "pendiente": 5.0,
+    "dosis_uSv_h": 26.29
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.388847,
+     -4.8251398
+    ]
+   },
+   "properties": {
+    "pozo": 48,
+    "nombre": "Basque Lakes",
+    "sol": 5024,
+    "elevacion_m": -3479.9,
+    "campana": "Valle Grande (hoy)",
+    "campana_id": "hoy",
+    "idea_campana": "Sobre la supersuperficie de erosión: bloques con discos que podrían ser cristales.",
+    "unidad": "Valle Grande, sobre la supersuperficie de erosión",
+    "hallazgo": "Primer pozo por encima de la supersuperficie de erosión, a más de 1 km de Campo Marte. Se hizo para identificar con CheMin los minerales de una roca con crestas finas que parecen cristales.",
+    "fuente": "Blog de Curiosity, sols 5016-5021",
+    "verificado": true,
+    "cielo_tapado_pct": 14.2,
+    "pendiente": 7.8,
+    "dosis_uSv_h": 25.72
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3876138,
+     -4.8246647
+    ]
+   },
+   "properties": {
+    "pozo": 49,
+    "nombre": "Nazca",
+    "sol": 5050,
+    "elevacion_m": -3488.0,
+    "campana": "Valle Grande (hoy)",
+    "campana_id": "hoy",
+    "idea_campana": "Sobre la supersuperficie de erosión: bloques con discos que podrían ser cristales.",
+    "unidad": "Valle Grande",
+    "hallazgo": "Pozo 49, en un bloque con muchos discos que podrían ser cristales. Es el último antes de la posición actual.",
+    "fuente": "Blog de Curiosity, sols 5016-5069 (docs/ciencia.md)",
+    "verificado": false,
+    "cielo_tapado_pct": 14.2,
+    "pendiente": 12.1,
+    "dosis_uSv_h": 25.72
+   }
+  }
+ ]
+}

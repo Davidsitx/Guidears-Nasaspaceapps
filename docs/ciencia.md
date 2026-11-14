@@ -12,7 +12,7 @@ Resumen en nuestras palabras. Cada punto enlaza a su fuente.
 | Período | Tema | Por qué importa | Fuente |
 | --- | --- | --- | --- |
 | mayo 2025 – marzo 2026 | Boxwork: crestas cementadas por agua subterránea, solo en esta capa | Agua subterránea activa cuando la superficie se secaba | JPL, junio 2025; blog sols 4838–4844 |
-| abril 2026 | Cráter Antofagasta (10 m) y perforación Atacama | Primer bedrock de sulfatos después del boxwork, ~160 m más arriba que Mineral King | blog sols 4867–4872 y 4873–4878 |
+| abril 2026 | Cráter Antofagasta (10 m), bloque Atacama (perforado, pero quedó enganchado al taladro y la muestra se perdió) y pozo Campo Marte (n.º 47) | Primer bedrock de sulfatos después del boxwork, ~160 m más arriba que Mineral King | blog sols 4867–4872 y 4873–4878 |
 | junio 2026 | Rumbo a la unidad de yardangs (colinas claras esculpidas por el viento) | Próxima gran campaña | blog sols 4913–4919 |
 | julio – agosto 2026 | Posible "superficie erosiva": la sedimentación se cortó por erosión y volvió | Hueco en el registro de rocas, cambio de ambiente | blog sols 4968–4974 y 4982–4987 |
 | sept. 2026 | Bandas de arena y roca en Valle Grande; ondulación eólica Chocolatal | Sedimentos movidos por el viento | blog sols 4995–5015 |

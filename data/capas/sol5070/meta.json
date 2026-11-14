@@ -17,9 +17,9 @@
   "cielo_tapado.png": "Fracción de cielo tapada por el relieve (más azul = más tapado = menos radiación). Cálculo propio: 16 direcciones hasta 400 m."
  },
  "fuentes": {
-  "pendiente": "Cálculo propio sobre el DEM USGS de Gale de 1 m (Calef y Parker 2016) llevado a 2 m.",
+  "pendiente": "Cálculo propio sobre el DEM USGS de Gale de 1 m (Calef y Parker 2016) llevado a 2 m; para las clases se usa la media en 3×3 celdas (6 m) y se descartan manchas de pocas celdas.",
   "limites": "Límite de 20° para traje (requisito lunar Artemis, NTRS 20210026296) y rover (provisorio, data/parametros.json). 30° crítico: SUPUESTO del equipo.",
-  "arena": "Indicio: CRISM FM2 (hierro ferroso) o MAF (olivino) fuerte, que suele marcar regolito o arena (guía de los mosaicos CRISM GMWG 2012), más tono oscuro en HiRISE (percentil < 35 de la zona). No es una medición de arena."
+  "arena": "Indicio: tono azulado en el color HiRISE de 3 m (índice (B−R)/(B+R) > −0,06, suavizado), en pendiente menor a 15° y en manchas de más de 160 m². La arena basáltica de Gale se ve azul oscura en estos mosaicos. No es una medición de arena; CRISM (máficos) se usa solo como apoyo."
  },
  "armado_con": "herramientas/capas_peligro.py"
 }

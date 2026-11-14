@@ -1,0 +1,40 @@
+{
+ "zona": "travesia_sur",
+ "proyeccion": "Equirectangular, paralelo estándar 0, R=3396190 m (igual que data/terreno/sol5070)",
+ "lat_norte": -4.582056279464093,
+ "lat_sur": -4.875604803995298,
+ "lon_oeste": 137.3452812104018,
+ "lon_este": 137.45662720246534,
+ "ancho_m": 6600,
+ "alto_m": 17400,
+ "dem": {
+  "archivo": "dem_12m_rg.png",
+  "ancho": 550,
+  "alto": 1450,
+  "m_por_px": 12,
+  "zmin": -4529.0,
+  "escala_m": 0.05,
+  "nota": "z = zmin + (R·256 + G) · escala_m"
+ },
+ "color": {
+  "archivos": [
+   "color_norte.jpg",
+   "color_sur.jpg"
+  ],
+  "m_por_px": 3,
+  "ancho": 2200,
+  "alto_cada_una": 2900,
+  "franjas_teñidas": 28,
+  "nota": "Las franjas grises del mosaico original (sin dato de color) se tiñeron con la paleta de sus bordes: relleno visual."
+ },
+ "cielo": {
+  "archivo": "cielo_12m.png",
+  "nota": "byte/255 = fracción de cielo tapada; 16 direcciones, horizonte de 400 m, calculado sobre el DEM de 4 m y promediado a 12 m"
+ },
+ "pendiente": {
+  "archivo": "pend_12m.png",
+  "nota": "byte/4 = grados; calculada a 4 m y promediada a 12 m"
+ },
+ "fuente": "Elevación y color entregados por el equipo el 14/11 (travesia_sur_elevacion_4m.tif y travesia_sur_color_3m.tif). La elevación coincide con el DEM USGS de Gale (Calef y Parker 2016): diferencia media de 0,22 m con data/terreno/sol5070. Origen exacto del mosaico de color: a confirmar por el equipo.",
+ "armado_con": "herramientas/travesia.py"
+}

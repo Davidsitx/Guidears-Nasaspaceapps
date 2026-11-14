@@ -45,6 +45,10 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 - data/terreno/sol5070/: terreno de la zona actual (DEM USGS 1 m y orto HiRISE, a 2 m y 0,5 m), verificado.
 - escena3d/index.html: GALE-3D, fusión del simulador de David y la escena autónoma del compañero (13/11). Se abre con doble clic, sin internet ni servidor. **No editar index.html a mano:** el código está en `escena3d/plantilla.html` y se arma con `python escena3d/armar.py [--zona <carpeta>]` (otras zonas salen como `index_<zona>.html`). Ver escena3d/README.md.
 
+## Estado al 14 de noviembre de 2026
+- La escena suma toda la travesía de Curiosity (aterrizaje → hoy): terreno de contexto, recorrido real, 49 perforaciones con ficha y viaje por soles. Ver **docs/travesia.md**.
+- 37 de las 49 fichas de perforaciones están "a verificar": no presentarlas como dato hasta revisarlas contra su fuente.
+
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).
 - Pendiente máxima astronauta: 20° (requisito lunar Artemis, a validar). Velocidad astronauta en llano: 2,5 km/h. Velocidad rover: 100 m/h en conducción; 30–60 m por sol de manejo según el blog.
