@@ -36,6 +36,16 @@ Es la fusión de dos trabajos del equipo:
   salida, aviso de sombra), **refugio** (distancia contra 1,38 km, tiempo afuera, hora) y **próxima parada** con
   flecha de rumbo. Al llegar a una parada aparece un aviso que abre su ficha.
 - **Capa de mineralogía CRISM** (ALT, HYD, FM2, MAF), si existe `data/mineralogia/crism_<zona>/`.
+- **Inicio "Cómo usar"** (botón ?) y barra con las acciones principales: **Recorrido guiado** (vuela a cada parada y
+  abre su ficha, con Anterior / Siguiente), **Caminar como astronauta** (ruta B) y **Seguir al rover** (ruta A).
+- **Primera persona con dos vistas** (botón "Vista" o tecla B): *ojos* (casco, balanceo de la cabeza al caminar,
+  partículas de polvo en el aire) y *detrás* (cámara que sigue al astronauta o al rover). Arrastrar o flechas: mirar
+  alrededor; doble toque: centrar. Transición suave al entrar.
+- **Astronauta articulado:** traje genérico sin marcas (casco de burbuja con visera dorada, mochila de soporte vital,
+  módulo de pecho, juntas). Camina con paso largo de baja gravedad (1,4 m por ciclo), se inclina en las subidas y
+  respira en reposo. **Rover:** ruedas con 24 garras en V; el mástil escanea el paisaje cuando está quieto.
+- **Huellas y polvo:** botas del astronauta y bandas de las ruedas del rover hasta donde llegó cada uno (acompañan la
+  barra de tiempo), y polvo al pisar y al rodar. Reflejos del cielo en metales y visera; cielo con degradé.
 - El borrador "a ojo" (`ruta_sol5070_cualitativa.geojson`) se carga oculto: se puede prender desde su casilla.
 - En celular los paneles arrancan cerrados (botones "Panel" y "Datos").
 
@@ -66,6 +76,7 @@ Archivos:
 | Límites de pendiente, velocidades, alcance de 1,38 km, dosis en superficie, blindaje | supuesto (**provisorio**) | `data/parametros.json` y sus fuentes |
 | Pendiente, cielo tapado, rutas A*, tiempos, dosis, inclinación del rover | cálculo propio | esta página y `armar.py` |
 | Modelo de Curiosity | aproximado | proporciones a escala, sin detalle de ingeniería |
+| Modelo y paso del astronauta | ilustrativo | traje genérico; paso de 1,4 m por ciclo elegido para que se vea la marcha de baja gravedad (supuesto visual, no medido) |
 
 Detalles:
 - **Pendiente de marcha:** desnivel en ventanas de 10 m a lo largo de la ruta. La pendiente del terreno se calcula por

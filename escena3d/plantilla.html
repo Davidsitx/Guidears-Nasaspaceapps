@@ -99,6 +99,27 @@
   #v-ref { bottom: 170px; left: 7%; } #v-mira { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px; border: 1px solid rgba(150,230,255,.5); border-radius: 50%; }
   #v-aviso { bottom: 170px; left: 50%; transform: translateX(-50%); pointer-events: auto; cursor: pointer; text-align: center; border-color: #7bd88f !important; max-width: 360px; }
   #v-min { margin-top: 3px; } #v-min div { white-space: normal; }
+  #visor.tercera .marco, #visor.tercera #v-mira { display: none; }
+
+  /* inicio: cómo usar */
+  #ayuda { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(20, 12, 8, .55); z-index: 8; padding: 16px; }
+  #ayuda .tarjeta { background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 18px 20px; width: min(560px, 100%); max-height: 100%; overflow-y: auto; }
+  #ayuda h1 { font-size: 20px; margin-bottom: 4px; }
+  #ayuda .opciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0 10px; }
+  #ayuda .opciones button { text-align: left; padding: 11px 12px; border-radius: 9px; line-height: 1.3; }
+  #ayuda .opciones button b { display: block; font-size: 14px; margin-bottom: 2px; }
+  #ayuda .opciones button span { color: var(--tenue); font-size: 12px; }
+  #ayuda ul { margin: 6px 0 0; padding-left: 18px; color: var(--tenue); font-size: 12.5px; }
+  @media (max-width: 520px) { #ayuda .opciones { grid-template-columns: 1fr; } }
+  #ctrl .grupo { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding-right: 8px; border-right: 1px solid var(--borde); }
+  .nav-tour { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 2px 40px 8px 0; }
+  .nav-tour span { color: var(--tenue); font-size: 12px; }
+  /* pantallas táctiles: botones más grandes */
+  @media (pointer: coarse) {
+    button, select { min-height: 40px; padding: 8px 12px; }
+    #fp .datos b { font-size: 17px; }
+    details > summary { padding: 9px 0; }
+  }
   @media (max-width: 760px) {
     #visor { font-size: 11px; } #visor .vb { min-width: 0; padding: 5px 7px; }
     #v-suelo { left: 3%; top: 64px; max-width: 46%; } #v-rad { right: 3%; top: 64px; max-width: 46%; } #v-ref { left: 3%; bottom: 190px; } #v-aviso { bottom: 190px; }
@@ -173,8 +194,14 @@
 </div>
 
 <div id="ctrl" class="caja">
+  <div class="grupo">
+    <button class="pri" id="bTour" title="Visita las paradas una por una con su ficha">Recorrido guiado</button>
+    <button id="bCaminar" title="Ruta B a pie, con el visor del casco">Caminar como astronauta</button>
+    <button id="bSeguir" title="Ruta A del robot, con la cámara detrás">Seguir al rover</button>
+    <button id="bAyuda" title="Cómo usar" aria-label="Cómo usar">?</button>
+  </div>
   <button id="bMarcar" aria-pressed="false">Marcar paradas</button>
-  <button class="pri" id="bCalcular">Calcular rutas</button>
+  <button id="bCalcular">Calcular rutas</button>
   <button id="bAuto" aria-pressed="false">Autonomía (G)</button>
   <button id="bBorrar">Borrar</button>
   <select id="sCam" aria-label="Cámara">
@@ -186,10 +213,26 @@
   <label>Hora <input type="range" id="iHora" min="5.5" max="18.5" step="0.25" value="12"></label>
   <label>Ls <input type="number" id="iLs" min="0" max="359" value="21"></label>
   <label>Velocidad × <select id="sVel"><option>1</option><option>10</option><option selected>60</option><option>300</option></select></label>
-  <span id="msg">Teclas: G autonomía · WASD manejar · Espacio parar · 1–4 cámaras · C capa · V visor (primera persona)</span>
+  <span id="msg">Teclas: G autonomía · WASD manejar · Espacio parar · 1–4 cámaras · C capa · en primera persona: B vista, V visor, flechas mirar</span>
 </div>
 
 <div id="ficha" class="caja oculto"><button class="cerrar" id="ficha-cerrar">×</button><div id="ficha-texto"></div></div>
+
+<div id="ayuda" class="oculto"><div class="tarjeta">
+  <h1>GALE-3D · donde está Curiosity hoy</h1>
+  <div class="sub">Terreno real de Marte (sol 5070), a escala 1:1. Comparamos al robot con un astronauta sobre las mismas paradas, con datos de pendiente, radiación y minerales.</div>
+  <div class="opciones">
+    <button class="pri" data-ay="tour"><b>Recorrido guiado</b><span>Las paradas una por una: qué hay y por qué ir.</span></button>
+    <button data-ay="caminar"><b>Caminar como astronauta</b><span>Ruta B a pie, con el visor del casco.</span></button>
+    <button data-ay="seguir"><b>Seguir al rover</b><span>Ruta A del robot, desde atrás, con sus huellas.</span></button>
+    <button data-ay="libre"><b>Explorar libre</b><span>Mover la cámara y tocar los carteles.</span></button>
+  </div>
+  <ul>
+    <li>Arrastrar: girar la vista. Rueda o pellizco: acercar. Tocar un cartel: ficha de la parada.</li>
+    <li>En primera persona: arrastrar para mirar alrededor, doble toque para centrar, B cambia la vista y V el visor.</li>
+    <li>Los datos marcados como <span class="prov">provisorio</span> son supuestos del equipo; el resto tiene fuente (panel, abajo).</li>
+  </ul>
+</div></div>
 
 <div id="visor" class="oculto">
   <div class="marco"></div><div id="v-mira"></div>
@@ -222,6 +265,7 @@
   <input type="range" id="f-barra" min="0" max="1000" value="0">
   <div class="fila2">
     <button id="f-play">▶ Recorrer</button>
+    <button id="f-vista" title="Cambiar entre los ojos y la cámara de atrás (B)">Vista: ojos</button>
     <button id="f-visor" aria-pressed="true" title="Datos del casco sobre la vista (V)">Visor</button>
     <label style="margin:0">Duración <select id="f-vel"><option value="30">30 s</option><option value="90" selected>90 s</option><option value="240">4 min</option></select></label>
     <span class="sub" id="f-ruta" style="flex:1"></span>
@@ -308,6 +352,12 @@ function muestrear(A, px, py) {
   return (A[k] * (1 - fx) + A[k + 1] * fx) * (1 - fy) + (A[k + W] * (1 - fx) + A[k + W + 1] * fx) * fy;
 }
 const alturaEn = (x, z) => muestrear(Z, ...mundoAPix(x, z));
+// altura sobre los mismos triángulos que dibuja la malla (para apoyar huellas y pies sin que queden enterrados)
+function alturaMalla(x, z) {
+  const [px, py] = mundoAPix(x, z), u = Math.min(Math.max(px - 0.5, 0), W - 1.0001), v = Math.min(Math.max(py - 0.5, 0), H - 1.0001);
+  const j = Math.floor(u), i = Math.floor(v), fx = u - j, fy = v - i, a = i * W + j, b = a + 1, c = a + W, d = c + 1;
+  return fx + fy <= 1 ? Z[a] + (Z[b] - Z[a]) * fx + (Z[c] - Z[a]) * fy : Z[d] + (Z[c] - Z[d]) * (1 - fx) + (Z[b] - Z[d]) * (1 - fy);
+}
 const celdaDe = (x, z) => { const [px, py] = mundoAPix(x, z); return [Math.min(W - 1, Math.max(0, Math.floor(px))), Math.min(H - 1, Math.max(0, Math.floor(py)))]; };
 const centroDe = ([c, f]) => pixAMundo(c + 0.5, f + 0.5);
 
@@ -384,6 +434,15 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure
 const escena = new THREE.Scene();
 escena.background = new THREE.Color('#c99a74');
 escena.fog = new THREE.Fog('#c99a74', 2500, 6000);
+// cielo: cúpula con degradé (más oscuro arriba, polvo claro en el horizonte); el color lo ajusta la hora del día
+const cieloDomo = (() => {
+  const g = new THREE.SphereGeometry(9000, 32, 16), p = g.attributes.position, c = [];
+  for (let i = 0; i < p.count; i++) { const y = Math.max(0, p.getY(i) / 9000), k = 1 - Math.pow(y, 0.45) * 0.42; c.push(k, k * (0.97 - y * 0.05), k * (0.93 - y * 0.06)); }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(c, 3));
+  const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: false, depthWrite: false }));
+  m.renderOrder = -1; m.frustumCulled = false; return m;
+})();
+escena.add(cieloDomo);
 const camara = new THREE.PerspectiveCamera(50, 1, 0.1, 12000);
 const controles = new OrbitControls(camara, lienzo);
 controles.enableDamping = true; controles.maxPolarAngle = Math.PI * 0.495; controles.minDistance = 3; controles.maxDistance = 6000;
@@ -394,6 +453,20 @@ Object.assign(sol.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, n
 sol.shadow.bias = -0.0006; sol.shadow.normalBias = 0.04;
 escena.add(sol, sol.target);
 const hemi = new THREE.HemisphereLight('#f3dcc2', '#7a5038', 0.9); escena.add(hemi);
+// reflejos: mapa de entorno con un cielo marciano (da brillo real a las ruedas de aluminio, al MMRTG y al visor dorado)
+{
+  const sc = new THREE.Scene(), g = new THREE.SphereGeometry(10, 48, 24), p = g.attributes.position, cols = [];
+  const cTop = new THREE.Color('#e3c4a2'), cHor = new THREE.Color('#d29b70'), cSue = new THREE.Color('#4a2c1d');
+  for (let i = 0; i < p.count; i++) {
+    const y = p.getY(i) / 10, c = y > 0 ? cHor.clone().lerp(cTop, Math.pow(y, 0.5)) : cHor.clone().lerp(cSue, Math.min(1, -y * 4));
+    cols.push(c.r, c.g, c.b);
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+  sc.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
+  const disco = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(6, 5.4, 4.6) }));
+  disco.position.set(3, 8.5, 2); sc.add(disco);
+  const pm = new THREE.PMREMGenerator(renderer); escena.environment = pm.fromScene(sc, 0.03).texture; pm.dispose();
+}
 
 // terreno: un vértice por celda de 2 m
 etapa('Armando el terreno…');
@@ -425,7 +498,7 @@ const ctxTex = lienzoTex.getContext('2d');
 const textura = new THREE.CanvasTexture(lienzoTex);
 textura.colorSpace = THREE.SRGBColorSpace;
 textura.anisotropy = renderer.capabilities.getMaxAnisotropy();
-const terreno = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: textura, roughness: 0.96, metalness: 0 }));
+const terreno = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: textura, roughness: 0.96, metalness: 0, envMapIntensity: 0.25 }));
 terreno.receiveShadow = true; terreno.castShadow = true;
 escena.add(terreno);
 
@@ -539,8 +612,8 @@ function dibujarRuta(r) {
   const mat = new THREE.MeshBasicMaterial({ color: r.color, transparent: opac < 1, opacity: opac, depthWrite: opac === 1 });
   const curva = new THREE.CatmullRomCurve3(r.pts.map(q => new THREE.Vector3(q.x, q.y + 1.2, q.z)), false, 'centripetal');
   r.tubo = new THREE.Mesh(new THREE.TubeGeometry(curva, Math.max(8, r.pts.length), 2.2, 6), mat);
-  const curvaSuelo = new THREE.CatmullRomCurve3(r.pts.map(q => new THREE.Vector3(q.x, q.y + 0.2, q.z)), false, 'centripetal');
-  r.fino = new THREE.Mesh(new THREE.TubeGeometry(curvaSuelo, Math.max(8, r.pts.length * 2), 0.15, 5), mat);
+  const curvaSuelo = new THREE.CatmullRomCurve3(r.pts.map(q => new THREE.Vector3(q.x, q.y + 0.15, q.z)), false, 'centripetal');
+  r.fino = new THREE.Mesh(new THREE.TubeGeometry(curvaSuelo, Math.max(8, r.pts.length * 2), 0.07, 5), new THREE.MeshBasicMaterial({ color: r.color, transparent: true, opacity: 0.75, depthWrite: false }));
   escena.add(r.tubo, r.fino);
 }
 function quitarRuta(r) { for (const o of [r.tubo, r.fino]) { escena.remove(o); o.geometry.dispose(); } }
@@ -672,13 +745,19 @@ for (const lado of [1, -1]) malla(new THREE.CylinderGeometry(0.08, 0.08, 0.12, 1
 const ruedas = [];
 const geoRueda = new THREE.CylinderGeometry(RUEDA_R, RUEDA_R, RUEDA_A, 32, 1, true);
 const geoTapa = new THREE.CircleGeometry(RUEDA_R - 0.01, 32);
-const geoGarra = new THREE.BoxGeometry(0.012, RUEDA_A * 0.98, 0.018);
+const geoGarra = new THREE.BoxGeometry(0.014, 0.022, RUEDA_A * 0.54);
 for (let w = 0; w < 6; w++) {
   const lado = w < 3 ? 1 : -1, xi = WX[w % 3];
   const g = new THREE.Group(); rover.add(g);
   const giro = new THREE.Group(); g.add(giro);
   malla(geoRueda, MAT.alu, giro, [0, 0, 0], [Math.PI / 2, 0, 0]);
-  for (let q = 0; q < 24; q++) { const a = q / 24 * Math.PI * 2; const gr = malla(geoGarra, MAT.alu, giro, [Math.cos(a) * RUEDA_R, Math.sin(a) * RUEDA_R, 0]); gr.rotation.set(0, 0, a); gr.rotateX(Math.PI / 2); }
+  // 24 garras en V (chevrón), como las ruedas de Curiosity: una sola malla instanciada por rueda
+  const garras = new THREE.InstancedMesh(geoGarra, MAT.alu, 48); garras.castShadow = true;
+  for (let q = 0, k = 0; q < 24; q++) for (const h of [-1, 1]) {
+    const a = q / 24 * Math.PI * 2, m = new THREE.Matrix4().makeRotationZ(a - Math.PI / 2).multiply(new THREE.Matrix4().makeRotationY(h * 0.38));
+    m.setPosition(Math.cos(a) * (RUEDA_R + 0.008), Math.sin(a) * (RUEDA_R + 0.008), h * RUEDA_A / 4); garras.setMatrixAt(k++, m);
+  }
+  giro.add(garras);
   malla(geoTapa, MAT.gris, giro, [0, 0, lado * RUEDA_A / 2], [0, lado > 0 ? 0 : Math.PI, 0]);
   for (let q = 0; q < 6; q++) malla(new THREE.BoxGeometry(0.02, RUEDA_R * 0.86, 0.01), MAT.alu, giro, [0, 0, lado * (RUEDA_A / 2 + 0.005)], [0, 0, q / 6 * Math.PI * 2]).geometry.translate(0, RUEDA_R * 0.43, 0);
   malla(new THREE.CylinderGeometry(0.07, 0.07, 0.05, 16), MAT.oscuro, g, [0, 0, lado * (RUEDA_A / 2 + 0.02)], [Math.PI / 2, 0, 0]);
@@ -692,14 +771,100 @@ const susp = [1, -1].map(lado => ({ lado, rDel: brazo(0.035), rTras: brazo(0.035
 const manchaSombra = new THREE.Mesh(new THREE.CircleGeometry(1.9, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18, depthWrite: false }));
 manchaSombra.rotation.x = -Math.PI / 2; manchaSombra.position.y = 0.03; rover.add(manchaSombra);
 
-// ---------- astronauta (1,7 m) ----------
+// ---------- astronauta (1,7 m), articulado para caminar ----------
+// Traje genérico de superficie (sin marcas): casco de burbuja con visera dorada, mochila de soporte vital (PLSS),
+// módulo de control en el pecho, juntas en hombros, codos, rodillas y botas. Mira hacia +x local, como el rover.
 const astro = new THREE.Group(); escena.add(astro);
-const traje = new THREE.MeshStandardMaterial({ color: 0xeeeeea, roughness: 0.8 });
-malla(new THREE.CapsuleGeometry(0.21, 0.7, 6, 14), traje, astro, [0, 0.95, 0]);
-malla(new THREE.SphereGeometry(0.16, 20, 16), traje, astro, [0, 1.53, 0]);
-malla(new THREE.SphereGeometry(0.125, 20, 12, 0, Math.PI), MAT.oro, astro, [0.06, 1.54, 0], [0, -Math.PI / 2, 0]);
-malla(new THREE.BoxGeometry(0.22, 0.48, 0.38), traje, astro, [-0.24, 1.1, 0]);     // mochila de soporte vital
-const piernas = [-0.1, 0.1].map(z => malla(new THREE.CapsuleGeometry(0.08, 0.56, 4, 10), traje, astro, [0, 0.4, z]));
+const MT = {
+  traje: new THREE.MeshStandardMaterial({ color: 0xf1eee6, roughness: 0.82, envMapIntensity: 0.6 }),
+  duro: new THREE.MeshStandardMaterial({ color: 0xe9e6de, roughness: 0.45, metalness: 0.1 }),
+  junta: new THREE.MeshStandardMaterial({ color: 0x8f8b83, roughness: 0.45, metalness: 0.55 }),
+  bota: new THREE.MeshStandardMaterial({ color: 0x6a645c, roughness: 0.9 }),
+  suela: new THREE.MeshStandardMaterial({ color: 0x2c2926, roughness: 0.95 }),
+  guante: new THREE.MeshStandardMaterial({ color: 0xd8d2c4, roughness: 0.75 }),
+  franja: new THREE.MeshStandardMaterial({ color: 0xd2552b, roughness: 0.6 }),
+  burbuja: new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.03, transmission: 0, transparent: true, opacity: 0.22, clearcoat: 1, envMapIntensity: 1.5 }),
+  visera: new THREE.MeshStandardMaterial({ color: 0xe0ad4c, roughness: 0.08, metalness: 1, envMapIntensity: 2.2 }),
+  pantalla: new THREE.MeshStandardMaterial({ color: 0x1a2a30, roughness: 0.3, metalness: 0.4, emissive: 0x0b6b7a, emissiveIntensity: 0.8 }),
+  luz: new THREE.MeshStandardMaterial({ color: 0xfff6dc, emissive: 0xfff2c8, emissiveIntensity: 1.6 }),
+};
+const cuerpo = new THREE.Group(); astro.add(cuerpo);
+const cadera = new THREE.Group(); cadera.position.y = 0.93; cuerpo.add(cadera);
+malla(new THREE.CylinderGeometry(0.17, 0.19, 0.16, 20), MT.traje, cadera, [0, 0.0, 0], [0, 0, 0]).scale.set(0.85, 1, 1.1);   // cadera del traje
+malla(new THREE.TorusGeometry(0.175, 0.025, 8, 24), MT.junta, cadera, [0, 0.09, 0], [Math.PI / 2, 0, 0]).scale.set(0.85, 1.1, 1);  // anillo de cintura
+const torso = new THREE.Group(); cadera.add(torso);
+{
+  const t = malla(new THREE.CapsuleGeometry(0.2, 0.3, 8, 20), MT.duro, torso, [0, 0.33, 0]); t.scale.set(0.9, 1, 1.28);   // torso rígido
+  malla(new THREE.BoxGeometry(0.1, 0.13, 0.24), MT.junta, torso, [0.2, 0.3, 0]);                                       // módulo de control
+  malla(new THREE.BoxGeometry(0.012, 0.07, 0.15), MT.pantalla, torso, [0.252, 0.32, 0]);
+  for (const z of [-0.07, 0, 0.07]) malla(new THREE.CylinderGeometry(0.012, 0.012, 0.02, 10), MT.franja, torso, [0.252, 0.26, z], [0, 0, Math.PI / 2]);
+  malla(new THREE.TorusGeometry(0.13, 0.03, 10, 28), MT.junta, torso, [0, 0.55, 0], [Math.PI / 2, 0, 0]);                // anillo del cuello
+  // mochila de soporte vital (PLSS)
+  malla(new THREE.BoxGeometry(0.22, 0.52, 0.44), MT.duro, torso, [-0.3, 0.33, 0]);
+  malla(new THREE.CylinderGeometry(0.11, 0.11, 0.44, 16), MT.duro, torso, [-0.3, 0.6, 0], [Math.PI / 2, 0, 0]);
+  malla(new THREE.BoxGeometry(0.015, 0.3, 0.3), MT.traje, torso, [-0.415, 0.3, 0]);
+  for (const z of [-0.14, 0.14]) malla(new THREE.CylinderGeometry(0.018, 0.018, 0.42, 8), MT.junta, torso, [-0.18, 0.33, z]);
+  malla(new THREE.CylinderGeometry(0.01, 0.01, 0.22, 6), MT.junta, torso, [-0.38, 0.78, 0.15]);                         // antena
+}
+// casco: carcasa trasera, burbuja transparente, visera dorada y dos luces
+const casco = new THREE.Group(); casco.position.set(0.02, 0.69, 0); torso.add(casco);
+malla(new THREE.SphereGeometry(0.17, 28, 20, -(Math.PI - 0.7) / 2, Math.PI - 0.7), MT.duro, casco);   // media esfera de atrás (-x)
+malla(new THREE.SphereGeometry(0.11, 18, 14), MT.suela, casco, [-0.01, -0.01, 0]);                    // cabeza (sombra interior)
+const burbuja = malla(new THREE.SphereGeometry(0.175, 32, 24), MT.burbuja, casco); burbuja.castShadow = false;
+malla(new THREE.SphereGeometry(0.178, 32, 20, Math.PI - 1.15, 2.3, 0.55, 1.05), MT.visera, casco);   // visera hacia +x
+for (const z of [-0.15, 0.15]) {
+  malla(new THREE.BoxGeometry(0.06, 0.05, 0.05), MT.junta, casco, [0.05, 0.1, z]);
+  malla(new THREE.BoxGeometry(0.01, 0.03, 0.035), MT.luz, casco, [0.082, 0.1, z]);
+}
+// brazos: hombro → brazo → codo → antebrazo → guante
+const brazos = [-1, 1].map(lado => {
+  const hombro = new THREE.Group(); hombro.position.set(0, 0.47, lado * 0.27); torso.add(hombro);
+  malla(new THREE.SphereGeometry(0.085, 16, 12), MT.junta, hombro);
+  malla(new THREE.CapsuleGeometry(0.068, 0.2, 6, 14), MT.traje, hombro, [0, -0.17, 0]);
+  if (lado > 0) malla(new THREE.CylinderGeometry(0.073, 0.073, 0.05, 16), MT.franja, hombro, [0, -0.1, 0]);   // franja de identificación
+  const codo = new THREE.Group(); codo.position.y = -0.33; hombro.add(codo);
+  malla(new THREE.TorusGeometry(0.06, 0.018, 8, 18), MT.junta, codo, [0, 0, 0], [Math.PI / 2, 0, 0]);
+  malla(new THREE.CapsuleGeometry(0.062, 0.18, 6, 14), MT.traje, codo, [0, -0.14, 0]);
+  malla(new THREE.CylinderGeometry(0.066, 0.066, 0.035, 14), MT.junta, codo, [0, -0.26, 0]);   // muñeca
+  const g = malla(new THREE.SphereGeometry(0.06, 14, 10), MT.guante, codo, [0.01, -0.32, 0]); g.scale.set(1, 1.3, 0.8);
+  return { hombro, codo, lado };
+});
+// piernas: cadera → muslo → rodilla → pierna → bota
+const piernas = [-1, 1].map(lado => {
+  const muslo = new THREE.Group(); muslo.position.set(0, -0.02, lado * 0.11); cadera.add(muslo);
+  malla(new THREE.CapsuleGeometry(0.092, 0.28, 6, 14), MT.traje, muslo, [0, -0.21, 0]);
+  const rodilla = new THREE.Group(); rodilla.position.y = -0.43; muslo.add(rodilla);
+  malla(new THREE.SphereGeometry(0.08, 14, 10), MT.junta, rodilla);
+  malla(new THREE.CapsuleGeometry(0.08, 0.27, 6, 14), MT.traje, rodilla, [0, -0.2, 0]);
+  const tobillo = new THREE.Group(); tobillo.position.y = -0.38; rodilla.add(tobillo);
+  malla(new THREE.BoxGeometry(0.27, 0.11, 0.14), MT.bota, tobillo, [0.04, -0.03, 0]);
+  malla(new THREE.BoxGeometry(0.29, 0.025, 0.15), MT.suela, tobillo, [0.04, -0.09, 0]);
+  malla(new THREE.CylinderGeometry(0.085, 0.09, 0.12, 14), MT.bota, tobillo, [-0.01, 0.05, 0]);
+  return { muslo, rodilla, tobillo, lado };
+});
+// pose de caminata. fase en radianes (una vuelta = un paso de cada pie); mov 0 = quieto, 1 = caminando.
+// Paso largo y saltado, como en la Luna y Marte con poca gravedad (1,4 m por ciclo).
+const ZANCADA = 1.4;
+function poseAstro(fase, mov = 1, pendiente = 0, t = 0) {
+  const s = Math.sin(fase), c = Math.cos(fase);
+  piernas.forEach(p => {
+    const sg = p.lado, sw = sg * s;
+    p.muslo.rotation.z = mov * 0.45 * sw;                                       // + = pierna hacia adelante
+    p.rodilla.rotation.z = -(0.08 + mov * 0.7 * Math.max(0, -sg * c));          // flexión al pasar la pierna
+    p.tobillo.rotation.z = -p.muslo.rotation.z - p.rodilla.rotation.z * 0.6;    // la bota queda casi paralela al suelo
+  });
+  brazos.forEach(b => {
+    b.hombro.rotation.z = -mov * 0.32 * b.lado * s + 0.05;
+    b.hombro.rotation.x = -b.lado * 0.14;                                       // brazos algo separados (traje rígido)
+    b.codo.rotation.z = 0.35 + mov * 0.18 * (1 - b.lado * s);
+  });
+  cadera.position.y = 0.93 - mov * 0.035 + mov * 0.05 * Math.abs(c);          // rebote: arriba a mitad de paso
+  torso.rotation.z = -(0.06 + mov * 0.08 + Math.max(-0.12, Math.min(0.2, pendiente * 0.6)));   // inclinación hacia adelante y en subida
+  torso.rotation.x = mov * 0.04 * s;
+  casco.rotation.z = -torso.rotation.z * 0.6;                                   // la cabeza compensa y mira al frente
+  if (!mov) torso.scale.y = 1 + 0.008 * Math.sin(t * 1.6);                     // respiración en reposo
+}
+poseAstro(0, 0);
 astro.visible = false;
 
 // ---------- estado del rover y del astronauta ----------
@@ -732,6 +897,79 @@ function ubicarRover() {
     estirar(sp.postes[0], fA, new THREE.Vector3(wF.x, wF.y, zIn)); estirar(sp.postes[1], mA, new THREE.Vector3(wM.x, wM.y, zIn)); estirar(sp.postes[2], rA, new THREE.Vector3(wR.x, wR.y, zIn));
     sp.bog.position.copy(bog); sp.bog.rotation.set(Math.PI / 2, 0, 0);
   });
+}
+
+// ---------- huellas: botas del astronauta y bandas del rover, hasta donde llegó cada uno ----------
+// Se calculan una vez por ruta y se muestran por cantidad: al adelantar o retroceder la barra, las huellas acompañan.
+const _m4 = new THREE.Matrix4(), _q = new THREE.Quaternion(), _qy = new THREE.Quaternion(), _nrm = new THREE.Vector3(), _up = new THREE.Vector3(0, 1, 0), _uno = new THREE.Vector3(1, 1, 1), _p = new THREE.Vector3();
+function normalEn(x, z) { const e = 1; return _nrm.set(alturaEn(x - e, z) - alturaEn(x + e, z), 2 * e, alturaEn(x, z - e) - alturaEn(x, z + e)).normalize(); }
+function capaHuellas(n, geo, op) {
+  const m = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: 0x3b2417, roughness: 1, transparent: true, opacity: op, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }), n);
+  m.count = 0; m.frustumCulled = false; m.renderOrder = 2; escena.add(m);
+  return { m, n, ruta: null, d: [], pos: [] };
+}
+const geoPie = new THREE.CircleGeometry(0.5, 14); geoPie.rotateX(-Math.PI / 2); geoPie.scale(0.3, 1, 0.13);   // suela de unos 30 × 13 cm
+const geoBanda = new THREE.PlaneGeometry(0.52, 0.4); geoBanda.rotateX(-Math.PI / 2);                         // banda de rueda de 40 cm
+const huellasAstro = capaHuellas(6000, geoPie, 0.6), huellasRover = capaHuellas(9000, geoBanda, 0.33);
+function prepararHuellas(h, r, pies) {
+  h.ruta = r; h.d = []; h.pos = []; h.m.count = 0; if (!r) return;
+  const paso = pies ? ZANCADA / 2 : 0.5; let k = 0, i = 0;
+  for (let d = paso; d < r.largo && k < h.n; d += paso, i++) {
+    const a = puntoEn(r, d), b = puntoEn(r, Math.min(r.largo, d + 1)), yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+    for (const lz of pies ? [i % 2 ? 0.11 : -0.11] : [-WZ, WZ]) {
+      if (k >= h.n) break;
+      const x = a.x + Math.sin(yaw) * lz, z = a.z + Math.cos(yaw) * lz;
+      _p.set(x, alturaMalla(x, z) + 0.035, z);
+      _q.setFromUnitVectors(_up, normalEn(x, z)).multiply(_qy.setFromAxisAngle(_up, yaw));
+      h.m.setMatrixAt(k++, _m4.compose(_p, _q, _uno)); h.d.push(d); h.pos.push(_p.clone());
+    }
+  }
+  h.m.instanceMatrix.needsUpdate = true;
+}
+// muestra las huellas hasta la distancia d; devuelve las que se sumaron (para levantar polvo ahí)
+function huellasHasta(h, r, d, pies) {
+  if (h.ruta !== r) prepararHuellas(h, r, pies);
+  if (!r) return [];
+  let lo = 0, hi = h.d.length; while (lo < hi) { const m = (lo + hi) >> 1; if (h.d[m] <= d) lo = m + 1; else hi = m; }
+  const antes = h.m.count; h.m.count = lo;
+  return lo > antes && lo - antes < 6 ? h.pos.slice(antes, lo) : [];
+}
+
+// ---------- polvo: nubecitas al pisar o rodar, y partículas suspendidas cerca de los ojos ----------
+const NP = 500, polvoPos = new Float32Array(NP * 3).fill(-1e5), polvoVel = new Float32Array(NP * 3), polvoVida = new Float32Array(NP);
+const polvoGeo = new THREE.BufferGeometry(); polvoGeo.setAttribute('position', new THREE.BufferAttribute(polvoPos, 3));
+const polvo = new THREE.Points(polvoGeo, new THREE.PointsMaterial({ color: 0xc89f7a, size: 0.09, transparent: true, opacity: 0.6, depthWrite: false }));
+polvo.frustumCulled = false; escena.add(polvo);
+let polvoI = 0;
+function soplarPolvo(p, n = 7, f = 0.45) {
+  for (let k = 0; k < n; k++) {
+    const i = polvoI++ % NP;
+    polvoPos[3 * i] = p.x + (Math.random() - 0.5) * 0.25; polvoPos[3 * i + 1] = p.y + 0.04; polvoPos[3 * i + 2] = p.z + (Math.random() - 0.5) * 0.25;
+    polvoVel[3 * i] = (Math.random() - 0.5) * f; polvoVel[3 * i + 1] = Math.random() * f * 0.7; polvoVel[3 * i + 2] = (Math.random() - 0.5) * f;
+    polvoVida[i] = 1 + Math.random() * 1.2;
+  }
+}
+const NA = 320, airePos = new Float32Array(NA * 3);
+for (let i = 0; i < NA * 3; i++) airePos[i] = (Math.random() - 0.5) * 30;
+const aireGeo = new THREE.BufferGeometry(); aireGeo.setAttribute('position', new THREE.BufferAttribute(airePos, 3));
+const aire = new THREE.Points(aireGeo, new THREE.PointsMaterial({ color: 0xf0d7b8, size: 0.035, transparent: true, opacity: 0.55, depthWrite: false }));
+aire.frustumCulled = false; aire.visible = false; escena.add(aire);
+function moverPolvo(dt) {
+  for (let i = 0; i < NP; i++) {
+    if (polvoVida[i] <= 0) continue;
+    polvoVida[i] -= dt; polvoVel[3 * i + 1] -= 0.25 * dt; polvoVel[3 * i] *= 0.97; polvoVel[3 * i + 2] *= 0.97;
+    for (let c = 0; c < 3; c++) polvoPos[3 * i + c] += polvoVel[3 * i + c] * dt;
+    if (polvoVida[i] <= 0) polvoPos[3 * i + 1] = -1e5;
+  }
+  polvoGeo.attributes.position.needsUpdate = true;
+  if (aire.visible) {      // deriva con el viento; las que se alejan de la cámara reaparecen del otro lado
+    const c = camara.position;
+    for (let i = 0; i < NA; i++) {
+      airePos[3 * i] += 0.35 * dt; airePos[3 * i + 1] += Math.sin(i + performance.now() / 1500) * 0.03 * dt; airePos[3 * i + 2] += 0.12 * dt;
+      for (let k = 0; k < 3; k++) { const v = [c.x, c.y, c.z][k], d = airePos[3 * i + k] - v; if (d > 15) airePos[3 * i + k] -= 30; else if (d < -15) airePos[3 * i + k] += 30; }
+    }
+    aireGeo.attributes.position.needsUpdate = true;
+  }
 }
 
 // ---------- planificador A* (de GALE-3D) ----------
@@ -900,7 +1138,7 @@ function actualizarSol() {
   sol.intensity = 3.0 * dia; hemi.intensity = 0.3 + 0.85 * dia;
   const cielo = new THREE.Color().setRGB(0.12 + 0.66 * dia, 0.10 + 0.52 * dia, 0.10 + 0.36 * dia);
   if (el < 0.2 && el > -0.05) cielo.lerp(new THREE.Color(0.35, 0.45, 0.6), 0.35);     // atardecer azulado de Marte
-  escena.background = cielo; escena.fog.color.copy(cielo);
+  escena.background = cielo; escena.fog.color.copy(cielo); cieloDomo.material.color.copy(cielo);
   const hh = Math.floor(hora), mm = Math.round((hora - hh) * 60);
   $('eHora').textContent = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
   $('eSol').textContent = `${num(el * 180 / Math.PI)}°`;
@@ -921,13 +1159,16 @@ function setCam(m) {
   }
 }
 $('sCam').onchange = e => setCam(e.target.value);
-function vistaGeneral() {
+let vuelo = null;
+// vuelo suave de la cámara hacia una posición y un punto de mira (lo aplica el bucle)
+function volarA(pos, obj, seg = 1.4) { vuelo = { p0: camara.position.clone(), t0: controles.target.clone(), p1: pos.clone(), t1: obj.clone(), t: 0, dur: seg }; }
+function vistaGeneral(animar = false) {
   const k = Math.max(1, 0.75 / camara.aspect);
   const ys = rutas.flatMap(r => r.pts.map(q => q.y)), ymed = ys.length ? (Math.min(...ys) + Math.max(...ys)) / 2 : 150;
-  controles.target.set(0, ymed, 0);
-  camara.position.set(0, ymed + 1300 * k, 1500 * k);
   escena.fog.near = 2500 * k; escena.fog.far = 6000 * k;
-  controles.update();
+  const obj = new THREE.Vector3(0, ymed, 0), pos = new THREE.Vector3(0, ymed + 1300 * k, 1500 * k);
+  if (animar) { volarA(pos, obj); return; }
+  controles.target.copy(obj); camara.position.copy(pos); controles.update();
 }
 
 // ---------- primera persona (recorre una ruta a la altura de los ojos) ----------
@@ -940,31 +1181,86 @@ function puntoEn(r, d) {
   const L = k => a[k] + (b[k] - a[k]) * t;
   return { x: L('x'), z: L('z'), y: L('y'), t: L('t'), dosis: L('dosis'), cielo: L('cielo'), marcha: b.marcha };
 }
-function entrarFP(r) {
-  fp = { r, d: 0, jugando: false, dir: null };
+// vista: 'ojos' (primera persona) o 'detras' (cámara que sigue al astronauta o al rover por la ruta)
+function entrarFP(r, vista = 'ojos') {
+  if (fp) salirFP(false);
+  fp = { r, d: 0, jugando: false, dir: null, vista: r.tipo === 'tripulado' ? 'ojos' : vista, mirar: { yaw: 0, pitch: 0 }, ultD: 0,
+    trans: { t0: performance.now(), p0: camara.position.clone(), q0: camara.quaternion.clone() },
+    est: { x: est.x, z: est.z, yaw: est.yaw, auto: est.auto }, astroVis: astro.visible };
+  setAuto(false); vuelo = null; fPlay.textContent = '▶ Recorrer';
   rutaSel = r; marcarSel(); dibujarPerfil();
   controles.enabled = false;
-  $('fp').classList.remove('oculto'); $('ctrl').classList.add('oculto');
-  $('f-ruta').textContent = `${r.nombre} · ojos a ${OJOS[r.tipo]} m`;
+  $('fp').classList.remove('oculto'); $('ctrl').classList.add('oculto'); $('ayuda').classList.add('oculto');
   $('f-dosis-et').textContent = r.tipo === 'astronauta' ? 'dosis acumulada' : r.tipo === 'vehiculo' ? 'soles de manejo' : '—';
   if (innerWidth < 760) mostrarPaneles(false);
   prepararVisor(r);
+  aplicarVista();
   ubicarFP(true);
 }
-function salirFP(volver = true) {
-  fp = null; $('fp').classList.add('oculto'); $('ctrl').classList.remove('oculto'); $('visor').classList.add('oculto');
-  controles.enabled = true;
-  if (volver) { modoCam = 'libre'; $('sCam').value = 'libre'; vistaGeneral(); }
+function aplicarVista() {
+  const r = fp.r, ojos = fp.vista === 'ojos';
+  $('f-vista').textContent = ojos ? 'Vista: ojos' : 'Vista: detrás';
+  $('f-vista').disabled = r.tipo === 'tripulado';
+  $('f-ruta').textContent = `${r.nombre} · ${ojos ? `ojos a ${OJOS[r.tipo]} m` : r.tipo === 'vehiculo' ? 'siguiendo al rover' : 'siguiendo al astronauta'}`;
+  $('visor').classList.toggle('tercera', !ojos);
+  aire.visible = ojos;
+  fp.trans = { t0: performance.now(), p0: camara.position.clone(), q0: camara.quaternion.clone() };
 }
-const tA = new THREE.Vector3(), tB = new THREE.Vector3();
+function salirFP(volver = true) {
+  if (!fp) return;
+  const g = fp.est; fp = null;
+  est.x = g.x; est.z = g.z; est.yaw = g.yaw; ubicarRover();
+  astro.visible = per.activo; if (per.activo) ubicarAstro(per.s);
+  aire.visible = false;
+  $('fp').classList.add('oculto'); $('ctrl').classList.remove('oculto'); $('visor').classList.add('oculto');
+  controles.enabled = true;
+  if (volver) { modoCam = 'libre'; $('sCam').value = 'libre'; vistaGeneral(true); }
+}
+const tA = new THREE.Vector3(), tB = new THREE.Vector3(), _fwd = new THREE.Vector3(), _pos = new THREE.Vector3(), _mira = new THREE.Vector3(), _qcam = new THREE.Quaternion(), _obj = new THREE.PerspectiveCamera();   // cámara auxiliar: su lookAt mira hacia -z, como la cámara real
+let dtFrame = 0.016, relojEscena = 0;
+const suave = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 function ubicarFP(salto = false) {
   const r = fp.r, q = puntoEn(r, fp.d), ojo = OJOS[r.tipo] || 1.7;
+  const tt = fp.trans ? Math.min(1, (performance.now() - fp.trans.t0) / 900) : 1;   // transición de 0,9 s
   const haciaAdelante = fp.d + 25 <= r.largo, q2 = puntoEn(r, haciaAdelante ? fp.d + 25 : Math.max(0, fp.d - 25)), sg = haciaAdelante ? 1 : -1;
-  tA.set(q.x, q.y + ojo, q.z);
-  tB.set(q.x + sg * (q2.x - q.x), (q2.y + q.y) / 2 + ojo, q.z + sg * (q2.z - q.z));
-  camara.position.copy(tA);
-  if (!fp.dir || salto) fp.dir = tB.clone(); else fp.dir.lerp(tB, 0.08);
-  camara.lookAt(fp.dir);
+  const qc = puntoEn(r, Math.min(r.largo, fp.d + 1.5)), qa = puntoEn(r, Math.max(0, fp.d - 1.5));
+  const yaw = Math.atan2(-(qc.z - qa.z), qc.x - qa.x), pend = Math.atan2(qc.y - qa.y, Math.max(0.01, Math.hypot(qc.x - qa.x, qc.z - qa.z)));
+  _fwd.set(Math.cos(yaw), 0, -Math.sin(yaw));
+  const avance = fp.d - fp.ultD; fp.ultD = fp.d;
+  const caminando = fp.jugando || Math.abs(avance) > 0.01;
+  // el astronauta y el rover se mueven con la cámara (en "detrás" se ven; en "ojos", el astronauta se oculta)
+  if (r.tipo === 'astronauta') {
+    astro.visible = fp.vista === 'detras';
+    astro.position.set(q.x, alturaMalla(q.x, q.z), q.z); astro.rotation.y = yaw;
+    fp.mov = (fp.mov ?? 0) + ((caminando ? 1 : 0) - (fp.mov ?? 0)) * Math.min(1, dtFrame * 6);
+    poseAstro(fp.d / ZANCADA * Math.PI * 2, fp.mov, pend, relojEscena);
+    for (const p of huellasHasta(huellasAstro, r, fp.d, true)) if (fp.jugando) soplarPolvo(p, 6, 0.35);
+  } else if (r.tipo === 'vehiculo') {
+    est.x = q.x; est.z = q.z; est.yaw = yaw; ubicarRover();
+    ruedas.forEach(w => { w.giro.rotation.z -= avance / RUEDA_R; });
+    for (const p of huellasHasta(huellasRover, r, fp.d, false)) if (fp.jugando && Math.random() < 0.5) soplarPolvo(p, 3, 0.25);
+  }
+  if (fp.vista === 'ojos') {
+    // balanceo de la cabeza al caminar (solo a pie)
+    const bob = r.tipo === 'astronauta' && fp.mov > 0.05 ? fp.mov : 0, ph = fp.d / ZANCADA * Math.PI * 2;
+    tA.set(q.x, q.y + ojo + bob * 0.03 * Math.cos(2 * ph), q.z).addScaledVector(_fwd.clone().cross(_up), bob * 0.02 * Math.sin(ph));
+    tB.set(q.x + sg * (q2.x - q.x), (q2.y + q.y) / 2 + ojo, q.z + sg * (q2.z - q.z));
+    if (!fp.dir || salto) fp.dir = tB.clone(); else fp.dir.lerp(tB, 0.08);
+    _obj.position.copy(tA); _obj.lookAt(fp.dir); _obj.rotateY(fp.mirar.yaw); _obj.rotateX(fp.mirar.pitch);
+  } else {
+    // cámara detrás y arriba, que gira alrededor si se arrastra
+    const lejos = r.tipo === 'vehiculo' ? 7.5 : 4.2, alto = r.tipo === 'vehiculo' ? 3.4 : 1.9;
+    const dir = _fwd.clone().applyAxisAngle(_up, fp.mirar.yaw);
+    tA.set(q.x, q.y, q.z).addScaledVector(dir, -lejos); tA.y = Math.max(q.y + alto + fp.mirar.pitch * -4, alturaEn(tA.x, tA.z) + 0.8);
+    _mira.set(q.x, q.y + (r.tipo === 'vehiculo' ? 1.3 : 1.25), q.z).addScaledVector(_fwd, 1.5);
+    if (!fp.cam || salto || tt < 1) fp.cam = tA.clone(); else fp.cam.lerp(tA, Math.min(1, dtFrame * 5));
+    _obj.position.copy(fp.cam); _obj.lookAt(_mira);
+  }
+  // transición suave al entrar o cambiar de vista
+  if (tt < 1) {
+    const e = suave(tt);
+    camara.position.lerpVectors(fp.trans.p0, _obj.position, e); camara.quaternion.slerpQuaternions(fp.trans.q0, _obj.quaternion, e);
+  } else { camara.position.copy(_obj.position); camara.quaternion.copy(_obj.quaternion); }
   fBarra.value = Math.round(1000 * fp.d / r.largo);
   $('f-tiempo').textContent = r.tipo === 'vehiculo' ? fmtH(q.t) + ' de manejo' : fmtH(q.t);
   $('f-dist').textContent = fmtM(fp.d);
@@ -973,6 +1269,17 @@ function ubicarFP(salto = false) {
   if (!$('panel').classList.contains('oculto')) dibujarPerfil(fp.d);
   if (visorOn) actualizarVisor(q);
 }
+$('f-vista').onclick = () => { if (!fp || fp.r.tipo === 'tripulado') return; fp.vista = fp.vista === 'ojos' ? 'detras' : 'ojos'; fp.mirar.yaw = 0; fp.mirar.pitch = 0; fp.cam = null; aplicarVista(); };
+// mirar alrededor: arrastrar con el dedo o el mouse (y flechas del teclado)
+let arrastre = null;
+lienzo.addEventListener('pointerdown', e => { if (fp) { arrastre = [e.clientX, e.clientY]; fp.trans = null; } });
+addEventListener('pointerup', () => { arrastre = null; });
+lienzo.addEventListener('pointermove', e => {
+  if (!fp || !arrastre || !e.buttons) return;
+  fp.mirar.yaw -= (e.clientX - arrastre[0]) * 0.005; fp.mirar.pitch = Math.max(-0.7, Math.min(0.6, fp.mirar.pitch - (e.clientY - arrastre[1]) * 0.004));
+  arrastre = [e.clientX, e.clientY];
+});
+lienzo.addEventListener('dblclick', () => { if (fp) { fp.mirar.yaw = 0; fp.mirar.pitch = 0; } });
 
 // ---------- visor del casco (lo que el astronauta ve sobre la vista) ----------
 let visorOn = true, ultLectura = null;
@@ -1118,7 +1425,11 @@ function rutaConParada(pa) {
 }
 function irAParada(pa) {
   if (fp) salirFP(false);
-  const y = alturaEn(pa.x, pa.z); controles.target.set(pa.x, y, pa.z); camara.position.set(pa.x - 70, y + 55, pa.z + 70); controles.update();
+  // vista oblicua desde el lado de la cámara actual, a ~110 m
+  const y = alturaEn(pa.x, pa.z), obj = new THREE.Vector3(pa.x, y, pa.z), dir = camara.position.clone().sub(controles.target).setY(0);
+  if (dir.lengthSq() < 1) dir.set(-1, 0, 1); dir.normalize();
+  const mira = obj.clone().add(new THREE.Vector3(0, 18, 0));     // la parada queda algo abajo del centro (arriba va la ficha)
+  volarA(mira.clone().addScaledVector(dir, 85).add(new THREE.Vector3(0, 60, 0)), mira);
   modoCam = 'libre'; $('sCam').value = 'libre';
 }
 function caminarHasta(pa) {
@@ -1129,6 +1440,7 @@ function caminarHasta(pa) {
 function conectarBotones(cont) {
   cont.querySelectorAll('[data-ir]').forEach(b => b.onclick = () => irAParada(paradasGeo.find(o => String(o.props.parada) === b.dataset.ir)));
   cont.querySelectorAll('[data-fp]').forEach(b => b.onclick = () => { $('ficha').classList.add('oculto'); caminarHasta(paradasGeo.find(o => String(o.props.parada) === b.dataset.fp)); });
+  cont.querySelectorAll('[data-tour]').forEach(b => b.onclick = () => tourIr(+b.dataset.tour));
 }
 function listarParadas() {
   const cont = $('paradas');
@@ -1144,7 +1456,9 @@ function mostrarFicha(m) {
     html = `<h1>Curiosity, sol ${p.sol}</h1><p>Elevación del terreno: ${num(D.zmin + m.y, 1)} m</p><p class="sub">Fuente: ${p.fuente || ''}</p>`;
   } else {
     const pa = d.parada, p = pa.props;
-    html = `<h1 class="parada-cab"><span class="chip" style="background:${colorParada(p)}">${p.parada}</span>${nombreSinId(p)}</h1>${fichaParada(pa)}`;
+    const i = paradasMarcadas.indexOf(pa), n = paradasMarcadas.length;
+    const nav = i >= 0 ? `<div class="nav-tour"><button data-tour="${i - 1}">◀ Anterior</button><span>Parada ${i + 1} de ${n}</span><button data-tour="${i + 1}">Siguiente ▶</button></div>` : '';
+    html = `${nav}<h1 class="parada-cab"><span class="chip" style="background:${colorParada(p)}">${p.parada}</span>${nombreSinId(p)}</h1>${fichaParada(pa)}`;
     const det = document.querySelector(`#paradas details[data-parada="${p.parada}"]`); if (det) det.open = true;
   }
   $('ficha-texto').innerHTML = html; $('ficha').classList.remove('oculto'); conectarBotones($('ficha-texto'));
@@ -1153,7 +1467,7 @@ $('ficha-cerrar').onclick = () => $('ficha').classList.add('oculto');
 
 // ---------- puntero: fichas, marcar paradas, cursor ----------
 let abajo = null;
-lienzo.addEventListener('pointerdown', e => { abajo = [e.clientX, e.clientY]; });
+lienzo.addEventListener('pointerdown', e => { abajo = [e.clientX, e.clientY]; vuelo = null; });
 lienzo.addEventListener('pointerup', e => {
   if (!abajo || Math.hypot(e.clientX - abajo[0], e.clientY - abajo[1]) > 5) return;
   const r = lienzo.getBoundingClientRect();
@@ -1183,6 +1497,12 @@ addEventListener('keydown', e => {
   const k = e.key.toLowerCase(); teclas[k] = true;
   if (e.key === 'Escape' && fp) salirFP();
   if (k === 'v' && fp) $('f-visor').click();
+  if (k === 'b' && fp) $('f-vista').click();
+  if (fp && e.key.startsWith('Arrow')) {
+    e.preventDefault();
+    if (e.key === 'ArrowLeft') fp.mirar.yaw += 0.15; if (e.key === 'ArrowRight') fp.mirar.yaw -= 0.15;
+    if (e.key === 'ArrowUp') fp.mirar.pitch = Math.min(0.6, fp.mirar.pitch + 0.1); if (e.key === 'ArrowDown') fp.mirar.pitch = Math.max(-0.7, fp.mirar.pitch - 0.1);
+  }
   if (e.key === ' ') { e.preventDefault(); if (fp) fPlay.click(); else setAuto(false); }
   if (fp) return;
   if (k === 'g') setAuto(!est.auto);
@@ -1230,18 +1550,46 @@ if (innerWidth < 760) mostrarPaneles(false);
 function ubicarAstro(s) {
   const r = per.ruta; if (!r) return;
   const p = puntoEn(r, s), ad = puntoEn(r, Math.min(r.largo, s + 1.5));
-  astro.position.set(p.x, p.y, p.z);
+  astro.position.set(p.x, alturaMalla(p.x, p.z), p.z);
+  astro.visible = per.activo && (est.auto || s > 0.5);    // quieto en la salida estaría dentro del rover
   if (Math.hypot(ad.x - p.x, ad.z - p.z) > 0.01) astro.rotation.y = Math.atan2(-(ad.z - p.z), ad.x - p.x);
-  piernas[0].rotation.z = Math.sin(s * 3) * 0.4; piernas[1].rotation.z = -Math.sin(s * 3) * 0.4;
+  const pend = Math.atan2(ad.y - p.y, Math.max(0.01, Math.hypot(ad.x - p.x, ad.z - p.z)));
+  poseAstro(s / ZANCADA * Math.PI * 2, est.auto && s < r.largo ? 1 : 0, pend, relojEscena);
+  for (const q of huellasHasta(huellasAstro, r, s, true)) if (est.auto) soplarPolvo(q, 6, 0.35);
   $('aCielo').textContent = `${Math.round(p.cielo * 100)} %`;
 }
 elegirRecorridos(); listarRutas(); listarParadas(); ubicarRover(); vistaGeneral();
+
+// ---------- acciones principales: recorrido guiado, caminar, seguir al rover, ayuda ----------
+function tourIr(i) {
+  const n = paradasMarcadas.length; if (!n) return;
+  const pa = paradasMarcadas[((i % n) + n) % n];
+  irAParada(pa); mostrarFicha(pa.marcador);
+  if (innerWidth < 1100) mostrarPaneles(false);
+  decir(`Recorrido guiado: ${pa.props.parada}. Usá Anterior y Siguiente en la ficha.`);
+}
+const rutaDe = t => rutas.find(r => r.tipo === t && !r.aOjo && !r.oculta) || rutas.find(r => r.tipo === t) || null;
+function caminar() { const r = rutaDe('astronauta'); if (!r) return decir('No hay ruta del astronauta.'); $('ficha').classList.add('oculto'); entrarFP(r, 'detras'); fp.jugando = true; fPlay.textContent = '❚❚ Pausa'; }
+function seguirRover() { const r = rutaDe('vehiculo'); if (!r) return decir('No hay ruta del vehículo.'); $('ficha').classList.add('oculto'); visorOn = false; entrarFP(r, 'detras'); fp.jugando = true; fPlay.textContent = '❚❚ Pausa'; }
+$('bTour').onclick = () => tourIr(0);
+$('bCaminar').onclick = () => { visorOn = true; caminar(); };
+$('bSeguir').onclick = seguirRover;
+$('bAyuda').onclick = () => $('ayuda').classList.remove('oculto');
+$('ayuda').onclick = e => { if (e.target.id === 'ayuda') $('ayuda').classList.add('oculto'); };
+$('ayuda').querySelectorAll('[data-ay]').forEach(b => b.onclick = () => {
+  $('ayuda').classList.add('oculto');
+  try { localStorage.setItem('gale3d-ayuda', 'vista'); } catch (e) {}
+  ({ tour: () => tourIr(0), caminar: () => { visorOn = true; caminar(); }, seguir: seguirRover, libre: () => {} })[b.dataset.ay]();
+});
+try { if (!localStorage.getItem('gale3d-ayuda')) $('ayuda').classList.remove('oculto'); } catch (e) { $('ayuda').classList.remove('oculto'); }
 
 // ---------- bucle ----------
 let ultimo = performance.now();
 renderer.setAnimationLoop(ahora => {
   const dtReal = Math.min(0.05, (ahora - ultimo) / 1000); ultimo = ahora;
   const vel = +$('sVel').value, dt = dtReal * vel;
+  dtFrame = dtReal; relojEscena += dtReal;
+  moverPolvo(dtReal);
   let movido = 0;
   if (fp) {
     if (fp.jugando) { fp.d = Math.min(fp.r.largo, fp.d + fp.r.largo * dtReal / +$('f-vel').value); if (fp.d >= fp.r.largo) { fp.jugando = false; fPlay.textContent = '▶ Recorrer'; } }
@@ -1273,6 +1621,16 @@ renderer.setAnimationLoop(ahora => {
     est.dist += movido;
     ruedas.forEach(w => { w.giro.rotation.z -= movido / RUEDA_R; });
     ubicarRover();
+    // bandas del rover y polvo al rodar (solo en autonomía: el manejo manual no deja bandas)
+    for (const q of huellasHasta(huellasRover, rutaRover, sRover, false)) if (est.auto && Math.random() < 0.5) soplarPolvo(q, 3, 0.25);
+    if (!per.activo) huellasHasta(huellasAstro, null, 0, true);
+    else if (!est.auto) poseAstro(per.s / ZANCADA * Math.PI * 2, 0, 0, relojEscena);
+    // vuelo suave de la cámara (paradas, recorrido guiado)
+    if (vuelo) {
+      vuelo.t = Math.min(1, vuelo.t + dtReal / vuelo.dur); const e = suave(vuelo.t);
+      camara.position.lerpVectors(vuelo.p0, vuelo.p1, e); controles.target.lerpVectors(vuelo.t0, vuelo.t1, e);
+      if (vuelo.t >= 1) vuelo = null;
+    }
     if (modoCam === 'rover' || modoCam === 'astro') {
       const obj = modoCam === 'astro' && astro.visible ? astro.position : rover.position;
       const delta = new THREE.Vector3(obj.x, obj.y + 1.1, obj.z).sub(controles.target);
@@ -1280,11 +1638,14 @@ renderer.setAnimationLoop(ahora => {
     }
     controles.update();
   }
+  const andando = (fp && fp.r.tipo === 'vehiculo' && fp.jugando) || (est.auto && rutaRover && sRover < rutaRover.largo);
+  cabeza.rotation.y += ((andando ? 0 : 0.7 * Math.sin(relojEscena * 0.35)) - cabeza.rotation.y) * Math.min(1, dtReal * 2);
+  cieloDomo.position.copy(camara.position);
   // sombra del sol alrededor del rover
   sol.target.position.set(est.x, rover.position.y, est.z); sol.position.copy(sol.target.position).addScaledVector(dirSol, 400);
   // rutas: tubo grueso de lejos, línea fina de cerca o en primera persona
   const cerca = fp || camara.position.distanceTo(controles.target) < 160;
-  for (const r of rutas) { r.tubo.visible = !r.oculta && !cerca; r.fino.visible = !r.oculta && !!cerca; }
+  for (const r of rutas) { r.tubo.visible = !r.oculta && !cerca; r.fino.visible = fp ? r === fp.r : !r.oculta && !!cerca; }
   terreno.castShadow = !!cerca;      // el relieve proyecta sombra solo de cerca (de lejos no se ve y cuesta mucho)
   // marcadores con tamaño constante en pantalla
   for (const m of marcadores) {
@@ -1309,7 +1670,7 @@ renderer.setAnimationLoop(ahora => {
   renderer.render(escena, camara);
 });
 document.getElementById('cargando').remove();
-window.__escena = { paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
+window.__escena = { huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>
 </html>

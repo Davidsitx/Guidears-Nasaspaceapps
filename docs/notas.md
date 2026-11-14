@@ -2,6 +2,18 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 madrugada · David (con Claude) · VISUAL Y USO DE LA ESCENA 3D
+- Hizo (`escena3d/plantilla.html`; `index.html` regenerado):
+  - astronauta articulado, con caminata y huellas;
+  - primera persona con vistas "ojos" y "detrás", para mirar alrededor y con transición suave;
+  - rover con ruedas de garras en V, mástil que escanea, bandas y polvo;
+  - reflejos del cielo y cielo con degradé;
+  - pantalla de inicio "Cómo usar" y botones "Recorrido guiado", "Caminar como astronauta" y "Seguir al rover";
+  - botones grandes en pantallas táctiles.
+- Probado en navegador (1280×800, sin errores): recorrido guiado, caminata en las dos vistas y seguimiento del rover.
+- Ojo: el paso de 1,4 m del astronauta es un supuesto visual (README, tabla de medido/supuesto).
+- Falta: probar fluidez en una tablet real; textos en inglés.
+
 ## 2026-11-14 madrugada · David (con Claude) · FICHAS DE PARADAS Y VISOR DEL ASTRONAUTA EN LA ESCENA 3D
 - Hizo, en `escena3d/plantilla.html` y `armar.py` (regenerado `index.html`, 7,1 MB, abre sin internet):
   - **Paradas desplegables** (panel y carteles 3D) con "Qué vas a encontrar" (CRISM), suelo, radiación y motivo.
