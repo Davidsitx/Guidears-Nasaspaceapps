@@ -1,0 +1,16 @@
+{
+  "name": "Gale Earth · Marte en 3D",
+  "short_name": "Gale Earth",
+  "description": "Marte en 3D con datos de NASA y ESA: el cráter Gale como sitio para la primera base humana.",
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#0b0d12",
+  "lang": "es",
+  "icons": [
+    { "src": "capas/logo/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "capas/logo/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "capas/logo/logo-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

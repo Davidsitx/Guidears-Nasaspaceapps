@@ -2,6 +2,15 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 tarde · Compañero (con Claude) · GALE EARTH SUBE AL REPO
+- **Carpeta nueva `gale-earth/`:** Marte en 3D estilo Google Earth (CesiumJS), para elegir dónde poner una base en Gale. Funciona en PC y celular. Se abre con `gale-earth/abrir.bat` (o `abrir.sh`); doble clic en `index.html` también anda, con menos capas. Ver `gale-earth/README.md`.
+- Tiene: recorrido y 49 perforaciones, tres sitios para la base, órbitas (MRO, Odyssey, Mars Express, TGO, Hope) y **Fobos y Deimos** con datos de JPL Horizons. También una **Biblioteca** con la ficha completa de cada pozo (CheMin, APXS, SAM, fotos, archivos crudos), una **línea de tiempo** de la exploración de Marte con fuente por evento, cielo con la Vía Láctea y pantalla de carga propia.
+- **No editar `gale-earth/index.html` ni `plantilla.html` a mano:** el código está en `cabecera.html`, `_cuerpo.html`, `interfaz.js`, `biblioteca.js` y `linea.js`. Se arma con `python _ensamblar.py` y después `python armar.py`.
+- `gale-earth/datos/entrada/` tiene copias propias de `perforaciones.geojson`, `zonas_gale.json` y `recorrido_oficial_sol0-5073.geojson`. El `perforaciones.geojson` de la escena (`data/curiosity/`) tiene otro esquema; no se tocó.
+- **No se versionan las teselas del globo (`gale-earth/teselas/`, ~6 GB).** Los scripts para regenerarlas están en `gale-earth/herramientas/`. Para la demo pública hay que alojarlas aparte.
+- Fuentes nuevas registradas en `docs/fuentes.md`. Por pedido del equipo no se incluyen misiones chinas.
+- Falta: textos en inglés para la entrega, alojar las teselas para la demo, `prototipo/mapa-perforaciones` (el botón "Mapa 2D" se oculta mientras no esté en el repo).
+
 ## 2026-11-14 tarde · David (con Claude) · EXPEDICIÓN SUR, PERFORACIÓN SIMULADA, CLIMA Y FUENTES CON "?"
 - **Expedición sur:** 5 puntos nuevos (E1–E5) más allá de A4 con `herramientas/expedicion.py` (CRISM + DEM + cielo + arena). Rutas del rover y a pie en `data/rutas/expedicion_sur.geojson`. En la escena se elige quién hace la misión (rover o astronauta). Detalle en `docs/paradas.md`.
 - **Se detiene al llegar:** el viaje por soles frena en cada perforación, la primera persona en cada parada y la expedición en cada punto; aparece una tarjeta con "Ver la perforación / Ver la parada", "Perforación simulada" y "Seguir". Casilla "Detenerse…" para desactivarlo.

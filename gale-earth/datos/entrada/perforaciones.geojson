@@ -1,0 +1,4006 @@
+{
+ "type": "FeatureCollection",
+ "nota": "49 perforaciones de Curiosity (y el intento Atacama). Posición: medida (PLACES o waypoints NASA). Mineralogía: medida (CheMin, % de la fracción cristalina, normalizada a 100; las arcillas y el amorfo no entran). agua_kg_t y co2_kg_t: cálculo propio, kg por tonelada de fracción cristalina, a partir de la fórmula de cada mineral; son mínimos. hallazgo/tecnico: resumen propio de la fuente citada.",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 1,
+    "nombre": "John Klein",
+    "sol": 182,
+    "fecha_aprox": "2013-02-08",
+    "zona": "bradbury",
+    "formacion": "Yellowknife Bay, formación Sheepbed",
+    "roca": "lodolita",
+    "elevacion_m": -4520.4,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La primera perforación en otro planeta con este tipo de taladro. Probó que hubo un lago con agua apta para la vida.",
+    "tecnico": "Lodolita con ~20 % de esmectita, sulfuros y sulfatos: agua de pH neutro y baja salinidad, con fuentes de energía química.",
+    "fuente_hallazgo": "Grotzinger et al. 2014, Science 343:1242777",
+    "minerales": [
+     [
+      "andesina",
+      43.8
+     ],
+     [
+      "pigeonita",
+      12.7
+     ],
+     [
+      "augita",
+      8.5
+     ],
+     [
+      "magnetita",
+      7.0
+     ],
+     [
+      "ortopiroxeno",
+      6.8
+     ],
+     [
+      "olivino (forsterita)",
+      5.1
+     ],
+     [
+      "anhidrita",
+      3.3
+     ],
+     [
+      "albita",
+      2.7
+     ],
+     [
+      "akaganeíta",
+      2.4
+     ],
+     [
+      "basanita",
+      2.0
+     ],
+     [
+      "sanidina",
+      1.7
+     ],
+     [
+      "pirrotina",
+      1.5
+     ],
+     [
+      "hematita",
+      1.2
+     ],
+     [
+      "cuarzo",
+      0.6
+     ],
+     [
+      "pirita",
+      0.4
+     ],
+     [
+      "halita",
+      0.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.21,
+     "Br": 0.0039,
+     "CaO": 8.02,
+     "Cl": 0.47,
+     "Cr2O3": 0.39,
+     "FeO": 22.77,
+     "K2O": 0.63,
+     "MgO": 6.49,
+     "MnO": 0.35,
+     "Na2O": 2.26,
+     "Ni": 0.0522,
+     "P2O5": 0.59,
+     "SiO2": 42.49,
+     "SO3": 5.63,
+     "TiO2": 1.38,
+     "Zn": 0.0675
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 4,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 8.2,
+    "cloro_pct": 0.47,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/21562/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4491296,
+     -4.5894849,
+     -4520.4
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 2,
+    "nombre": "Cumberland",
+    "sol": 279,
+    "fecha_aprox": "2013-05-19",
+    "zona": "bradbury",
+    "formacion": "Yellowknife Bay, formación Sheepbed",
+    "roca": "lodolita",
+    "elevacion_m": -4520.3,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La muestra más estudiada de Marte: guarda las moléculas orgánicas más grandes encontradas en el planeta.",
+    "tecnico": "SAM detectó decano, undecano y dodecano (posibles restos de ácidos grasos). Primera datación K-Ar en otro planeta (~4.200 millones de años).",
+    "fuente_hallazgo": "Freissinet et al. 2025, PNAS; Farley et al. 2014, Science",
+    "minerales": [
+     [
+      "andesina",
+      43.6
+     ],
+     [
+      "pigeonita",
+      15.6
+     ],
+     [
+      "magnetita",
+      8.7
+     ],
+     [
+      "augita",
+      8.1
+     ],
+     [
+      "ortopiroxeno",
+      8.1
+     ],
+     [
+      "akaganeíta",
+      3.4
+     ],
+     [
+      "sanidina",
+      3.1
+     ],
+     [
+      "pirrotina",
+      1.9
+     ],
+     [
+      "olivino (forsterita)",
+      1.8
+     ],
+     [
+      "anhidrita",
+      1.6
+     ],
+     [
+      "basanita",
+      1.4
+     ],
+     [
+      "hematita",
+      1.3
+     ],
+     [
+      "ilmenita",
+      1.0
+     ],
+     [
+      "halita",
+      0.2
+     ],
+     [
+      "cuarzo",
+      0.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.63,
+     "Br": 0.0066,
+     "CaO": 6.66,
+     "Cl": 1.19,
+     "Cr2O3": 0.46,
+     "FeO": 21.95,
+     "K2O": 0.62,
+     "MgO": 9.32,
+     "MnO": 0.29,
+     "Na2O": 3.01,
+     "Ni": 0.0932,
+     "P2O5": 0.86,
+     "SiO2": 41.13,
+     "SO3": 4.61,
+     "TiO2": 0.99,
+     "Zn": 0.0921
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 4,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 10.0,
+    "cloro_pct": 1.19,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/21562/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4491125,
+     -4.5894787,
+     -4520.3
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 3,
+    "nombre": "Windjana",
+    "sol": 621,
+    "fecha_aprox": "2014-05-05",
+    "zona": "bradbury",
+    "formacion": "Kimberley, arenisca",
+    "roca": "arenisca",
+    "elevacion_m": -4479.2,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Una arenisca rica en potasio y magnetita: Marte tuvo rocas volcánicas más variadas de lo que se creía.",
+    "tecnico": "21 % de feldespato potásico y 14 % de magnetita en la fracción cristalina; zinc muy alto en APXS (0,48 %).",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "augita",
+      29.0
+     ],
+     [
+      "feldespato potásico",
+      21.1
+     ],
+     [
+      "pigeonita",
+      16.7
+     ],
+     [
+      "magnetita",
+      13.8
+     ],
+     [
+      "plagioclasa",
+      5.6
+     ],
+     [
+      "olivino (forsterita)",
+      5.2
+     ],
+     [
+      "akaganeíta",
+      2.5
+     ],
+     [
+      "anhidrita",
+      1.4
+     ],
+     [
+      "pirrotina",
+      1.3
+     ],
+     [
+      "ilmenita",
+      1.1
+     ],
+     [
+      "enstatita",
+      1.0
+     ],
+     [
+      "hematita",
+      0.9
+     ],
+     [
+      "basanita",
+      0.2
+     ],
+     [
+      "cuarzo",
+      0.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 5.62,
+     "Br": 0.0123,
+     "CaO": 5.26,
+     "Cl": 0.57,
+     "Cr2O3": 0.49,
+     "FeO": 27.9,
+     "K2O": 3.09,
+     "MgO": 12.29,
+     "MnO": 0.53,
+     "Na2O": 0.96,
+     "Ni": 0.0516,
+     "P2O5": 0.64,
+     "SiO2": 37.38,
+     "SO3": 3.57,
+     "TiO2": 1.07,
+     "Zn": 0.4775
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 3,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 14.7,
+    "cloro_pct": 0.57,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/21582/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.40201,
+     -4.6388429,
+     -4479.2
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 4,
+    "nombre": "Confidence Hills",
+    "sol": 759,
+    "fecha_aprox": "2014-09-24",
+    "zona": "pahrump",
+    "formacion": "formación Murray, Pahrump Hills",
+    "roca": "lodolita",
+    "elevacion_m": -4460.6,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La primera muestra del Monte Sharp: el rover llegó a la montaña que vino a estudiar.",
+    "tecnico": "Hematita (13 %) y jarosita en la fracción cristalina: oxidación y fluidos ácidos después de depositarse.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      38.3
+     ],
+     [
+      "hematita",
+      12.8
+     ],
+     [
+      "augita",
+      12.0
+     ],
+     [
+      "pigeonita",
+      9.9
+     ],
+     [
+      "feldespato potásico",
+      9.4
+     ],
+     [
+      "magnetita",
+      5.6
+     ],
+     [
+      "ortopiroxeno",
+      3.9
+     ],
+     [
+      "apatita",
+      2.4
+     ],
+     [
+      "olivino (forsterita)",
+      2.3
+     ],
+     [
+      "jarosita",
+      2.1
+     ],
+     [
+      "cuarzo",
+      1.3
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 9.73,
+     "Br": 0.004,
+     "CaO": 4.58,
+     "Cl": 0.41,
+     "Cr2O3": 0.39,
+     "FeO": 19.83,
+     "K2O": 0.98,
+     "MgO": 5.55,
+     "MnO": 0.36,
+     "Na2O": 2.65,
+     "Ni": 0.0928,
+     "P2O5": 1.02,
+     "SiO2": 48.13,
+     "SO3": 4.86,
+     "TiO2": 1.13,
+     "Zn": 0.2107
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 2,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 18.4,
+    "cloro_pct": 0.41,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/21635/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3774636,
+     -4.6626993,
+     -4460.6
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 5,
+    "nombre": "Mojave 2",
+    "sol": 882,
+    "fecha_aprox": "2015-01-28",
+    "zona": "pahrump",
+    "formacion": "formación Murray, Pahrump Hills",
+    "roca": "lodolita",
+    "elevacion_m": -4459.6,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Tiene cristales que se forman en agua ácida: el lago cambió con el tiempo.",
+    "tecnico": "Jarosita 7,3 % de la fracción cristalina, la más alta de Pahrump Hills; P2O5 1,3 % (APXS).",
+    "fuente_hallazgo": "Rampe et al. 2017, EPSL; NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      55.7
+     ],
+     [
+      "pigeonita",
+      10.9
+     ],
+     [
+      "jarosita",
+      7.3
+     ],
+     [
+      "hematita",
+      7.1
+     ],
+     [
+      "magnetita",
+      7.1
+     ],
+     [
+      "augita",
+      5.2
+     ],
+     [
+      "apatita",
+      4.3
+     ],
+     [
+      "cuarzo",
+      1.9
+     ],
+     [
+      "olivino (forsterita)",
+      0.5
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 11.43,
+     "Br": 0.0065,
+     "CaO": 4.33,
+     "Cl": 0.43,
+     "Cr2O3": 0.37,
+     "FeO": 16.11,
+     "K2O": 0.73,
+     "MgO": 4.55,
+     "MnO": 0.38,
+     "Na2O": 3.01,
+     "Ni": 0.1032,
+     "P2O5": 1.29,
+     "SiO2": 49.48,
+     "SO3": 6.27,
+     "TiO2": 1.19,
+     "Zn": 0.2204
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 8,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 14.2,
+    "cloro_pct": 0.43,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/116554/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3774498,
+     -4.6628637,
+     -4459.6
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 6,
+    "nombre": "Telegraph Peak",
+    "sol": 908,
+    "fecha_aprox": "2015-02-24",
+    "zona": "pahrump",
+    "formacion": "formación Murray, Pahrump Hills",
+    "roca": "lodolita",
+    "elevacion_m": -4453.5,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Más sílice de lo esperado: el agua disolvió y movió minerales.",
+    "tecnico": "Cristobalita 11,8 % de la fracción cristalina; SiO2 52,7 % (APXS).",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      43.8
+     ],
+     [
+      "magnetita",
+      13.2
+     ],
+     [
+      "cristobalita",
+      11.8
+     ],
+     [
+      "feldespato potásico",
+      8.4
+     ],
+     [
+      "pigeonita",
+      6.8
+     ],
+     [
+      "ortopiroxeno",
+      5.5
+     ],
+     [
+      "apatita",
+      3.1
+     ],
+     [
+      "jarosita",
+      2.4
+     ],
+     [
+      "olivino (forsterita)",
+      1.8
+     ],
+     [
+      "hematita",
+      1.8
+     ],
+     [
+      "cuarzo",
+      1.5
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 10.74,
+     "Br": 0.0039,
+     "CaO": 4.37,
+     "Cl": 0.3,
+     "Cr2O3": 0.36,
+     "FeO": 18.68,
+     "K2O": 0.98,
+     "MgO": 2.93,
+     "MnO": 0.22,
+     "Na2O": 3.34,
+     "Ni": 0.0515,
+     "P2O5": 1.33,
+     "SiO2": 52.7,
+     "SO3": 2.54,
+     "TiO2": 1.23,
+     "Zn": 0.1232
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 3,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 15.0,
+    "cloro_pct": 0.3,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/116555/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3774523,
+     -4.6635273,
+     -4453.5
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 7,
+    "nombre": "Buckskin",
+    "sol": 1060,
+    "fecha_aprox": "2015-07-30",
+    "zona": "stimson",
+    "formacion": "formación Murray, Marias Pass",
+    "roca": "lodolita",
+    "elevacion_m": -4446.9,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Tiene tridimita, un mineral de volcanes explosivos: Marte tuvo erupciones más violentas de lo pensado.",
+    "tecnico": "Tridimita 34 % de la fracción cristalina; SiO2 73,7 % (APXS), el valor más alto de la misión.",
+    "fuente_hallazgo": "Morris et al. 2016, PNAS 113:7071",
+    "minerales": [
+     [
+      "plagioclasa",
+      42.8
+     ],
+     [
+      "tridimita",
+      34.1
+     ],
+     [
+      "sanidina",
+      8.4
+     ],
+     [
+      "magnetita",
+      6.9
+     ],
+     [
+      "cristobalita",
+      6.0
+     ],
+     [
+      "anhidrita",
+      1.8
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 5.66,
+     "Br": 0.0059,
+     "CaO": 3.05,
+     "Cl": 0.29,
+     "Cr2O3": 0.1,
+     "FeO": 5.49,
+     "K2O": 0.96,
+     "MgO": 0.82,
+     "MnO": 0.06,
+     "Na2O": 2.08,
+     "Ni": 0.0133,
+     "P2O5": 1.25,
+     "SiO2": 73.65,
+     "SO3": 4.8,
+     "TiO2": 1.57,
+     "Zn": 0.0327
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 0,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 6.9,
+    "cloro_pct": 0.29,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/141470/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3702986,
+     -4.6680251,
+     -4446.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 8,
+    "nombre": "Big Sky",
+    "sol": 1119,
+    "fecha_aprox": "2015-09-29",
+    "zona": "stimson",
+    "formacion": "formación Stimson (arenisca eólica)",
+    "roca": "arenisca",
+    "elevacion_m": -4434.7,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Una duna fósil sin alterar, para comparar con la roca alterada de al lado.",
+    "tecnico": "Arenisca basáltica: piroxeno y plagioclasa, magnetita 12,6 %. Muestra de referencia frente al halo de Greenhorn.",
+    "fuente_hallazgo": "Yen et al. 2017, EPSL",
+    "minerales": [
+     [
+      "plagioclasa",
+      45.7
+     ],
+     [
+      "pigeonita",
+      20.2
+     ],
+     [
+      "magnetita",
+      12.6
+     ],
+     [
+      "ortopiroxeno",
+      10.0
+     ],
+     [
+      "hematita",
+      3.6
+     ],
+     [
+      "tridimita",
+      1.8
+     ],
+     [
+      "feldespato potásico",
+      1.7
+     ],
+     [
+      "cuarzo",
+      1.6
+     ],
+     [
+      "anhidrita",
+      1.5
+     ],
+     [
+      "fluorapatita",
+      1.4
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 11.52,
+     "Br": 0.0377,
+     "CaO": 6.12,
+     "Cl": 0.73,
+     "Cr2O3": 0.51,
+     "FeO": 21.55,
+     "K2O": 0.46,
+     "MgO": 7.49,
+     "MnO": 0.27,
+     "Na2O": 3.08,
+     "Ni": 0.0543,
+     "P2O5": 0.72,
+     "SiO2": 42.95,
+     "SO3": 3.35,
+     "TiO2": 1.0,
+     "Zn": 0.0377
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 0,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 16.2,
+    "cloro_pct": 0.73,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/141472/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.368583,
+     -4.6731358,
+     -4434.7
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 9,
+    "nombre": "Greenhorn",
+    "sol": 1137,
+    "fecha_aprox": "2015-10-17",
+    "zona": "stimson",
+    "formacion": "formación Stimson, halo de fractura",
+    "roca": "arenisca alterada",
+    "elevacion_m": -4434.5,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Una franja clara junto a una grieta: por ahí circuló agua subterránea mucho después de formarse la roca.",
+    "tecnico": "Halo rico en sílice y sulfato de calcio (anhidrita 16 %, SO3 11,9 %).",
+    "fuente_hallazgo": "Yen et al. 2017, EPSL",
+    "minerales": [
+     [
+      "plagioclasa",
+      42.1
+     ],
+     [
+      "magnetita",
+      17.3
+     ],
+     [
+      "anhidrita",
+      16.1
+     ],
+     [
+      "ortopiroxeno",
+      7.6
+     ],
+     [
+      "hematita",
+      6.0
+     ],
+     [
+      "pigeonita",
+      4.7
+     ],
+     [
+      "basanita",
+      4.0
+     ],
+     [
+      "cuarzo",
+      2.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 3.92,
+     "Br": 0.0228,
+     "CaO": 7.8,
+     "Cl": 0.46,
+     "Cr2O3": 0.45,
+     "FeO": 15.25,
+     "K2O": 0.3,
+     "MgO": 1.81,
+     "MnO": 0.14,
+     "Na2O": 2.43,
+     "Ni": 0.0293,
+     "P2O5": 1.15,
+     "SiO2": 53.24,
+     "SO3": 11.92,
+     "TiO2": 1.0,
+     "Zn": 0.0162
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 2,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 23.3,
+    "cloro_pct": 0.46,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/141473/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3686468,
+     -4.6731459,
+     -4434.5
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 10,
+    "nombre": "Lubango",
+    "sol": 1320,
+    "fecha_aprox": "2016-04-22",
+    "zona": "stimson",
+    "formacion": "formación Stimson, halo de fractura",
+    "roca": "arenisca alterada",
+    "elevacion_m": -4429.0,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Otra franja clara: el agua subterránea lavó y agregó sílice.",
+    "tecnico": "SiO2 59,8 % y SO3 13,7 % (APXS); sulfatos de calcio 23 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      43.2
+     ],
+     [
+      "anhidrita",
+      12.3
+     ],
+     [
+      "magnetita",
+      11.1
+     ],
+     [
+      "ortopiroxeno",
+      10.4
+     ],
+     [
+      "basanita",
+      9.0
+     ],
+     [
+      "pigeonita",
+      5.9
+     ],
+     [
+      "cuarzo",
+      3.5
+     ],
+     [
+      "yeso",
+      2.3
+     ],
+     [
+      "hematita",
+      2.3
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 3.09,
+     "Br": 0.006,
+     "CaO": 8.22,
+     "Cl": 0.32,
+     "Cr2O3": 0.29,
+     "FeO": 8.22,
+     "K2O": 0.31,
+     "MgO": 1.55,
+     "MnO": 0.09,
+     "Na2O": 1.92,
+     "Ni": 0.0111,
+     "P2O5": 1.33,
+     "SiO2": 59.75,
+     "SO3": 13.69,
+     "TiO2": 1.11,
+     "Zn": 0.0089
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 10,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 13.4,
+    "cloro_pct": 0.32,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/145372/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3592342,
+     -4.6782608,
+     -4429.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 11,
+    "nombre": "Okoruso",
+    "sol": 1332,
+    "fecha_aprox": "2016-05-05",
+    "zona": "stimson",
+    "formacion": "formación Stimson",
+    "roca": "arenisca",
+    "elevacion_m": -4429.3,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La roca 'sana' junto a Lubango, para ver qué cambió el agua.",
+    "tecnico": "Arenisca basáltica casi sin sulfato (SO3 0,96 %): pareja sin alterar de Lubango.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      41.9
+     ],
+     [
+      "pigeonita",
+      20.8
+     ],
+     [
+      "magnetita",
+      17.3
+     ],
+     [
+      "ortopiroxeno",
+      11.0
+     ],
+     [
+      "feldespato potásico",
+      2.9
+     ],
+     [
+      "apatita",
+      1.6
+     ],
+     [
+      "cuarzo",
+      1.4
+     ],
+     [
+      "basanita",
+      1.2
+     ],
+     [
+      "hematita",
+      1.1
+     ],
+     [
+      "anhidrita",
+      0.8
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 9.64,
+     "Br": 0.0106,
+     "CaO": 6.36,
+     "Cl": 0.5,
+     "Cr2O3": 0.41,
+     "FeO": 22.39,
+     "K2O": 0.37,
+     "MgO": 8.97,
+     "MnO": 0.39,
+     "Na2O": 3.08,
+     "Ni": 0.0494,
+     "P2O5": 0.75,
+     "SiO2": 45.1,
+     "SO3": 0.96,
+     "TiO2": 0.94,
+     "Zn": 0.0321
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 1,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 18.4,
+    "cloro_pct": 0.5,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/145373/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3591733,
+     -4.6782403,
+     -4429.3
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 12,
+    "nombre": "Oudam",
+    "sol": 1361,
+    "fecha_aprox": "2016-06-04",
+    "zona": "murray",
+    "formacion": "formación Murray (Murray Buttes)",
+    "roca": "lodolita",
+    "elevacion_m": -4435.6,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Barro de lago con mucho óxido de hierro.",
+    "tecnico": "Hematita 26 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      51.1
+     ],
+     [
+      "hematita",
+      26.0
+     ],
+     [
+      "piroxeno",
+      9.7
+     ],
+     [
+      "anhidrita",
+      5.8
+     ],
+     [
+      "yeso",
+      5.5
+     ],
+     [
+      "cuarzo",
+      1.9
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 9.4,
+     "Br": 0.0024,
+     "CaO": 4.55,
+     "Cl": 0.35,
+     "Cr2O3": 0.32,
+     "FeO": 18.74,
+     "K2O": 0.87,
+     "MgO": 4.9,
+     "MnO": 0.22,
+     "Na2O": 2.59,
+     "Ni": 0.0773,
+     "P2O5": 0.52,
+     "SiO2": 51.82,
+     "SO3": 4.36,
+     "TiO2": 1.05,
+     "Zn": 0.1081
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 11,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 26.0,
+    "cloro_pct": 0.35,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3577081,
+     -4.6786414,
+     -4435.6
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 13,
+    "nombre": "Marimba",
+    "sol": 1422,
+    "fecha_aprox": "2016-08-05",
+    "zona": "murray",
+    "formacion": "formación Murray (Murray Buttes)",
+    "roca": "lodolita",
+    "elevacion_m": -4410.4,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Lodolita del lago profundo, rica en arcillas.",
+    "tecnico": "Hematita 16 %, sulfatos de calcio 18 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      45.8
+     ],
+     [
+      "hematita",
+      16.4
+     ],
+     [
+      "anhidrita",
+      10.2
+     ],
+     [
+      "sanidina",
+      7.7
+     ],
+     [
+      "yeso",
+      6.4
+     ],
+     [
+      "olivino (forsterita)",
+      5.3
+     ],
+     [
+      "piroxeno",
+      3.6
+     ],
+     [
+      "basanita",
+      1.9
+     ],
+     [
+      "jarosita",
+      1.5
+     ],
+     [
+      "cuarzo",
+      1.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.49,
+     "Br": 0.0259,
+     "CaO": 5.27,
+     "Cl": 0.48,
+     "Cr2O3": 0.33,
+     "FeO": 22.53,
+     "K2O": 0.83,
+     "MgO": 4.58,
+     "MnO": 0.09,
+     "Na2O": 2.11,
+     "Ni": 0.1083,
+     "P2O5": 1.05,
+     "SiO2": 45.99,
+     "SO3": 6.78,
+     "TiO2": 1.07,
+     "Zn": 0.1084
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 16,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 16.4,
+    "cloro_pct": 0.48,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/169776/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3544744,
+     -4.6871848,
+     -4410.4
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 14,
+    "nombre": "Quela",
+    "sol": 1464,
+    "fecha_aprox": "2016-09-17",
+    "zona": "murray",
+    "formacion": "formación Murray (Murray Buttes)",
+    "roca": "lodolita",
+    "elevacion_m": -4379.5,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Más barro de lago, con sales en las grietas.",
+    "tecnico": "Hematita 20 %, sulfatos de calcio 17 % de la fracción cristalina; Cl 1 %.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      44.0
+     ],
+     [
+      "hematita",
+      20.0
+     ],
+     [
+      "anhidrita",
+      10.7
+     ],
+     [
+      "sanidina",
+      6.1
+     ],
+     [
+      "piroxeno",
+      5.3
+     ],
+     [
+      "olivino (forsterita)",
+      5.1
+     ],
+     [
+      "basanita",
+      4.5
+     ],
+     [
+      "yeso",
+      1.8
+     ],
+     [
+      "jarosita",
+      1.4
+     ],
+     [
+      "cuarzo",
+      1.1
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.48,
+     "Br": 0.0042,
+     "CaO": 7.48,
+     "Cl": 1.01,
+     "Cr2O3": 0.29,
+     "FeO": 18.93,
+     "K2O": 0.77,
+     "MgO": 4.1,
+     "MnO": 0.22,
+     "Na2O": 2.19,
+     "Ni": 0.0999,
+     "P2O5": 1.1,
+     "SiO2": 44.81,
+     "SO3": 9.3,
+     "TiO2": 1.05,
+     "Zn": 0.0826
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 8,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 20.0,
+    "cloro_pct": 1.01,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/169777/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3530064,
+     -4.6952022,
+     -4379.5
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 15,
+    "nombre": "Sebina",
+    "sol": 1495,
+    "fecha_aprox": "2016-10-19",
+    "zona": "murray",
+    "formacion": "formación Murray",
+    "roca": "lodolita",
+    "elevacion_m": -4360.8,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Lodolita con hematita y venas de yeso.",
+    "tecnico": "Hematita 20 %, anhidrita 17 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      38.4
+     ],
+     [
+      "hematita",
+      20.4
+     ],
+     [
+      "anhidrita",
+      16.9
+     ],
+     [
+      "piroxeno",
+      6.8
+     ],
+     [
+      "sanidina",
+      5.1
+     ],
+     [
+      "yeso",
+      3.8
+     ],
+     [
+      "olivino (forsterita)",
+      3.0
+     ],
+     [
+      "jarosita",
+      2.6
+     ],
+     [
+      "basanita",
+      1.8
+     ],
+     [
+      "cuarzo",
+      1.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.68,
+     "Br": 0.0104,
+     "CaO": 7.13,
+     "Cl": 1.06,
+     "Cr2O3": 0.3,
+     "FeO": 18.3,
+     "K2O": 0.83,
+     "MgO": 4.25,
+     "MnO": 0.16,
+     "Na2O": 2.01,
+     "Ni": 0.1024,
+     "P2O5": 0.61,
+     "SiO2": 46.17,
+     "SO3": 9.13,
+     "TiO2": 1.1,
+     "Zn": 0.0814
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 12,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 20.4,
+    "cloro_pct": 1.06,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/169778/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3549486,
+     -4.6996032,
+     -4360.8
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 16,
+    "nombre": "Duluth",
+    "sol": 2057,
+    "fecha_aprox": "2018-05-20",
+    "zona": "verarubin",
+    "formacion": "formación Murray, bajo la cresta Vera Rubin",
+    "roca": "lodolita",
+    "elevacion_m": -4192.5,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "El regreso del taladro: después de una falla en 2016, los ingenieros inventaron otra forma de perforar.",
+    "tecnico": "Primera muestra con la técnica nueva de perforación (FED) tras la falla del avance del taladro del sol 1536.",
+    "fuente_hallazgo": "Abbey et al. 2020, Icarus 350:113885",
+    "minerales": [
+     [
+      "plagioclasa",
+      55.9
+     ],
+     [
+      "hematita",
+      13.0
+     ],
+     [
+      "piroxeno",
+      9.0
+     ],
+     [
+      "sanidina",
+      9.0
+     ],
+     [
+      "basanita",
+      5.4
+     ],
+     [
+      "anhidrita",
+      3.0
+     ],
+     [
+      "yeso",
+      1.8
+     ],
+     [
+      "magnetita",
+      1.6
+     ],
+     [
+      "cuarzo",
+      1.3
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.8,
+     "Br": 0.0023,
+     "CaO": 7.72,
+     "Cl": 0.93,
+     "Cr2O3": 0.34,
+     "FeO": 22.33,
+     "K2O": 0.96,
+     "MgO": 2.76,
+     "MnO": 0.26,
+     "Na2O": 2.3,
+     "Ni": 0.0927,
+     "P2O5": 1.11,
+     "SiO2": 41.87,
+     "SO3": 10.25,
+     "TiO2": 1.06,
+     "Zn": 0.1327
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 7,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 14.6,
+    "cloro_pct": 0.93,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/288511/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3772471,
+     -4.7241961,
+     -4192.5
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 17,
+    "nombre": "Stoer",
+    "sol": 2136,
+    "fecha_aprox": "2018-08-09",
+    "zona": "verarubin",
+    "formacion": "cresta Vera Rubin",
+    "roca": "lodolita",
+    "elevacion_m": -4170.0,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La roca más rica en óxido de hierro de toda la misión.",
+    "tecnico": "Hematita 28,3 % de la fracción cristalina.",
+    "fuente_hallazgo": "Rampe et al. 2020, JGR Planets",
+    "minerales": [
+     [
+      "plagioclasa",
+      44.1
+     ],
+     [
+      "hematita",
+      28.3
+     ],
+     [
+      "piroxeno",
+      7.3
+     ],
+     [
+      "anhidrita",
+      5.3
+     ],
+     [
+      "yeso",
+      4.2
+     ],
+     [
+      "sanidina",
+      4.0
+     ],
+     [
+      "jarosita",
+      2.2
+     ],
+     [
+      "akaganeíta",
+      1.6
+     ],
+     [
+      "cuarzo",
+      1.5
+     ],
+     [
+      "basanita",
+      0.8
+     ],
+     [
+      "magnetita",
+      0.7
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.75,
+     "Br": 0.0044,
+     "CaO": 6.44,
+     "Cl": 0.89,
+     "Cr2O3": 0.34,
+     "FeO": 21.53,
+     "K2O": 0.91,
+     "MgO": 4.72,
+     "MnO": 0.17,
+     "Na2O": 2.45,
+     "Ni": 0.0914,
+     "P2O5": 0.84,
+     "SiO2": 44.08,
+     "SO3": 7.59,
+     "TiO2": 1.03,
+     "Zn": 0.0847
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 13,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 29.0,
+    "cloro_pct": 0.89,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/288516/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.378061,
+     -4.7255925,
+     -4170.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 18,
+    "nombre": "Highfield",
+    "sol": 2224,
+    "fecha_aprox": "2018-11-07",
+    "zona": "verarubin",
+    "formacion": "cresta Vera Rubin, roca gris",
+    "roca": "lodolita",
+    "elevacion_m": -4146.9,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Una roca gris en una cresta roja: la hematita de grano grueso suele formarse con fluidos tibios.",
+    "tecnico": "Hematita gris de grano grueso (20 %).",
+    "fuente_hallazgo": "Rampe et al. 2020, JGR Planets",
+    "minerales": [
+     [
+      "plagioclasa",
+      47.3
+     ],
+     [
+      "hematita",
+      20.2
+     ],
+     [
+      "piroxeno",
+      10.1
+     ],
+     [
+      "anhidrita",
+      8.2
+     ],
+     [
+      "yeso",
+      5.2
+     ],
+     [
+      "sanidina",
+      3.7
+     ],
+     [
+      "basanita",
+      2.6
+     ],
+     [
+      "magnetita",
+      1.4
+     ],
+     [
+      "cuarzo",
+      1.3
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 9.45,
+     "Br": 0.0067,
+     "CaO": 4.83,
+     "Cl": 0.93,
+     "Cr2O3": 0.3,
+     "FeO": 18.6,
+     "K2O": 0.85,
+     "MgO": 4.2,
+     "MnO": 0.14,
+     "Na2O": 2.58,
+     "Ni": 0.102,
+     "P2O5": 0.73,
+     "SiO2": 50.59,
+     "SO3": 5.61,
+     "TiO2": 0.94,
+     "Zn": 0.07
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 12,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 21.6,
+    "cloro_pct": 0.93,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/288517/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3775706,
+     -4.7285135,
+     -4146.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 19,
+    "nombre": "Rock Hall",
+    "sol": 2261,
+    "fecha_aprox": "2018-12-15",
+    "zona": "verarubin",
+    "formacion": "cresta Vera Rubin",
+    "roca": "lodolita",
+    "elevacion_m": -4143.8,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Mucho cloro: pasaron salmueras ácidas y saladas.",
+    "tecnico": "Akaganeíta 11,3 % y jarosita en la fracción cristalina; Cl 2,1 % (APXS), el más alto de la cresta.",
+    "fuente_hallazgo": "Rampe et al. 2020, JGR Planets",
+    "minerales": [
+     [
+      "plagioclasa",
+      38.2
+     ],
+     [
+      "anhidrita",
+      21.2
+     ],
+     [
+      "piroxeno",
+      17.1
+     ],
+     [
+      "akaganeíta",
+      11.3
+     ],
+     [
+      "hematita",
+      5.4
+     ],
+     [
+      "jarosita",
+      4.3
+     ],
+     [
+      "apatita",
+      2.5
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.33,
+     "Br": 0.0229,
+     "CaO": 8.64,
+     "Cl": 2.1,
+     "Cr2O3": 0.31,
+     "FeO": 20.0,
+     "K2O": 0.62,
+     "MgO": 3.97,
+     "MnO": 0.08,
+     "Na2O": 2.13,
+     "Ni": 0.0995,
+     "P2O5": 0.87,
+     "SiO2": 37.37,
+     "SO3": 15.28,
+     "TiO2": 1.0,
+     "Zn": 0.0919
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 16,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 5.4,
+    "cloro_pct": 2.1,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/288518/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3781597,
+     -4.7284142,
+     -4143.8
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 20,
+    "nombre": "Aberlady",
+    "sol": 2369,
+    "fecha_aprox": "2019-04-05",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Jura",
+    "roca": "lodolita",
+    "elevacion_m": -4157.9,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La entrada a la zona de arcilla que se veía desde órbita.",
+    "tecnico": "Lodolita rica en arcillas; sulfatos de calcio 37 % de la fracción cristalina.",
+    "fuente_hallazgo": "Thorpe et al. 2021, LPSC",
+    "minerales": [
+     [
+      "plagioclasa",
+      34.7
+     ],
+     [
+      "anhidrita",
+      18.9
+     ],
+     [
+      "basanita",
+      18.4
+     ],
+     [
+      "piroxeno",
+      14.7
+     ],
+     [
+      "hematita",
+      5.5
+     ],
+     [
+      "sanidina",
+      3.9
+     ],
+     [
+      "cuarzo",
+      2.1
+     ],
+     [
+      "magnetita",
+      1.9
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.24,
+     "Br": 0.0211,
+     "CaO": 7.03,
+     "Cl": 0.95,
+     "Cr2O3": 0.38,
+     "FeO": 20.59,
+     "K2O": 0.6,
+     "MgO": 5.84,
+     "MnO": 0.36,
+     "Na2O": 2.21,
+     "Ni": 0.0818,
+     "P2O5": 0.81,
+     "SiO2": 41.55,
+     "SO3": 9.89,
+     "TiO2": 1.08,
+     "Zn": 0.2494
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 11,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 7.4,
+    "cloro_pct": 0.95,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/321821/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3836534,
+     -4.7260789,
+     -4157.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 21,
+    "nombre": "Kilmarie",
+    "sol": 2384,
+    "fecha_aprox": "2019-04-21",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Jura",
+    "roca": "lodolita",
+    "elevacion_m": -4158.0,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Arcilla y una pista de carbonato de hierro, años antes del gran hallazgo de siderita.",
+    "tecnico": "Siderita 8 % de la fracción cristalina; anhidrita 29 %; Zn 0,44 % (APXS).",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      32.5
+     ],
+     [
+      "anhidrita",
+      29.3
+     ],
+     [
+      "piroxeno",
+      13.4
+     ],
+     [
+      "basanita",
+      10.0
+     ],
+     [
+      "siderita",
+      8.0
+     ],
+     [
+      "hematita",
+      3.8
+     ],
+     [
+      "sanidina",
+      2.3
+     ],
+     [
+      "cuarzo",
+      0.8
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.34,
+     "Br": 0.0129,
+     "CaO": 9.23,
+     "Cl": 0.32,
+     "Cr2O3": 0.36,
+     "FeO": 19.86,
+     "K2O": 0.62,
+     "MgO": 5.66,
+     "MnO": 0.61,
+     "Na2O": 1.78,
+     "Ni": 0.0662,
+     "P2O5": 0.97,
+     "SiO2": 38.56,
+     "SO3": 12.96,
+     "TiO2": 1.1,
+     "Zn": 0.4411
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 6,
+    "co2_kg_t": 30,
+    "oxidos_fe_pct": 3.8,
+    "cloro_pct": 0.32,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/321823/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3836548,
+     -4.7260738,
+     -4158.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 22,
+    "nombre": "Glen Etive 1",
+    "sol": 2486,
+    "fecha_aprox": "2019-08-03",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Knockfarril Hill",
+    "roca": "lodolita",
+    "elevacion_m": -4133.4,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Arcilla depositada por ríos que llegaban al lago.",
+    "tecnico": "Anhidrita 34 % de la fracción cristalina; siderita 3 %.",
+    "fuente_hallazgo": "Bennett et al. 2022, JGR Planets",
+    "minerales": [
+     [
+      "plagioclasa",
+      40.0
+     ],
+     [
+      "anhidrita",
+      34.0
+     ],
+     [
+      "hematita",
+      7.0
+     ],
+     [
+      "piroxeno",
+      6.0
+     ],
+     [
+      "sanidina",
+      5.0
+     ],
+     [
+      "basanita",
+      3.0
+     ],
+     [
+      "siderita",
+      3.0
+     ],
+     [
+      "cuarzo",
+      2.0
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.41,
+     "Br": 0.0281,
+     "CaO": 5.03,
+     "Cl": 0.78,
+     "Cr2O3": 0.39,
+     "FeO": 23.46,
+     "K2O": 1.07,
+     "MgO": 5.74,
+     "MnO": 0.27,
+     "Na2O": 2.18,
+     "Ni": 0.1042,
+     "P2O5": 0.81,
+     "SiO2": 43.87,
+     "SO3": 6.37,
+     "TiO2": 1.21,
+     "Zn": 0.1834
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 2,
+    "co2_kg_t": 11,
+    "oxidos_fe_pct": 7.0,
+    "cloro_pct": 0.78,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/323307/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3835412,
+     -4.7303091,
+     -4133.4
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 23,
+    "nombre": "Glen Etive 2",
+    "sol": 2527,
+    "fecha_aprox": "2019-09-15",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Knockfarril Hill",
+    "roca": "lodolita",
+    "elevacion_m": -4133.4,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Segundo pozo en el mismo lugar, para repetir experimentos.",
+    "tecnico": "Plagioclasa 63 % de la fracción cristalina; SO3 13,2 % (APXS).",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      63.6
+     ],
+     [
+      "piroxeno",
+      11.1
+     ],
+     [
+      "anhidrita",
+      10.1
+     ],
+     [
+      "sanidina",
+      6.1
+     ],
+     [
+      "hematita",
+      4.0
+     ],
+     [
+      "basanita",
+      3.0
+     ],
+     [
+      "cuarzo",
+      2.0
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.3,
+     "Br": 0.0082,
+     "CaO": 9.66,
+     "Cl": 0.71,
+     "Cr2O3": 0.36,
+     "FeO": 20.16,
+     "K2O": 1.04,
+     "MgO": 4.63,
+     "MnO": 0.25,
+     "Na2O": 1.81,
+     "Ni": 0.1006,
+     "P2O5": 0.69,
+     "SiO2": 38.64,
+     "SO3": 13.17,
+     "TiO2": 1.14,
+     "Zn": 0.2372
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 2,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 4.0,
+    "cloro_pct": 0.71,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/323312/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3835412,
+     -4.7303091,
+     -4133.4
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 24,
+    "nombre": "Hutton",
+    "sol": 2668,
+    "fecha_aprox": "2020-02-06",
+    "zona": "glentorridon",
+    "formacion": "formación Murray, bajo el pedimento Greenheugh",
+    "roca": "lodolita",
+    "elevacion_m": -4095.4,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Justo debajo de una gran discontinuidad: el agua alteró la roca de otra manera.",
+    "tecnico": "Poca esmectita (6 %), con cristobalita y ópalo-CT, a diferencia del resto de Glen Torridon (~30 %).",
+    "fuente_hallazgo": "Rampe et al. 2020, AGU; Bennett et al. 2022",
+    "minerales": [
+     [
+      "plagioclasa",
+      49.7
+     ],
+     [
+      "piroxeno",
+      14.1
+     ],
+     [
+      "magnetita",
+      12.4
+     ],
+     [
+      "cristobalita",
+      9.3
+     ],
+     [
+      "hematita",
+      4.8
+     ],
+     [
+      "sanidina",
+      4.7
+     ],
+     [
+      "apatita",
+      3.8
+     ],
+     [
+      "anhidrita",
+      1.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 9.29,
+     "Br": 0.0131,
+     "CaO": 5.88,
+     "Cl": 0.91,
+     "Cr2O3": 0.31,
+     "FeO": 19.94,
+     "K2O": 0.89,
+     "MgO": 6.29,
+     "MnO": 0.27,
+     "Na2O": 3.39,
+     "Ni": 0.0739,
+     "P2O5": 1.09,
+     "SiO2": 46.64,
+     "SO3": 3.71,
+     "TiO2": 1.07,
+     "Zn": 0.1598
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 0,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 17.2,
+    "cloro_pct": 0.91,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/419691/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.380899,
+     -4.7365847,
+     -4095.4
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 25,
+    "nombre": "Edinburgh",
+    "sol": 2711,
+    "fecha_aprox": "2020-03-22",
+    "zona": "glentorridon",
+    "formacion": "pedimento Greenheugh (arenisca Stimson)",
+    "roca": "arenisca",
+    "elevacion_m": -4088.7,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Arriba del pedimento: arena del desierto que tapó el paisaje mucho después.",
+    "tecnico": "Olivino, piroxeno y magnetita, con 10 % de esmectita: distinta de las otras muestras de Stimson.",
+    "fuente_hallazgo": "Rampe et al. 2020, AGU",
+    "minerales": [
+     [
+      "plagioclasa",
+      39.6
+     ],
+     [
+      "piroxeno",
+      27.6
+     ],
+     [
+      "magnetita",
+      14.0
+     ],
+     [
+      "olivino",
+      11.5
+     ],
+     [
+      "sanidina",
+      4.6
+     ],
+     [
+      "apatita",
+      2.0
+     ],
+     [
+      "hematita",
+      0.5
+     ],
+     [
+      "cuarzo",
+      0.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.86,
+     "Br": 0.0077,
+     "CaO": 7.1,
+     "Cl": 0.81,
+     "Cr2O3": 0.42,
+     "FeO": 22.67,
+     "K2O": 1.09,
+     "MgO": 9.36,
+     "MnO": 0.54,
+     "Na2O": 3.45,
+     "Ni": 0.0408,
+     "P2O5": 0.59,
+     "SiO2": 39.54,
+     "SO3": 4.58,
+     "TiO2": 0.87,
+     "Zn": 0.0353
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 0,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 14.5,
+    "cloro_pct": 0.81,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/419696/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3807898,
+     -4.7370607,
+     -4088.7
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 26,
+    "nombre": "Glasgow",
+    "sol": 2754,
+    "fecha_aprox": "2020-05-05",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Glasgow",
+    "roca": "lodolita",
+    "elevacion_m": -4107.9,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "El techo de la zona de arcilla.",
+    "tecnico": "Anhidrita 18,5 %, hematita 13 % de la fracción cristalina.",
+    "fuente_hallazgo": "Thorpe et al. 2021, LPSC",
+    "minerales": [
+     [
+      "plagioclasa",
+      50.4
+     ],
+     [
+      "anhidrita",
+      18.5
+     ],
+     [
+      "hematita",
+      13.4
+     ],
+     [
+      "piroxeno",
+      5.8
+     ],
+     [
+      "sanidina",
+      3.7
+     ],
+     [
+      "cuarzo",
+      3.3
+     ],
+     [
+      "basanita",
+      3.2
+     ],
+     [
+      "apatita",
+      1.0
+     ],
+     [
+      "cristobalita",
+      0.7
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.74,
+     "Br": 0.02,
+     "CaO": 6.11,
+     "Cl": 1.12,
+     "Cr2O3": 0.38,
+     "FeO": 18.82,
+     "K2O": 0.91,
+     "MgO": 4.74,
+     "MnO": 0.17,
+     "Na2O": 2.23,
+     "Ni": 0.0964,
+     "P2O5": 1.03,
+     "SiO2": 46.87,
+     "SO3": 7.48,
+     "TiO2": 1.08,
+     "Zn": 0.1039
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 2,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 13.4,
+    "cloro_pct": 1.12,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/419700/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3810583,
+     -4.7352367,
+     -4107.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 27,
+    "nombre": "Mary Anning",
+    "sol": 2838,
+    "fecha_aprox": "2020-07-30",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Knockfarril Hill",
+    "roca": "lodolita",
+    "elevacion_m": -4128.1,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Lleva el nombre de una paleontóloga. Glen Torridon dio la mayor variedad de orgánicos de la misión.",
+    "tecnico": "Carbonato de hierro 3 %, plagioclasa 70 % de la fracción cristalina.",
+    "fuente_hallazgo": "Bennett et al. 2022, JGR Planets",
+    "minerales": [
+     [
+      "plagioclasa",
+      70.5
+     ],
+     [
+      "piroxeno",
+      11.6
+     ],
+     [
+      "sanidina",
+      6.3
+     ],
+     [
+      "anhidrita",
+      3.9
+     ],
+     [
+      "carbonato de Fe",
+      3.1
+     ],
+     [
+      "hematita",
+      2.5
+     ],
+     [
+      "cuarzo",
+      2.1
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.05,
+     "Br": 0.0056,
+     "CaO": 6.32,
+     "Cl": 0.91,
+     "Cr2O3": 0.32,
+     "FeO": 19.77,
+     "K2O": 0.88,
+     "MgO": 6.55,
+     "MnO": 0.37,
+     "Na2O": 2.16,
+     "Ni": 0.0867,
+     "P2O5": 0.73,
+     "SiO2": 42.85,
+     "SO3": 9.6,
+     "TiO2": 1.11,
+     "Zn": 0.2124
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 0,
+    "co2_kg_t": 12,
+    "oxidos_fe_pct": 2.5,
+    "cloro_pct": 0.91,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/419705/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3911375,
+     -4.7293066,
+     -4128.1
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 28,
+    "nombre": "Mary Anning 3",
+    "sol": 2887,
+    "fecha_aprox": "2020-09-18",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Knockfarril Hill",
+    "roca": "lodolita",
+    "elevacion_m": -4128.1,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Otro pozo en el mismo sitio, para repetir y ampliar los análisis.",
+    "tecnico": "SO3 12 % (APXS); basanita y carbonato de Fe en la fracción cristalina.",
+    "fuente_hallazgo": "Bennett et al. 2022, JGR Planets",
+    "minerales": [
+     [
+      "plagioclasa",
+      63.7
+     ],
+     [
+      "piroxeno",
+      13.9
+     ],
+     [
+      "sanidina",
+      6.3
+     ],
+     [
+      "basanita",
+      4.8
+     ],
+     [
+      "anhidrita",
+      4.6
+     ],
+     [
+      "carbonato de Fe",
+      2.5
+     ],
+     [
+      "cuarzo",
+      2.3
+     ],
+     [
+      "hematita",
+      1.9
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.83,
+     "Br": 0.0058,
+     "CaO": 7.77,
+     "Cl": 0.89,
+     "Cr2O3": 0.36,
+     "FeO": 18.22,
+     "K2O": 0.69,
+     "MgO": 7.59,
+     "MnO": 0.66,
+     "Na2O": 2.21,
+     "Ni": 0.0674,
+     "P2O5": 1.37,
+     "SiO2": 38.96,
+     "SO3": 12.06,
+     "TiO2": 1.06,
+     "Zn": 0.1826
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 3,
+    "co2_kg_t": 10,
+    "oxidos_fe_pct": 1.9,
+    "cloro_pct": 0.89,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/419710/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3911375,
+     -4.7293066,
+     -4128.1
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 29,
+    "nombre": "Groken",
+    "sol": 2910,
+    "fecha_aprox": "2020-10-12",
+    "zona": "glentorridon",
+    "formacion": "Glen Torridon, miembro Knockfarril Hill",
+    "roca": "lodolita",
+    "elevacion_m": -4127.9,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Nódulos con manganeso y fósforo: elementos clave para la química de la vida.",
+    "tecnico": "MnO 1,07 % y P2O5 2,13 % (APXS), los más altos de Glen Torridon. Sin abundancias CheMin publicadas en la base.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [],
+    "quimica_apxs": {
+     "Al2O3": 7.59,
+     "Br": 0.0254,
+     "CaO": 6.15,
+     "Cl": 0.5,
+     "Cr2O3": 0.42,
+     "FeO": 19.66,
+     "K2O": 0.6,
+     "MgO": 9.35,
+     "MnO": 1.07,
+     "Na2O": 2.33,
+     "Ni": 0.063,
+     "P2O5": 2.13,
+     "SiO2": 37.32,
+     "SO3": 11.33,
+     "TiO2": 1.1,
+     "Zn": 0.2118
+    },
+    "fuente_mineralogia": "Todavía no publicada en la base de NASA",
+    "agua_kg_t": null,
+    "co2_kg_t": null,
+    "oxidos_fe_pct": null,
+    "cloro_pct": 0.5,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/419714/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3911432,
+     -4.7293202,
+     -4127.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 30,
+    "nombre": "Nontron",
+    "sol": 3056,
+    "fecha_aprox": "2021-03-11",
+    "zona": "transicion",
+    "formacion": "zona de Mont Mercou",
+    "roca": "lodolita",
+    "elevacion_m": -4072.9,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Al pie del acantilado de Mont Mercou: empieza el cambio de arcilla a sal.",
+    "tecnico": "Goethita y ankerita (carbonato) en la fracción cristalina; hematita 17 %.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      51.2
+     ],
+     [
+      "hematita",
+      17.1
+     ],
+     [
+      "piroxeno",
+      8.7
+     ],
+     [
+      "anhidrita",
+      8.0
+     ],
+     [
+      "basanita",
+      5.2
+     ],
+     [
+      "sanidina",
+      3.7
+     ],
+     [
+      "goethita",
+      2.4
+     ],
+     [
+      "ankerita",
+      2.2
+     ],
+     [
+      "cuarzo",
+      1.5
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 9.15,
+     "Br": 0.0029,
+     "CaO": 4.52,
+     "Cl": 0.9,
+     "Cr2O3": 0.33,
+     "FeO": 19.82,
+     "K2O": 0.86,
+     "MgO": 4.14,
+     "MnO": 0.27,
+     "Na2O": 2.55,
+     "Ni": 0.1205,
+     "P2O5": 0.99,
+     "SiO2": 49.3,
+     "SO3": 5.58,
+     "TiO2": 1.16,
+     "Zn": 0.2182
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 6,
+    "co2_kg_t": 9,
+    "oxidos_fe_pct": 19.5,
+    "cloro_pct": 0.9,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/516416/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.412544,
+     -4.7353856,
+     -4072.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 31,
+    "nombre": "Bardou",
+    "sol": 3096,
+    "fecha_aprox": "2021-04-21",
+    "zona": "transicion",
+    "formacion": "Mont Mercou",
+    "roca": "lodolita",
+    "elevacion_m": -4066.5,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Más arriba en el mismo acantilado, para seguir el cambio.",
+    "tecnico": "Hematita 21 %, ankerita 2,6 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      53.0
+     ],
+     [
+      "hematita",
+      21.0
+     ],
+     [
+      "piroxeno",
+      8.8
+     ],
+     [
+      "basanita",
+      5.5
+     ],
+     [
+      "sanidina",
+      4.2
+     ],
+     [
+      "ankerita",
+      2.6
+     ],
+     [
+      "anhidrita",
+      2.0
+     ],
+     [
+      "cuarzo",
+      1.7
+     ],
+     [
+      "yeso",
+      1.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.88,
+     "Br": 0.0039,
+     "CaO": 4.7,
+     "Cl": 0.88,
+     "Cr2O3": 0.31,
+     "FeO": 19.06,
+     "K2O": 0.83,
+     "MgO": 4.62,
+     "MnO": 0.3,
+     "Na2O": 2.38,
+     "Ni": 0.0966,
+     "P2O5": 0.74,
+     "SiO2": 48.35,
+     "SO3": 7.5,
+     "TiO2": 1.11,
+     "Zn": 0.1545
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 6,
+    "co2_kg_t": 11,
+    "oxidos_fe_pct": 21.0,
+    "cloro_pct": 0.88,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/516418/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4123814,
+     -4.7357279,
+     -4066.5
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 32,
+    "nombre": "Pontours",
+    "sol": 3172,
+    "fecha_aprox": "2021-07-08",
+    "zona": "transicion",
+    "formacion": "transición arcilla-sulfato",
+    "roca": "lodolita",
+    "elevacion_m": -4041.3,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Aparece sal común: el agua se estaba evaporando.",
+    "tecnico": "Halita 1,2 % de la fracción cristalina; Cl 1,46 % (APXS).",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      58.5
+     ],
+     [
+      "piroxeno",
+      16.7
+     ],
+     [
+      "hematita",
+      9.3
+     ],
+     [
+      "sanidina",
+      5.7
+     ],
+     [
+      "basanita",
+      3.1
+     ],
+     [
+      "yeso",
+      2.0
+     ],
+     [
+      "cuarzo",
+      1.8
+     ],
+     [
+      "goethita",
+      1.7
+     ],
+     [
+      "halita",
+      1.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.75,
+     "Br": 0.0042,
+     "CaO": 5.12,
+     "Cl": 1.46,
+     "Cr2O3": 0.34,
+     "FeO": 22.17,
+     "K2O": 0.79,
+     "MgO": 5.33,
+     "MnO": 0.28,
+     "Na2O": 2.31,
+     "Ni": 0.109,
+     "P2O5": 1.2,
+     "SiO2": 42.24,
+     "SO3": 9.53,
+     "TiO2": 1.08,
+     "Zn": 0.1664
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 8,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 11.0,
+    "cloro_pct": 1.46,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/516420/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4035018,
+     -4.7419254,
+     -4041.3
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 33,
+    "nombre": "Maria Gordon",
+    "sol": 3232,
+    "fecha_aprox": "2021-09-08",
+    "zona": "transicion",
+    "formacion": "transición arcilla-sulfato",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -4015.2,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Más minerales con agua en su estructura.",
+    "tecnico": "Goethita 5,5 % y sulfatos de calcio 11 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      51.7
+     ],
+     [
+      "hematita",
+      16.2
+     ],
+     [
+      "piroxeno",
+      7.6
+     ],
+     [
+      "feldespato alcalino",
+      6.1
+     ],
+     [
+      "goethita",
+      5.5
+     ],
+     [
+      "anhidrita",
+      4.8
+     ],
+     [
+      "basanita",
+      4.4
+     ],
+     [
+      "yeso",
+      2.1
+     ],
+     [
+      "cuarzo",
+      1.6
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.82,
+     "Br": 0.0036,
+     "CaO": 7.0,
+     "Cl": 1.05,
+     "Cr2O3": 0.32,
+     "FeO": 20.66,
+     "K2O": 0.81,
+     "MgO": 4.45,
+     "MnO": 0.26,
+     "Na2O": 2.17,
+     "Ni": 0.1179,
+     "P2O5": 1.09,
+     "SiO2": 42.48,
+     "SO3": 10.47,
+     "TiO2": 1.09,
+     "Zn": 0.1379
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 13,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 21.7,
+    "cloro_pct": 1.05,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/516577/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3963954,
+     -4.7440407,
+     -4015.2
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 34,
+    "nombre": "Zechstein",
+    "sol": 3292,
+    "fecha_aprox": "2021-11-09",
+    "zona": "transicion",
+    "formacion": "transición arcilla-sulfato",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3991.1,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La muestra con más yeso de toda la misión: el mineral que más agua guarda.",
+    "tecnico": "Yeso 33,7 % de la fracción cristalina, el valor más alto del catálogo.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      37.8
+     ],
+     [
+      "yeso",
+      33.7
+     ],
+     [
+      "piroxeno",
+      12.6
+     ],
+     [
+      "hematita",
+      9.6
+     ],
+     [
+      "basanita",
+      4.4
+     ],
+     [
+      "cuarzo",
+      1.9
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.5,
+     "Br": 0.0023,
+     "CaO": 6.75,
+     "Cl": 1.04,
+     "Cr2O3": 0.33,
+     "FeO": 18.9,
+     "K2O": 0.8,
+     "MgO": 4.34,
+     "MnO": 0.22,
+     "Na2O": 2.31,
+     "Ni": 0.0882,
+     "P2O5": 1.05,
+     "SiO2": 46.42,
+     "SO3": 7.95,
+     "TiO2": 1.12,
+     "Zn": 0.1074
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 73,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 9.6,
+    "cloro_pct": 1.04,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/516581/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3950252,
+     -4.7467533,
+     -3991.1
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 35,
+    "nombre": "Avanavero",
+    "sol": 3517,
+    "fecha_aprox": "2022-06-28",
+    "zona": "sulfatos",
+    "formacion": "formación Mirador",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3910.0,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Entrada a las capas de sales.",
+    "tecnico": "Goethita 9,9 %, hematita 17 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      41.7
+     ],
+     [
+      "hematita",
+      17.4
+     ],
+     [
+      "anhidrita",
+      12.2
+     ],
+     [
+      "goethita",
+      9.9
+     ],
+     [
+      "piroxeno",
+      8.7
+     ],
+     [
+      "basanita",
+      4.6
+     ],
+     [
+      "sanidina",
+      3.5
+     ],
+     [
+      "ilmenita",
+      1.0
+     ],
+     [
+      "cuarzo",
+      1.0
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 8.98,
+     "Br": 0.0015,
+     "CaO": 4.63,
+     "Cl": 0.76,
+     "Cr2O3": 0.36,
+     "FeO": 22.03,
+     "K2O": 0.8,
+     "MgO": 4.45,
+     "MnO": 0.43,
+     "Na2O": 2.47,
+     "Ni": 0.1023,
+     "P2O5": 1.05,
+     "SiO2": 47.82,
+     "SO3": 4.77,
+     "TiO2": 1.11,
+     "Zn": 0.1455
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 13,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 27.3,
+    "cloro_pct": 0.76,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/517372/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3968249,
+     -4.7556165,
+     -3910.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 36,
+    "nombre": "Canaima",
+    "sol": 3614,
+    "fecha_aprox": "2022-10-05",
+    "zona": "sulfatos",
+    "formacion": "formación Mirador, unidad de sulfatos de Mg",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3879.8,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Primera identificación exacta del sulfato de magnesio con agua que se veía desde órbita.",
+    "tecnico": "Starkeyita (MgSO4·4H2O) 6 % de la fracción cristalina; SO3 19,2 % (APXS).",
+    "fuente_hallazgo": "Bristow y Chipera, AHED, doi:10.48667/4apc-vz90",
+    "minerales": [
+     [
+      "andesina",
+      44.5
+     ],
+     [
+      "hematita",
+      12.4
+     ],
+     [
+      "yeso",
+      10.5
+     ],
+     [
+      "piroxeno",
+      8.4
+     ],
+     [
+      "sanidina",
+      8.4
+     ],
+     [
+      "starkeyita",
+      6.1
+     ],
+     [
+      "goethita",
+      5.8
+     ],
+     [
+      "anhidrita",
+      1.6
+     ],
+     [
+      "cuarzo",
+      1.3
+     ],
+     [
+      "basanita",
+      1.1
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 6.61,
+     "Br": 0.0022,
+     "CaO": 4.95,
+     "Cl": 1.27,
+     "Cr2O3": 0.29,
+     "FeO": 17.66,
+     "K2O": 0.68,
+     "MgO": 10.68,
+     "MnO": 0.21,
+     "Na2O": 2.19,
+     "Ni": 0.0839,
+     "P2O5": 0.87,
+     "SiO2": 34.22,
+     "SO3": 19.21,
+     "TiO2": 0.9,
+     "Zn": 0.1025
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 51,
+    "co2_kg_t": 0,
+    "oxidos_fe_pct": 18.2,
+    "cloro_pct": 1.27,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/613060/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.399277,
+     -4.760777,
+     -3879.8
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 37,
+    "nombre": "Tapo Caparo",
+    "sol": 3755,
+    "fecha_aprox": "2023-02-27",
+    "zona": "sulfatos",
+    "formacion": "formación Mirador",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3853.2,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Carbonato de hierro: el carbono del aire antiguo quedó guardado en la roca.",
+    "tecnico": "Siderita 26 % de la fracción cristalina (~10 % de la roca) y kieserita. Base del hallazgo del ciclo del carbono.",
+    "fuente_hallazgo": "Tutolo et al. 2025, Science 388:292",
+    "minerales": [
+     [
+      "plagioclasa",
+      38.2
+     ],
+     [
+      "siderita",
+      26.3
+     ],
+     [
+      "piroxeno",
+      21.8
+     ],
+     [
+      "kieserita",
+      8.0
+     ],
+     [
+      "basanita",
+      3.8
+     ],
+     [
+      "anhidrita",
+      2.0
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 6.6,
+     "Br": 0.0037,
+     "CaO": 6.58,
+     "Cl": 0.52,
+     "Cr2O3": 0.68,
+     "FeO": 25.33,
+     "K2O": 0.39,
+     "MgO": 7.38,
+     "MnO": 0.49,
+     "Na2O": 1.86,
+     "Ni": 0.0377,
+     "P2O5": 0.4,
+     "SiO2": 37.33,
+     "SO3": 11.2,
+     "TiO2": 0.76,
+     "Zn": 0.3888
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 13,
+    "co2_kg_t": 100,
+    "oxidos_fe_pct": 0,
+    "cloro_pct": 0.52,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/613064/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3982095,
+     -4.7656997,
+     -3853.2
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 38,
+    "nombre": "Ubajara",
+    "sol": 3825,
+    "fecha_aprox": "2023-05-10",
+    "zona": "sulfatos",
+    "formacion": "formación Mirador",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3826.1,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "El sitio que NASA mostró al anunciar la siderita.",
+    "tecnico": "Starkeyita 16 % y siderita 12 % de la fracción cristalina.",
+    "fuente_hallazgo": "Tutolo et al. 2025, Science 388:292",
+    "minerales": [
+     [
+      "plagioclasa",
+      37.0
+     ],
+     [
+      "starkeyita",
+      15.9
+     ],
+     [
+      "piroxeno",
+      15.0
+     ],
+     [
+      "siderita",
+      11.9
+     ],
+     [
+      "yeso",
+      5.8
+     ],
+     [
+      "hematita",
+      5.8
+     ],
+     [
+      "goethita",
+      3.0
+     ],
+     [
+      "cuarzo",
+      2.2
+     ],
+     [
+      "basanita",
+      2.1
+     ],
+     [
+      "anhidrita",
+      1.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.12,
+     "Br": 0.0028,
+     "CaO": 4.78,
+     "Cl": 1.67,
+     "Cr2O3": 0.37,
+     "FeO": 19.72,
+     "K2O": 0.58,
+     "MgO": 9.5,
+     "MnO": 0.34,
+     "Na2O": 2.18,
+     "Ni": 0.0787,
+     "P2O5": 0.73,
+     "SiO2": 37.75,
+     "SO3": 14.23,
+     "TiO2": 0.81,
+     "Zn": 0.0839
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 76,
+    "co2_kg_t": 45,
+    "oxidos_fe_pct": 8.8,
+    "cloro_pct": 1.67,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/613233/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3986082,
+     -4.7680747,
+     -3826.1
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 39,
+    "nombre": "Sequoia",
+    "sol": 3982,
+    "fecha_aprox": "2023-10-19",
+    "zona": "sulfatos",
+    "formacion": "formación Mirador",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3764.3,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Tercera muestra con siderita.",
+    "tecnico": "Siderita 13 % y kieserita 10 % de la fracción cristalina. En la base figura como 'Sequoia2'.",
+    "fuente_hallazgo": "Tutolo et al. 2025, Science 388:292",
+    "minerales": [
+     [
+      "plagioclasa",
+      37.0
+     ],
+     [
+      "piroxeno",
+      24.4
+     ],
+     [
+      "siderita",
+      13.3
+     ],
+     [
+      "kieserita",
+      10.2
+     ],
+     [
+      "akaganeíta",
+      4.8
+     ],
+     [
+      "anhidrita",
+      4.5
+     ],
+     [
+      "hematita",
+      4.2
+     ],
+     [
+      "cuarzo",
+      1.6
+     ]
+    ],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 18,
+    "co2_kg_t": 51,
+    "oxidos_fe_pct": 4.2,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/755176/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4045524,
+     -4.7764748,
+     -3764.3
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 40,
+    "nombre": "Mineral King",
+    "sol": 4110,
+    "fecha_aprox": "2024-02-27",
+    "zona": "gediz",
+    "formacion": "junto a la loma de Gediz Vallis",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3730.0,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La perforación n.º 40: un pozo poco profundo, pero alcanzó para analizarlo.",
+    "tecnico": "Halita 8,7 % de la fracción cristalina, la más alta de la misión.",
+    "fuente_hallazgo": "NASA, blog del 4 de marzo de 2024; NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      35.1
+     ],
+     [
+      "piroxeno",
+      31.8
+     ],
+     [
+      "siderita",
+      11.1
+     ],
+     [
+      "halita",
+      8.7
+     ],
+     [
+      "anhidrita",
+      5.5
+     ],
+     [
+      "kieserita",
+      2.9
+     ],
+     [
+      "hematita",
+      2.7
+     ],
+     [
+      "akaganeíta",
+      2.3
+     ]
+    ],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 6,
+    "co2_kg_t": 42,
+    "oxidos_fe_pct": 2.7,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/755449/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4073539,
+     -4.7801177,
+     -3730.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 41,
+    "nombre": "Mammoth Lakes 2",
+    "sol": 4223,
+    "fecha_aprox": "2024-06-22",
+    "zona": "gediz",
+    "formacion": "canal Gediz Vallis",
+    "roca": "roca del canal",
+    "elevacion_m": -3688.2,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Perforada en el canal donde aparecieron las piedras de azufre puro.",
+    "tecnico": "Natrojarosita 11 % y akaganeíta 10 % de la fracción cristalina; sin azufre nativo en el polvo.",
+    "fuente_hallazgo": "NASA/JPL, 18 de julio de 2024",
+    "minerales": [
+     [
+      "plagioclasa",
+      36.2
+     ],
+     [
+      "piroxeno",
+      16.5
+     ],
+     [
+      "natrojarosita",
+      11.3
+     ],
+     [
+      "anhidrita",
+      11.0
+     ],
+     [
+      "akaganeíta",
+      10.3
+     ],
+     [
+      "siderita",
+      10.2
+     ],
+     [
+      "halita",
+      4.5
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 7.69,
+     "Br": 0.0081,
+     "CaO": 5.55,
+     "Cl": 1.1,
+     "Cr2O3": 0.37,
+     "FeO": 21.3,
+     "K2O": 0.64,
+     "MgO": 4.76,
+     "MnO": 0.24,
+     "Na2O": 2.67,
+     "Ni": 0.0701,
+     "P2O5": 0.98,
+     "SiO2": 40.49,
+     "SO3": 13.01,
+     "TiO2": 0.96,
+     "Zn": 0.0797
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 23,
+    "co2_kg_t": 39,
+    "oxidos_fe_pct": 0,
+    "cloro_pct": 1.1,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/771670/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4088596,
+     -4.785719,
+     -3688.2
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 42,
+    "nombre": "Kings Canyon",
+    "sol": 4266,
+    "fecha_aprox": "2024-08-05",
+    "zona": "gediz",
+    "formacion": "zona de Gediz Vallis",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3673.4,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "La perforación n.º 42, cierre de la campaña del canal.",
+    "tecnico": "Plagioclasa 55 %, hematita 16 % y anhidrita 12 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      54.7
+     ],
+     [
+      "hematita",
+      15.9
+     ],
+     [
+      "anhidrita",
+      11.9
+     ],
+     [
+      "piroxeno",
+      6.4
+     ],
+     [
+      "sanidina",
+      5.0
+     ],
+     [
+      "carbonato de Fe-Mg-Ca",
+      3.5
+     ],
+     [
+      "cuarzo",
+      1.4
+     ],
+     [
+      "natrojarosita",
+      1.2
+     ]
+    ],
+    "quimica_apxs": {
+     "Al2O3": 9.55,
+     "Br": 0.0029,
+     "CaO": 5.15,
+     "Cl": 0.85,
+     "Cr2O3": 0.45,
+     "FeO": 20.54,
+     "K2O": 0.86,
+     "MgO": 3.91,
+     "MnO": 0.19,
+     "Na2O": 2.25,
+     "Ni": 0.1083,
+     "P2O5": 0.88,
+     "SiO2": 48.86,
+     "SO3": 5.11,
+     "TiO2": 1.11,
+     "Zn": 0.0915
+    },
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 1,
+    "co2_kg_t": 15,
+    "oxidos_fe_pct": 15.9,
+    "cloro_pct": 0.85,
+    "enlace_datos": "https://galecrater.samples.odr.io/odr/chemin#/odr/view/771673/84/eyJkdF9pZCI6IjQzIn0/1",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.4091283,
+     -4.7873187,
+     -3673.4
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 43,
+    "nombre": "Altadena",
+    "sol": 4563,
+    "fecha_aprox": "2025-06-07",
+    "zona": "boxwork",
+    "formacion": "borde de la unidad de boxwork",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3647.2,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "En el borde del boxwork: el color de la roca cambia con la profundidad del pozo.",
+    "tecnico": "Goethita 8,9 %, hematita 9 % y carbonato de Fe 4 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA, blog soles 4568-4569; NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      51.1
+     ],
+     [
+      "piroxeno",
+      11.1
+     ],
+     [
+      "anhidrita",
+      10.2
+     ],
+     [
+      "hematita",
+      9.2
+     ],
+     [
+      "goethita",
+      8.9
+     ],
+     [
+      "carbonato de Fe",
+      4.2
+     ],
+     [
+      "basanita",
+      3.7
+     ],
+     [
+      "cuarzo",
+      1.6
+     ]
+    ],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 11,
+    "co2_kg_t": 16,
+    "oxidos_fe_pct": 18.1,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3835414,
+     -4.7998472,
+     -3647.2
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 44,
+    "nombre": "Valle de la Luna",
+    "sol": 4691,
+    "fecha_aprox": "2025-10-16",
+    "zona": "boxwork",
+    "formacion": "boxwork, hueco Monte Grande",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3610.9,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Dentro de un hueco de la red de crestas. Mucho más carbonato que en la cresta de al lado.",
+    "tecnico": "Siderita 24,8 % de la fracción cristalina (vs. 3,7 % en la cresta Nevado Sajama, a ~10 m).",
+    "fuente_hallazgo": "NASA, blog soles 4695-4701; NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      35.7
+     ],
+     [
+      "siderita",
+      24.8
+     ],
+     [
+      "piroxeno",
+      21.1
+     ],
+     [
+      "anhidrita",
+      6.4
+     ],
+     [
+      "sulfato de Mg·4H2O",
+      4.9
+     ],
+     [
+      "goethita",
+      3.6
+     ],
+     [
+      "hematita",
+      2.9
+     ],
+     [
+      "cuarzo",
+      0.6
+     ]
+    ],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 22,
+    "co2_kg_t": 94,
+    "oxidos_fe_pct": 6.5,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3810354,
+     -4.8078392,
+     -3610.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 45,
+    "nombre": "Nevado Sajama",
+    "sol": 4716,
+    "fecha_aprox": "2025-11-11",
+    "zona": "boxwork",
+    "formacion": "boxwork, cresta",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3608.0,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Sobre una cresta, apenas 2 m más arriba que el hueco. La comparación explica cómo se formó la red.",
+    "tecnico": "Goethita 9,3 %, anhidrita 13 %, siderita 3,7 % de la fracción cristalina.",
+    "fuente_hallazgo": "NASA, blog soles 4709-4715 y 4716-4722; NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+    "minerales": [
+     [
+      "plagioclasa",
+      49.5
+     ],
+     [
+      "piroxeno",
+      13.6
+     ],
+     [
+      "anhidrita",
+      13.3
+     ],
+     [
+      "goethita",
+      9.3
+     ],
+     [
+      "hematita",
+      7.3
+     ],
+     [
+      "siderita",
+      3.7
+     ],
+     [
+      "basanita",
+      1.8
+     ],
+     [
+      "cuarzo",
+      1.4
+     ]
+    ],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "NASA/ODR, Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 (CheMin, % de la fracción cristalina, normalizado)",
+    "agua_kg_t": 11,
+    "co2_kg_t": 14,
+    "oxidos_fe_pct": 16.6,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3810041,
+     -4.8080075,
+     -3608.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 46,
+    "nombre": "Nevado Sajama 2",
+    "sol": 4795,
+    "fecha_aprox": "2026-01-31",
+    "zona": "boxwork",
+    "formacion": "boxwork, cresta",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3607.7,
+    "fuente_posicion": "MSL PLACES, localized_interp.csv (PDS Imaging Node, versión 2026-08-01)",
+    "hallazgo": "Pozo gemelo para usar el último reactivo químico de SAM y buscar moléculas orgánicas.",
+    "tecnico": "A pocos cm de Nevado Sajama; muestra tratada con TMAH (segundo vial). Número 46 inferido: el blog no lo numera.",
+    "fuente_hallazgo": "NASA, blog soles 4788-4797 y 4798-4803",
+    "minerales": [],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "Todavía no publicada en la base de NASA",
+    "agua_kg_t": null,
+    "co2_kg_t": null,
+    "oxidos_fe_pct": null,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3809924,
+     -4.8080054,
+     -3607.7
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 47,
+    "nombre": "Campo Marte",
+    "sol": 4897,
+    "fecha_aprox": "2026-05-16",
+    "zona": "yardangs",
+    "formacion": "estratos de sulfatos por encima del boxwork",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3569.6,
+    "fuente_posicion": "NASA/JPL, MSL_waypoints.json del mapa 'Where is Curiosity?' (consultado 2026-11-14)",
+    "hallazgo": "Después de que el taladro quedó atascado en Atacama, el siguiente intento salió bien.",
+    "tecnico": "47.ª perforación exitosa. CheMin y SAM analizaron la muestra; resultados todavía no publicados en la base.",
+    "fuente_hallazgo": "NASA, blog soles 4900-4907 y 4908-4912",
+    "minerales": [],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "Todavía no publicada en la base de NASA",
+    "agua_kg_t": null,
+    "co2_kg_t": null,
+    "oxidos_fe_pct": null,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3815811,
+     -4.81439703,
+     -3569.6
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 48,
+    "nombre": "Basque Lakes",
+    "sol": 5022,
+    "fecha_aprox": "2026-09-21",
+    "zona": "yardangs",
+    "formacion": "por encima de la superficie erosiva (cuadrángulo Cache Creek)",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3479.9,
+    "fuente_posicion": "NASA/JPL, MSL_waypoints.json del mapa 'Where is Curiosity?' (consultado 2026-11-14)",
+    "hallazgo": "La primera perforación por encima de la superficie erosiva: roca de un capítulo más nuevo de la historia de Marte.",
+    "tecnico": "48.ª perforación. CheMin y SAM-TLS analizaron la muestra; resultados no publicados todavía.",
+    "fuente_hallazgo": "NASA, blog soles 5016-5021 y 5022-5028",
+    "minerales": [],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "Todavía no publicada en la base de NASA",
+    "agua_kg_t": null,
+    "co2_kg_t": null,
+    "oxidos_fe_pct": null,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3888471,
+     -4.82513971,
+     -3479.9
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": 49,
+    "nombre": "Nazca",
+    "sol": 5050,
+    "fecha_aprox": "2026-10-20",
+    "zona": "yardangs",
+    "formacion": "bloque con discos (posibles cristales)",
+    "roca": "roca sedimentaria",
+    "elevacion_m": -3488.0,
+    "fuente_posicion": "NASA/JPL, MSL_waypoints.json del mapa 'Where is Curiosity?' (consultado 2026-11-14)",
+    "hallazgo": "La última perforación (octubre de 2026): una roca llena de discos que podrían ser cristales.",
+    "tecnico": "49.ª perforación. Busca identificar el mineral de los discos con CheMin y SAM.",
+    "fuente_hallazgo": "NASA, blog soles 5043-5049 y 5050-5055",
+    "minerales": [],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "Todavía no publicada en la base de NASA",
+    "agua_kg_t": null,
+    "co2_kg_t": null,
+    "oxidos_fe_pct": null,
+    "cloro_pct": null,
+    "enlace_datos": "https://galecrater.samples.odr.io/search_sample/",
+    "estado": "muestra analizada"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3876138,
+     -4.82466475,
+     -3488.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "n": null,
+    "nombre": "Atacama",
+    "sol": 4876,
+    "fecha_aprox": "2026-04-24",
+    "zona": "yardangs",
+    "formacion": "estratos de sulfatos",
+    "roca": "bloque suelto",
+    "elevacion_m": -3570.4,
+    "fuente_posicion": "NASA/JPL, MSL_waypoints.json del mapa 'Where is Curiosity?' (consultado 2026-11-14) (posición del sol 4868, a pocos metros)",
+    "hallazgo": "El pozo se hizo, pero el bloque suelto (~13 kg) quedó pegado al taladro y el brazo lo levantó. El equipo lo liberó el 1 de mayo de 2026.",
+    "tecnico": "Intento sin muestra entregada: no entra en la numeración.",
+    "fuente_hallazgo": "NASA, blog soles 4879-4885 y 4886-4892",
+    "minerales": [],
+    "quimica_apxs": {},
+    "fuente_mineralogia": "sin muestra",
+    "agua_kg_t": null,
+    "co2_kg_t": null,
+    "oxidos_fe_pct": null,
+    "cloro_pct": null,
+    "enlace_datos": "https://science.nasa.gov/blog/",
+    "estado": "intento"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.3817063,
+     -4.8142672,
+     -3570.4
+    ]
+   }
+  }
+ ]
+}

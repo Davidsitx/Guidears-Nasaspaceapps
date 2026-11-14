@@ -58,5 +58,13 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Humanos a Marte "ya en la década de 2030"; arquitectura Luna a Marte | nasa.gov/humans-in-space/humans-to-mars; nasa.gov/moontomarsarchitecture-components |
 | Dónde bajar datos de Curiosity | PDS Atmospheres Node (REMS); PDS Analyst's Notebook (an.rsl.wustl.edu); PDS Geosciences Node (pds-geosciences.wustl.edu/missions/msl) |
 | Mineralogía de Gale con CRISM (enlace del "?") | Seelos et al. 2014, GRL, doi:10.1002/2014GL060310 |
+| Gale Earth: órbitas de MRO, Odyssey, Mars Express, TGO y Hope; Fobos y Deimos | JPL Horizons (ssd.jpl.nasa.gov), elementos osculadores respecto de Marte (500@499), plano IAU_MARS, época 2026-11-14 TDB. Propagados como órbita de Kepler (cálculo propio) |
+| Gale Earth: tamaño de Fobos y Deimos, fechas de descubrimiento | NASA NSSDCA, Mars Fact Sheet; NASA Science, Mars Moons |
+| Gale Earth: línea de tiempo de misiones a Marte | NASA NSSDCA, Chronology of Mars Exploration (nssdc.gsfc.nasa.gov/planetary/chronology_mars.html) y comunicados de cada misión (fuente por evento en `gale-earth/datos/linea_tiempo.json`) |
+| Gale Earth: edad y evolución del cráter Gale (estimado) | Thomson et al. 2011, Icarus 214; Le Deit et al. 2013, JGR Planets; Grotzinger et al. 2014 y 2015, Science; Kite et al. 2013, Geology |
+| Gale Earth: fin de MAVEN, ESCAPADE y MMX (2025–2026) | NASA (03-06-2026, fin de MAVEN); NASA Science, misión ESCAPADE; ESA y DLR (lanzamiento de MMX, 19/20-10-2026) |
+| Gale Earth: mineralogía, química y gases de las 49 perforaciones (Biblioteca) | NASA PDS (CheMin, APXS, SAM nivel 2); Gale Crater Mineralogy and Geochemistry Database (galecrater.samples.odr.io); fotos crudas NASA/JPL-Caltech/MSSS |
+| Gale Earth: globo, mapa en color y pantalla de carga | CesiumJS (Apache 2.0); Cesium Mars (NASA, ESA, Cesium); Viking MDIM 2.1 color (NASA/USGS); CTX global (NASA/JPL/MSSS/Murray Lab); HRSC/MOLA Blend (USGS) |
+| Gale Earth: cielo (Vía Láctea y estrellas) | Catálogo Hipparcos (ESA) y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial (BSD) |
 
 En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).

@@ -8,3 +8,7 @@ node_modules/
 __pycache__/
 .DS_Store
 escena3d/.cache/
+
+# Gale Earth: teselas del globo (~6 GB, ver gale-earth/README.md)
+gale-earth/teselas/
+gale-earth/respaldo_v1/
