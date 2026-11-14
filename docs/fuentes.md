@@ -67,4 +67,9 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Gale Earth: globo, mapa en color y pantalla de carga | CesiumJS (Apache 2.0); Cesium Mars (NASA, ESA, Cesium); Viking MDIM 2.1 color (NASA/USGS); CTX global (NASA/JPL/MSSS/Murray Lab); HRSC/MOLA Blend (USGS) |
 | Gale Earth: cielo (Vía Láctea y estrellas) | Catálogo Hipparcos (ESA) y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial (BSD) |
 
-En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).
+| Por qué se eligió Gale (minerales vistos desde órbita en las capas del Monte Sharp, 5,5 km) | Smithsonian NASM 2022 (airandspace.si.edu/stories/editorial/10-years-curiosity-mars); Spaceflight Now 2011 |
+| Primer pozo: Gale tuvo un lago de agua dulce habitable | NASA/JPL 2013, "Curiosity Rover Hits Paydirt" (science.nasa.gov/resource/curiosity-rover-hits-paydirt); Vaniman et al. 2014, doi:10.1126/science.1243480 |
+| Moléculas orgánicas más grandes de Marte (Cumberland, 2025) | NASA/JPL, 24/3/2025 |
+| Pozos 43 a 47 y entrada a la unidad de sulfatos | Blog de Curiosity, sols 4709-4715, 4804-4811, 4893-4899 y 4845-4851 (science.nasa.gov/blog) |
+
+**Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).

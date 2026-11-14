@@ -2,6 +2,14 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 tarde (2) · David (con Claude) · QA: FUENTES "?", CINTA AL PISO, CARTELES, E1–E5, VISOR AL MANEJAR
+- **"?" en cada ítem:** capas, leyendas, fichas de paradas y perforaciones, panel derecho, clima, expedición y "¿Por qué perforar en Gale?". Al tocarlo se abre una ventanita con la fuente y "Abrir la fuente". Lista completa de enlaces: `docs/fuentes-enlaces.md` (`herramientas/listar_fuentes.py`).
+- **Cinta amarilla del recorrido:** de cerca ahora sigue el piso, angosta y con flechas, como las rutas guiadas; ya no corta al astronauta.
+- **Carteles:** al pasar el puntero cambia el cursor, el cartel crece y aparece su nombre; el clic tolera un poco más de movimiento.
+- **E1–E5** están en "Paradas" con su descripción y en el recorrido guiado (18 paradas).
+- **Manejar al astronauta:** botones "Visor" (datos del casco) y "Ojos" (primera persona, arrastrar para mirar); teclas V y B.
+- **Ficha y llegada arriba a la derecha**, para ver el punto de perforación; los menús desplegables ya se leen.
+- **docs/por-que-perforar.md:** el porqué de perforar en Gale en versión larga, corta y de una frase, más el guion de 30 s con subtítulos en inglés.
 ## 2026-11-14 tarde · Compañero (con Claude) · GALE EARTH SUBE AL REPO
 - **Carpeta nueva `gale-earth/`:** Marte en 3D estilo Google Earth (CesiumJS), para elegir dónde poner una base en Gale. Funciona en PC y celular. Se abre con `gale-earth/abrir.bat` (o `abrir.sh`); doble clic en `index.html` también anda, con menos capas. Ver `gale-earth/README.md`.
 - Tiene: recorrido y 49 perforaciones, tres sitios para la base, órbitas (MRO, Odyssey, Mars Express, TGO, Hope) y **Fobos y Deimos** con datos de JPL Horizons. También una **Biblioteca** con la ficha completa de cada pozo (CheMin, APXS, SAM, fotos, archivos crudos), una **línea de tiempo** de la exploración de Marte con fuente por evento, cielo con la Vía Láctea y pantalla de carga propia.
