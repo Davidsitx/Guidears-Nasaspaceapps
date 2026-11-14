@@ -1278,18 +1278,47 @@ const GLOBO = D.globo && CTX ? await (async () => {
     return h;
   };
   const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0, side: THREE.DoubleSide });
-  const malla = (pos, col, idx) => {
+  // tex: textura de imagen (Viking o CTX coloreado); si no hay, colores por vértice
+  const malla = (pos, col, idx, uv = null, tex = null) => {
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    if (uv) g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     g.setIndex(new THREE.BufferAttribute(Uint32Array.from(idx), 1)); g.computeVertexNormals();
-    const m = new THREE.Mesh(g, mat); m.frustumCulled = false; m.renderOrder = -0.5; escena.add(m); return m;
+    const m = new THREE.Mesh(g, tex ? new THREE.MeshStandardMaterial({ map: tex, roughness: 1, metalness: 0, side: THREE.DoubleSide }) : mat);
+    m.frustumCulled = false; m.renderOrder = -0.5; escena.add(m); return m;
   };
-  // grilla lat/lon genérica: nodos (nf × nc), con celdas que se saltean (huecos donde hay una capa más fina)
-  const grilla = (nf, nc, nodo, saltear) => {
-    const pos = new Float32Array(nf * nc * 3), col = new Float32Array(nf * nc * 3), idx = [];
-    for (let i = 0; i < nf; i++) for (let j = 0; j < nc; j++) nodo(i, j, pos, col, 3 * (i * nc + j));
+  // grilla lat/lon genérica: nodos (nf × nc), con celdas que se saltean (huecos donde hay una capa más fina) y coordenadas de textura
+  const grilla = (nf, nc, nodo, saltear, uvDe = null) => {
+    const pos = new Float32Array(nf * nc * 3), col = new Float32Array(nf * nc * 3), uv = uvDe ? new Float32Array(nf * nc * 2) : null, idx = [];
+    for (let i = 0; i < nf; i++) for (let j = 0; j < nc; j++) { nodo(i, j, pos, col, 3 * (i * nc + j)); if (uv) uv.set(uvDe(i, j), 2 * (i * nc + j)); }
     for (let i = 0; i < nf - 1; i++) for (let j = 0; j < nc - 1; j++) { if (saltear(i, j)) continue; const a = i * nc + j, b = a + 1, c = a + nc, d = c + 1; idx.push(a, c, b, b, c, d); }
-    return { pos, col, idx };
+    return { pos, col, uv, idx };
   };
+  // ── imágenes: Viking (todo Marte y la región) con el mismo realce; CTX coloreado con Viking cerca de Gale ──
+  const cargar = src => new Promise((ok, mal) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => ok(im); im.onerror = mal; im.src = src; });
+  const lienzo = (im, w, h, sx = 0, sy = 0, sw = im.width, sh = im.height) => { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); c.getContext('2d').drawImage(im, sx, sy, sw, sh, 0, 0, c.width, c.height); return c; };
+  const realzar = cv => {                // mismo realce que los colores por vértice: tono del mosaico de la travesía, contraste y saturación
+    const x = cv.getContext('2d', { willReadFrequently: true }), id = x.getImageData(0, 0, cv.width, cv.height), d = id.data;
+    for (let k = 0; k < d.length; k += 4) { const v0 = (MEDIA[0] + (d[k] - MEDIA[0]) * CONTR) * gan[0], v1 = (MEDIA[1] + (d[k + 1] - MEDIA[1]) * CONTR) * gan[1], v2 = (MEDIA[2] + (d[k + 2] - MEDIA[2]) * CONTR) * gan[2], g = (v0 + v1 + v2) / 3;
+      d[k] = g + (v0 - g) * SAT; d[k + 1] = g + (v1 - g) * SAT; d[k + 2] = g + (v2 - g) * SAT; }
+    x.putImageData(id, 0, 0); return cv;
+  };
+  const textura = (cv, repetir = false) => { const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); if (repetir) t.wrapS = THREE.RepeatWrapping; return t; };
+  // CTX en gris + Viking en color: el detalle (brillo relativo) sale de CTX y el color de Viking, como en Gale Earth
+  const colorearCTX = (gris, base) => {
+    const w = gris.width, h = gris.height, borroso = lienzo(lienzo(gris, w / 24, h / 24), w, h), b = lienzo(base, w, h);
+    const g = gris.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data, s = borroso.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data;
+    const xb = b.getContext('2d', { willReadFrequently: true }), id = xb.getImageData(0, 0, w, h), d = id.data;
+    for (let k = 0; k < d.length; k += 4) { if (g[k] === 0 && g[k + 1] === 0) continue; const f = Math.min(2.2, Math.max(0.3, (g[k] + 1) / (s[k] + 6))) ** 0.85; d[k] *= f; d[k + 1] *= f; d[k + 2] *= f; }
+    xb.putImageData(id, 0, 0); return b;
+  };
+  const MAXTEX = Math.min(LIVIANO ? 2048 : 8192, renderer.capabilities.maxTextureSize);
+  const imVR = await cargar('data:image/jpeg;base64,' + D.globo.viking_region), caja = RG.viking_caja;   // lo que cubre el recorte Viking
+  const cvVR = realzar(lienzo(imVR, imVR.width, imVR.height));
+  const texGlobal = D.globo.viking_global ? await cargar('data:image/jpeg;base64,' + D.globo.viking_global).then(im => textura(realzar(lienzo(im, Math.min(im.width, MAXTEX), Math.min(im.height, MAXTEX / 2))), true)).catch(() => null) : null;
+  const texRegion = textura(cvVR);
+  // la parte del Viking de la región que cae en una caja (para la capa cercana y como color base del CTX)
+  const recorteViking = (n, s, o, e, w, h) => lienzo(cvVR, w, h, (o - caja.oeste) / (caja.este - caja.oeste) * cvVR.width, (caja.norte - n) / (caja.norte - caja.sur) * cvVR.height,
+    (e - o) / (caja.este - caja.oeste) * cvVR.width, (n - s) / (caja.norte - caja.sur) * cvVR.height);
   const s16 = v => Math.round(v * 16) / 16, s128 = v => Math.round(v * 128) / 128;
   // capa cercana: ±0,75° alrededor de la zona, alineada a la grilla de 1/16°
   const cN = s16(lat0 + 0.75), cS = s16(lat0 - 0.75), cW = s16(lon0 - 0.75 / ca), cE = s16(lon0 + 0.75 / ca);
@@ -1299,25 +1328,28 @@ const GLOBO = D.globo && CTX ? await (async () => {
   const capas = [];
   // 1) todo Marte cada 1°, con hueco en la región
   { const im = MG, G = grilla(181, 361, (i, j, p, c, k) => { enu(90 - i, j, altImg(im, i, j), p, k); colImg(CG, i, j, c, k); },
-      (i, j) => j >= RG.lon_oeste && j + 1 <= RG.lon_este && 90 - i <= RG.lat_norte && 90 - i - 1 >= RG.lat_sur);
-    capas.push(malla(G.pos, G.col, G.idx)); }
+      (i, j) => j >= RG.lon_oeste && j + 1 <= RG.lon_este && 90 - i <= RG.lat_norte && 90 - i - 1 >= RG.lat_sur,
+      (i, j) => [(j + 180) / 360, (90 - i + 90) / 180]);
+    capas.push(malla(G.pos, G.col, G.idx, G.uv, texGlobal)); }
   // 2) región de Gale cada 1/16°, con hueco en la capa cercana; más una pollera hacia abajo en su borde (tapa rendijas con la capa global)
   const altGlobal = (lat, lon) => { const f = 90 - lat, c = lon, i = Math.min(179, Math.floor(f)), j = Math.min(359, Math.floor(c)), u = f - i, v = c - j;
     return altImg(MG, i, j) * (1 - u) * (1 - v) + altImg(MG, i, j + 1) * (1 - u) * v + altImg(MG, i + 1, j) * u * (1 - v) + altImg(MG, i + 1, j + 1) * u * v; };
   { const nf = RG.alto, nc = RG.ancho, latI = i => RG.lat_norte - i / 16, lonJ = j => RG.lon_oeste + j / 16;
     const altR = (i, j) => { const d = Math.min(i, j, nf - 1 - i, nc - 1 - j) / 16, w = Math.min(1, d / 2.5), s = w * w * (3 - 2 * w), hg = altGlobal(latI(i), lonJ(j)); return hg + (altImg(MR, i, j) - hg) * s; };
+    const uvR = (la, lo) => [(lo - caja.oeste) / (caja.este - caja.oeste), (la - caja.sur) / (caja.norte - caja.sur)];
     const G = grilla(nf, nc, (i, j, p, c, k) => { enu(latI(i), lonJ(j), altR(i, j), p, k); colImg(CRg, i, j, c, k); },
-      (i, j) => latI(i) <= cN && latI(i + 1) >= cS && lonJ(j) >= cW && lonJ(j + 1) <= cE);
+      (i, j) => latI(i) <= cN && latI(i + 1) >= cS && lonJ(j) >= cW && lonJ(j + 1) <= cE, (i, j) => uvR(latI(i), lonJ(j)));
     const borde = []; for (let j = 0; j < nc; j++) borde.push([0, j]); for (let i = 1; i < nf; i++) borde.push([i, nc - 1]); for (let j = nc - 2; j >= 0; j--) borde.push([nf - 1, j]); for (let i = nf - 2; i >= 0; i--) borde.push([i, 0]);
-    const n0 = nf * nc, pos = new Float32Array((n0 + borde.length) * 3), col = new Float32Array((n0 + borde.length) * 3); pos.set(G.pos); col.set(G.col);
-    borde.forEach(([i, j], n) => { enu(latI(i), lonJ(j), altR(i, j) - 4000, pos, 3 * (n0 + n)); colImg(CRg, i, j, col, 3 * (n0 + n)); });
+    const n0 = nf * nc, pos = new Float32Array((n0 + borde.length) * 3), col = new Float32Array((n0 + borde.length) * 3), uv = new Float32Array((n0 + borde.length) * 2); pos.set(G.pos); col.set(G.col); uv.set(G.uv);
+    borde.forEach(([i, j], n) => { enu(latI(i), lonJ(j), altR(i, j) - 4000, pos, 3 * (n0 + n)); colImg(CRg, i, j, col, 3 * (n0 + n)); uv.set(uvR(latI(i), lonJ(j)), 2 * (n0 + n)); });
     for (let n = 0; n < borde.length; n++) { const a = borde[n][0] * nc + borde[n][1], b = borde[(n + 1) % borde.length][0] * nc + borde[(n + 1) % borde.length][1], c = n0 + n, d = n0 + (n + 1) % borde.length; G.idx.push(a, c, b, b, c, d); }
-    capas.push(malla(pos, col, G.idx)); }
+    capas.push(malla(pos, col, G.idx, uv, texRegion)); }
   // 3) capa cercana cada 1/128°, con hueco donde está la travesía
   { const nf = Math.round((cN - cS) * 128) + 1, nc = Math.round((cE - cW) * 128) + 1, latI = i => cN - i / 128, lonJ = j => cW + j / 128;
     const G = grilla(nf, nc, (i, j, p, c, k) => { enu(latI(i), lonJ(j), regional(latI(i), lonJ(j), c, k), p, k); },
-      (i, j) => latI(i) <= hN + 1e-9 && latI(i + 1) >= hS - 1e-9 && lonJ(j) >= hW - 1e-9 && lonJ(j + 1) <= hE + 1e-9);
-    capas.push(malla(G.pos, G.col, G.idx)); }
+      (i, j) => latI(i) <= hN + 1e-9 && latI(i + 1) >= hS - 1e-9 && lonJ(j) >= hW - 1e-9 && lonJ(j + 1) <= hE + 1e-9,
+      (i, j) => [(lonJ(j) - cW) / (cE - cW), (latI(i) - cS) / (cN - cS)]);
+    capas.push(malla(G.pos, G.col, G.idx, G.uv, textura(recorteViking(cN, cS, cW, cE, 1024, 1024)))); }
   // 4) delantal: une el borde del terreno de la travesía (sus mismos vértices) con el borde del hueco de la capa cercana
   { const { Wc, Hc, Zc, X0c, Z0c } = CTX, st = LIVIANO ? 2 : 1, dxc = CTX.ancho / Wc, dzc = CTX.alto / Hc;
     const jm = Math.floor((Wc - 1) / st) * st, im = Math.floor((Hc - 1) / st) * st, adentro = [];
@@ -1346,10 +1378,53 @@ const GLOBO = D.globo && CTX ? await (async () => {
       }
     }
     capas.push(malla(pos, col, idx)); }
-  return { capas, centro: new THREE.Vector3(0, -RM - D.zmin, 0), RM, meta };
+  // ── CTX: el que trae el archivo (herramientas/bajar_ctx.py) o, si no hay, bajado en vivo del mismo servicio que usa Gale Earth ──
+  const ponerCTX = (capa, gris, n, s, o, e, cajaUV) => {
+    const base = recorteViking(n, s, o, e, gris.width, gris.height), cv = colorearCTX(gris, base), m = capa.material;
+    // la textura cubre la caja del CTX: se recalculan las coordenadas de textura de la capa
+    const uv = capa.geometry.attributes.uv, P = capa.userData.latlon;
+    for (let k = 0; k < P.length / 2; k++) uv.setXY(k, (P[2 * k + 1] - o) / (e - o), (P[2 * k] - s) / (n - s));
+    uv.needsUpdate = true; if (m.map) m.map.dispose(); m.map = textura(cv); m.needsUpdate = true;
+  };
+  const latlonDe = (nf, nc, latI, lonJ, extra = []) => { const a = new Float64Array((nf * nc + extra.length) * 2); for (let i = 0; i < nf; i++) for (let j = 0; j < nc; j++) a.set([latI(i), lonJ(j)], 2 * (i * nc + j)); extra.forEach((v, n) => a.set(v, 2 * (nf * nc + n))); return a; };
+  { const nf = RG.alto, nc = RG.ancho, latI = i => RG.lat_norte - i / 16, lonJ = j => RG.lon_oeste + j / 16, borde = [];
+    for (let j = 0; j < nc; j++) borde.push([latI(0), lonJ(j)]); for (let i = 1; i < nf; i++) borde.push([latI(i), lonJ(nc - 1)]); for (let j = nc - 2; j >= 0; j--) borde.push([latI(nf - 1), lonJ(j)]); for (let i = nf - 2; i >= 0; i--) borde.push([latI(i), lonJ(0)]);
+    capas[1].userData.latlon = latlonDe(nf, nc, latI, lonJ, borde); }
+  { const nf = Math.round((cN - cS) * 128) + 1, nc = Math.round((cE - cW) * 128) + 1; capas[2].userData.latlon = latlonDe(nf, nc, i => cN - i / 128, j => cW + j / 128); }
+  const ctxListo = async () => {
+    const C = D.globo.ctx;
+    if (C) {           // incluido en el archivo
+      const [gc, gr] = await Promise.all([cargar('data:image/jpeg;base64,' + C.cerca), cargar('data:image/jpeg;base64,' + C.region)]);
+      const a = C.meta.cerca, b = C.meta.region;
+      ponerCTX(capas[2], lienzo(gc, Math.min(gc.width, MAXTEX), Math.min(gc.height, MAXTEX)), a.lat_norte, a.lat_sur, a.lon_oeste, a.lon_este);
+      ponerCTX(capas[1], lienzo(gr, Math.min(gr.width, MAXTEX), Math.min(gr.height, MAXTEX)), b.lat_norte, b.lat_sur, b.lon_oeste, b.lon_este);
+      return 'archivo';
+    }
+    if (!navigator.onLine || location.protocol === 'about:') return null;
+    // en vivo: teselas de 512 px; en el nivel z cada una cubre 180/2^z grados (latitud y longitud planetocéntricas)
+    const mosaico = async (n, s, o, e, z) => {
+      const paso = 180 / 2 ** z, x0 = Math.floor((o + 180) / paso), x1 = Math.floor((e + 180) / paso), y0 = Math.floor((90 - n) / paso), y1 = Math.floor((90 - s) / paso);
+      const cv = document.createElement('canvas'); cv.width = (x1 - x0 + 1) * 512; cv.height = (y1 - y0 + 1) * 512; const x = cv.getContext('2d');
+      const lista = []; for (let y = y0; y <= y1; y++) for (let xx = x0; xx <= x1; xx++) lista.push([xx, y]);
+      let ok = 0; const uno = async ([tx, ty]) => { try { const im = await Promise.race([cargar(`https://astro.arcgis.com/arcgis/rest/services/OnMars/CTX/MapServer/tile/${z}/${ty}/${tx}`), new Promise((_, m) => setTimeout(m, 20000))]); x.drawImage(im, (tx - x0) * 512, (ty - y0) * 512, 512, 512); ok++; } catch (err) {} };
+      for (let k = 0; k < lista.length; k += 6) await Promise.all(lista.slice(k, k + 6).map(uno));
+      if (ok < lista.length * 0.6) throw new Error('CTX incompleto');
+      const px = lo => (lo + 180 - x0 * paso) / paso * 512, py = la => (90 - la - y0 * paso) / paso * 512, w = px(e) - px(o), h = py(s) - py(n), f = Math.min(1, MAXTEX / Math.max(w, h));
+      return lienzo(cv, w * f, h * f, px(o), py(n), w, h);
+    };
+    ponerCTX(capas[2], await mosaico(cN, cS, cW, cE, LIVIANO ? 8 : 9), cN, cS, cW, cE);
+    ponerCTX(capas[1], await mosaico(RG.lat_norte, RG.lat_sur, RG.lon_oeste, RG.lon_este, LIVIANO ? 5 : 6), RG.lat_norte, RG.lat_sur, RG.lon_oeste, RG.lon_este);
+    return 'en vivo';
+  };
+  return { capas, centro: new THREE.Vector3(0, -RM - D.zmin, 0), RM, meta, ctxListo };
 })().catch(e => { console.warn('globo de fondo:', e); return null; }) : null;
 const NEGRO_ESPACIO = new THREE.Color(0.012, 0.012, 0.02);
-if (GLOBO) { camara.far = 3.2e7; camara.updateProjectionMatrix(); controles.maxDistance = 1.4e7; }
+if (GLOBO) {
+  camara.far = 3.2e7; camara.updateProjectionMatrix(); controles.maxDistance = 1.4e7;
+  // imagen CTX alrededor de Gale (sin bloquear la carga): del archivo o en vivo; si no hay internet queda el Viking
+  setTimeout(() => GLOBO.ctxListo().then(r => { GLOBO.ctx = r; if (r) decir(r === 'en vivo' ? 'Imagen CTX cargada en vivo alrededor de Gale (40 m/píxel cerca, 330 m en la región).' : 'Imagen CTX alrededor de Gale lista.'); })
+    .catch(e => { GLOBO.ctx = null; console.warn('CTX no disponible:', e.message || e); }), 1500);
+}
 
 // ---------- recorrido real completo (data/curiosity/recorrido_completo.geojson) ----------
 const TR = D.travesia ? (() => {

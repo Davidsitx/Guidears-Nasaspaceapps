@@ -2,6 +2,11 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 tarde (5) · David (con Claude) · IMAGEN DE MARTE MÁS NÍTIDA (rama `david/union-gale-earth`)
+- El globo pasó de colores por vértice (1° ≈ 59 km) a **texturas de imagen**: Viking en todo Marte (~2,6 km/píxel) y en la región de Gale.
+- **CTX alrededor de Gale** (el mismo servicio de Gale Earth): ~40 m/píxel cerca de la travesía y ~330 m en la región, coloreado con Viking. Dos maneras: en vivo si hay internet, o dentro del archivo corriendo `python herramientas/bajar_ctx.py` y `python escena3d/armar.py` en una PC con internet (desde acá no se puede bajar: el servicio está bloqueado en este entorno). Probado con teselas de prueba: se cargan, se colorean y se ubican bien.
+- **Pendiente para David:** correr `bajar_ctx.py`, rearmar y subir `data/terreno/globo/ctx_*.jpg`.
+
 ## 2026-11-14 tarde (4) · David (con Claude) · GLOBO DE MARTE EN LA ESCENA (rama `david/union-gale-earth`)
 - **Ya no queda gris a los costados:** alrededor de la travesía hay relieve MOLA y color Viking sobre la esfera de Marte, hasta el horizonte. Desde muy alto el cielo se vuelve negro y se ve el planeta entero (botón "Marte completo"; "Gale Earth ↗" abre la app del compañero).
 - Datos: `data/terreno/globo/` (~0,5 MB), armados con `herramientas/globo.py` desde MOLA MEGDR 16 ppd y el Viking 8k de `gale-earth/capas/`. MOLA coincide con el DEM de la travesía (+5 ± 41 m).

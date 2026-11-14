@@ -60,6 +60,13 @@ cr = viking(LA, LO, 1)
 guardar_altura('mola_region.png', hr)
 Image.fromarray(np.clip(cr, 0, 255).astype(np.uint8)).save(os.path.join(SAL, 'color_region.png'), optimize=True)
 
+# imagen Viking de la región a resolución completa (8k: ~22,8 píxeles por grado), para usarla como textura
+x0 = int(round((R['lon_oeste'] + 180) / 360 * VW)); x1 = int(round((R['lon_este'] + 180) / 360 * VW))
+y0 = int(round((90 - R['lat_norte']) / 180 * VH)); y1 = int(round((90 - R['lat_sur']) / 180 * VH))
+Image.fromarray(vik[y0:y1, x0:x1].astype(np.uint8)).save(os.path.join(SAL, 'viking_region.jpg'), quality=92)
+R['viking_px'] = [x0, y0, x1, y1]
+R['viking_caja'] = dict(oeste=x0 / VW * 360 - 180, este=x1 / VW * 360 - 180, norte=90 - y0 / VH * 180, sur=90 - y1 / VH * 180)   # lo que cubre el recorte
+
 # --- todo Marte: grilla de 1°, altura y color promediados en el grado alrededor de cada vértice
 glat = 90 - np.arange(181.0); glon = np.arange(361.0)
 GA, GO = np.meshgrid(glat, glon, indexing='ij')
@@ -71,6 +78,9 @@ hg /= 49
 guardar_altura('mola_global.png', hg)
 cg = viking(GA, GO, 6)
 Image.fromarray(np.clip(cg, 0, 255).astype(np.uint8)).save(os.path.join(SAL, 'color_global.png'), optimize=True)
+
+# imagen Viking de todo Marte para la escena: 4096 × 2048, JPEG más liviano que el original
+Image.fromarray(vik.astype(np.uint8)).resize((4096, 2048), Image.LANCZOS).save(os.path.join(SAL, 'viking_global.jpg'), quality=80, optimize=True)
 
 # --- ganancia de color: que el Viking (2,6 km/píxel) tenga el tono del mosaico de la travesía (3 m) donde se superponen
 mc = json.load(open(os.path.join(RAIZ, 'data', 'terreno', 'travesia_sur', 'meta.json')))

@@ -220,6 +220,14 @@ def main():
             globo = {"meta": leer_json(os.path.join(dg, "meta.json"))}
             for n in ("mola_region", "color_region", "mola_global", "color_global"):
                 globo[n] = b64(open(os.path.join(dg, n + ".png"), "rb").read())
+            globo["viking_region"] = b64(open(os.path.join(dg, "viking_region.jpg"), "rb").read())
+            vg = os.path.join(dg, "viking_global.jpg")                                    # color de todo Marte (Viking MDIM 2.1, 4096 × 2048, de herramientas/globo.py)
+            if os.path.exists(vg):
+                globo["viking_global"] = b64(open(vg, "rb").read())
+            if os.path.exists(os.path.join(dg, "ctx.json")):                           # CTX bajado con herramientas/bajar_ctx.py
+                globo["ctx"] = {"meta": leer_json(os.path.join(dg, "ctx.json")),
+                                "cerca": b64(open(os.path.join(dg, "ctx_cerca.jpg"), "rb").read()), "region": b64(open(os.path.join(dg, "ctx_region.jpg"), "rb").read())}
+                print("globo: imagen CTX incluida")
             print("globo: MOLA + Viking alrededor de Gale y todo Marte")
         print(f"contexto: travesía completa, {len(travesia['puntos']) if travesia else 0} puntos de recorrido, {len(pozos['lista']) if pozos else 0} perforaciones")
 

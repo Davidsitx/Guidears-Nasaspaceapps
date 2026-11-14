@@ -130,3 +130,6 @@ Detalles:
 - Alrededor del terreno de la travesía ya no queda gris: hay relieve MOLA (16 píxeles/grado, ~3,7 km) con color Viking, sobre la esfera de Marte con su curvatura. Cerca de la travesía la grilla es de 1/128° (~460 m, interpolada), alrededor de Gale de 1/16° y en el resto del planeta de 1°. Un "delantal" une el borde del terreno de 12 m con el fondo.
 - El botón **"Marte completo"** aleja la cámara hasta ver el planeta; la rueda o el pellizco vuelven a acercar. Funciona también en el artifact publicado. **"Gale Earth ↗"** abre la app del compañero cuando está al lado.
 - Es solo fondo: no entra en rutas, alertas ni capas. Datos: `data/terreno/globo/` (`python herramientas/globo.py /ruta/megt90n000eb.img`).
+- **Imagen:** todo Marte lleva el mosaico Viking como textura (~2,6 km/píxel). Alrededor de Gale se suma la imagen **CTX** (la misma de Gale Earth): ~40 m/píxel en ±0,75° y ~330–650 m en la región, con el detalle de CTX y el color de Viking.
+  - **Para que quede dentro del archivo** (sin internet y en el artifact): en una PC con internet, `pip install pillow`, `python herramientas/bajar_ctx.py` y después `python escena3d/armar.py`. Escribe `data/terreno/globo/ctx_*.jpg` (~2 MB en total).
+  - **Si no está en el archivo**, la escena la baja sola en vivo cuando hay internet. Sin internet queda el Viking.
