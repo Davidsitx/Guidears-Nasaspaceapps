@@ -2,6 +2,14 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (6) · Compañero (con Claude) · NAVES EN 3D
+- Hecho (gale-earth/): MRO y Mars Odyssey ahora son modelos 3D oficiales de NASA (NASA 3D Resources, sin copyright), en `capas/modelos/mro.glb` (1,2 MB) y `odyssey.glb` (5,8 MB).
+  - Se orientan según su movimiento.
+  - De cerca se ve el modelo; desde lejos (más de 2.500 km), el punto de siempre.
+  - En la ficha de cada nave hay un botón "Ver la nave en 3D de cerca": la cámara la sigue en su órbita y se puede girar alrededor.
+- Mars Express y TGO (ESA) y Hope (Emiratos) no tienen modelo libre en el repositorio de NASA y siguen como punto.
+- En ese repositorio también hay modelos de MAVEN, Perseverance (.glb) y Curiosity (solo .blend), por si se suman.
+
 ## 2026-11-15 mañana (5) · Compañero (con Claude) · MANCHAS DE MINERALES, LUGARES CLAVE Y SR-1 FREEDOM
 - Hecho (gale-earth/):
   - **Minerales vistos desde órbita = manchas con justificación.** `herramientas/manchas_minerales.py` toma el percentil de cada indicador CRISM de `data/mineralogia/crism_contexto.png` (David). Marca la señal más fuerte de la franja (percentil 90 o más) y dibuja el contorno de cada mancha de al menos 0,05 km²: hasta 14 por mineral, 79 en total. Sale en `capas/minerales/manchas.json`.

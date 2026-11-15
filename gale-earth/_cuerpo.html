@@ -457,10 +457,17 @@ function kepler(el, jd) {
 }
 function fijo(xyz, jd) { const W = wMarte(jd), c = Math.cos(W), s = Math.sin(W); return new C.Cartesian3((xyz[0] * c + xyz[1] * s) * 1000, (-xyz[0] * s + xyz[1] * c) * 1000, xyz[2] * 1000); }
 const jdDe = t => C.JulianDate.totalDays(t) + 69.184 / 86400;   // UTC -> TDB aprox.
+// Modelos 3D oficiales de NASA (NASA 3D Resources, github.com/nasa/NASA-3D-Resources, sin copyright). Mars Express, TGO y
+// Hope no son de NASA y no hay modelo libre en ese repositorio: siguen como punto.
+const MODELOS_3D = { 'MRO': 'capas/modelos/mro.glb', 'Mars Odyssey': 'capas/modelos/odyssey.glb' };
 for (const [nombre, el] of Object.entries(O.orbitadores)) {
   const col = C.Color.fromCssColorString(el.color);
-  el.ent = viewer.entities.add({ position: new C.CallbackPositionProperty(t => fijo(kepler(el, jdDe(t)), jdDe(t)), false),
-    point: { pixelSize: 9, color: col, outlineColor: C.Color.WHITE, outlineWidth: 2 },
+  const posO = new C.CallbackPositionProperty(t => fijo(kepler(el, jdDe(t)), jdDe(t)), false), glb = MODELOS_3D[nombre];
+  const conModelo = glb && location.protocol.startsWith('http');   // con file:// el navegador no deja cargar el .glb: queda el punto
+  el.ent = viewer.entities.add({ position: posO,
+    point: { pixelSize: 9, color: col, outlineColor: C.Color.WHITE, outlineWidth: 2, ...(conModelo ? { distanceDisplayCondition: new C.DistanceDisplayCondition(2.5e6, 1e12) } : {}) },
+    ...(conModelo ? { orientation: new C.VelocityOrientationProperty(posO),
+      model: { uri: glb, minimumPixelSize: 64, maximumScale: 4000, silhouetteColor: col, silhouetteSize: 1.5, distanceDisplayCondition: new C.DistanceDisplayCondition(0, 2.5e6) } } : {}),
     label: { text: nombre, font: '600 13px system-ui', fillColor: col, pixelOffset: new C.Cartesian2(10, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK },
     properties: { tipo: 'orbitador', nombre } });
   let cache = null, cacheT = -1;
@@ -676,6 +683,7 @@ viewer.screenSpaceEventHandler.setInputAction(m => {
 // ---------- panel ----------
 let pestaña = 'explorar';
 function abrir(t, mostrar = true) {
+  if (viewer.trackedEntity) viewer.trackedEntity = undefined;   // deja de seguir una nave al cambiar de pestaña
   pestaña = t; document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.toggle('on', mostrar && b.dataset.t === t));
   $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca', motor: 'Motor del globo' })[t];
   $('cajon').classList.remove('ancho');
@@ -844,6 +852,7 @@ function fichaLuna(n) {
 }
 function fichaOrbitador(n) {
   const el = O.orbitadores[n], jd = jdDe(viewer.clock.currentTime), [lo, la, r] = subpunto(el, jd), pas = proximoPaso(el, jd);
+  viewer.trackedEntity = undefined;
   viewer.camera.flyTo({ destination: C.Cartesian3.multiplyByScalar(C.Cartesian3.normalize(fijo(kepler(el, jd), jd), new C.Cartesian3()), (r + Math.max(6000, el.a * 1.6)) * 1000, new C.Cartesian3()), duration: 2 });
   cont().innerHTML = `<button class="btn" id="volver">← Orbitadores</button>
     <h3 style="margin-top:10px"><span class="chip" style="background:${el.color}"></span>${n}</h3><div class="sub">${el.agencia} · en Marte desde ${el.llegada} · ${el.estado}</div>
@@ -851,8 +860,13 @@ function fichaOrbitador(n) {
     <div class="astro"><b>Qué aporta a Gale Earth</b><ul><li>${el.aporta}</li></ul></div>
     <div class="ind"><div><small>Altura ahora</small><b>${fmt(r - 3389.5)} <small>km</small></b></div><div><small>Sobre</small><b style="font-size:14px">${la.toFixed(1)}°, ${((lo + 360) % 360).toFixed(1)}° E</b></div>
       <div><small>Vuelta completa</small><b>${fmt(el.pr / 3600, 2)} <small>h</small></b></div><div><small>Próximo paso sobre Gale</small><b style="font-size:13px">${pas ? fechaDeJd(pas).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : 'en +3 días'}</b></div></div>
-    <p class="fuente">Paso sobre Gale: el punto bajo la nave a menos de 2° del centro del cráter (cálculo propio). ${O.fuente}.</p>`;
-  $('volver').onclick = vistaOrbitas;
+    ${el.ent.model ? `<div class="btns"><button class="btn prim" id="verNave">Ver la nave en 3D de cerca</button></div>` : ''}
+    <p class="fuente">Paso sobre Gale: el punto bajo la nave a menos de 2° del centro del cráter (cálculo propio). ${O.fuente}.${el.ent.model ? ' Modelo 3D: NASA 3D Resources (<a href="https://github.com/nasa/NASA-3D-Resources" target="_blank" rel="noopener">github.com/nasa/NASA-3D-Resources</a>).' : ''}</p>`;
+  $('volver').onclick = () => { viewer.trackedEntity = undefined; vistaOrbitas(); };
+  if ($('verNave')) $('verNave').onclick = () => {   // la cámara sigue a la nave en su órbita; se puede girar alrededor con el mouse
+    if (viewer.trackedEntity === el.ent) { viewer.trackedEntity = undefined; $('verNave').textContent = 'Ver la nave en 3D de cerca'; return; }
+    el.ent.viewFrom = new C.Cartesian3(-35, -35, 18); viewer.trackedEntity = el.ent; $('verNave').textContent = 'Dejar de seguir la nave';
+  };
 }
 
 const VIS = { recorrido: true, pozos: true, etiquetas: true, orbitas: true, base: true };

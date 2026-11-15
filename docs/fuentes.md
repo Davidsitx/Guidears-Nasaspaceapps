@@ -104,3 +104,4 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 | Lugares clave (Olympus Mons, Hellas, Jezero, Gusev, Endeavour) | Nombres, centros y diámetros: IAU / USGS Gazetteer of Planetary Nomenclature; textos: NASA Science (PIA00300, PIA21570, páginas de las misiones Perseverance, Spirit y Opportunity); contornos: cálculo propio sobre HRSC-MOLA Blend 200 m (USGS) |
 | SR-1 Freedom (línea de tiempo) | NASA, nasa.gov/mission/space-reactor-1-freedom; hoja "America Underway in Space on Nuclear Power" (NASA, 24/3/2026) |
 | odr_gale_56_fichas.json (escritorio de la PC, no versionado) | Copia de las 56 fichas CheMin de la base del cráter Gale (galecrater.samples.odr.io, doi:10.48484/JN48-YW52): de ahí salen los enlaces "ODR" de la Biblioteca |
+| Modelos 3D de MRO y Mars Odyssey | NASA 3D Resources (github.com/nasa/NASA-3D-Resources): "Mars Reconnaissance Orbiter (MRO) (C)" y "Mars Odyssey", .glb, sin copyright |
