@@ -2,6 +2,8 @@
 
 Esta carpeta explica **cómo está hecho GALE-3D** para seguir desarrollándolo con el mismo estilo, la misma estructura y las mismas reglas. La escribimos para que cualquier sesión de Claude (o una persona) pueda tomar el repositorio e implementar lo que falta sin romper lo que ya anda.
 
+**Lo primero ahora: [qa-unificacion.md](qa-unificacion.md).** Decidimos que Gale Earth sea la única pantalla. Ahí están los problemas que mostró la grabación de QA (con su segundo), cómo tiene que quedar, las reglas de transiciones, botones y movimientos, las fases para pasar todo a Gale Earth y el guion para volver a probar.
+
 **Para el equipo: [paso-a-paso.md](paso-a-paso.md)** explica cómo juntar todo en `main`, publicarlo con GitHub Pages, instalarlo y seguir con Claude (con el primer mensaje listo para pegar).
 
 ## Orden de lectura

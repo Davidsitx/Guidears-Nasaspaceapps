@@ -2,6 +2,21 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada (4) · David (con Claude) · QA DEL SITIO PUBLICADO Y DECISIÓN: GALE EARTH ES LA ÚNICA PANTALLA
+- **Decidió (David):** Gale Earth es la única pantalla. Todo lo de GALE-3D pasa al mismo globo:
+  - portada;
+  - paradas, rutas, Base Gale y expedición ("Curiosity hoy");
+  - rover y astronauta ("Misión Curiosity");
+  - misión en pareja ("Vista del astronauta"), mundo abierto y wiki.
+  - Nada de saltar de un Marte a otro.
+- **Hizo:** QA de la grabación del sitio publicado (2 min 24 s): 15 hallazgos con su segundo y su causa en el código. Están en `docs/desarrollo/qa-unificacion.md`, con:
+  - reglas de transiciones, estados de botones y pines y movimientos (4 min por defecto, arrancar en pausa);
+  - las fases 0 a 8 para unificar;
+  - un guion de QA de 15 pasos.
+  - Capturas en `docs/desarrollo/capturas/qa/`.
+- **Para el compañero:** las fases 0.5, 0.6 y 2 a 8 tocan `gale-earth/`. La propuesta es poner el código nuevo en archivos nuevos (`portada.js`, `mision.js`) que sume `_ensamblar.py`, con enganches cortos en lo existente. Avisar si prefieren otra forma.
+- **Falta:** todo el plan. Lo primero es la fase 0 (arreglos sobre lo publicado, para la demo).
+
 ## 2026-11-15 madrugada (3) · David (con Claude) · BASE GALE Y ROVER GX-2 EN LA ESCENA (rama `david/union-gale-earth`)
 - **Base Gale** (modelo 3D en la zona de hoy, marcador "BG"; inspirada en las fotos de domos geodésicos y módulos con túneles que trajo David).
   - **Lugar elegido con los datos:** círculo de 26 m donde el 95 % del suelo está bajo 8° y nada pasa de 12°, casi sin arena, a más de 20 m de las rutas y a menos de 750 m de Curiosity. Gana el de menos pendiente y desnivel, con más cielo tapado. Quedó a 719 m de Curiosity, con pendiente media de 3,4° y 9 % de cielo tapado. Cálculo propio sobre la grilla de 2 m.

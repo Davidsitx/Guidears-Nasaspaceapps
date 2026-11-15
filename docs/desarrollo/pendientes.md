@@ -1,5 +1,7 @@
 # Lo que falta, en orden de prioridad
 
+> **Prioridad nueva (15/11):** unificar todo en Gale Earth. El orden de trabajo está en [qa-unificacion.md](qa-unificacion.md): primero su fase 0 y después sus fases 1 y 3. Los ítems de esta lista siguen valiendo, pero se hacen ya dentro de Gale Earth.
+
 Cada ítem tiene **qué hacer**, **dónde** y **cuándo está terminado**. Al tomar uno, anotarlo en `docs/notas.md`; al terminarlo, sacarlo de esta lista.
 
 ## Para la entrega (prioridad alta)
