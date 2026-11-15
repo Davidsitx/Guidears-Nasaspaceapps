@@ -4666,7 +4666,7 @@ const PARTES_BASE = {
 function htmlBase(clave) {
   if (!BASE) return '<p>La base no entra en esta zona.</p>';
   const orden = ['habitat', 'laboratorio', 'esclusa', 'invernadero', 'tuneles', 'reactor', 'solar', 'isru', 'agua', 'antena', 'meteo', 'garaje', 'plataforma', 'luces'];
-  return `<span class="prov">propuesta propia</span><h1 class="parada-cab"><span class="chip" style="background:#d9733f">B</span>Base Gale</h1>
+  return `<span class="prov">propuesta propia</span><h1 class="parada-cab"><span class="chip" style="background:#d9733f">BG</span>Base Gale</h1>
     <p>Dónde vuelven los astronautas después de cada salida, con su zona de aterrizaje al lado. Está en la <b>${BASE.sitio.nombre}</b> del análisis de sitios del equipo, en la llanura del aterrizaje de Curiosity: un círculo de 250 m libre, con pendiente bajo 10° en 20 m, lejos de los peligros del rover y de la arena oscura, y a más de 1 km del recorrido para no pisarlo ${fq('sitiosBase')} ${fq('usgsOrto')}. <span class="prov">cálculo propio · umbrales provisorios</span></p>
     <p>Sobre el terreno de la travesía (celdas de 12 m), en 26 m a la redonda la pendiente media es de ${num(BASE.pend, 1)}° (máxima ${num(BASE.pmax, 0)}°) y el relieve tapa el ${num(BASE.cielo * 100)} % del cielo, así que la radiación es de ${num(tasaDe(BASE.cielo), 1)} µSv/h (${num(tasaDe(0), 1)} a cielo abierto) ${fq('hassler')}. Está a ${fmtM(BASE.drec)} del recorrido, a ${fmtM(BASE.dater)} del aterrizaje de 2012 y a ${fmtM(BASE.dc)} de Curiosity hoy. <span class="prov">cálculo propio</span></p>
     <p class="sub">Alternativas del mismo análisis: ${BASE.otros.map(f => `${f.properties.nombre} (${f.properties.rol})`).join(' y ')}. La Zona 2 la eligió el equipo.</p>
@@ -5154,7 +5154,119 @@ document.getElementById('cargando').remove();
     history.replaceState(null, '', location.pathname + location.search);
   }
 }
-window.__base = BASE; window.__mostrarBase = mostrarBase; window.__V3 = THREE.Vector3; window.__RN = RN; window.__rn = { activar: rnActivar, perforar: rnPerforar, dron: rnDron, ficha: mostrarGX };
+// ---------- exportar la misión para Gale Earth (herramientas/exportar_mision.py) ----------
+// Gale Earth es la única pantalla: estas dos funciones sacan de la escena, con los mismos cálculos y textos, todo lo de
+// "Curiosity hoy" (paradas, rutas, expedición, base, fichas, parámetros) y los modelos 3D (.glb). No cambian nada visible.
+const LL = (x, z) => mundoALonLat(x, z).map(v => +v.toFixed(7));
+function limpiarFicha(html) {
+  const d = document.createElement('div'); d.innerHTML = html;
+  d.querySelectorAll('.botones, button, .nav-tour, [data-tour]').forEach(e => e.remove());
+  d.querySelectorAll('a.q').forEach(a => { a.removeAttribute('data-f'); });
+  return d.innerHTML.replace(/\s+/g, ' ').trim();
+}
+function muestraHTML(x, z, nombre, quien) {
+  const antes = $('ficha-texto').innerHTML; mostrarMuestra(x, z, nombre, quien);
+  const h = limpiarFicha($('ficha-texto').innerHTML); $('ficha-texto').innerHTML = antes; $('ficha').classList.add('oculto'); return h;
+}
+window.__exportarMision = () => {
+  const r2 = v => Math.round(v * 100) / 100, r1 = v => Math.round(v * 10) / 10;
+  const terrenos = ['—', 'claro', 'intermedio', 'oscuro'], minerales = [], minIdx = new Map();
+  const terrenoDe = (lon, lat) => { const br = CR ? brilloRelativo(lon, lat) : null; return br == null ? 0 : br > 0.7 ? 1 : br < 0.3 ? 3 : 2; };
+  const mineralDe = (lon, lat) => {
+    const L = lecturaMineral(lon, lat, 0); if (!L || !L.length) return -1;
+    const k = L.map(i => i.k + i.nivel).join();
+    if (!minIdx.has(k)) { minIdx.set(k, minerales.length); minerales.push(L.map(i => [i.corto, i.nivel])); }
+    return minIdx.get(k);
+  };
+  // puntos de una línea cada ~2 m: lon, lat, d, elevación, pendiente de marcha, pendiente del suelo, cielo, horas, µSv, terreno, minerales
+  const puntos = (pts, conSuelo) => {
+    const out = []; let ult = -1e9;
+    pts.forEach((q, i) => {
+      if (q.d - ult < 2 && i < pts.length - 1) return; ult = q.d;
+      const [lon, lat] = LL(q.x, q.z), enZ = enZona(q.x, q.z);
+      out.push([lon, lat, r1(q.d), r1(D.zmin + (q.y ?? alturaGlobal(q.x, q.z))), r1(q.marcha ?? 0), r1(q.terr ?? pendGlobal(q.x, q.z)), r2(q.cielo ?? cieloGlobal(q.x, q.z)),
+        Math.round((q.t ?? 0) * 1e4) / 1e4, r1(q.dosis ?? 0), conSuelo && enZ ? terrenoDe(lon, lat) : 0, conSuelo && enZ ? mineralDe(lon, lat) : -1]);
+    });
+    return out;
+  };
+  const paradas = paradasGeo.filter(pa => pa.x != null).map(pa => {
+    const p = pa.props, [lon, lat] = LL(pa.x, pa.z), nom = nombreSinId(p);
+    return { id: String(p.parada), nombre: nom, color: colorParada(p), quien: p.quien || '', tipo: p.tipo || '', lon, lat, elev: r1(D.zmin + alturaGlobal(pa.x, pa.z)),
+      motivo: p.motivo_cientifico || '',
+      ficha: limpiarFicha(`<h1 class="parada-cab"><span class="chip" style="background:${colorParada(p)}">${p.parada}</span>${nom}</h1>${fichaParada(pa)}`),
+      muestra: muestraHTML(pa.x, pa.z, `${p.parada} · ${nom}`, /rover|vehic/i.test(p.quien || '') ? 'vehiculo' : 'astronauta') };
+  });
+  const lista = rutas.filter(r => r.fija && !r.aOjo);
+  const rutasX = lista.map((r, i) => ({
+    id: /Caminata (\d)/.test(r.nombre) ? `C-cam${r.nombre.match(/Caminata (\d)/)[1]}` : (r.nombre.match(/^([A-C]) ·/) || [])[1] || `R${i}`,
+    nombre: r.nombre, tipo: r.tipo, color: r.color, largo: r1(r.largo), largo3d: r1(r.largo3d), horas: Math.round(r.horas * 1000) / 1000, dosis: r1(r.dosis),
+    sube: r1(r.sube), baja: r1(r.baja), maxMarcha: r1(r.maxMarcha), lim: r.lim, idaVuelta: !!r.idaVuelta, cieloMedio: r2(r.cieloMedio),
+    paradas: paradasDeRuta(r).filter(o => !(o.d < 15 || /^S$/i.test(String(o.pa.props.parada)))).map(o => ({ id: String(o.pa.props.parada), d: r1(o.d) })),
+    pts: puntos(r.pts, true) }));
+  const expe = EXP ? {
+    nota: EXP.nota || '', resumen: $('expe-resumen')?.innerHTML || '',
+    lineas: Object.fromEntries(Object.entries(EXP.lineas).map(([k, L]) => [k, { color: COLORES[k], largo: r1(L.largo), props: L.props,
+      paradas: L.paradas.map(o => ({ id: o.e.id, d: r1(o.d) })), pts: puntos(L.pts, false) }])),
+    paradas: EXP.paradas.map(e => ({ id: e.id, nombre: e.parada, quien: e.quien || '', lon: e.lon, lat: e.lat, elev: r1(D.zmin + e.y), color: '#e0703a',
+      ficha: limpiarFicha(fichaExpe(e)), muestra: muestraHTML(e.x, e.z, e.parada, e.quien === 'astronauta' ? 'astronauta' : 'vehiculo') })) } : null;
+  const [clon, clat] = LL(est.x, est.z);
+  const base = BASE ? { lon: BASE.lon, lat: BASE.lat, elev: r1(D.zmin + alturaGlobal(BASE.x, BASE.z)), alto_plataforma: r2(BASE.grupo.position.y - alturaGlobal(BASE.x, BASE.z)), sitio: BASE.sitio,
+    ficha: limpiarFicha(htmlBase()), partes: Object.fromEntries(Object.entries(PARTES_BASE).map(([k, v]) => [k, v[0]])),
+    pend: r1(BASE.pend), cielo: r2(BASE.cielo), drec: Math.round(BASE.drec), dater: Math.round(BASE.dater), dc: Math.round(BASE.dc) } : null;
+  return {
+    version: 1, generado: new Date().toISOString(), sol: 5070,
+    zona: { lon_oeste: M.lon_oeste, lon_este: M.lon_este, lat_norte: M.lat_norte, lat_sur: M.lat_sur },
+    curiosity: { lon: clon, lat: clat, yaw: r2(est.yaw), elev: r1(D.zmin + alturaGlobal(est.x, est.z)) },
+    paradas, rutas: rutasX, expedicion: expe, base, gx2: limpiarFicha(htmlGX()),
+    terrenos, minerales,
+    estaciones: ESTACIONES.map(e => ({ de: e.de, a: e.a, nombre: e.nombre, lineas: e.lineas })),
+    parametros: { PR: { ...PR }, EVA: { ...EVA }, zancada: ZANCADA },
+    fuentes: FUENTES_URL,
+  };
+};
+// modelos 3D: cada uno se exporta en reposo, con las piezas que se mueven nombradas, girado para que el este de la escena
+// quede como el "adelante" de glTF (+Z): así, en Gale Earth, el modelo queda bien orientado sobre el marco este-norte-arriba.
+window.__exportarModelos = async GLTFExporter => {
+  if (RN.activo) rnActivar(false);
+  ruedas.forEach((w, i) => { w.g.position.set(w.xi, RUEDA_R, w.zi); w.giro.rotation.set(0, 0, 0); w.giro.name = `rueda_${i}`; });
+  chasis.rotation.set(0, 0, 0); chasis.updateMatrix(); cabeza.name = 'cabeza';
+  const L = v => v.clone().applyMatrix4(chasis.matrix);
+  susp.forEach(sp => {                                       // la misma cuenta de ubicarRover, con el piso plano
+    const off = sp.lado > 0 ? 0 : 3, wF = ruedas[off].g.position, wM = ruedas[off + 1].g.position, wR = ruedas[off + 2].g.position;
+    const piv = L(PIV(sp.lado)), zIn = sp.lado * (WZ - RUEDA_A / 2 - 0.16), arriba = (p, h) => new THREE.Vector3(p.x, p.y + h, zIn);
+    const fA = arriba(wF, 0.32), mA = arriba(wM, 0.16), rA = arriba(wR, 0.32), bog = new THREE.Vector3((wM.x + wR.x) / 2 + 0.05, (mA.y + rA.y) / 2 + 0.06, zIn);
+    estirar(sp.rDel, piv, fA); estirar(sp.rTras, piv, bog); estirar(sp.bMed, bog, mA); estirar(sp.bTras, bog, rA);
+    estirar(sp.postes[0], fA, new THREE.Vector3(wF.x, wF.y, zIn)); estirar(sp.postes[1], mA, new THREE.Vector3(wM.x, wM.y, zIn)); estirar(sp.postes[2], rA, new THREE.Vector3(wR.x, wR.y, zIn));
+    sp.bog.position.copy(bog); sp.bog.rotation.set(Math.PI / 2, 0, 0);
+  });
+  RN.alasOn = true; RN.alasT = 1; RN.seguir(); RN.tick(0);
+  RN.ruedasGX.forEach((w, i) => { w.giro.name = `rueda_${i}`; });
+  RN.lidar.name = 'lidar'; RN.rotores.forEach((r, i) => { r.name = `rotor_${i}`; });
+  poseAstro(0, 0);
+  piernas.forEach((p, i) => { p.muslo.name = `muslo_${i}`; p.rodilla.name = `rodilla_${i}`; p.tobillo.name = `tobillo_${i}`; });
+  brazos.forEach((b, i) => { b.hombro.name = `hombro_${i}`; b.codo.name = `codo_${i}`; });
+  cadera.name = 'cadera'; torso.name = 'torso'; casco.name = 'casco';
+  const sinLuces = o => { const fuera = []; o.traverse(c => { if (c.isLight || c.isSprite) fuera.push(c); }); fuera.forEach(c => c.parent && c.parent.remove(c)); return o; };
+  const preparar = (obj, mantenerGiro) => {
+    const c = sinLuces(obj.clone(true)); c.position.set(0, 0, 0); if (!mantenerGiro) c.rotation.set(0, 0, 0); c.visible = true;
+    const w = new THREE.Group(); w.rotation.y = -Math.PI / 2; w.add(c); const s = new THREE.Scene(); s.add(w); s.updateMatrixWorld(true); return s;
+  };
+  const curiosity = rover.clone(true);
+  [...curiosity.children].forEach((c, i) => { const o = rover.children[i]; if (o === RN.g || o === manchaSombra) curiosity.remove(c); });
+  const gx = RN.g.clone(true); gx.visible = true;
+  const astroC = astro.clone(true); astroC.visible = true;
+  const piezas = { curiosity: preparar(curiosity), gx2: preparar(gx), astronauta: preparar(astroC) };
+  if (BASE) piezas.base_gale = preparar(BASE.grupo, true);
+  const ex = new GLTFExporter(), out = {};
+  for (const [k, s] of Object.entries(piezas)) {
+    const buf = await ex.parseAsync(s, { binary: true, onlyVisible: true });
+    let bin = ''; const u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) bin += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+    out[k] = btoa(bin);
+  }
+  ubicarRover();
+  return out;
+};
+window.__base = BASE; window.__mostrarBase = mostrarBase; window.__V3 = THREE.Vector3; window.__THREE = THREE; window.__RN = RN; window.__rn = { activar: rnActivar, perforar: rnPerforar, dron: rnDron, ficha: mostrarGX };
 window.__escena = { GLOBO, expe, EXP, entrarExpe, salirExpe, perforar, lsDeFecha, pintarClima, muestraOrbital, llegadaParada, paradasDeRuta, get kPolvo() { return kPolvo; }, AL, get cartel() { return cartelClave; }, get CTX() { return CTX; }, TR, POZOS, viaje, entrarViaje, salirViaje, vistaTravesia, mostrarPozo, controles, BASE_S, fijarCamara: (p, t) => { vuelo = null; seguirTras = null; modoCam = 'libre'; camara.position.set(...p); controles.target.set(...t); controles.update(); }, dibujarCapa, evaluarAlertas, yo, setControl, volverABase, abrirPerfil, agente, campoRegreso, get control() { return control; }, huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>

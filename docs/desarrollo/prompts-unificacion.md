@@ -2,6 +2,11 @@
 
 Mensajes listos para pegar en Claude, uno por fase del plan [qa-unificacion.md](qa-unificacion.md). El plan dice **qué** hay que hacer; estos mensajes le dicen a Claude **cómo trabajar** y **cómo mostrarte el resultado**, igual que veníamos haciendo (capturas de cada paso y la página para abrir).
 
+> **Estado (15/11, mañana):** "Misión Curiosity" ya está dentro de Gale Earth.
+> - **Hechas:** fases 1, 3, 5 y 6, la 4 casi entera, y los ítems 0.5 y 0.6.
+> - **Siguen:** 2 (portada en Gale Earth), 7 (mundo abierto), lo que falta de la 4 (taladro y dron del GX-2) y la 8 (wiki y Biblioteca).
+> - La fase 0A (arreglos en la escena) solo importa para la "versión clásica".
+
 ## Cómo se usa
 
 1. **Traer lo último:**

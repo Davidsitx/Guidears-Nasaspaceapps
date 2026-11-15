@@ -2,6 +2,28 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana · David (con Claude) · MISIÓN CURIOSITY DENTRO DE GALE EARTH: UNA SOLA PANTALLA
+- **Decidió (David):** "Misión Curiosity 3D" va en la misma pantalla que Gale Earth, en "Curiosity hoy", con la misma lógica visual. Nada de saltar a otro Marte.
+- **Hizo:**
+  - **`herramientas/exportar_mision.py`:** abre la escena sin ventana y saca, con sus mismas funciones, `gale-earth/datos/mision.json` y los modelos `gale-earth/capas/mision/*.glb`.
+    - El JSON tiene paradas con ficha y muestra simulada, rutas con datos cada 2 m, expedición, Base Gale, GX-2, estaciones, parámetros y fuentes.
+    - Los modelos son Curiosity, GX-2, astronauta y Base Gale, exportados con el GLTFExporter de three.js (MIT), copiado en `escena3d/vendor/`.
+  - **`gale-earth/mision.js`:** el módulo nuevo, que `_ensamblar.py` suma; no edita el resto de Gale Earth. Trae:
+    - "Curiosity hoy" completo en el globo;
+    - la barra de la misión;
+    - los recorridos de 4 min que arrancan en pausa;
+    - la misión en pareja con visor, comunicaciones y minimapa;
+    - el hover de todos los carteles;
+    - el botón "Misión Curiosity" sin cambio de página;
+    - el vuelo del espacio al cráter sin perder a Marte de vista (`pitchAdjustHeight`).
+  - **Probado sin internet** con Cesium del paquete npm y un terreno de prueba armado con nuestros DEM (MOLA, travesía 12 m, zona 2 m).
+    - Probados: entrada, hover y clic en carteles, fichas, rover por la ruta A, GX-2, expedición, misión en pareja (cámara del casco y desde atrás), base y Esc.
+    - Sin errores en la consola. Capturas en `docs/desarrollo/capturas/gale-earth/`.
+    - En el celular (390 × 844) la barra queda en dos filas, el botón "Misión Curiosity" se esconde mientras la misión está abierta y, en pareja, comunicaciones, visor y reproductor no se pisan (captura `10_celular.jpg`).
+    - Los enlaces directos `#pareja`, `#rover`, `#apie`, `#tripulado`, `#expedicion` y `#base` abren cada modo.
+- **Para el compañero:** `mision.js` es un archivo aparte. En lo tuyo solo cambió `_ensamblar.py` (una línea), y `index.html` y `plantilla.html` se rearmaron. El módulo envuelve `irA` y el clic del globo sin tocar `_cuerpo.html`.
+- **Falta:** la portada dentro de Gale Earth (fase 2), el mundo abierto (fase 7), y animar el taladro y el dron del GX-2 en el globo.
+
 ## 2026-11-15 madrugada (5) · David (con Claude) · BASE GALE EN LA ZONA 2 Y PROMPTS PARA EL PASO A PASO
 - **Decidió (David):** la Base Gale va en la **Zona 2** del análisis de sitios del equipo, en la llanura del aterrizaje. Las zonas 1 (mejor puntaje) y 3 quedan como alternativas.
 - **Hizo:**

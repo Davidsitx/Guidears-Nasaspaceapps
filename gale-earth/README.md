@@ -36,10 +36,22 @@ Las teselas de Marte (varios GB) están en la PC o en Google Drive: por eso el c
 - **Línea de tiempo** (estilo Google Earth): desde la formación de Gale y los primeros telescopios hasta hoy, cada misión que llegó o intentó llegar a Marte, los sitios de aterrizaje que aparecen en el globo y los hallazgos de Curiosity. Datos y fuentes en `datos/linea_tiempo.json`; las edades geológicas están marcadas como estimadas.
 - **Capas**: mostrar u ocultar elementos, colorear los pozos por recurso, exagerar el relieve y cargar una clave propia de Cesium ion.
 
-## Unión con GALE-3D (misión de Curiosity en 3D)
-- Arriba a la derecha (abajo a la izquierda en el celular) está **"Misión Curiosity · 3D"**: vuela hasta Curiosity y abre `../escena3d/index.html`, la escena con las rutas del rover y del astronauta. Es un enlace común: funciona aunque Cesium no cargue.
-- En la ficha del sitio "Valle Grande · Curiosity hoy" (pestaña Base) está "Entrar a la misión en 3D".
-- Desde GALE-3D, el botón **"Marte completo ↗"** vuelve acá con `#curiosity`: Gale Earth arranca y vuela directo a la posición de hoy.
+## Misión Curiosity en este mapa (una sola pantalla)
+Desde el 15/11, la misión que antes abría otra página (GALE-3D) vive acá, en **"Curiosity hoy"**. Código en `mision.js` (de David, con Claude), sumado por `_ensamblar.py`.
+- **Cómo se entra:** el botón **"Misión Curiosity"** (arriba a la derecha), el chip "Curiosity hoy", el buscador o `#curiosity`. No cambia de página: el globo vuela a la zona de hoy, abre el panel "Curiosity hoy" y muestra la barra de la misión abajo.
+- **Qué se ve en el globo:**
+  - paradas S, A1–A4, B1, B2, C2–C4, Q1, M1, R1 y Z1 (carteles con su color), rutas A, B y las caminatas de C (líneas pegadas al terreno), y la expedición sur E1–E5;
+  - **Base Gale** en la Zona 2 (modelo 3D);
+  - Curiosity o el **GX-2** en la salida, con el astronauta al lado.
+  - Cada cartel, la base y el rover abren su ficha en el panel, con las mismas fuentes ("?").
+  - Al pasar el mouse, cualquier cartel (también los pozos y zonas de Gale Earth) muestra la mano, se agranda y dice qué es.
+- **Barra de la misión:** En pareja · Rover ruta A · A pie ruta B · Tripulado C · Expedición sur · Base Gale · Curiosity / GX-2.
+  - Todo recorrido arranca **en pausa** ("Listos para salir") y dura **4 min** por defecto (1, 2, 4 u 8).
+  - Se detiene en cada parada y tiene vista desde atrás o con los ojos del astronauta. Esc sale.
+- **Misión en pareja:** cámara del casco del Astronauta 1, Astronauta 2 a 6 m (visor con suelo, CRISM, radiación y refugio, más minimapa) y mensajes de la Base Gale y de la Tierra con la demora real de la luz.
+- **Enlaces directos:** `#pareja`, `#rover`, `#apie`, `#tripulado`, `#expedicion` y `#base`.
+- **Datos:** `datos/mision.json` y `capas/mision/*.glb` salen de la escena con `python herramientas/exportar_mision.py`, desde la raíz del repo, con los mismos números y textos. La escena anterior queda como "versión clásica" (`../escena3d/`).
+- Desde GALE-3D, el botón **"Marte completo ↗"** vuelve acá con `#curiosity`.
 - `servir.py` ahora también sirve `/escena3d/` (la carpeta hermana, solo lectura) y acepta `/gale-earth/...`, así la ida y vuelta funciona con `abrir.bat`. En GitHub Pages y con doble clic funciona por rutas relativas.
 - `index.html` en la raíz del repo redirige a Gale Earth: es la entrada del proyecto.
 

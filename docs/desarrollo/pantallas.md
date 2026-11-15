@@ -2,6 +2,39 @@
 
 Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)). Si algo cambia, se actualiza este archivo.
 
+## 0. Gale Earth · Curiosity hoy: la pantalla única (desde el 15/11)
+
+![Curiosity hoy en Gale Earth](capturas/gale-earth/01_curiosity_hoy.jpg)
+
+- **Entrada:** el botón **"Misión Curiosity"** (arriba a la derecha), el chip "Curiosity hoy" o el buscador. No cambia de página: el globo vuela a la zona de hoy, abre el panel **Curiosity hoy** (cómo recorrerla, paradas, base y rover) y muestra la **barra de la misión** abajo.
+- **En el mapa:**
+  - carteles de las paradas, con su color, y rutas pegadas al terreno (A azul, B naranja, caminatas de C);
+  - expedición E1–E5 y la **Base Gale** en la Zona 2;
+  - Curiosity (o el GX-2) y el astronauta en la salida.
+  - Al pasar el mouse por cualquier cartel (también los de Gale Earth) aparece la mano, se agranda y dice qué es; un toque abre la ficha en el panel.
+- **Barra:** En pareja · Rover ruta A · A pie ruta B · Tripulado C · Expedición sur · Base Gale · Curiosity / GX-2 · Todo.
+
+![Rover por la ruta A](capturas/gale-earth/03_rover_ruta_A.jpg)
+
+- **Recorridos:**
+  - la cámara vuela a la salida y aparece **"Listos para salir"**; nada se mueve hasta tocar "▶ Salir";
+  - **4 min** por defecto (1, 2, 4 u 8);
+  - se detiene en cada parada con "Ver la parada", "Perforación simulada" y "Seguir ▶";
+  - vista desde atrás o con los ojos (a pie);
+  - "Salir (Esc)" vuelve a Curiosity hoy.
+
+![Misión en pareja](capturas/gale-earth/04_pareja_casco.jpg)
+
+- **Misión en pareja:**
+  - **cámara del casco** del Astronauta 1, con campo visual amplio, que sigue la pendiente;
+  - el Astronauta 2 a 6 m;
+  - **visor** a la derecha (minimapa, próxima parada, suelo, CRISM, radiación y refugio);
+  - **comunicaciones** a la izquierda (Base Gale, Tierra con la demora de la luz y respuestas rápidas).
+![En el celular: misión en pareja y barra de la misión](capturas/gale-earth/10_celular.jpg)
+
+- **En el celular (390 × 844):** la barra de la misión queda en dos filas (En pareja, Rover ruta A, A pie ruta B y Todo; el resto sigue en el panel Curiosity hoy); el botón "Misión Curiosity" se esconde mientras la misión está abierta; en pareja, las comunicaciones se apoyan siempre arriba del reproductor y el visor se achica para no taparlas.
+- **Código:** `gale-earth/mision.js`. Datos y modelos con `python herramientas/exportar_mision.py` (sección "Cómo se arma" de `arquitectura.md`). Lo que sigue más abajo es la escena anterior, que queda como **versión clásica**.
+
 ## 1. Portada (tapa la escena mientras carga)
 
 ### Paso 1 · Inicio

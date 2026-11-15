@@ -191,6 +191,12 @@ En pantallas táctiles no hay hover: un toque abre la ficha directamente.
 
 ## 4. Paso a paso de la unificación
 
+> **Estado al 15/11 a la mañana:** las fases **1, 3, 5 y 6 están hechas**, y la **4 en buena parte**: "Misión Curiosity" ya vive en Gale Earth, en "Curiosity hoy" (`gale-earth/mision.js`). También quedaron hechos los ítems **0.5** (Marte en cuadro en el vuelo) y **0.6** (hover en los pines). Falta:
+> - la **fase 2**: la portada dentro de Gale Earth;
+> - la **fase 7**: mundo abierto;
+> - de la **fase 4**: animar en el globo el taladro y el dron del GX-2;
+> - de la **fase 8**: unir la wiki con la Biblioteca. La escena anterior ya queda como "versión clásica".
+
 Cada fase tiene **qué**, **dónde**, **cómo** y **terminado cuando**. El tamaño es una estimación (S: hasta 2 h; M: 2 a 5 h; L: más de 5 h).
 
 **Quién hace qué:** `gale-earth/` es del compañero. Para no pisarse, el código nuevo va en archivos nuevos que `_ensamblar.py` suma (`portada.js`, `mision.js`). En los archivos que ya existen solo se agregan enganches cortos, y todo se anota en `docs/notas.md`.
@@ -211,6 +217,8 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 | 0.9 | Fusionar la rama y verificar H12 en la publicación | PR de `david/union-gale-earth` (Base Gale y GX-2) a `main`. | En el sitio publicado, Caminar no muestra "Llegaste a S". |
 
 ### Fase 1 · Los datos de la misión para Gale Earth (M)
+> ✅ hecha: `herramientas/exportar_mision.py` → `gale-earth/datos/mision.json`.
+
 - **Qué:** un archivo `gale-earth/datos/mision.json` con todo lo de la zona de hoy, en longitud y latitud:
   - **paradas:** id, letra, color, nombre, motivo científico, quién va, suelo, CRISM y radiación;
   - **rutas A, B y C y expedición E1–E5:** línea más una muestra cada 5 m con distancia, elevación, pendiente, cielo tapado y arena;
@@ -236,6 +244,8 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 - **Terminado cuando:** abrir la URL, elegir Mars Earth y volver con Atrás no cambia de página y no tiene cortes.
 
 ### Fase 3 · "Curiosity hoy" completo (M)
+> ✅ hecha: en `gale-earth/mision.js`.
+
 - **Qué:** con el chip "Curiosity hoy" se ven, en Gale Earth:
   - las paradas, como pines con su letra y color;
   - las rutas A, B y C, como líneas pegadas al suelo con flechas;
@@ -249,6 +259,8 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 - **Terminado cuando:** todo lo de la zona de hoy se ve y se toca en Gale Earth, con fuente, y los pines tienen los estados de 3.3.
 
 ### Fase 4 · Modelos 3D en el globo (M–L)
+> 🟡 casi: los cuatro modelos están en el globo y se mueven las ruedas y las piernas. Falta animar el taladro y el dron del GX-2.
+
 - **Qué:** Curiosity, el GX-2, el astronauta y la Base Gale como modelos `.glb` sobre el terreno de 1 m de Gale Earth.
 - **Dónde:**
   - Exportación: una página `escena3d/exportar_modelos.html` que arma cada modelo con el mismo código de la escena (`malla`, `MAT`, `RN`, la base) y lo baja con `GLTFExporter` de three.js. Se corre una vez con Playwright y guarda `gale-earth/capas/modelos/*.glb`.
@@ -262,6 +274,8 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
   - Gale Earth sigue a más de 30 cuadros por segundo en una PC común.
 
 ### Fase 5 · Misión Curiosity: las rutas nuevas con el rover y el astronauta (L)
+> ✅ hecha: rutas A, B y C, caminatas y expedición, 4 min, en pausa al entrar, con paradas y cámara de seguimiento.
+
 - **Qué:** el modo que hoy es "Recorrido guiado", "Seguir al rover", "Caminar" y "Expedición", ahora dentro de Gale Earth.
 - **Dónde:** `gale-earth/mision.js`. Se porta la lógica de `ubicarFP`, `paradasDeRuta`, `llegadaParada` y `tickExpe` de la escena.
 - **Cómo:**
@@ -275,6 +289,8 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 - **Terminado cuando:** se cumplen T4, T6 y T7 y todo 3.4.
 
 ### Fase 6 · Vista del astronauta: la misión en pareja (L)
+> ✅ hecha: cámara del casco, visor, comunicaciones con la demora de la luz y minimapa.
+
 - **Qué:** la misión en pareja dentro de Gale Earth:
   - **cámara del casco** del Astronauta 1, con `camera.setView` cada cuadro, a 1,7 m y con el rumbo de la ruta;
   - **visor** del Astronauta 2 a la derecha;

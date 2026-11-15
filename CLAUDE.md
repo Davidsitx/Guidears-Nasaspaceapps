@@ -58,6 +58,7 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 - Portada en tres pasos con cuatro entradas: **Mars Earth** (Gale Earth en el espacio, con foco en Gale), **Recorrido en Marte**, **Mundo abierto** e **Información / wiki**.
 - Dos visualizaciones principales: **Misión en pareja** (cámara del Astronauta 1, visor del Astronauta 2, mensajes de la base y de la Tierra con la demora real de la luz) y **Rover y astronauta**.
 - Rama `david/union-gale-earth` (PR #5): ya incluye la rama del compañero (#6). Guía completa en `docs/desarrollo/`.
+- **Hecho (15/11, mañana):** "Misión Curiosity" vive dentro de Gale Earth, en "Curiosity hoy" (`gale-earth/mision.js`): paradas, rutas, expedición, Base Gale, rover (Curiosity o GX-2), astronauta y misión en pareja, sin cambiar de página. Datos y modelos: `python herramientas/exportar_mision.py`. La escena `escena3d/` queda como versión clásica.
 - **Decisión (15/11): Gale Earth es la única pantalla.** Todo lo de GALE-3D se pasa al mismo globo. El plan, con hallazgos de QA, reglas de transiciones y fases, está en `docs/desarrollo/qa-unificacion.md`.
 - En la escena: **Base Gale** en la **Zona 2** del análisis de sitios del equipo (`data/base/sitios_base.geojson`, llanura del aterrizaje, a 1,7 km del recorrido; partes con ficha y fuente) y **Rover GX-2**, la versión nueva para las próximas excavaciones (taladro de 2 m, dron, alas solares; diseño propio). Se elige en Escena → Rover.
 
