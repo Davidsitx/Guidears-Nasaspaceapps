@@ -883,7 +883,7 @@ $('miComms').addEventListener('click', e => {
     }
     return irA0(v, dur);
   };
-  $('vHoy').onclick = () => miEntrar();
+  if ($('vHoy')) $('vHoy').onclick = () => miEntrar();      // el chip puede no estar (Gale Earth quitó los atajos bajo el buscador)
   entrarMision = () => miEntrar();          // el enlace de las fichas de Gale Earth también entra acá, sin cambiar de página
   for (const id of ['vGale', 'vRec', 'vMarte', 'logoRiel']) $(id)?.addEventListener('click', miDejar);
   document.querySelectorAll('.rb[data-t]').forEach(b => b.addEventListener('click', () => { if (MI.modo) miSalirModo(false); $('cajon').classList.remove('mi-libre'); }));

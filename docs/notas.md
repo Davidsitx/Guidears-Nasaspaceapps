@@ -90,6 +90,122 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
   - Los números con fuente están en la ficha; lo propio (tamaño, ruedas, LiDAR) dice "supuesto" o "propuesta del equipo".
 - Arreglado: la página no terminaba de cargar porque la base usaba una variable de otro bloque (`R is not defined`). Ahora `BASE.radio`.
 - Falta: ver `docs/desarrollo/pendientes.md` (ítems 13 a 15).
+## 2026-11-15 mañana (11) · Compañero (con Claude) · AUDITORÍA DE GALE EARTH (ERRORES, FUENTES, ACTUALIDAD)
+- Informe completo: `docs/auditoria_gale_earth_2026-11-15.pdf`.
+- Barrido automático por 150 pantallas: 0 errores de JavaScript.
+- Arreglado:
+  - enlace THEMIS 404 → stac.astrogeology.usgs.gov/docs/data/mars/themis_controlled_mosaics/;
+  - tabla de `docs/fuentes.md` (9 filas habían quedado después del pie);
+  - "Sol en el cénit…" ahora sale en inglés;
+  - filas "Gale Earth · Expedición" renombradas (ese paquete no se ve en la app).
+- Estado de las misiones verificado al 15/11: MAVEN terminada el 3/6/2026; Odyssey, MRO, MEX, TGO y Hope activas; MMX lanzada el 20/10; ESCAPADE hizo los sobrevuelos el 7 y el 9/11; Rosalind Franklin a fines de 2028.
+- **Para David** (fuentes secundarias o pendientes en escena3d): Space.com (31°), Smithsonian/Spaceflight Now (por qué Gale), 37 hallazgos "de memoria", yardangs sin enlace, VanBommel sin DOI, origen de la travesía y el gpkg.
+- Falta:
+  - revisar si el CheMin de Nevado Sajama 2 (sol 4795) ya está en el PDS (tanda 42);
+  - abrir a mano una ficha ODR (el sitio no respondió desde la PC);
+  - subir el relieve de Jezero a HF;
+  - PR nuevo.
+
+## 2026-11-15 mañana (10) · Compañero (con Claude) · CAPA "AGUA EN EL PRIMER METRO DEL SUELO" (MEDIDA, TODO MARTE)
+- Nueva capa en Capas → Todo Marte. Es **medida** por el espectrómetro de rayos gamma (GRS) de Mars Odyssey entre 2002 y 2005.
+  - Producto oficial del PDS: ODY-M-GRS-5-ELEMENTS-V1.0, `H2O_SR_5X5.TAB` (5° × 5°, suavizado de 10°, % en peso de H2O, de 60°S a 60°N, con su sigma). Se guardó la copia en `gale-earth/datos/crudos_grs/`.
+  - `capas_globales.py --agua` genera `capas/global/agua_grs.png`. Solo se interpola entre celdas para dibujar.
+  - Valores: Gale 5,4 ± 0,4 %; Jezero 3,5 %; Hellas 4,2 %; Olympus 4,4 %. Rango de 1,6 % a 7,4 %.
+  - La leyenda aclara que es agua en minerales o hielo (no líquida) y que la resolución es de cientos de km.
+- Fuente: Boynton et al. 2007, JGR 112, E12S99. Producto: pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/.
+
+## 2026-11-15 mañana (9) · Compañero (con Claude) · SE QUITA LA RADIACIÓN GLOBAL; HIRISE SOLO DE CERCA
+- **Se quitó la capa "Radiación en superficie (todo Marte)"** (y su código en `capas_globales.py`). El único detector de radiación que estuvo en la superficie de Marte es RAD, en Curiosity; una capa global sería un modelo, no una medición. Queda solo la capa de radiación de Gale (5 m, día/noche).
+  - Las JPG viejas quedaron en la PC en `Google Mars/_to_delete/`, para borrar a mano.
+- **Tour, escena 6:** ahora dice que RAD es el único detector que hubo en la superficie y suma la tormenta solar del 20/5/2024 (8.100 µGy, ≈39 días de dosis normal, de `datos/radiacion.json`). Esa tormenta ya estaba en la línea de tiempo y en Biblioteca → Clima y radiación.
+- **Losas superpuestas en el vuelo bajo:** se revisó en la PC con el navegador. Las causaba la capa HiRISE 25 cm: sus fotos traen sombras y franjas propias que no coinciden con el relieve 3D. Ahora HiRISE solo aparece de cerca (`minimumTerrainLevel: 15`, cámara a menos de ~1–2 km). Con HiRISE así, la vista del tour queda limpia.
+- Nota: `viewer.imageryLayers.add()` no devuelve la capa (un primer intento rompía el motor "Marte completo"; ya corregido).
+
+## 2026-11-15 mañana (8) · Compañero (con Claude) · RADIACIÓN EN TODO MARTE, CARTELES DETRÁS DEL PLANETA Y AJUSTES DEL TOUR
+- **Radiación en superficie (todo Marte)**, en Capas → Todo Marte: `capas/global/radiacion_{oeste,este}.jpg`, generadas con `capas_globales.py --radiacion`. Es una ESTIMACIÓN con datos reales:
+  - lo que midió RAD en Gale: 0,21 mGy/día = 0,64 mSv/día (Hassler 2014), con la presión media de ese año, 847,5 Pa (REMS, año marciano 31, a -4.520 m);
+  - +250 Pa ≈ -32,5 µGy/día (Guo 2015, ApJ 810, doi:10.1088/0004-637X/810/1/24);
+  - la presión según la altura HRSC-MOLA, con altura de escala de 11,1 km (NASA Mars Fact Sheet).
+  - Resultado: Gale 0,64; Jezero 0,69; Hellas 0,58; cumbre del Olympus 0,94 mSv/día.
+  - Fuera de ~700–950 Pa es extrapolación lineal (Guo y colegas vieron un efecto no lineal), y no incluye el ciclo solar ni las tormentas. Todo eso lo dice la leyenda. Hay antecedentes de mapas globales con MOLA (Saganti 2004; De Angelis 2004, NASA Langley).
+- **Carteles detrás del planeta:** los topónimos y los lugares clave que quedan detrás del horizonte se ocultan, con un test de horizonte cinco veces por segundo. Antes se veían nombres del otro lado del planeta sobre Gale.
+- **Tour:**
+  - el vuelo bajo va más alto (6,2 km) y más lento;
+  - en la escena de CheMin la cámara queda a más de 3,5 km, para que no se pisen los nombres de los pozos;
+  - la escena de radiación muestra primero la estimación de todo Marte y después la capa fina de Gale;
+  - durante el tour las teselas cargan más rápido (error de pantalla 2).
+- Pendiente: las teselas superpuestas en el vuelo bajo (cambio de nivel de detalle entre ortofoto, HiRISE y CTX) no se pueden reproducir acá porque CTX está bloqueado. Revisar en la PC con el tour nuevo.
+
+## 2026-11-15 mañana (7) · Compañero (con Claude) · INGLÉS POR DEFECTO, TOUR DE 2 MINUTOS Y RELIEVE DE JEZERO
+- Hecho (gale-earth/):
+  - **Idioma:** botón EN/ES en el riel; inglés por defecto (se guarda en localStorage `galeEarthIdioma`).
+    - La interfaz se sigue escribiendo en castellano. `idioma.js` traduce lo que aparece en pantalla con `datos/idioma_en.json` (unas 1.030 frases; los números se sacan y se vuelven a poner, así una frase sirve para todos los pozos).
+    - También traduce los carteles del globo, y los números salen en formato inglés.
+    - Si se agrega texto nuevo, hay que sumar su frase al diccionario; si no, queda en castellano.
+  - **Tour** (botón Tour en el riel, `tour.js`): unos 2 minutos, con bandas de cine, título y 7 escenas: Marte, Gale, el recorrido en vuelo bajo, las manchas CRISM, lo que confirmó CheMin, la radiación de día y de noche, y MRO en 3D.
+    - Los textos salen de los datos (km recorridos, 49 pozos, 26–34 % de arcilla, hasta 28 % de hematita).
+    - Esc o "Skip" lo cortan y todo vuelve a como estaba.
+  - **Relieve de Jezero** a 20 m: `teselas_terreno_jezero.py` sobre el CTX DEM de Mars 2020 (NASA/JPL, servidor USGS), niveles 10–13, fundido con HRSC-MOLA en 4 km de borde.
+    - Genera `teselas/terreno_jezero_n10-13.zip` (64 MB) y un rango nuevo en `meta.json`, dentro de `terreno_zz_meta.zip`.
+    - Ya está en la PC. **Falta subirlo a Hugging Face** (zip + meta + índices: `indices_nube.py` y `subir_hf.bat`) antes de publicar.
+- No se puso Perseverance (el protagonista es Curiosity).
+- Bordes entre teselas: los de la ortofoto y HiRISE ya se funden. La imagen CTX no se ve desde el entorno de pruebas (el servicio está bloqueado ahí), así que los saltos de brillo entre teselas de CTX hay que revisarlos a ojo en la PC.
+
+## 2026-11-15 mañana (6) · Compañero (con Claude) · NAVES EN 3D
+- Hecho (gale-earth/): MRO y Mars Odyssey ahora son modelos 3D oficiales de NASA (NASA 3D Resources, sin copyright), en `capas/modelos/mro.glb` (1,2 MB) y `odyssey.glb` (5,8 MB).
+  - Se orientan según su movimiento.
+  - De cerca se ve el modelo; desde lejos (más de 2.500 km), el punto de siempre.
+  - En la ficha de cada nave hay un botón "Ver la nave en 3D de cerca": la cámara la sigue en su órbita y se puede girar alrededor.
+- Mars Express y TGO (ESA) y Hope (Emiratos) no tienen modelo libre en el repositorio de NASA y siguen como punto.
+- En ese repositorio también hay modelos de MAVEN, Perseverance (.glb) y Curiosity (solo .blend), por si se suman.
+
+## 2026-11-15 mañana (5) · Compañero (con Claude) · MANCHAS DE MINERALES, LUGARES CLAVE Y SR-1 FREEDOM
+- Hecho (gale-earth/):
+  - **Minerales vistos desde órbita = manchas con justificación.** `herramientas/manchas_minerales.py` toma el percentil de cada indicador CRISM de `data/mineralogia/crism_contexto.png` (David). Marca la señal más fuerte de la franja (percentil 90 o más) y dibuja el contorno de cada mancha de al menos 0,05 km²: hasta 14 por mineral, 79 en total. Sale en `capas/minerales/manchas.json`.
+    - Cada mancha lista los pozos de Curiosity que caen adentro, con el valor de CheMin.
+    - Si coincide con una unidad publicada, lleva la referencia: Glen Torridon (arcillas, Fraeman 2016 y Milliken 2010), unidad de sulfatos (Milliken 2010) y Vera Rubin (hematita, Fraeman 2013).
+    - Al pasar el mouse aparece un cartel con todo y enlaces. Reemplaza los PNG de percentiles, que quedan sin usar.
+  - **Lugares clave con contorno:** Olympus Mons, Hellas, Jezero, Gusev y Endeavour.
+    - Se calculan con `herramientas/lugares_clave.py` y se guardan en `datos/lugares_clave.json`.
+    - Método igual al borde de Gale: 360 perfiles desde el centro IAU sobre HRSC-MOLA. En los cráteres se toma el punto más convexo entre 0,8 y 1,2 radios; en Olympus, el escarpe basal.
+    - Los diámetros de los contornos dan como los de la IAU: Hellas 2.267 contra 2.299 km, Jezero 48 contra 47,5, Gusev 161 contra 158 y Endeavour 21 contra 21,8.
+    - Están en Explorar, cada uno con su ficha y enlace de NASA. armar.py los embebe (en la PC se parcheó armar.py: es distinto del del repo).
+  - **Línea de tiempo:** SR-1 Freedom (NASA, lanzamiento previsto en diciembre de 2028, llegada en 2029, helicópteros SkyFall). Es de fisión nuclear, no de fusión. La línea de tiempo ahora muestra fechas "año-mes" como "dic 2028".
+  - **Radiación:** se quitó la etiqueta "medido + cálculo". Los botones Día/Noche se leen y, si la capa estaba apagada, la prenden (antes no se veía ningún cambio).
+- Falta: decidir si se suma la capa de los 30 cuadrángulos del USGS (MC-1 a MC-30).
+
+## 2026-11-15 mañana (4) · Compañero (con Claude) · ZONAS PROHIBIDAS EN TODO MARTE, BORDES SUAVES Y ARREGLOS
+- Hecho (gale-earth/):
+  - "Zonas prohibidas por pendiente" ahora cubre todo Marte, igual que la altitud. Fuera de Gale sale de nuestras teselas HRSC-MOLA nivel 7 (~1,3 km/píxel), reducidas a ~2,6 km tomando la clase más severa: capas/global/pendiente_{oeste,este}.png, generadas con `herramientas/capas_globales.py --pendiente`. Es cálculo propio. A esa escala la pendiente se subestima y solo marca laderas grandes (paredes de cráteres, Valles Marineris, escarpes). En Gale sigue arriba la capa fina de 5 m.
+  - Ortofoto 1 m y HiRISE se funden con CTX en el borde de su caja (1,8 km y 350 m) y alrededor de los huecos. Ya no se ven como rectángulos pegados encima.
+  - La cámara ya no atraviesa el suelo: antes de cada cuadro se la sube si quedó a menos de 15 m del terreno (con el teclado se colaba).
+  - Los topónimos de la IAU tienen prueba de profundidad: un cerro tapa los que quedan detrás y ya no flotan en el cielo.
+  - Se quitaron los atajos de colores debajo del buscador (repetían Explorar).
+  - Arreglos de estilo: los botones "Escala" se veían blancos; los enlaces de fuentes eran azul oscuro sobre negro; la regla CSS de .fuentesOf estaba rota.
+- Sobre "fronteras": Marte no tiene fronteras políticas. La división oficial es la de los 30 cuadrángulos de USGS (MC-1 a MC-30; Gale está en MC-23 Aeolis). Queda como posible capa si se decide.
+
+## 2026-11-15 mañana (3) · Compañero (con Claude) · PESTAÑA MOTOR, SIN CLAVES, NITIDEZ Y LUNAS REALES
+- Hecho (gale-earth/):
+  - Nueva pestaña **Motor** en el riel, debajo de Capas. Tiene dos tarjetas: "Marte completo (recomendado)" y "Cesium Mars (respaldo)". Ahí también quedaron el color de la imagen CTX y HiRISE.
+  - Se quitó todo lo de claves de Cesium ion: el campo, los botones y el mensaje de error que pedía una clave. Cesium Mars queda como respaldo de emergencia con la clave de evaluación que trae Cesium: el jurado no tiene que poner nada.
+  - Nitidez: Cesium dibujaba a la resolución "recomendada" del navegador (en pantallas de alta densidad, la mitad) y ahora dibuja a la resolución real, con tope en DPR 2. maximumScreenSpaceError pasó de 2 a 1,5. Gale Earth es para compu, no para celular.
+  - Fobos y Deimos con textura global real de NASA 3D Resources (capas/lunas/*.jpg, 2048×1024). Se dibujan como primitiva que sigue a la entidad, porque Cesium no aplica imágenes a un elipsoide de entidad en movimiento. Con file:// queda el color liso.
+  - Se quitó la sección Mars 3D Home de la pestaña Base (después va algo genérico).
+- Decidido: CTX ya se pide a su resolución nativa (nivel 12 ≈ 5 m/px). Los niveles 13–15 del servicio fallan en Gale, así que la mejora viene del dibujado, no de pedir más zoom.
+- Falta: probar en la PC de presentación cuánto rinde con la resolución completa. Si va lento, volver a maximumScreenSpaceError 2.
+
+## 2026-11-15 mañana (2) · Compañero (con Claude) · UNA SOLA CAPA DE ALTITUD Y NOMBRES SIEMPRE A LA VISTA
+- "Relieve en color (llanuras → montañas)" y "Colores de altitud" eran lo mismo con distinta escala y resolución. Ahora son una sola casilla, **Colores de altitud**, con un selector de escala:
+  - **Marte entero** (por defecto): la misma rampa de −8,2 a +21,2 km en todo el planeta. En el área de Curiosity se ve con el DEM USGS de 1 m (`capas/gale_5m/relieve_mola.webp`, 15 m/px).
+  - **Zona de Curiosity:** la imagen anterior con más contraste (`relieve_color.png`).
+- La capa global es más viva: opacidad 0,85 (antes 0,6), con sombreado de relieve y un control de opacidad.
+- **Topónimos de la IAU prendidos desde el inicio;** se pueden apagar en Capas. Van pegados al suelo, así que el planeta tapa los que quedan detrás del horizonte (antes "Elysium Mons" se veía desde Gale).
+
+## 2026-11-15 mañana · Compañero (con Claude) · THEMIS SIN RAYAS EN LOS POLOS
+- Las rayas negras cerca de los polos eran franjas sin datos del mosaico THEMIS de USGS, que vienen pintadas de negro. Ahora son transparentes: las franjas THEMIS pasaron de .jpg a .webp con canal alfa.
+- El mosaico THEMIS llega solo hasta ±65°. Más allá se ve la foto de fondo, y el borde se esfuma en los últimos 3° para que no parezca un casquete.
+- La capa "Lugares de aterrizaje" ahora se llama "Lugares de aterrizaje (Misiones)".
+
 ## 2026-11-15 madrugada (3) · Compañero (con Claude) · GALE EARTH: CAPAS DE TODO MARTE
 - **Capas → Todo Marte** (`gale-earth/marte.js`; datos en `capas/global/`, armados con `herramientas/capas_globales.py`):
   - **Colores de altitud:** relieve de todo el planeta en datum MOLA, con leyenda de −8,2 a +21,2 km. Sale de nuestras propias teselas HRSC-MOLA 200 m (nivel 5, ~5 km/px).

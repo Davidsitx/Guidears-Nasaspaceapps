@@ -3,7 +3,10 @@
 'use strict';
 const D = JSON.parse(document.getElementById('datos').textContent);
 const C = Cesium, $ = id => document.getElementById(id);
-const fmt = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString('es-AR', { maximumFractionDigits: d, minimumFractionDigits: d });
+const IDIOMA = (() => { try { return localStorage.getItem('galeEarthIdioma') || 'en'; } catch { return 'en'; } })();   // inglés por defecto
+window.IDIOMA = IDIOMA; document.documentElement.lang = IDIOMA;
+const fmt = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString(IDIOMA === 'es' ? 'es-AR' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
+/*__IDIOMA_JS__*/
 
 // ---------- Marte: elipsoide IAU 2015 (49901) y token de Cesium ion ----------
 C.Ellipsoid.default = C.Ellipsoid.MARS;
@@ -18,6 +21,8 @@ const viewer = new C.Viewer('globo', {
   globe: new C.Globe(MARS), baseLayer: false, skyAtmosphere: false, baseLayerPicker: false, geocoder: false, timeline: false, animation: false,
   homeButton: false, sceneModePicker: false, navigationHelpButton: false, infoBox: false, selectionIndicator: false, fullscreenButton: false,
 });
+viewer.entities.collectionChanged.addEventListener((col, añadidas) => tradEtiquetas(añadidas));   // carteles del globo en inglés
+document.querySelectorAll('#idiomaSel button').forEach(b => { b.classList.toggle('on', b.dataset.i === IDIOMA); b.onclick = () => { if (b.dataset.i !== IDIOMA) cambiarIdioma(b.dataset.i); }; });
 viewer.scene.backgroundColor = C.Color.BLACK;
 // Cielo: Vía Láctea y estrellas reales (catálogo Hipparcos de ESA + contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial).
 // Las 6 caras del cubo las genera herramientas/cielo_via_lactea.py.
@@ -33,7 +38,9 @@ Object.assign(viewer.scene.skyAtmosphere, { show: true, hueShift: -0.56, saturat
 Object.assign(viewer.scene.atmosphere, { hueShift: -0.56, saturationShift: -0.3, brightnessShift: -0.1 });
 Object.assign(viewer.scene.fog, { enabled: true, density: 2.5e-5, minimumBrightness: 0.3, screenSpaceErrorFactor: 2 });   // liviana: no tapa el Monte Sharp
 viewer.scene.globe.enableLighting = false;
-viewer.scene.globe.maximumScreenSpaceError = 2;       // equilibrio entre detalle y fluidez
+viewer.scene.globe.maximumScreenSpaceError = 1.5;     // más detalle: pide teselas más finas antes
+// Pantallas de alta densidad: Cesium dibuja por defecto a la mitad de resolución y la imagen se ve borrosa.
+if (!matchMedia('(pointer:coarse)').matches) { viewer.useBrowserRecommendedResolution = false; viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2) / (window.devicePixelRatio || 1); }
 viewer.scene.globe.tileCacheSize = 1500;              // guarda más teselas: menos parpadeo al alejar y acercar
 viewer.scene.globe.preloadAncestors = true;
 viewer.scene.globe.preloadSiblings = true;            // carga también las vecinas: al girar no aparecen huecos
@@ -213,8 +220,32 @@ class CTXColor extends C.UrlTemplateImageryProvider {
       if (V && w > 0) { const f = L0 / (VL || 1); r = r * (1 - w) + Math.min(255, V[i] * f) * w; gg = gg * (1 - w) + Math.min(255, V[i + 1] * f) * w; b = b * (1 - w) + Math.min(255, V[i + 2] * f) * w; }
       a[i] = r; a[i + 1] = gg; a[i + 2] = b; a[i + 3] = 255;
     }
+    if (this.caja) suavizarBordes(a, x, y, l, this.caja, this.ancho);
     t.putImageData(d, 0, 0); return c;
   }
+}
+// Bordes suaves para las fotos locales (ortofoto 1 m, HiRISE 25 cm): en vez de un rectángulo con corte seco sobre CTX,
+// la foto se funde en `ancho` grados hacia el borde de su caja y en `r` píxeles alrededor de los huecos sin foto.
+function suavizarBordes(a, x, y, l, caja, ancho, r = 24) {
+  const N = 512, d = 180 / 2 ** l, lon0 = -180 + x * d, lat0 = 90 - y * d, paso = d / N;
+  let huecos = false; const M = new Float32Array(N * N);
+  for (let i = 0; i < N * N; i++) { M[i] = a[i * 4 + 3] > 0 ? 1 : 0; if (!M[i]) huecos = true; }
+  let B = null;
+  if (huecos) {   // promedio en una ventana de (2r+1)² (dos pasadas): cerca de un hueco baja de 1 a 0,5 en el borde
+    const T = new Float32Array(N * N); B = new Float32Array(N * N);
+    for (let py = 0; py < N; py++) { let s = 0; const f = py * N;
+      for (let k = -r; k <= r; k++) s += M[f + Math.min(N - 1, Math.max(0, k))];
+      for (let px = 0; px < N; px++) { T[f + px] = s / (2 * r + 1); s += M[f + Math.min(N - 1, px + r + 1)] - M[f + Math.max(0, px - r)]; } }
+    for (let px = 0; px < N; px++) { let s = 0;
+      for (let k = -r; k <= r; k++) s += T[Math.min(N - 1, Math.max(0, k)) * N + px];
+      for (let py = 0; py < N; py++) { B[py * N + px] = s / (2 * r + 1); s += T[Math.min(N - 1, py + r + 1) * N + px] - T[Math.max(0, py - r) * N + px]; } }
+  }
+  for (let py = 0, i = 0; py < N; py++) { const lat = lat0 - (py + 0.5) * paso, gy = Math.min(lat - caja[1], caja[3] - lat);
+    for (let px = 0; px < N; px++, i++) { if (!M[i]) continue;
+      const lon = lon0 + (px + 0.5) * paso;
+      let f = Math.max(0, Math.min(1, Math.min(lon - caja[0], caja[2] - lon, gy) / ancho));
+      if (B) f *= Math.max(0, Math.min(1, (B[i] - 0.5) * 2));
+      a[i * 4 + 3] = Math.round(a[i * 4 + 3] * f * f * (3 - 2 * f)); } }
 }
 // Proveedor de imagen que reintenta las teselas que fallan por red (en vez de dejarlas borrosas).
 class ConReintentos extends C.UrlTemplateImageryProvider {
@@ -244,6 +275,7 @@ class HiRISEColor extends ConReintentos {
       const L0 = Math.round(0.3 * a[i] + 0.59 * a[i + 1] + 0.11 * a[i + 2]), w = sat >= 14 ? 0.5 : 0.5 + 0.5 * (14 - sat) / 14;
       a[i] = a[i] * (1 - w) + LUT[L0 * 3] * w; a[i + 1] = a[i + 1] * (1 - w) + LUT[L0 * 3 + 1] * w; a[i + 2] = a[i + 2] * (1 - w) + LUT[L0 * 3 + 2] * w;
     }
+    if (this.caja) suavizarBordes(a, x, y, l, this.caja, this.ancho, 12);
     t.putImageData(d, 0, 0); return c;
   }
 }
@@ -265,10 +297,15 @@ function crearImagenes(t) {
     url: 'teselas/orto1m/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512, minimumLevel: 9, maximumLevel: 14,
     rectangle: C.Rectangle.fromDegrees(137.0938, geodetica(-5.2495), 137.8530, geodetica(-4.0686)),
     credit: 'Ortofoto MSL Gale 1 m: NASA/JPL/University of Arizona (HiRISE), mosaico USGS Astrogeology' }, 'color', 0.3, true));
-  CAPAS_BASE.hirise = viewer.imageryLayers.addImageryProvider(new HiRISEColor({
+  if (CAPAS_BASE.orto) Object.assign(CAPAS_BASE.orto.imageryProvider, { caja: [137.0938, -5.2495, 137.8530, -4.0686], ancho: 0.03 });   // ~1,8 km de fundido
+  // HiRISE solo de cerca (teselas de terreno de nivel 15 o más, ~1–2 km de cámara): las fotos tienen sus propias sombras
+  // y franjas de distintas fechas; vistas de lejos parecían losas superpuestas sobre el relieve 3D.
+  CAPAS_BASE.hirise = new C.ImageryLayer(new HiRISEColor({
     url: 'teselas/hirise/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512,
     minimumLevel: 9, maximumLevel: 16, rectangle: C.Rectangle.fromDegrees(137.3267, geodetica(-4.8756), 137.4786, geodetica(-4.5551)),
-    credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }));
+    credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }), { minimumTerrainLevel: 15 });
+  viewer.imageryLayers.add(CAPAS_BASE.hirise);   // (add no devuelve la capa)
+  Object.assign(CAPAS_BASE.hirise.imageryProvider, { caja: [137.3267, -4.8756, 137.4786, -4.5551], ancho: 0.006 });   // ~350 m de fundido
 }
 // Teselas en la nube: si la página está publicada (https) y nube.json dice dónde están, un service worker (sw.js)
 // las saca de los .zip guardados en Cloudflare R2. Con servir.py (abrir.bat) se usan las de la PC.
@@ -305,7 +342,7 @@ async function prepararNube() {
       tileset = await C.Cesium3DTileset.fromIonAssetId(3644333, { maximumScreenSpaceError: 12 });
       viewer.scene.primitives.add(tileset);
     } catch (e) {
-      avisar('No se pudo cargar Cesium Mars (' + (e.message || e) + '). Revisá la conexión o cargá tu propia clave de Cesium ion en la pestaña Capas.');
+      avisar('No se pudo cargar Cesium Mars (' + (e.message || e) + '). Revisá la conexión o elegí el motor "Marte completo" en la pestaña Motor.');
     }
     if (!t && location.protocol === 'file:') setTimeout(() => avisar('Abriste el archivo directo: se ve Cesium Mars. Para el globo completo de Marte (CTX 5 m, terreno propio y HiRISE 25 cm) abrí Gale Earth con abrir.bat.', 15000), 4000);
   }
@@ -429,10 +466,17 @@ function kepler(el, jd) {
 }
 function fijo(xyz, jd) { const W = wMarte(jd), c = Math.cos(W), s = Math.sin(W); return new C.Cartesian3((xyz[0] * c + xyz[1] * s) * 1000, (-xyz[0] * s + xyz[1] * c) * 1000, xyz[2] * 1000); }
 const jdDe = t => C.JulianDate.totalDays(t) + 69.184 / 86400;   // UTC -> TDB aprox.
+// Modelos 3D oficiales de NASA (NASA 3D Resources, github.com/nasa/NASA-3D-Resources, sin copyright). Mars Express, TGO y
+// Hope no son de NASA y no hay modelo libre en ese repositorio: siguen como punto.
+const MODELOS_3D = { 'MRO': 'capas/modelos/mro.glb', 'Mars Odyssey': 'capas/modelos/odyssey.glb' };
 for (const [nombre, el] of Object.entries(O.orbitadores)) {
   const col = C.Color.fromCssColorString(el.color);
-  el.ent = viewer.entities.add({ position: new C.CallbackPositionProperty(t => fijo(kepler(el, jdDe(t)), jdDe(t)), false),
-    point: { pixelSize: 9, color: col, outlineColor: C.Color.WHITE, outlineWidth: 2 },
+  const posO = new C.CallbackPositionProperty(t => fijo(kepler(el, jdDe(t)), jdDe(t)), false), glb = MODELOS_3D[nombre];
+  const conModelo = glb && location.protocol.startsWith('http');   // con file:// el navegador no deja cargar el .glb: queda el punto
+  el.ent = viewer.entities.add({ position: posO,
+    point: { pixelSize: 9, color: col, outlineColor: C.Color.WHITE, outlineWidth: 2, ...(conModelo ? { distanceDisplayCondition: new C.DistanceDisplayCondition(2.5e6, 1e12) } : {}) },
+    ...(conModelo ? { orientation: new C.VelocityOrientationProperty(posO),
+      model: { uri: glb, minimumPixelSize: 64, maximumScale: 4000, silhouetteColor: col, silhouetteSize: 1.5, distanceDisplayCondition: new C.DistanceDisplayCondition(0, 2.5e6) } } : {}),
     label: { text: nombre, font: '600 13px system-ui', fillColor: col, pixelOffset: new C.Cartesian2(10, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK },
     properties: { tipo: 'orbitador', nombre } });
   let cache = null, cacheT = -1;
@@ -454,10 +498,23 @@ for (const [nombre, el] of Object.entries(O.lunas || {})) {
     const y = C.Cartesian3.cross(z, x, new C.Cartesian3());
     return C.Quaternion.fromRotationMatrix(new C.Matrix3(x.x, y.x, z.x, x.y, y.y, z.y, x.z, y.z, z.z)); }, false);
   el.ent = viewer.entities.add({ position: new C.CallbackPositionProperty(posL, false), orientation: orient,
-    ellipsoid: { radii: new C.Cartesian3(el.radios_km[0] * 1000, el.radios_km[1] * 1000, el.radios_km[2] * 1000), material: col, slicePartitions: 24, stackPartitions: 16 },
+    // con file:// el navegador no deja usar la textura: queda el elipsoide de color liso
+    ...(location.protocol.startsWith('http') ? {} : { ellipsoid: { radii: new C.Cartesian3(el.radios_km[0] * 1000, el.radios_km[1] * 1000, el.radios_km[2] * 1000), material: col, slicePartitions: 24, stackPartitions: 16 } }),
     point: { pixelSize: 7, color: col, outlineColor: C.Color.BLACK, outlineWidth: 1, distanceDisplayCondition: new C.DistanceDisplayCondition(400000, 1e12) },
     label: { text: nombre, font: 'italic 600 13px system-ui', fillColor: col, pixelOffset: new C.Cartesian2(10, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK },
     properties: { tipo: 'luna', nombre } });
+  if (location.protocol.startsWith('http')) {
+    // Textura global de NASA (NASA 3D Resources: mosaico de Viking y Mars Express). Cesium no aplica imágenes a un
+    // elipsoide de entidad que se mueve, así que se dibuja como primitiva y se lo lleva a la posición de la luna en cada cuadro.
+    const prim = viewer.scene.primitives.add(new C.Primitive({ asynchronous: false,
+      geometryInstances: new C.GeometryInstance({ id: el.ent, geometry: new C.EllipsoidGeometry({ radii: new C.Cartesian3(el.radios_km[0] * 1000, el.radios_km[1] * 1000, el.radios_km[2] * 1000),
+        vertexFormat: C.VertexFormat.POSITION_NORMAL_AND_ST, slicePartitions: 96, stackPartitions: 64 }) }),
+      appearance: new C.MaterialAppearance({ closed: true, material: C.Material.fromType('Image', { image: `capas/lunas/${nombre === 'Fobos' ? 'fobos' : 'deimos'}.jpg`,
+        color: C.Color.fromCssColorString(nombre === 'Fobos' ? '#c9b9a8' : '#d6c8b6') }) }) }));
+    const uno = new C.Cartesian3(1, 1, 1);
+    viewer.scene.preRender.addEventListener((sc, t) => { prim.show = el.ent.show; if (!prim.show) return;
+      const p = el.ent.position.getValue(t), q = orient.getValue(t); if (p && q) prim.modelMatrix = C.Matrix4.fromTranslationQuaternionRotationScale(p, q, uno, new C.Matrix4()); });
+  }
   const pts = []; for (let k = 0; k <= 240; k++) pts.push(kepler(el, O.epoca_jd_tdb + k / 240 * el.pr / 86400));
   el.orb = viewer.entities.add({ polyline: { positions: new C.CallbackProperty(t => pts.map(x => fijo(x, jdDe(t))), false), width: 1.2,
     material: new C.PolylineDashMaterialProperty({ color: col.withAlpha(0.6), dashLength: 12 }), arcType: C.ArcType.NONE } });
@@ -491,7 +548,7 @@ $('vAyuda').onclick = () => $('ayuda').classList.remove('oculto');
     const t = `×${String(NIV[k]).replace('.', ',')}`; $('vRelieve').title = `Relieve ${t}${NIV[k] === 1 ? ' (escala real)' : ' (realzado)'}`;
     $('relBadge').textContent = t; $('relBadge').classList.toggle('oculto', NIV[k] === 1);
     if ($('exag')) $('exag').value = String(NIV[k]); }; }
-$('vMarte').onclick = () => irA('marte'); $('vGale').onclick = () => { abrir('explorar'); fichaGale(); }; $('vRec').onclick = () => irA('rec'); $('vHoy').onclick = () => irA('hoy');
+
 
 // ---------- fecha marciana: longitud solar (Ls) y año marciano ----------
 // Ls: algoritmo Mars24 de NASA GISS (Allison y McEwen 2000, Planet. Space Sci. 48:215). Año marciano: el año 1 empezó
@@ -527,6 +584,31 @@ capas.borde.push(viewer.entities.add({
     material: new C.PolylineGlowMaterialProperty({ glowPower: 0.25, taperPower: 1, color: C.Color.fromCssColorString('#ff9f43') }) },
   properties: { tipo: 'gale' } }));
 const nBorde = BORDE.puntos.reduce((a, p) => p[1] > a[1] ? p : a);
+// Lugares clave de Marte con su contorno (mismo método que el borde de Gale; datos/lugares_clave.json)
+const LUGARES = (D.lugares_clave && D.lugares_clave.lugares) || [];
+for (const L of LUGARES) {
+  const col = C.Color.fromCssColorString('#ffd29a');
+  capas.borde.push(viewer.entities.add({ polyline: { positions: L.puntos.map(p => pos(p[0], p[1])), width: 5, clampToGround: true, classificationType: C.ClassificationType.BOTH,
+      material: new C.PolylineGlowMaterialProperty({ glowPower: 0.22, taperPower: 1, color: C.Color.fromCssColorString('#ff9f43') }) }, properties: { tipo: 'lugar', id: L.id } }));
+  const n = L.puntos.reduce((a, p) => p[1] > a[1] ? p : a), lejos = Math.max(2.0e6, L.diametro_iau_km * 1000 * 30);
+  const etqL = viewer.entities.add({ position: pos(n[0], n[1]), properties: { tipo: 'lugar', id: L.id },
+    label: { text: `${L.nombre} · ${fmt(L.diametro_iau_km)} km`, font: '700 15px system-ui', fillColor: col, outlineColor: C.Color.BLACK, outlineWidth: 5,
+      style: C.LabelStyle.FILL_AND_OUTLINE, heightReference: CLAMP, verticalOrigin: C.VerticalOrigin.BOTTOM, pixelOffset: new C.Cartesian2(0, -8), eyeOffset: new C.Cartesian3(0, 0, -3000),
+      distanceDisplayCondition: new C.DistanceDisplayCondition(0, Math.min(2.4e7, lejos)) } });
+  etqL._p = pos(n[0], n[1], 0); capas.borde.push(etqL); (window.ETQ_LUGARES = window.ETQ_LUGARES || []).push(etqL);
+}
+function fichaLugar(id) {
+  const L = LUGARES.find(x => x.id === id); if (!L) return;
+  const r = L.diametro_iau_km * 1000 / 2;
+  viewer.camera.flyTo({ destination: C.Cartesian3.fromDegrees(L.centro[0], geodetica(L.centro[1] - L.diametro_iau_km / 59.3 * 1.1), Math.max(30000, r * 2.2), MARS), orientation: { heading: 0, pitch: -0.75, roll: 0 }, duration: 2.5 });
+  cont().innerHTML = `<button class="btn" id="volverEx">← Explorar</button><h2 style="margin-top:12px">${L.nombre}</h2>
+    <p>${L.texto}</p>
+    <div class="ind"><div><small>Diámetro (IAU) <span class="tag">medido</span></small><b style="font-size:14px">${fmt(L.diametro_iau_km)} <small>km</small></b></div>
+    <div><small>Altura del contorno <span class="tag">medido</span></small><b style="font-size:14px">${fmt(L.alt_min)} a ${fmt(L.alt_max)} <small>m</small></b></div></div>
+    <p class="sub">Contorno naranja: ${L.tipo === 'escarpe' ? 'el escarpe que rodea la base del volcán' : 'la cresta del borde'}, trazado sobre el relieve HRSC-MOLA (USGS) con el mismo método que el borde de Gale. <span class="tag">cálculo propio</span></p>
+    <p class="fuente"><a href="${L.enlace}" target="_blank" rel="noopener">${L.fuente}</a>. Nombre, centro y diámetro: nomenclatura de la IAU (<a href="https://planetarynames.wr.usgs.gov/" target="_blank" rel="noopener">USGS Gazetteer of Planetary Nomenclature</a>).</p>`;
+  $('volverEx').onclick = vistaExplorar;
+}
 capas.borde.push(viewer.entities.add({ position: pos(nBorde[0], nBorde[1]),
   label: { text: 'Cráter Gale · 154 km', font: '700 16px system-ui', fillColor: C.Color.fromCssColorString('#ffd29a'), outlineColor: C.Color.BLACK, outlineWidth: 5,
     style: C.LabelStyle.FILL_AND_OUTLINE, heightReference: CLAMP, verticalOrigin: C.VerticalOrigin.BOTTOM, pixelOffset: new C.Cartesian2(0, -8),
@@ -542,6 +624,16 @@ capas.borde.push(viewer.entities.add({ position: pos(nBorde[0], nBorde[1]),
   ctl.minimumZoomDistance = 20;
   ctl.maximumZoomDistance = 4.0e7;
   ctl.enableCollisionDetection = true;
+  // El control de Cesium solo frena el mouse; con el teclado (W/S/Q/E) o donde el relieve fino aún no cargó la cámara
+  // podía quedar bajo el suelo. Antes de cada cuadro se la sube si quedó a menos de 15 m del terreno.
+  const cg = new C.Cartographic();
+  viewer.scene.preRender.addEventListener(sc => {
+    const cam = sc.camera; if (!C.Matrix4.equals(cam.transform, C.Matrix4.IDENTITY)) return;
+    if (!C.Cartographic.fromCartesian(cam.positionWC, MARS, cg) || cg.height > 80000) return;
+    const h = sc.globe.getHeight(cg); if (h === undefined) return;
+    const suelo = Math.max(h, h * (sc.verticalExaggeration || 1)) + 15;
+    if (cg.height < suelo) cam.setView({ destination: C.Cartesian3.fromRadians(cg.longitude, cg.latitude, suelo, MARS), orientation: { heading: cam.heading, pitch: cam.pitch, roll: cam.roll } });
+  });
   ctl.inertiaSpin = 0.85; ctl.inertiaTranslate = 0.85; ctl.inertiaZoom = 0.7;
   ctl.tiltEventTypes = [T.MIDDLE_DRAG, T.PINCH, { eventType: T.LEFT_DRAG, modifier: K.SHIFT }, { eventType: T.LEFT_DRAG, modifier: K.CTRL }];
   ctl.lookEventTypes = [{ eventType: T.LEFT_DRAG, modifier: K.ALT }];
@@ -576,7 +668,7 @@ capas.borde.push(viewer.entities.add({ position: pos(nBorde[0], nBorde[1]),
 // ---------- selección con clic ----------
 viewer.screenSpaceEventHandler.setInputAction(m => {
   // Se mira todo lo que hay bajo el dedo (no solo lo de arriba): los círculos de los sitios de base tapaban a los pozos.
-  const ORDEN = ['pozo', 'sitio', 'orbitador', 'luna', 'zona', 'gale'];
+  const ORDEN = ['pozo', 'sitio', 'orbitador', 'luna', 'zona', 'gale', 'lugar'];
   const bajo = viewer.scene.drillPick(m.position, 12).map(o => o && o.id && o.id.properties && o.id.properties.tipo ? o.id : null).filter(Boolean);
   let e = bajo.sort((x, y) => ORDEN.indexOf(x.properties.tipo.getValue()) - ORDEN.indexOf(y.properties.tipo.getValue()))[0];
   if (!e || e.properties.tipo.getValue() !== 'pozo') {        // toque apenas al lado de un pin de pozo: se toma el más cercano (hasta 22 px)
@@ -595,29 +687,32 @@ viewer.screenSpaceEventHandler.setInputAction(m => {
   if (tipo === 'orbitador') { abrir('orbita'); fichaOrbitador(pr.nombre.getValue()); }
   if (tipo === 'luna') { abrir('orbita'); fichaLuna(pr.nombre.getValue()); }
   if (tipo === 'gale') { abrir('explorar'); fichaGale(); }
+  if (tipo === 'lugar') { abrir('explorar'); fichaLugar(pr.id.getValue()); }
 }, C.ScreenSpaceEventType.LEFT_CLICK);
 
 // ---------- panel ----------
 let pestaña = 'explorar';
 function abrir(t, mostrar = true) {
+  if (viewer.trackedEntity) viewer.trackedEntity = undefined;   // deja de seguir una nave al cambiar de pestaña
   pestaña = t; document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.toggle('on', mostrar && b.dataset.t === t));
-  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca' })[t];
+  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca', motor: 'Motor del globo' })[t];
   $('cajon').classList.remove('ancho');
   $('reloj').classList.toggle('oculto', t !== 'orbita');
   if (mostrar && window.abrirCajon) abrirCajon();
   $('contenido').scrollTop = 0;
-  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca })[t](); }
+  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca, motor: vistaMotor })[t](); }
 const cont = () => $('contenido');
 
 function vistaExplorar() {
   cont().innerHTML = `<p class="sub">Tocá una zona, un pozo en el globo o un número. Los colores del recorrido son las zonas que cruzó Curiosity.</p>
     <div class="tarjeta" id="tGale"><span class="chip" style="background:#ff9f43"></span><b>Punto de interés: cráter Gale</b><div class="sub">154 km de diámetro · borde marcado en naranja</div></div>
+    ${LUGARES.length ? `<h2>Otros lugares clave de Marte</h2>${LUGARES.map(L => `<div class="tarjeta" data-lugar="${L.id}"><span class="chip" style="background:#ff9f43"></span><b>${L.nombre}</b><div class="sub">${fmt(L.diametro_iau_km)} km · ${L.texto.split(/:\s|\.\s/)[0]}</div></div>`).join('')}` : ''}
     <h2>Zonas del cráter recorridas por Curiosity</h2>
     ${ZONAS.map(z => `<div class="tarjeta" data-z="${z.id}"><span class="chip" style="background:${z.color}"></span><b>${z.nombre}</b>
       <div class="sub">soles ${z.sol[0]}–${Math.min(z.sol[1], RS[RS.length - 1])} · ${fmt(z.largo_km, 1)} km</div>
       <div>${z.pozos.map(n => `<span class="pz" data-n="${n}">${n}</span>`).join('')}</div></div>`).join('')}
     <h2>Lo que revelan los datos</h2><div id="hallazgos"></div>`;
-  cont().querySelectorAll('.tarjeta').forEach(el => el.onclick = e => { if (e.target.dataset.n) return; fichaZona(el.dataset.z); });
+  cont().querySelectorAll('.tarjeta').forEach(el => el.onclick = e => { if (e.target.dataset.n) return; if (el.dataset.lugar) return fichaLugar(el.dataset.lugar); if (el.dataset.z) fichaZona(el.dataset.z); });
   cont().querySelectorAll('.pz').forEach(el => el.onclick = () => fichaPozo(NUM[+el.dataset.n - 1], true));
   $('tGale').onclick = fichaGale;
   hallazgos();
@@ -710,9 +805,7 @@ function vistaBase() {
   cont().innerHTML = `<h2>Nuestro propósito</h2>
     <p>Usar todo lo que Curiosity midió en 14 años para elegir dónde instalar la <b>primera base humana en Gale</b>: agua, materiales, terreno firme, protección contra la radiación y ciencia cerca.</p>
     <p class="sub">En el taller de NASA de 2015 sobre sitios para misiones humanas, Gale quedó entre las tres zonas de exploración más votadas, junto con Melas Chasma y Jezero.</p>
-    <h2>El interior: un antecedente argentino</h2>
-    <p><b>Mars 3D Home</b> (UNCuyo, con integrantes de San Luis) ganó el premio Mejor Concepto de Misión del Space Apps 2022: el interior de un hábitat y herramientas impresas en 3D para que cuatro astronautas vivan un año en Marte. Nuestra base aporta <i>dónde</i>; su trabajo, <i>cómo vivir adentro</i>.</p>
-    <div class="btns"><a class="btn" target="_blank" rel="noopener" href="https://2022.spaceappschallenge.org/challenges/2022-challenges/mars-habitat/teams/mars-3d-home">Ver Mars 3D Home</a></div>`;
+`;
   cont().querySelectorAll('[data-s]').forEach(el => el.onclick = () => fichaSitio(el.dataset.s));
   medirPendientes();
 }
@@ -771,6 +864,7 @@ function fichaLuna(n) {
 }
 function fichaOrbitador(n) {
   const el = O.orbitadores[n], jd = jdDe(viewer.clock.currentTime), [lo, la, r] = subpunto(el, jd), pas = proximoPaso(el, jd);
+  viewer.trackedEntity = undefined;
   viewer.camera.flyTo({ destination: C.Cartesian3.multiplyByScalar(C.Cartesian3.normalize(fijo(kepler(el, jd), jd), new C.Cartesian3()), (r + Math.max(6000, el.a * 1.6)) * 1000, new C.Cartesian3()), duration: 2 });
   cont().innerHTML = `<button class="btn" id="volver">← Orbitadores</button>
     <h3 style="margin-top:10px"><span class="chip" style="background:${el.color}"></span>${n}</h3><div class="sub">${el.agencia} · en Marte desde ${el.llegada} · ${el.estado}</div>
@@ -778,8 +872,13 @@ function fichaOrbitador(n) {
     <div class="astro"><b>Qué aporta a Gale Earth</b><ul><li>${el.aporta}</li></ul></div>
     <div class="ind"><div><small>Altura ahora</small><b>${fmt(r - 3389.5)} <small>km</small></b></div><div><small>Sobre</small><b style="font-size:14px">${la.toFixed(1)}°, ${((lo + 360) % 360).toFixed(1)}° E</b></div>
       <div><small>Vuelta completa</small><b>${fmt(el.pr / 3600, 2)} <small>h</small></b></div><div><small>Próximo paso sobre Gale</small><b style="font-size:13px">${pas ? fechaDeJd(pas).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : 'en +3 días'}</b></div></div>
-    <p class="fuente">Paso sobre Gale: el punto bajo la nave a menos de 2° del centro del cráter (cálculo propio). ${O.fuente}.</p>`;
-  $('volver').onclick = vistaOrbitas;
+    ${el.ent.model ? `<div class="btns"><button class="btn prim" id="verNave">Ver la nave en 3D de cerca</button></div>` : ''}
+    <p class="fuente">Paso sobre Gale: el punto bajo la nave a menos de 2° del centro del cráter (cálculo propio). ${O.fuente}.${el.ent.model ? ' Modelo 3D: NASA 3D Resources (<a href="https://github.com/nasa/NASA-3D-Resources" target="_blank" rel="noopener">github.com/nasa/NASA-3D-Resources</a>).' : ''}</p>`;
+  $('volver').onclick = () => { viewer.trackedEntity = undefined; vistaOrbitas(); };
+  if ($('verNave')) $('verNave').onclick = () => {   // la cámara sigue a la nave en su órbita; se puede girar alrededor con el mouse
+    if (viewer.trackedEntity === el.ent) { viewer.trackedEntity = undefined; $('verNave').textContent = 'Ver la nave en 3D de cerca'; return; }
+    el.ent.viewFrom = new C.Cartesian3(-35, -35, 18); viewer.trackedEntity = el.ent; $('verNave').textContent = 'Dejar de seguir la nave';
+  };
 }
 
 const VIS = { recorrido: true, pozos: true, etiquetas: true, orbitas: true, base: true };
@@ -788,17 +887,21 @@ const VIS = { recorrido: true, pozos: true, etiquetas: true, orbitas: true, base
 // Se generan con herramientas/gale_datos.py a partir del DEM de 1 m y el mosaico HiRISE de 25 cm (USGS/NASA).
 // Necesitan abrirse por http (abrir.bat / abrir.sh): desde file:// el navegador no deja usarlas en WebGL.
 const ANALISIS = [
-  ['relieve_color', 'Relieve en color (llanuras → montañas)', 'Falso color por altura con sombreado: azul = llanuras bajas, verde-amarillo = laderas, rojo-blanco = Monte Sharp.', 0.75],
   ['orto_color', 'Foto HiRISE coloreada por altura', 'Brillo de la foto HiRISE (25 cm, reducida) con el color de la altura. Donde no hay foto se usa el sombreado.', 0.85],
-  ['zonas_prohibidas', 'Zonas prohibidas por pendiente', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite).', 0.9],
+  ['zonas_prohibidas', 'Zonas prohibidas por pendiente (todo Marte)', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite). En la zona de Curiosity se calcula con el relieve de 1 m (a 5 m); en el resto de Marte con el de 200 m a ~2,6 km por píxel, que subestima la pendiente: solo marca laderas grandes (paredes de cráteres, cañones, escarpes).', 0.9],
   ['dosis', 'Radiación en superficie (día / noche)', 'Dosis de rayos cósmicos medida por RAD, corregida por el cielo que tapa el relieve. Rojo = más dosis, azul = menos. De noche la presión del aire sube y la dosis baja cerca de un 5 % (RAD).', 0.5],
 ];
-const CAPA_A = {};
+const CAPA_A = {}, CAPA_AG = {};   // CAPA_AG: versión de todo Marte, debajo de la fina
 let HORARIO_RAD = 'dia';
 async function capaAnalisis(id, on, alfa) {
   if (!D.capas5m || !capasImagen()) return avisar('Las capas de análisis necesitan el terreno 3D cargado.');
   if (on && !CAPA_A[id]) {
     try {
+      if (id === 'zonas_prohibidas' && !CAPA_AG[id]) {
+        const g = (await mgMeta()).pendiente; CAPA_AG[id] = [];
+        if (g) for (const [arch, o, e] of [[g.oeste, -180, 0], [g.este, 0, 180]])
+          CAPA_AG[id].push(capasImagen().addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/global/' + arch, { rectangle: C.Rectangle.fromDegrees(o, -90, e, 90) })));
+      }
       const r = D.capas5m.rect_geodetico;
       const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id === 'dosis' ? 'dosis_' + HORARIO_RAD : id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
       CAPA_A[id] = capasImagen().addImageryProvider(prov);
@@ -807,6 +910,7 @@ async function capaAnalisis(id, on, alfa) {
     }
   }
   if (CAPA_A[id]) { CAPA_A[id].show = on; CAPA_A[id].alpha = alfa; }
+  for (const L of CAPA_AG[id] || []) { L.show = on; L.alpha = alfa; }
 }
 async function cambiarHorarioRad(h) {
   HORARIO_RAD = h; const L = CAPA_A.dosis;
@@ -816,19 +920,65 @@ function leyendaRad() {
   const r = D.capas5m && D.capas5m.radiacion; if (!r) return '';
   return `<div class="fila"><span>Horario</span><span class="seg" id="radHora"><button data-h="dia" class="${HORARIO_RAD === 'dia' ? 'on' : ''}">☀ Día</button><button data-h="noche" class="${HORARIO_RAD === 'noche' ? 'on' : ''}">☾ Noche</button></span></div>
     <div class="sub" style="display:flex;align-items:center;gap:8px"><span>${fmt(r.min, 2)}</span><span style="flex:1;height:10px;border-radius:5px;background:linear-gradient(90deg,#285ac8,#50aae6,#fadc5a,#f07832,#c81e28)"></span><span>${fmt(r.max, 2)} mSv/día</span></div>
-    <div class="sub">Promedio en la zona: de día ${fmt(r.dia_media, 3)} y de noche ${fmt(r.noche_media, 3)} mSv/día. Fórmula: ${r.formula}. <span class="tag">medido + cálculo</span></div>
+    <div class="sub">Promedio en la zona: de día ${fmt(r.dia_media, 3)} y de noche ${fmt(r.noche_media, 3)} mSv/día. Fórmula: ${r.formula}.</div>
     <p class="fuente">RAD: Hassler et al. 2014, Science (<a href="https://doi.org/10.1126/science.1244797" target="_blank" rel="noopener">doi.org/10.1126/science.1244797</a>). Día y noche: Rafkin et al. 2014, JGR Planets (<a href="https://doi.org/10.1002/2013JE004525" target="_blank" rel="noopener">doi.org/10.1002/2013JE004525</a>). Datos de RAD: <a href="https://pds-ppi.igpp.ucla.edu/" target="_blank" rel="noopener">pds-ppi.igpp.ucla.edu</a> (NASA PDS).</p>`;
 }
-let MINS = null; const CAPA_M = {};
+// ---------- minerales vistos desde órbita: manchas de CRISM con su justificación ----------
+// capas/minerales/manchas.json sale de herramientas/manchas_minerales.py (contornos: cálculo propio sobre CRISM).
+let MANCHAS = null; const CAPA_M = {};
 async function capaMineral(id, on) {
-  if (!MINS) try { MINS = await (await fetch('capas/minerales/minerales.json')).json(); } catch { return avisar('Para ver los minerales abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
+  if (!MANCHAS) try { MANCHAS = await (await fetch('capas/minerales/manchas.json')).json(); } catch { return avisar('Para ver los minerales abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
   if (on && !CAPA_M[id]) {
-    const r = MINS.rect_geodetico; if (!capasImagen()) return;
-    CAPA_M[id] = capasImagen().addImageryProvider(await C.SingleTileImageryProvider.fromUrl(`capas/minerales/${id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) }));
+    CAPA_M[id] = [];
+    for (const m of MANCHAS.manchas.filter(x => x.mineral === id)) {
+      const col = C.Color.fromCssColorString(m.color), pts = m.anillo.map(([lo, la]) => pos(lo, la));
+      CAPA_M[id].push(viewer.entities.add({ polygon: { hierarchy: pts, material: col.withAlpha(0.33), classificationType: C.ClassificationType.TERRAIN }, properties: { tipo: 'mancha', mancha: m } }),
+        viewer.entities.add({ polyline: { positions: pts, width: 2, clampToGround: true, material: col.withAlpha(0.95) }, properties: { tipo: 'mancha', mancha: m } }));
+    }
   }
-  if (CAPA_M[id]) CAPA_M[id].show = on;
+  for (const e of CAPA_M[id] || []) e.show = on;
+  if (!on) { const t = $('tipMancha'); if (t) t.classList.add('oculto'); }
+}
+function fichaMancha(m) {
+  const u = { arcillas: '% de la roca', sulfatos: '% de la parte cristalina', hematita: '% de la parte cristalina' }[m.campo_chemin] || '';
+  const pozos = m.pozos.length ? `<div style="margin-top:6px"><b>Pozos de Curiosity dentro de la mancha</b> <span class="tag">medido</span><ul style="margin:3px 0 0;padding-left:16px">${m.pozos.map(p => `<li>${p.nombre}${p.valor != null ? `: ${m.campo_chemin} ${fmt(p.valor, 1)} ${u} (CheMin)` : ': sin medida de CheMin para este mineral'}</li>`).join('')}</ul></div>` : '';
+  return `<b style="color:${m.color}">● ${m.nombre}</b>${m.unidad ? `<div><b>${m.unidad}</b></div>` : ''}
+    <div class="sub">Vista desde órbita por CRISM (indicador ${m.indicador}). La mancha agrupa la señal más fuerte de la franja de Curiosity (percentil 90 o más; con los huecos rellenados, el promedio da ${m.senal}). Área ${fmt(m.area_km2, 2)} km². <span class="tag">medido desde órbita</span> <span class="tag">contorno: cálculo propio</span></div>
+    ${pozos}
+    <div class="fuente" style="margin-top:6px">${m.refs.map(r => `<a href="${r.u}" target="_blank" rel="noopener">${r.t}</a>`).join('<br>')}</div>`;
+}
+{ // cartel al pasar el mouse por una mancha; se queda mientras el mouse esté encima para poder tocar los enlaces
+  const tip = document.createElement('div'); tip.id = 'tipMancha'; tip.className = 'oculto'; document.body.appendChild(tip);
+  let quitar = null, actual = null;
+  viewer.camera.moveStart.addEventListener(() => { tip.classList.add('oculto'); actual = null; });
+  tip.onmouseenter = () => clearTimeout(quitar); tip.onmouseleave = () => { quitar = setTimeout(() => { tip.classList.add('oculto'); actual = null; }, 300); };
+  if (!matchMedia('(pointer:coarse)').matches) new C.ScreenSpaceEventHandler(viewer.scene.canvas).setInputAction(mv => {
+    if (!Object.keys(CAPA_M).length) return;
+    const p = viewer.scene.pick(mv.endPosition), e = p && p.id, m = e && e.properties && e.properties.tipo && e.properties.tipo.getValue() === 'mancha' ? e.properties.mancha.getValue() : null;
+    if (m) {
+      clearTimeout(quitar);
+      if (actual !== m.id) { tip.innerHTML = fichaMancha(m); actual = m.id; }
+      const x = Math.min(mv.endPosition.x + 18, innerWidth - 360), y = Math.min(mv.endPosition.y + 14, innerHeight - tip.offsetHeight - 10);
+      tip.style.left = x + 'px'; tip.style.top = y + 'px'; tip.classList.remove('oculto');
+    } else if (actual) { clearTimeout(quitar); quitar = setTimeout(() => { tip.classList.add('oculto'); actual = null; }, 450); }
+  }, C.ScreenSpaceEventType.MOUSE_MOVE);
 }
 const MIN_LISTA = [['arcillas', 'Arcillas de Fe/Mg', '#40c4ff'], ['sulfatos', 'Sulfatos hidratados', '#ffd640'], ['agua', 'Agua en minerales', '#78ffc8'], ['hematita', 'Óxidos férricos / hematita', '#ff503c'], ['olivino', 'Olivino', '#96ff5a'], ['piroxeno', 'Piroxeno alto en calcio', '#c878ff']];
+// ---------- pestaña Motor: qué globo se usa ----------
+function vistaMotor() {
+  const tarj = (v, t, d) => `<div class="tarjeta ${MODO === v ? 'activa' : ''}" data-motor="${v}" style="cursor:pointer"><b>${MODO === v ? '● ' : ''}${t}</b><div class="sub">${d}</div></div>`;
+  cont().innerHTML = `<p class="sub">Gale Earth puede dibujar Marte con dos motores. El primero es el principal; el segundo queda como respaldo por si algo falla. Ninguno pide claves ni registros.</p>
+    ${tarj('globo', 'Marte completo (recomendado)', 'Todo el planeta con el mosaico CTX de 5 m por píxel y el relieve HRSC/MOLA de 200 m; en la zona de Curiosity, relieve de 1 m (a 5 m), ortofoto de 1 m y fotos HiRISE de 25 cm. Tiene todas las capas.')}
+    ${tarj('cesium', 'Cesium Mars (respaldo)', 'Modelo 3D de Marte de NASA, ESA y Cesium (MOLA + HRSC y un sector de Gale en alta resolución). Usa la clave de evaluación que trae Cesium. Algunas capas propias no funcionan con este motor.')}
+    ${MODO === 'globo' ? `<h2>Imagen</h2>
+    <div class="fila"><span>Imagen de todo Marte (CTX 5 m)</span><select id="colorCTX"><option value="color">color de Marte</option><option value="gris">blanco y negro original</option></select></div>
+    <label class="fila"><span>Fotos HiRISE 25 cm (Gale)</span><input type="checkbox" data-b="hirise" ${CAPAS_BASE.hirise.show ? 'checked' : ''}></label>
+    <p class="sub">El color se arma con el brillo de CTX y el color de Viking: es aproximado, no una foto en color.</p>` : ''}
+    <p class="fuente">CTX: NASA/JPL/MSSS/Murray Lab (servicio NASA–Esri). Color: Viking MDIM 2.1 (NASA/USGS). HiRISE: NASA/JPL/Univ. of Arizona. Relieve: USGS Astrogeology. Cesium Mars: NASA, ESA, Cesium.</p>`;
+  cont().querySelectorAll('[data-motor]').forEach(el => el.onclick = () => { if (el.dataset.motor === MODO) return; try { localStorage.setItem('galeEarthMotor', el.dataset.motor); } catch {} location.reload(); });
+  cont().querySelectorAll('[data-b]').forEach(el => el.onchange = () => { CAPAS_BASE[el.dataset.b].show = el.checked; });
+  if ($('colorCTX')) { $('colorCTX').value = MODO_COLOR; $('colorCTX').onchange = e => { MODO_COLOR = e.target.value; try { localStorage.setItem('galeEarthColor', MODO_COLOR); } catch {} capaCTX(); }; }
+}
 function vistaCapas() {
   cont().innerHTML = `<h2>Capas</h2>
     ${[['recorrido', 'Recorrido de Curiosity por zonas'], ['pozos', 'Las 49 perforaciones'], ['etiquetas', 'Nombres de zonas'], ['orbitas', 'Orbitadores y órbitas']].map(([k, t]) => `<label class="fila"><span>${t}</span><input type="checkbox" data-c="${k}" ${VIS[k] ? 'checked' : ''}></label>`).join('')}
@@ -840,36 +990,25 @@ function vistaCapas() {
     ${ANALISIS.map(([k, t, d, a]) => `<label class="fila"><span title="${d}">${t}</span><input type="checkbox" data-a="${k}" ${CAPA_A[k] && CAPA_A[k].show ? 'checked' : ''}></label><div class="fila"><span class="sub">${d}</span><input type="range" min="0.1" max="1" step="0.05" data-o="${k}" value="${CAPA_A[k] ? CAPA_A[k].alpha : a}" style="width:90px"></div>`).join('')}` : ''}
     ${D.capas5m ? leyendaRad() : ''}
     <h2>Minerales vistos desde órbita (CRISM)</h2>
-    <p class="sub">Espectrómetro CRISM de la sonda Mars Reconnaissance Orbiter (NASA), sobre la franja que recorrió Curiosity. Más color = señal más fuerte dentro de la zona (es relativa, no una cantidad). Lo medido en cada pozo se ve con "Color de los pozos" → CheMin.</p>
-    ${MIN_LISTA.map(([k, t, c]) => `<label class="fila"><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${c};margin-right:6px"></i>${t}</span><input type="checkbox" data-m="${k}" ${CAPA_M[k] && CAPA_M[k].show ? 'checked' : ''}></label>`).join('')}
+    <p class="sub">Espectrómetro CRISM de la sonda Mars Reconnaissance Orbiter (NASA), sobre la franja que recorrió Curiosity. Cada mancha marca dónde la señal de ese mineral está entre el 10 % más fuerte de la zona (es relativa, no una cantidad). Pasá el mouse por una mancha para ver de dónde sale, qué pozos de Curiosity caen adentro y qué midió CheMin ahí.</p>
+    ${MIN_LISTA.map(([k, t, c]) => `<label class="fila"><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${c};margin-right:6px"></i>${t}</span><input type="checkbox" data-m="${k}" ${CAPA_M[k] && CAPA_M[k][0] && CAPA_M[k][0].show ? 'checked' : ''}></label>`).join('')}
     <p class="fuente">CRISM: mosaicos del cráter Gale de NASA/JHU-APL (Seelos et al. 2012), <a href="https://crism.jhuapl.edu/msl_landing_sites/" target="_blank" rel="noopener">crism.jhuapl.edu/msl_landing_sites</a>. CheMin en los pozos: <a href="https://pds-geosciences.wustl.edu/missions/msl/chemin.htm" target="_blank" rel="noopener">pds-geosciences.wustl.edu/missions/msl/chemin.htm</a> (NASA PDS).</p>
-    <h2>Motor 3D</h2>
-    <div class="fila"><span>Globo</span><select id="motor"><option value="globo">Marte completo (CTX 5 m + HiRISE 25 cm)</option><option value="cesium">Cesium Mars (3D Tiles)</option></select></div>
-    ${MODO === 'globo' ? `<p class="sub">Todo Marte con el mosaico CTX de 5 m por píxel. Relieve: HRSC/MOLA (200 m) en el planeta y modelo de 1 m (a 5 m) en la zona de Curiosity. Fotos HiRISE de 25 cm en Gale.</p>
-    <div class="fila"><span>Imagen de todo Marte (CTX 5 m)</span><select id="colorCTX"><option value="color">color de Marte</option><option value="gris">blanco y negro original</option></select></div>
-    <label class="fila"><span>Fotos HiRISE 25 cm (Gale)</span><input type="checkbox" data-b="hirise" ${CAPAS_BASE.hirise.show ? 'checked' : ''}></label>
-    <p class="sub">El color se arma con el brillo de CTX y el color de Viking: es aproximado, no una foto en color.</p>`
-    : `<p class="sub">Cesium Mars (Cesium ion): relieve MOLA + HRSC de todo Marte y un sector de Gale en alta resolución.${location.protocol === 'file:' ? ' Para el globo completo abrí Gale Earth con <b>abrir.bat</b>.' : ''}</p>`}
-    <h2>Cesium ion</h2><p class="sub">Solo para el motor Cesium Mars. Usa la clave de evaluación incluida; para la presentación conviene una clave propia gratuita: cesium.com/ion → Access Tokens.</p>
-    <input type="text" id="tok" placeholder="Pegá tu clave de Cesium ion (opcional)" value="${token ? '••••••' + token.slice(-6) : ''}">
-    <div class="btns"><button class="btn prim" id="guardarTok">Guardar y recargar</button><button class="btn" id="borrarTok">Usar la de evaluación</button></div>
     <h2>Fuentes</h2><p class="fuente">Imagen global: mosaico CTX de 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri) y color Viking MDIM 2.1 (NASA/USGS, Mars Trek). HiRISE 25 cm: NASA/JPL/Univ. of Arizona, mosaico USGS. Terreno: HRSC/MOLA Blend 200 m y DEM MSL 1 m (USGS Astrogeology). Motor alternativo: Cesium Mars (NASA, ESA y Cesium). Recorrido: NASA/JPL "Where is Curiosity?". Pozos: base de mineralogía y geoquímica de Gale de NASA (CheMin/APXS) y blog de la misión. Órbitas: JPL Horizons. Zonas y sitios para la base: propuesta del equipo con esos datos. Capas de análisis: DEM de 1 m y mosaico HiRISE color de 25 cm del área de MSL (USGS Astrogeology / NASA PDS), procesados por el equipo; la dosis parte de la medición de superficie de RAD.</p>`;
   cont().querySelectorAll('[data-c]').forEach(el => el.onchange = () => { VIS[el.dataset.c] = el.checked; for (const e of capas[el.dataset.c]) e.show = el.checked; if (el.dataset.c === 'base' && zonaEZ) zonaEZ.show = el.checked; });
   const alfaDe = k => +cont().querySelector(`[data-o="${k}"]`).value;
   cont().querySelectorAll('[data-a]').forEach(el => el.onchange = () => capaAnalisis(el.dataset.a, el.checked, alfaDe(el.dataset.a)));
-  cont().querySelectorAll('[data-o]').forEach(el => el.oninput = () => { const L = CAPA_A[el.dataset.o]; if (L) L.alpha = +el.value; });
-  $('motor').value = MODO; $('motor').onchange = e => { try { localStorage.setItem('galeEarthMotor', e.target.value); } catch {} location.reload(); };
-  cont().querySelectorAll('[data-b]').forEach(el => el.onchange = () => { CAPAS_BASE[el.dataset.b].show = el.checked; });
-  if ($('colorCTX')) { $('colorCTX').value = MODO_COLOR; $('colorCTX').onchange = e => { MODO_COLOR = e.target.value; try { localStorage.setItem('galeEarthColor', MODO_COLOR); } catch {} capaCTX(); }; }
+  cont().querySelectorAll('[data-o]').forEach(el => el.oninput = () => { const L = CAPA_A[el.dataset.o]; if (L) L.alpha = +el.value; for (const G of CAPA_AG[el.dataset.o] || []) G.alpha = +el.value; });
   const ley = () => { const e = ESCALAS[colorPor]; $('leyColor').innerHTML = e ? `${e.n}: de 0 (oscuro) a ${fmt(e.max)} ${e.u} (claro). Gris = sin dato.` : ''; };
   $('colorPor').value = colorPor; ley();
   $('colorPor').onchange = async e => { colorPor = e.target.value; if (ESCALAS[colorPor] && ESCALAS[colorPor].campo.startsWith('ch_')) await cargarCheminPozos(); repintar(); ley(); };
   cont().querySelectorAll('[data-m]').forEach(el => el.onchange = () => capaMineral(el.dataset.m, el.checked));
   mgEnganchar();
-  cont().querySelectorAll('#radHora button').forEach(b => b.onclick = async () => { cont().querySelectorAll('#radHora button').forEach(x => x.classList.toggle('on', x === b)); await cambiarHorarioRad(b.dataset.h); });
+  cont().querySelectorAll('#radHora button').forEach(b => b.onclick = async () => {
+    cont().querySelectorAll('#radHora button').forEach(x => x.classList.toggle('on', x === b)); await cambiarHorarioRad(b.dataset.h);
+    // si la capa de radiación estaba apagada, se prende: si no, el botón no mostraba ningún cambio
+    const cb = cont().querySelector('[data-a="dosis"]'); if (cb && !cb.checked) { cb.checked = true; await capaAnalisis('dosis', true, alfaDe('dosis')); }
+  });
   $('exag').value = String(viewer.scene.verticalExaggeration || 1); $('exag').onchange = e => { const v = +e.target.value; viewer.scene.verticalExaggeration = v; $('relBadge').textContent = '×' + String(v).replace('.', ','); $('relBadge').classList.toggle('oculto', v === 1); };
-  $('guardarTok').onclick = () => { const v = $('tok').value.trim(); if (v && !v.startsWith('••')) { try { localStorage.setItem('galeEarthToken', v); } catch {} location.reload(); } };
-  $('borrarTok').onclick = () => { try { localStorage.removeItem('galeEarthToken'); } catch {} location.reload(); };
 }
 // Las órbitas se ven desde lejos; de cerca cruzarían la pantalla, así que se ocultan bajo 200 km.
 viewer.camera.percentageChanged = 0.05;

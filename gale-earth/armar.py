@@ -88,6 +88,9 @@ def main():
         "recorrido": json.loads(leer(os.path.join(dc, "recorrido_oficial_sol0-5073.geojson"))),
         "orbitadores": json.loads(leer(os.path.join(AQUI, "datos", "orbitadores.json"))),
         "borde_gale": json.loads(leer(os.path.join(AQUI, "datos", "borde_gale.json"))),
+        # Contornos de lugares clave de Marte (herramientas/lugares_clave.py). Opcional.
+        "lugares_clave": json.loads(leer(os.path.join(AQUI, "datos", "lugares_clave.json")))
+                         if os.path.exists(os.path.join(AQUI, "datos", "lugares_clave.json")) else None,
         "sitios": SITIOS,
         # Capas de análisis (herramientas/gale_datos.py procesar → reducidas a 4096 px). Opcionales.
         "capas5m": json.loads(leer(os.path.join(AQUI, "capas", "gale_5m", "capas.json")))
