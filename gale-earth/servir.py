@@ -1,4 +1,4 @@
-"""Servidor local de Gale Earth (solo biblioteca estándar de Python 3).
+"""Servidor local de Maps in Mars (solo biblioteca estándar de Python 3).
 
 - Sirve esta carpeta (index.html, capas/, etc.) en http://localhost:8765 y en la red Wi-Fi (para el celular)
 - Sirve las teselas de terreno y de HiRISE 25 cm leyéndolas DIRECTO de los .zip,
@@ -98,7 +98,7 @@ def indexar():
 
 
 def ips_red():
-    """Direcciones IPv4 de esta PC en la red local (para abrir Gale Earth desde el celular)."""
+    """Direcciones IPv4 de esta PC en la red local (para abrir Maps in Mars desde el celular)."""
     import socket
     ips = []
     try:
@@ -244,7 +244,7 @@ class Manejador(SimpleHTTPRequestHandler):
         if ruta == "/teselas.json":
             import json
             if firma() != _firma:   # teselas nuevas, o Google Drive se conectó después: se vuelve a indexar
-                print("Gale Earth · cambiaron las teselas, vuelvo a buscarlas…")
+                print("Maps in Mars · cambiaron las teselas, vuelvo a buscarlas…")
                 indexar()
             cuerpo = json.dumps({"terreno": any(k.startswith("terreno/") for k in ZIPS),
                                  "hirise": any(k.startswith("hirise/") for k in ZIPS),
@@ -262,7 +262,7 @@ if __name__ == "__main__":
     mimetypes.add_type("image/webp", ".webp")
     mimetypes.add_type("application/manifest+json", ".webmanifest")
     mimetypes.add_type("text/markdown", ".md")
-    print("Gale Earth · buscando teselas…")
+    print("Maps in Mars · buscando teselas…")
     indexar()
     if not ZIPS:
         print("  (no encontré teselas: el globo usará solo el terreno de Cesium Mars)")

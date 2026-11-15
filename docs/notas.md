@@ -2,6 +2,20 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 tarde (3) · compañero (con Claude) · MAPS IN MARS: BASE EN EL MAPA, NUEVO RECORRIDO, ASTRONAUTA A MANO, TOUR Y FLUIDEZ
+- **Pidió:** tomar la copia del Escritorio (`Marte/`) como punto de partida, y una tanda de mejoras. La copia del Escritorio resultó idéntica a `origin/main` (mismos md5) más los zip de teselas: no había referencias nuevas que traer.
+- **Hizo (casi todo en el archivo nuevo `gale-earth/maps.js`, que envuelve funciones de `mision.js` y `pmr.js` sin cambiarlas; `_ensamblar.py` lo suma al final):**
+  - **Nombre del producto: Maps in Mars** (antes Gale Earth) en título, carga, logo, manifiesto, tour, diccionarios, `mision.json` y su exportador, escena clásica y entrada de la raíz. La carpeta sigue llamándose `gale-earth/` para no romper rutas.
+  - **Botón "Base" del panel:** además de la tabla de sitios, vuela a la Base Gale (Zona 2) y deja su pin visible; tarjeta arriba que abre la ficha de la base.
+  - **Interruptores de arriba:** "49 perforaciones" (igual), **"Nuevo recorrido"** (nuevo) y **"Misión Curiosity"** (antes "Recorrido nuevo": prende nuestras rutas y entra a Curiosity hoy).
+  - **Nuevo recorrido:** el usuario pone pines (1 o más, hasta 20) dentro del terreno de 12 m; se unen en línea recta en su orden, desde Curiosity hoy o desde la Base Gale, a pie o en PMR, con vuelta opcional. Cada tramo se colorea (firme / difícil: arena o a menos de 5° del límite / peligroso: más de 20° / sin datos) y salen avisos con metros y pendiente máxima, más tiempo de salida y distancia al refugio (EVA 6 h, 30 min; supuestos de `parametros`). Botón **"Ruta más segura"** (A* de `pmr.js` por los mismos pines) y **"Recorrer ▶"** (lo recorre con el reproductor de la misión; cada pin es una parada).
+  - **Por qué había más de una línea al caminar:** B y las caminatas de C son ida y vuelta, y la vuelta es un tramo calculado aparte (la ruta más segura desde la última parada al PMR); medido en `mision.json`, B se separa hasta 42 m y C-cam1 hasta 72 m. Además, en la guía del PMR se veían todos los tramos juntos. Ahora: **ida llena, vuelta punteada**, leyenda en el reproductor, y en la guía solo se ve el tramo en curso.
+  - **Misión en pareja (y toda caminata):** botón **"Manejar al astronauta"** (W A S D / flechas / pad, Shift ×10). Frena en pendientes > 20°, va más lento en arena, sigue contando dosis y tiempo, avisa al pasar 30 min del PMR o el 75 % de la salida; visor y pantalla del PMR se actualizan. Al soltarlo vuelve a la ruta en el punto más cercano.
+  - **Tour (9 pasos):** paso 7 paneo de 150° alrededor de la Base Gale; paso 8 los recorridos nuevos parada por parada (S, B1, A2, A4, E2, E3, E5) con sus nombres de los datos.
+  - **Fluidez:** mientras la cámara se mueve se pide menos detalle (error de pantalla 2,6 px en vez de 1,5) y se vuelve al detalle completo 350 ms después de parar; `loadingDescendantLimit` 40 → 20; `?fps` muestra cuadros por segundo para medir.
+- **Para David:** no toqué `mision.js` ni `pmr.js` salvo el cambio de nombre en textos. Los envoltorios están en `maps.js` (miVisibles, miCapa, miModo, miSalirModo, miTick). Si cambiás esos nombres, avisame.
+- **Falta:** probar en la PC con `abrir.bat` (en el contenedor se probó sin internet, con WebGL por software); medir FPS antes/después con `?fps`.
+
 ## 2026-11-15 mediodía (2) · Compañero (con Claude) · CIERRE DE LO ABIERTO
 - **Base ODR:** desde la PC del compañero no responde, ni directo ni por su DOI (10.48484/JN48-YW52 redirige al mismo sitio). Lo demás de NASA abre bien.
   - Respaldo agregado: cada ficha de la Wiki con CheMin tiene ahora el botón **"Minerales en el PDS de NASA"**, que abre el archivo oficial de CheMin (`mslcmn_1xxx/data/rdr5/`). Se verificó que los 59 archivos existen.

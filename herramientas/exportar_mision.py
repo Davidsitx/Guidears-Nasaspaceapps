@@ -1,4 +1,4 @@
-"""Exporta la misión de la escena (GALE-3D) para Gale Earth: una sola pantalla, los mismos números.
+"""Exporta la misión de la escena (GALE-3D) para Maps in Mars: una sola pantalla, los mismos números.
 
 Abre escena3d/index.html en un navegador sin ventana (Playwright + Chromium), y con las mismas funciones de la escena saca
 (y al final suma la ruta T del PMR, el rover presurizado, con herramientas/ruta_base.py):
@@ -69,7 +69,7 @@ def main():
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import ruta_base
     ruta_base.main()
-    print(f"Listo en {time.time() - t0:.0f} s. Si cambió Gale Earth: dentro de gale-earth/, python _ensamblar.py y python armar.py.")
+    print(f"Listo en {time.time() - t0:.0f} s. Si cambió Maps in Mars: dentro de gale-earth/, python _ensamblar.py y python armar.py.")
 
 
 if __name__ == "__main__":

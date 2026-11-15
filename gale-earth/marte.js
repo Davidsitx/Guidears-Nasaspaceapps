@@ -4,7 +4,7 @@
 const MG = { meta: null, rampa: false, local: null, escala: 'marte', alfa: 0.85, themis: [], nombres: null, aterrizajes: null, noche: null, nocheT: 0, vis: {} };
 
 async function mgMeta() { if (!MG.meta) MG.meta = await (await fetch('capas/global/global.json')).json(); return MG.meta; }
-const mgError = () => avisar(location.protocol === 'file:' ? 'Para ver las capas de todo Marte abrí Gale Earth con abrir.bat (o desde la página publicada).' : 'No se pudo cargar la capa.', 9000);
+const mgError = () => avisar(location.protocol === 'file:' ? 'Para ver las capas de todo Marte abrí Maps in Mars con abrir.bat (o desde la página publicada).' : 'No se pudo cargar la capa.', 9000);
 
 // ---- colores de altitud de todo Marte (capas/global/altitud_*.jpg, de nuestras teselas HRSC-MOLA, datum MOLA) ----
 const RAMPA = { cortes: [[-8200, '#2b0f54'], [-4400, '#3b4cc0'], [-2400, '#2fa6d6'], [0, '#46c08a'], [3400, '#cfe05a'], [6500, '#f2a23c'], [9400, '#d9573b'], [13800, '#c8649a'], [18200, '#f2e4f0'], [21200, '#ffffff']] };

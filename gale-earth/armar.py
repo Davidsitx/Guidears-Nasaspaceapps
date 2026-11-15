@@ -1,4 +1,4 @@
-"""Arma gale-earth/index.html (Gale Earth): un solo archivo con los datos adentro.
+"""Arma gale-earth/index.html (Maps in Mars): un solo archivo con los datos adentro.
 
 Uso (desde la carpeta gale-earth):
     python armar.py

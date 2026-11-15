@@ -218,7 +218,7 @@
     #ctrl::-webkit-scrollbar { display: none; }
     #ctrl > *, #ctrl .grupo { flex: none; } #ctrl .grupo { flex-wrap: nowrap; }
   }
-  /* unión con Gale Earth: fundido al cambiar de vista */
+  /* unión con Maps in Mars: fundido al cambiar de vista */
   #transicion { position: fixed; inset: 0; z-index: 60; background: #0b0d12; opacity: 0; pointer-events: none; transition: opacity .6s ease; display: grid; place-items: center; color: var(--tenue); font-size: 14px; }
   #transicion.on { opacity: 1; pointer-events: auto; }
   #transicion.sale { opacity: 1; transition: none; }
@@ -769,7 +769,7 @@
 (() => {
   const po = document.getElementById('ayuda'), $p = id => document.getElementById(id);
   if (/desde-gale-earth/.test(location.hash)) po.classList.add('oculto');
-  // Gale Earth solo cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages)
+  // Maps in Mars solo cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages)
   const alLado = location.protocol === 'file:' ? /\/escena3d\/[^/]*$/.test(location.pathname) : /\/escena3d\//.test(location.pathname);
   const ic = {
     flag: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/></svg>',
@@ -810,12 +810,12 @@
   function elegir(k, boton) {
     po.querySelectorAll('.elegido').forEach(b => b.classList.remove('elegido')); boton?.classList.add('elegido');
     if (k === 'ge') { location.href = '../gale-earth/index.html#curiosity'; return; }
-    if (k === 'me') { if (alLado) return irMarsEarth(); k = 'marte'; }   // sin Gale Earth al lado: Marte completo dentro de la escena
+    if (k === 'me') { if (alLado) return irMarsEarth(); k = 'marte'; }   // sin Maps in Mars al lado: Marte completo dentro de la escena
     if (!acc) { pend = [k, boton]; po.classList.add('esperando'); return; }
     if (!acc[k]) { $p('po-estado').textContent = 'Esa zona no está en esta versión de la escena.'; return; }
     entrar(k);
   }
-  // Mars Earth: Marte se centra en Gale y se abre Gale Earth, que arranca en el espacio y se acerca al cráter
+  // Mars Earth: Marte se centra en Gale y se abre Maps in Mars, que arranca en el espacio y se acerca al cráter
   function centrarGlobo() {
     const g = po.querySelector('.po-globo'), r = g.getBoundingClientRect(), m = $p('po-gale');
     const fx = (parseFloat(m.style.left) || 50) / 100, fy = (parseFloat(m.style.top) || 50) / 100;
@@ -888,7 +888,7 @@
     listo(a, datos = {}) {
       acc = a; po.classList.remove('esperando'); po.classList.add('listo');
       $p('po-estado').textContent = 'Listo: elegí una zona.';
-      if (!alLado && !a.marte) $p('po-me').classList.add('oculto');   // ni Gale Earth al lado ni globo propio
+      if (!alLado && !a.marte) $p('po-me').classList.add('oculto');   // ni Maps in Mars al lado ni globo propio
       if (po.dataset.paso === '3') zona(zonaAct);            // si se eligió la entrada mientras cargaba, se rearma con lo disponible
       for (const [id, t] of Object.entries(datos)) if (t && $p(id)) $p(id).textContent = t;
       if (pend) { const [k, b] = pend; pend = null; elegir(k, b); }
@@ -967,7 +967,7 @@
   <div class="vb oculto" id="v-aviso"></div>
 </div>
 
-<div id="vistas" class="seg oculto"><button id="vPlaneta" class="oculto" aria-pressed="false" title="Alejarse hasta ver todo Marte (relieve MOLA y color Viking)"><span class="largo">Marte completo</span><span class="corto">Marte</span></button><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy"><span class="largo">Travesía completa</span><span class="corto">Travesía</span></button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo"><span class="largo">Zona de hoy</span><span class="corto">Hoy</span></button><button id="vMarteGE" class="oculto" title="Abrir Gale Earth: Marte estilo Google Earth, con órbitas, base y biblioteca"><span class="largo">Gale Earth</span><span class="corto">Earth</span> ↗</button></div>
+<div id="vistas" class="seg oculto"><button id="vPlaneta" class="oculto" aria-pressed="false" title="Alejarse hasta ver todo Marte (relieve MOLA y color Viking)"><span class="largo">Marte completo</span><span class="corto">Marte</span></button><button id="vTrav" aria-pressed="false" title="Todo el recorrido de Curiosity, del aterrizaje a hoy"><span class="largo">Travesía completa</span><span class="corto">Travesía</span></button><button id="vZona" aria-pressed="true" title="Donde está Curiosity hoy: rutas, paradas y manejo"><span class="largo">Zona de hoy</span><span class="corto">Hoy</span></button><button id="vMarteGE" class="oculto" title="Abrir Maps in Mars: Marte estilo Google Earth, con órbitas, base y biblioteca"><span class="largo">Maps in Mars</span><span class="corto">Earth</span> ↗</button></div>
 <div id="viaje" class="caja oculto">
   <div class="datos">
     <div><b id="vj-sol">Sol 0</b><span id="vj-fecha">agosto de 2012</span></div>
@@ -1080,7 +1080,7 @@ const FUENTES_URL = {
   suitport: ['NASA JSC (2012): suitports, el traje queda acoplado afuera; la preparación de una salida pasa de horas a menos de 30 minutos y el polvo no entra', 'https://ntrs.nasa.gov/citations/20120018014'],
   jplApprox: ['NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte', 'https://ssd.jpl.nasa.gov/planets/approx_pos.html'],
   odometria: ['NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos', 'https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/'],
-  biblioteca: ['Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR', 'https://galecrater.samples.odr.io/'],
+  biblioteca: ['Biblioteca de Maps in Mars (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR', 'https://galecrater.samples.odr.io/'],
   odr: ['NASA/ODR: Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52', 'https://doi.org/10.48484/JN48-YW52'],
   pdsApxs: ['NASA PDS Geosciences: APXS de MSL (óxidos y trazas)', 'https://pds-geosciences.wustl.edu/missions/msl/apxs.htm'],
   mahli: ['NASA: imágenes crudas de Curiosity (MAHLI), NASA/JPL-Caltech/MSSS', 'https://mars.nasa.gov/msl/multimedia/raw-images/'],
@@ -1817,7 +1817,7 @@ const GLOBO = D.globo && CTX ? await (async () => {
     x.putImageData(id, 0, 0); return cv;
   };
   const textura = (cv, repetir = false) => { const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); if (repetir) t.wrapS = THREE.RepeatWrapping; return t; };
-  // CTX en gris + Viking en color: el detalle (brillo relativo) sale de CTX y el color de Viking, como en Gale Earth
+  // CTX en gris + Viking en color: el detalle (brillo relativo) sale de CTX y el color de Viking, como en Maps in Mars
   const colorearCTX = (gris, base) => {
     const w = gris.width, h = gris.height, borroso = lienzo(lienzo(gris, w / 24, h / 24), w, h), b = lienzo(base, w, h);
     const g = gris.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data, s = borroso.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, w, h).data;
@@ -1892,7 +1892,7 @@ const GLOBO = D.globo && CTX ? await (async () => {
       }
     }
     capas.push(malla(pos, col, idx)); }
-  // ── CTX: el que trae el archivo (herramientas/bajar_ctx.py) o, si no hay, bajado en vivo del mismo servicio que usa Gale Earth ──
+  // ── CTX: el que trae el archivo (herramientas/bajar_ctx.py) o, si no hay, bajado en vivo del mismo servicio que usa Maps in Mars ──
   const ponerCTX = (capa, gris, n, s, o, e, cajaUV) => {
     const base = recorteViking(n, s, o, e, gris.width, gris.height), cv = colorearCTX(gris, base), m = capa.material;
     // la textura cubre la caja del CTX: se recalculan las coordenadas de textura de la capa
@@ -3583,7 +3583,7 @@ function irAPozo(p) {
 }
 const FUENTE_POZO = { 1: 'vaniman', 2: 'organicos', 36: 'tutolo', 37: 'tutolo', 38: 'tutolo', 39: 'tutolo', 42: 'pia26403', 43: 'blog4804', 44: 'blog4709', 45: 'blog4709', 46: 'blog4804', 47: 'blog4893' };
 const fqPozo = p => fq(FUENTE_POZO[p.pozo] || 'an');
-// lo que suma la Biblioteca de Gale Earth (armar.py lo trae de gale-earth/datos/biblioteca.json): hallazgo con fuente, foto, minerales, química, agua y datos crudos
+// lo que suma la Biblioteca de Maps in Mars (armar.py lo trae de gale-earth/datos/biblioteca.json): hallazgo con fuente, foto, minerales, química, agua y datos crudos
 const escB = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 function bibPozo(p) {
   const b = p.bib; if (!b || !b.hallazgo) return '';
@@ -3599,10 +3599,10 @@ function bibPozo(p) {
     ${ox.length ? `<details><summary>Química (APXS)</summary><div class="quimica">${ox.map(k => `<div><b>${num(b.apxs.ox[k], 1)} %</b><span>${k.replace(/(\d)/g, '<sub>$1</sub>')}</span></div>`).join('')}</div>
       <p class="sub">Porcentaje en peso, sol ${b.apxs.sol} (producto ${escB(b.apxs.producto)}). Fuente: NASA PDS ${fq('pdsApxs')}</p></details>` : ''}
     ${b.agua != null ? `<details><summary>Agua para una base</summary><p>Los minerales de esta roca guardan unos <b>${num(b.agua, 1)} kg de agua por tonelada</b>${b.co2 ? ` y ${num(b.co2, 1)} kg de CO₂ en carbonatos` : ''}. <span class="prov">cálculo del equipo</span></p>
-      <p class="sub">Lectura del equipo: es agua que una base podría sacar calentando la roca. Se calcula con los minerales de CheMin (Biblioteca de Gale Earth ${fq('biblioteca')}).</p></details>` : ''}
+      <p class="sub">Lectura del equipo: es agua que una base podría sacar calentando la roca. Se calcula con los minerales de CheMin (Biblioteca de Maps in Mars ${fq('biblioteca')}).</p></details>` : ''}
     <details><summary>Datos crudos y novedades</summary>
       ${b.blog.map(e => `<p class="sub">${escB(e.fecha)}: ${escB(e.texto)}${e.url ? ` <a href="${escB(e.url)}" target="_blank" rel="noopener" style="color:var(--acento)">Blog de Curiosity ↗</a>` : ''}</p>`).join('')}
-      <p class="sub">${b.sam ? `SAM analizó esta muestra en ${b.sam} experimento${b.sam > 1 ? 's' : ''}. ` : ''}${b.odr ? `<a href="${escB(b.odr)}" target="_blank" rel="noopener" style="color:var(--acento)">Ficha en la base de muestras ODR ↗</a>. ` : ''}${b.fotos_total ? `${b.fotos_total} fotos crudas del sol. ` : ''}Los archivos crudos (CheMin, APXS, SAM y fotos) están en Gale Earth → Biblioteca.</p>
+      <p class="sub">${b.sam ? `SAM analizó esta muestra en ${b.sam} experimento${b.sam > 1 ? 's' : ''}. ` : ''}${b.odr ? `<a href="${escB(b.odr)}" target="_blank" rel="noopener" style="color:var(--acento)">Ficha en la base de muestras ODR ↗</a>. ` : ''}${b.fotos_total ? `${b.fotos_total} fotos crudas del sol. ` : ''}Los archivos crudos (CheMin, APXS, SAM y fotos) están en Maps in Mars → Biblioteca.</p>
       ${b.falta.length ? `<p class="sub">Todavía sin publicar en el PDS: ${b.falta.map(escB).join(', ')} (la NASA los libera por entregas).</p>` : ''}</details>`;
 }
 function fichaPozo(p) {
@@ -3629,7 +3629,7 @@ function mostrarPozo(p, volar = false) {
 function listarPozos() {
   $('pozos').innerHTML = CAMPANAS.map(c => `<details><summary><span class="chip" style="background:${c.color}">${c.pozos.length}</span>${c.nombre}</summary><div class="sub">${c.idea}</div>${
     c.pozos.map(p => `<button class="pozo-fila" data-pozo="${POZOS.indexOf(p)}" data-volar="1"><b>${p.pozo}</b> ${p.nombre}<span class="sub">sol ${p.sol}</span></button>`).join('')}</details>`).join('')
-    + `<div class="sub" style="margin-top:6px">${POZOS.filter(p => p.bib).length ? `${POZOS.filter(p => p.bib).length} de ${POZOS.length} fichas con la Biblioteca de Gale Earth: hallazgo con fuente, foto, minerales (CheMin), química (APXS) y datos crudos ${fq('biblioteca')}.` : `${POZOS.filter(p => p.verificado).length} de ${POZOS.length} fichas verificadas contra su fuente; el resto dice "a verificar".`}</div>`;
+    + `<div class="sub" style="margin-top:6px">${POZOS.filter(p => p.bib).length ? `${POZOS.filter(p => p.bib).length} de ${POZOS.length} fichas con la Biblioteca de Maps in Mars: hallazgo con fuente, foto, minerales (CheMin), química (APXS) y datos crudos ${fq('biblioteca')}.` : `${POZOS.filter(p => p.verificado).length} de ${POZOS.length} fichas verificadas contra su fuente; el resto dice "a verificar".`}</div>`;
   conectarBotones($('pozos'));
 }
 
@@ -5394,7 +5394,7 @@ window.__portada?.listo({
   'po-trav-dim': TR ? `+38 km · ${POZOS.length} perforaciones · ${Math.round(TR.P[TR.P.length - 1].sol)} soles` : null,
 });
 document.getElementById('cargando').remove();
-// ---------- unión con Gale Earth (../gale-earth/index.html): ida y vuelta entre Marte completo y la misión ----------
+// ---------- unión con Maps in Mars (../gale-earth/index.html): ida y vuelta entre Marte completo y la misión ----------
 // Solo se ofrece cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages); en una copia suelta no hay a dónde ir.
 {
   const alLado = location.protocol === 'file:' ? /\/escena3d\/[^/]*$/.test(location.pathname) : /\/escena3d\//.test(location.pathname);
@@ -5406,7 +5406,7 @@ document.getElementById('cargando').remove();
       setTimeout(() => { location.href = '../gale-earth/index.html#curiosity'; }, 1950);
     };
   }
-  if (DESDE_GE && CTX) {                                  // llegada desde Gale Earth: se baja desde lo alto hasta la zona de hoy
+  if (DESDE_GE && CTX) {                                  // llegada desde Maps in Mars: se baja desde lo alto hasta la zona de hoy
     $('transicion').querySelector('span').textContent = 'Misión Curiosity · sol 5070';
     $('transicion').classList.add('sale'); setTimeout(() => { $('transicion').classList.remove('sale'); }, 80);
     vuelo = null; camara.position.set(CTX.cx, 42000, CTX.cz + 16000); controles.target.set(CTX.cx, 0, CTX.cz); controles.update();
@@ -5415,8 +5415,8 @@ document.getElementById('cargando').remove();
     history.replaceState(null, '', location.pathname + location.search);
   }
 }
-// ---------- exportar la misión para Gale Earth (herramientas/exportar_mision.py) ----------
-// Gale Earth es la única pantalla: estas dos funciones sacan de la escena, con los mismos cálculos y textos, todo lo de
+// ---------- exportar la misión para Maps in Mars (herramientas/exportar_mision.py) ----------
+// Maps in Mars es la única pantalla: estas dos funciones sacan de la escena, con los mismos cálculos y textos, todo lo de
 // "Curiosity hoy" (paradas, rutas, expedición, base, fichas, parámetros) y los modelos 3D (.glb). No cambian nada visible.
 const LL = (x, z) => mundoALonLat(x, z).map(v => +v.toFixed(7));
 function limpiarFicha(html) {
@@ -5488,7 +5488,7 @@ window.__exportarMision = () => {
   };
 };
 // modelos 3D: cada uno se exporta en reposo, con las piezas que se mueven nombradas, girado para que el este de la escena
-// quede como el "adelante" de glTF (+Z): así, en Gale Earth, el modelo queda bien orientado sobre el marco este-norte-arriba.
+// quede como el "adelante" de glTF (+Z): así, en Maps in Mars, el modelo queda bien orientado sobre el marco este-norte-arriba.
 window.__exportarModelos = async GLTFExporter => {
   if (RN.activo) rnActivar(false);
   ruedas.forEach((w, i) => { w.g.position.set(w.xi, RUEDA_R, w.zi); w.giro.rotation.set(0, 0, 0); w.giro.name = `rueda_${i}`; });

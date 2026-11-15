@@ -2,7 +2,7 @@
 import re
 s=open('_cuerpo.html').read()
 i=s.index('// ==================== Interfaz estilo Google Earth'); j=s.index("\nabrir('explorar', false);")
-s=s[:i]+open('interfaz.js').read().rstrip()+'\n'+open('biblioteca.js').read().rstrip()+'\n'+open('linea.js').read().rstrip()+'\n'+open('marte.js').read().rstrip()+'\n'+open('tour.js').read().rstrip()+'\n'+open('mision.js').read().rstrip()+'\n'+open('pmr.js').read().rstrip()+s[j:]
+s=s[:i]+open('interfaz.js').read().rstrip()+'\n'+open('biblioteca.js').read().rstrip()+'\n'+open('linea.js').read().rstrip()+'\n'+open('marte.js').read().rstrip()+'\n'+open('tour.js').read().rstrip()+'\n'+open('mision.js').read().rstrip()+'\n'+open('pmr.js').read().rstrip()+'\n'+open('maps.js').read().rstrip()+s[j:]
 s=s.replace("$('exag').onchange = e => { viewer.scene.verticalExaggeration = +e.target.value; };",
  "$('exag').onchange = e => { const v = +e.target.value; viewer.scene.verticalExaggeration = v; $('relBadge').textContent = '×' + String(v).replace('.', ','); $('relBadge').classList.toggle('oculto', v === 1); };")
 import json, os

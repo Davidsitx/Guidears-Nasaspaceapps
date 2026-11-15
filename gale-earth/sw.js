@@ -1,4 +1,4 @@
-// Gale Earth · trabajador de servicio (service worker) para las teselas en la nube.
+// Maps in Mars · trabajador de servicio (service worker) para las teselas en la nube.
 //
 // La página pide las teselas como siempre ("teselas/terreno/9/512/300.bin", "teselas/hirise/…webp").
 // - Si la abrís con servir.py (abrir.bat), el servidor de la PC las tiene y este archivo no hace nada.

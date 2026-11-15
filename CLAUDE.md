@@ -64,6 +64,9 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 - **Decisión (15/11): Gale Earth es la única pantalla.** Todo lo de GALE-3D se pasa al mismo globo. El plan, con hallazgos de QA, reglas de transiciones y fases, está en `docs/desarrollo/qa-unificacion.md`.
 - En la escena: **Base Gale** en la **Zona 2** del análisis de sitios del equipo (`data/base/sitios_base.geojson`, llanura del aterrizaje, a 1,7 km del recorrido; partes con ficha y fuente) y **Rover GX-2**, la versión nueva para las próximas excavaciones (taladro de 2 m, dron, alas solares; diseño propio). Se elige en Escena → Rover.
 
+## Estado al 15 de noviembre de 2026 (noche)
+- **El producto se llama Maps in Mars** (antes Gale Earth; la carpeta sigue siendo `gale-earth/`). Arriba: "49 perforaciones", "Nuevo recorrido" (pines del usuario con avisos de terreno) y "Misión Curiosity". Lo nuevo vive en `gale-earth/maps.js`. Ver docs/notas.md.
+
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).
 - Pendiente máxima astronauta: 20° (requisito lunar Artemis, a validar). Velocidad astronauta en llano: 2,5 km/h. Velocidad rover: 100 m/h en conducción; 30–60 m por sol de manejo según el blog.

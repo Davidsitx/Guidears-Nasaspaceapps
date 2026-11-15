@@ -72,7 +72,7 @@ async function iniciarTour() {
   const eeAntes = viewer.scene.globe.maximumScreenSpaceError; viewer.scene.globe.maximumScreenSpaceError = Math.max(eeAntes, 2);   // carga más rápido en los vuelos
   document.body.classList.add('enTour'); ui.classList.remove('oculto');
   requestAnimationFrame(() => ui.classList.add('on'));
-  const N = 7, paso = k => `${String(k).padStart(2, '0')} / ${String(N).padStart(2, '0')}`;
+  const N = 9, paso = k => `${String(k).padStart(2, '0')} / ${String(N).padStart(2, '0')}`;
   const km = kmRecorrido(), soles = RS[RS.length - 1];
   if (!MANCHAS) try { MANCHAS = await (await fetch('capas/minerales/manchas.json')).json(); } catch {}
   const rango = (id, campo) => { const m = MANCHAS && MANCHAS.manchas.find(x => x.id === id); const v = m ? m.pozos.map(p => p.valor).filter(x => x != null) : []; return v.length ? [Math.min(...v), Math.max(...v)] : null; };
@@ -84,7 +84,7 @@ async function iniciarTour() {
     await tNegro(false);
     const giroMarte = tGirar(C.Cartesian3.ZERO, C.Math.toRadians(-30), C.Math.toRadians(-8), 2.15e7, 11, 26);
     await tEsperar(600);
-    await tTitulo(`<b>GALE EARTH</b><span>${tx('Mars, seen from orbit — and confirmed on the ground', 'Marte visto desde órbita, y confirmado en el suelo')}</span>`, 4200);
+    await tTitulo(`<b>MAPS IN MARS</b><span>${tx('Mars, seen from orbit — and confirmed on the ground', 'Marte visto desde órbita, y confirmado en el suelo')}</span>`, 4200);
     tTexto(tx('Every layer comes from NASA, USGS or ESA data. Every number carries its source.', 'Cada capa sale de datos de NASA, USGS o ESA. Cada número lleva su fuente.'), paso(1));
     await giroMarte;
 
@@ -133,11 +133,39 @@ async function iniciarTour() {
     await tEsperar(6500);
     await capaAnalisis('dosis', false, 0.55);
 
-    // 7 · las naves en órbita y cierre
+    // 7 · la Base Gale: paneo alrededor del hábitat (propuesta propia, en la Zona 2 del análisis de sitios del equipo)
+    const hayMision = typeof miCargar === 'function' && await miCargar().catch(() => false);
+    if (hayMision && MI.D.base) {
+      const b = MI.D.base, kmF = m => fmt(m / 1000, 1);
+      miOrbitas(false); if (MI.mod.base_gale) MI.mod.base_gale.show = true;
+      tTexto(tx(`<b>Gale Base</b> · our proposal, on the flat landing plain (Zone 2 of our site analysis): ${kmF(b.drec)} km from Curiosity's traverse, ${fmt(b.pend, 1)}° of local slope. Habitat, pressurized tunnels, lab, suitport airlock and greenhouse.`,
+                `<b>Base Gale</b> · nuestra propuesta, en la llanura del aterrizaje (Zona 2 de nuestro análisis de sitios): a ${kmF(b.drec)} km del recorrido de Curiosity, con ${fmt(b.pend, 1)}° de pendiente local. Hábitat, túneles presurizados, laboratorio, esclusa con suitports e invernadero.`), paso(7));
+      await tIrYGirar(await tCentro(b.lon, b.lat), C.Math.toRadians(35), C.Math.toRadians(-24), 210, 5, 12, 150);
+
+      // 8 · los recorridos nuevos: desde la posición de Curiosity hoy, parada por parada
+      const recAntes = !!MI.verRec; await miVerRecorrido(true);
+      const LA = MI.lineas.A, LB = MI.lineas.B;
+      tTexto(tx(`<b>New routes</b> from where Curiosity is today (sol ${MI.D.sol}): route A for the robot (${kmF(LA.largo)} km), route B on foot (${kmF(LB.largo)} km, out and back) and a southern expedition beyond A4. Every stop has a science reason.`,
+                `<b>Recorridos nuevos</b> desde donde está Curiosity hoy (sol ${MI.D.sol}): ruta A del robot (${kmF(LA.largo)} km), ruta B a pie (${kmF(LB.largo)} km, ida y vuelta) y una expedición al sur, más allá de A4. Cada parada tiene un motivo científico.`), paso(8));
+      const sec = ['S', 'B1', 'A2', 'A4', 'E2', 'E3', 'E5'].map(id => MI.paradas[id]).filter(Boolean);
+      for (let i = 0; i < sec.length; i++) {
+        const p = sec[i], q = sec[Math.min(sec.length - 1, i + 1)], prev = sec[Math.max(0, i - 1)];
+        const rumbo = i < sec.length - 1 ? Math.atan2((q.lon - p.lon) * Math.cos(p.lat * Math.PI / 180), q.lat - p.lat) : Math.atan2((p.lon - prev.lon) * Math.cos(p.lat * Math.PI / 180), p.lat - prev.lat);
+        const c = await tCentro(p.lon, p.lat);
+        await new Promise((ok, mal) => viewer.camera.flyToBoundingSphere(new C.BoundingSphere(c, 10), { offset: new C.HeadingPitchRange(rumbo + Math.PI, C.Math.toRadians(-32), i ? 900 : 2600),
+          duration: i ? 3.2 : 4.5, easingFunction: C.EasingFunction.QUADRATIC_IN_OUT, complete: ok, cancel: () => mal('corte') }));
+        if (i) tTexto(`<span class="mi-pill" style="background:${p.color}">${p.id}</span> ${typeof miTr === 'function' ? miTr(p.nombre) : p.nombre}`);
+        await tEsperar(i ? 1300 : 2500);
+      }
+      if (!recAntes) await miVerRecorrido(false);
+      miOrbitas(true);
+    }
+
+    // 9 · las naves en órbita y cierre
     const mro = O.orbitadores.MRO;
     if (mro && mro.ent && mro.ent.model) {
       tTexto(tx('<b>Overhead</b>, MRO and Mars Odyssey — NASA\'s own 3D models, on orbits computed live — relay Curiosity\'s data to Earth.',
-                '<b>Arriba</b>, MRO y Mars Odyssey, con los modelos 3D de NASA y órbitas calculadas en vivo, retransmiten los datos de Curiosity a la Tierra.'), paso(7));
+                '<b>Arriba</b>, MRO y Mars Odyssey, con los modelos 3D de NASA y órbitas calculadas en vivo, retransmiten los datos de Curiosity a la Tierra.'), paso(9));
       await tNegro(true);
       mro.ent.viewFrom = new C.Cartesian3(-45, -30, 16); viewer.trackedEntity = mro.ent;
       await tEsperar(600); await tNegro(false); await tEsperar(8000);
@@ -145,7 +173,7 @@ async function iniciarTour() {
     } else await tNegro(true);
     viewer.camera.setView({ destination: pos(115, 4, 3.4e7) });
     await tNegro(false);
-    tTexto(tx('Gale Earth · NASA Space Apps Challenge 2026 · San Luis, Argentina', 'Gale Earth · NASA Space Apps Challenge 2026 · San Luis, Argentina'), paso(7));
+    tTexto(tx('Maps in Mars · NASA Space Apps Challenge 2026 · San Luis, Argentina', 'Maps in Mars · NASA Space Apps Challenge 2026 · San Luis, Argentina'), paso(9));
     const fin = tGirar(C.Cartesian3.ZERO, C.Math.toRadians(-60), C.Math.toRadians(-5), 2.25e7, 9, 22);
     await tTitulo(`<b>${tx('Explore it yourself', 'Exploralo vos')}</b><span>${tx('Every layer has a source. Every number, a citation.', 'Cada capa tiene su fuente. Cada número, su cita.')}</span>`, 5200);
     await fin;

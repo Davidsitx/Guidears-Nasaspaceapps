@@ -2,28 +2,28 @@
 // Lo que antes abría otra página (GALE-3D) ahora vive acá, en "Curiosity hoy": paradas, rutas A, B y C, expedición sur,
 // Base Gale, rover (Curiosity o GX-2), PMR (rover presurizado), astronauta y misión en pareja. Mismos números y textos que la
 // escena 3D: los saca herramientas/exportar_mision.py a datos/mision.json y capas/mision/*.glb. Módulo de David (con Claude).
-// Textos en los dos idiomas: lg('castellano', 'english') según IDIOMA (Gale Earth arranca en inglés). Los textos de los datos
-// (fichas, paradas, fuentes) se traducen con el diccionario datos/idioma_en_mision.json, igual que el resto de Gale Earth.
+// Textos en los dos idiomas: lg('castellano', 'english') según IDIOMA (Maps in Mars arranca en inglés). Los textos de los datos
+// (fichas, paradas, fuentes) se traducen con el diccionario datos/idioma_en_mision.json, igual que el resto de Maps in Mars.
 const MI_EN = (window.IDIOMA || 'en') !== 'es';
 const lg = (es, en) => MI_EN ? en : es;
 const MI = { D: null, activo: false, cargando: null, modo: null, rover: 'curiosity', mod: {}, ds: null, lineas: {}, excluir: [],
   dur: 240, parar: true, fovOjos: C.Math.toRadians(82), fov0: null, cam: { h: 0, p: -0.32, r: 12 }, siguiendo: false, ult: 0, quieto: 0, hover: null,
   g3: { alas: 0, alasObj: 0, cang: 0, cangObj: 0, lidar: 0, dron: null, perf: null }, camDe: {}, verRec: false, guia: null };
 try { MI.dur = +localStorage.getItem('galeMisionDur') || 240; MI.rover = localStorage.getItem('galeMisionRover') || 'curiosity'; } catch {}
-const M_GRADO = 3396190 * d2r;     // d2r ya existe en Gale Earth
+const M_GRADO = 3396190 * d2r;     // d2r ya existe en Maps in Mars
 const miNum = (v, d = 0) => v == null || !isFinite(v) ? '—' : Number(v).toLocaleString(MI_EN ? 'en-US' : 'es-AR', { maximumFractionDigits: d, minimumFractionDigits: d });
 const miM = m => m >= 1000 ? `${miNum(m / 1000, 2)} km` : `${Math.round(m)} m`;
 const miH = h => { const m = Math.round(h * 60); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min`; };
 const miT = h => { const m = Math.round(h * 60); return `T+${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
 const miEsc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const miTr = s => (window.trad ? window.trad(String(s ?? '')) : String(s ?? ''));     // textos de los datos (diccionario de Gale Earth)
+const miTr = s => (window.trad ? window.trad(String(s ?? '')) : String(s ?? ''));     // textos de los datos (diccionario de Maps in Mars)
 function miFq(id) {
   const f = MI.D?.fuentes?.[id]; if (!f) return '';
   const t = miTr(f[0]);
   return `<a class="q" href="${f[1]}" target="_blank" rel="noopener" title="${lg('Fuente', 'Source')}: ${miEsc(t)}" aria-label="${lg('Ver la fuente', 'See the source')}: ${miEsc(t)}">?</a>`;
 }
 
-// ---------- estilos (mismo lenguaje que Gale Earth; visor y pines según la guía de estilo del equipo) ----------
+// ---------- estilos (mismo lenguaje que Maps in Mars; visor y pines según la guía de estilo del equipo) ----------
 document.head.insertAdjacentHTML('beforeend', `<style id="miEstilos">
 #miBarra{position:absolute;left:50%;bottom:calc(42px + var(--inf-seg));transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:6px;padding:6px;
   background:var(--sup);border:1px solid #ffffff14;border-radius:26px;box-shadow:var(--sombra);backdrop-filter:blur(8px);max-width:calc(100vw - var(--riel) - 120px);
@@ -42,7 +42,7 @@ body.cajonAbierto:not(.hoja) #miPlay,body.cajonAbierto:not(.hoja) #miCard{left:c
 .mi-seg{display:flex;border:1px solid #ffffff1f;border-radius:19px;overflow:hidden;flex:none}
 .mi-seg button{height:36px;border:0;background:var(--sup2);color:var(--suave);padding:0 12px;cursor:pointer;font-size:12.5px}
 .mi-seg button+button{border-left:1px solid #ffffff1a}.mi-seg button[aria-pressed=true]{background:#4a3424;color:#fff}
-/* interruptores arriba: 49 perforaciones y recorrido nuevo (pastillas de Gale Earth, con punto de color) */
+/* interruptores arriba: 49 perforaciones y recorrido nuevo (pastillas de Maps in Mars, con punto de color) */
 #miArriba{position:absolute;top:calc(19px + var(--sup-seg));left:calc(var(--riel) + 404px);z-index:7;display:flex;gap:8px;flex-wrap:wrap;transition:opacity .25s}
 body.cajonAbierto:not(.hoja) #miArriba{left:calc(var(--riel) + 436px)}
 .mi-int{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px 0 11px;border-radius:17px;border:1px solid #ffffff1f;background:rgba(32,33,36,.94);
@@ -114,7 +114,7 @@ body.mi-marcar .cesium-widget canvas{cursor:crosshair!important}
 #miHud .msg{font-size:11.5px;color:#e0fbff;max-height:4.2em;overflow:hidden}
 @keyframes miLate{50%{opacity:.25}}
 body.mi-casco #miHudMarco{position:absolute;inset:0;z-index:7;pointer-events:none;background:radial-gradient(ellipse 78% 74% at 50% 48%,transparent 62%,rgba(0,0,0,.55) 100%)}
-/* lugar libre entre el visor (izquierda, 284 px) y la pantalla del PMR (derecha, 416 px, sin tapar los controles de Gale Earth) */
+/* lugar libre entre el visor (izquierda, 284 px) y la pantalla del PMR (derecha, 416 px, sin tapar los controles de Maps in Mars) */
 body.mi-hud #miCard{left:calc((100vw + var(--riel) + 272px) / 2);width:min(500px,calc(100vw - var(--riel) - 320px))}
 body.mi-pant #miCard{left:calc((100vw + var(--riel) - 404px) / 2);width:min(520px,calc(100vw - var(--riel) - 452px))}
 body.mi-pant.mi-hud #miCard{left:calc((100vw + var(--riel) - 132px) / 2);width:min(500px,calc(100vw - var(--riel) - 724px))}
@@ -313,7 +313,7 @@ async function miCargar() {
   if (MI.cargando) return MI.cargando;
   MI.cargando = (async () => {
     try { MI.D = await (await fetch('datos/mision.json', { cache: 'no-cache' })).json(); }
-    catch (e) { avisar(location.protocol === 'file:' ? lg('Para ver la misión abrí Gale Earth con abrir.bat (o desde la página publicada).', 'To see the mission, open Gale Earth with abrir.bat (or from the published page).') : lg('No se pudo cargar datos/mision.json.', 'Could not load datos/mision.json.')); MI.cargando = null; return false; }
+    catch (e) { avisar(location.protocol === 'file:' ? lg('Para ver la misión abrí Maps in Mars con abrir.bat (o desde la página publicada).', 'To see the mission, open Maps in Mars with abrir.bat (or from the published page).') : lg('No se pudo cargar datos/mision.json.', 'Could not load datos/mision.json.')); MI.cargando = null; return false; }
     const D = MI.D;
     for (const r of D.rutas) MI.lineas[r.id] = { ...r, tipoL: r.tipo };
     if (D.expedicion) for (const [k, L] of Object.entries(D.expedicion.lineas)) MI.lineas['E-' + k] = { ...L, id: 'E-' + k, nombre: k === 'vehiculo' ? lg('Expedición sur · rover', 'Southern expedition · rover') : lg('Expedición sur · a pie', 'Southern expedition · on foot'), tipo: k, idaVuelta: false };
@@ -443,7 +443,7 @@ async function miVerPMR() {
   miSinChoque();
   viewer.camera.flyToBoundingSphere(new C.BoundingSphere(P, 5), { offset: new C.HeadingPitchRange(r + Math.PI - 0.75, -0.42, 30), duration: 2.2, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 200000 });
 }
-// luz del sol para los modelos: alta desde el noroeste, como el sombreado del relieve de Gale Earth (SOL.az 315°)
+// luz del sol para los modelos: alta desde el noroeste, como el sombreado del relieve de Maps in Mars (SOL.az 315°)
 function miLuz() {
   const c = MI.D.curiosity, enu = C.Transforms.eastNorthUpToFixedFrame(pos(c.lon, c.lat, 0), MARS), az = 315 * d2r, el = 48 * d2r;
   const s = C.Matrix4.multiplyByPointAsVector(enu, new C.Cartesian3(Math.sin(az) * Math.cos(el), Math.cos(az) * Math.cos(el), Math.sin(el)), new C.Cartesian3());
@@ -495,7 +495,7 @@ function miVisibles() {
     else e.show = MI.verRec;
   }
 }
-// las 49 perforaciones de Gale Earth con la misma forma de pin (el color sigue la opción "Color de los pozos" de Capas)
+// las 49 perforaciones de Maps in Mars con la misma forma de pin (el color sigue la opción "Color de los pozos" de Capas)
 function miPozosEstilo() {
   if (typeof POZOS === 'undefined') return;
   const esc = new C.NearFarScalar(500, 1.1, 40000, 0.45);
@@ -516,7 +516,7 @@ async function miVerRecorrido(on) {
   miVisibles(); if (MI.fichaClave === 'hoy') fichaHoy();
 }
 
-// ---------- fichas en el panel de Gale Earth ----------
+// ---------- fichas en el panel de Maps in Mars ----------
 function miFicha(titulo, html, botones = '', clave = '') {
   $('cajonTitulo').textContent = titulo; MI.fichaClave = clave;
   document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.remove('on'));
@@ -603,7 +603,7 @@ function miAccion(a, ds) {
   if (a === 'libre') return pmrLibre();
   if (a === 'pozo') return pmrIrAPozo(+ds.n);
 }
-async function hMedida(lon, lat, elev) {      // la más precisa: la del terreno a máximo detalle (Gale Earth: alturas)
+async function hMedida(lon, lat, elev) {      // la más precisa: la del terreno a máximo detalle (Maps in Mars: alturas)
   try { const h = await alturas([C.Cartographic.fromDegrees(lon, geodetica(lat))]); if (h && h[0] != null && isFinite(h[0])) return h[0] * (viewer.scene.verticalExaggeration || 1); } catch {}
   return alturaSuelo(lon, lat, elev);
 }
@@ -636,7 +636,7 @@ async function miEntrar(abrirFicha = true) {
   miMostrar('miBarra', true); miRover(MI.rover);
   if (abrirFicha) fichaHoy();
 }
-// los orbitadores y las lunas de Gale Earth se ven siempre (sin profundidad): cerca del suelo tapan la vista y se guardan
+// los orbitadores y las lunas de Maps in Mars se ven siempre (sin profundidad): cerca del suelo tapan la vista y se guardan
 function miOrbitas(ver) {
   if (MI.orbVer === ver) return; MI.orbVer = ver;
   for (const e of viewer.entities.values) { const t = e.properties?.tipo?.getValue?.(); if (t === 'orbitador' || t === 'luna') { if (!ver) { e._miShow = e.show; e.show = false; } else if (e._miShow != null) { e.show = e._miShow; e._miShow = null; } } }
@@ -1002,7 +1002,7 @@ $('miPantalla').addEventListener('click', e => {
       : miMsg('a2', lg(`Voy con el PMR hasta vos: ${miM(r.d)}, unos ${miNum(Math.max(1, r.d / miVPMR() * 60))} min. Buscá reparo del relieve mientras tanto.`, `I'm driving the PMR to you: ${miM(r.d)}, about ${miNum(Math.max(1, r.d / miVPMR() * 60))} min. Find terrain shelter meanwhile.`), 'alerta'), 1100); }
 });
 
-// ---------- puntero: mano y realce sobre todo lo que se puede tocar (pines de Gale Earth y de la misión) ----------
+// ---------- puntero: mano y realce sobre todo lo que se puede tocar (pines de Maps in Mars y de la misión) ----------
 {
   const h = new C.ScreenSpaceEventHandler(viewer.canvas); let pend = null, prev = null;
   const tip = $('miTip');
@@ -1026,7 +1026,7 @@ $('miPantalla').addEventListener('click', e => {
   }, C.ScreenSpaceEventType.MOUSE_MOVE);
   viewer.canvas.addEventListener('mouseleave', () => tip.classList.add('oculto'));
 }
-// clic: primero la misión; si no es de la misión, lo de siempre de Gale Earth
+// clic: primero la misión; si no es de la misión, lo de siempre de Maps in Mars
 {
   const ss = viewer.screenSpaceEventHandler, previo = ss.getInputAction(C.ScreenSpaceEventType.LEFT_CLICK);
   ss.setInputAction(m => {
@@ -1089,7 +1089,7 @@ async function miWiki(clave) {
   else if (k === 'parada') fichaParada(x); else if (k === 'muestra') miAccion('muestra', { id: x }); else fichaHoy();
 }
 
-// ---------- enganches con Gale Earth: un solo mapa ----------
+// ---------- enganches con Maps in Mars: un solo mapa ----------
 {
   // "Misión Curiosity" ya no abre otra página: entra a Curiosity hoy en este mismo globo
   const b = $('bMision'); if (b) { b.removeAttribute('href'); b.setAttribute('role', 'button'); b.tabIndex = 0;
@@ -1107,8 +1107,8 @@ async function miWiki(clave) {
     }
     return irA0(v, dur);
   };
-  if ($('vHoy')) $('vHoy').onclick = () => miEntrar();      // el chip puede no estar (Gale Earth quitó los atajos bajo el buscador)
-  entrarMision = () => miEntrar();          // el enlace de las fichas de Gale Earth también entra acá, sin cambiar de página
+  if ($('vHoy')) $('vHoy').onclick = () => miEntrar();      // el chip puede no estar (Maps in Mars quitó los atajos bajo el buscador)
+  entrarMision = () => miEntrar();          // el enlace de las fichas de Maps in Mars también entra acá, sin cambiar de página
   for (const id of ['vGale', 'vRec', 'vMarte', 'logoRiel']) $(id)?.addEventListener('click', miDejar);
   document.querySelectorAll('.rb[data-t]').forEach(b => b.addEventListener('click', () => { if (MI.modo) miSalirModo(false); $('cajon').classList.remove('mi-libre'); }));
   addEventListener('keydown', e => { const tag = document.activeElement?.tagName; if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
@@ -1118,7 +1118,7 @@ async function miWiki(clave) {
   $('miIntPozos').onclick = () => miVerPozos($('miIntPozos').getAttribute('aria-pressed') !== 'true');
   $('miIntRec').onclick = () => miVerRecorrido($('miIntRec').getAttribute('aria-pressed') !== 'true');
   cont().addEventListener('change', e => { if (e.target.matches?.('[data-c="pozos"]')) $('miIntPozos').setAttribute('aria-pressed', e.target.checked); });
-  // los pozos con la forma de pin de la lámina (también cuando Gale Earth los repinta: selección o color por mineral)
+  // los pozos con la forma de pin de la lámina (también cuando Maps in Mars los repinta: selección o color por mineral)
   const rp0 = repintar; repintar = function () { rp0(); miPozosEstilo(); };
   miPozosEstilo(); miVerPozos(false);
   let ultimo = performance.now();
@@ -1126,7 +1126,7 @@ async function miWiki(clave) {
   // Wiki sola en otra pestaña: ?wiki=bib:vista:pozo o ?wiki=mi:ficha
   const wiki = new URLSearchParams(location.search).get('wiki');
   if (wiki != null) {
-    document.body.classList.add('soloWiki'); document.title = 'Wiki · Gale Earth';
+    document.body.classList.add('soloWiki'); document.title = 'Wiki · Maps in Mars';
     const [k, v, p] = wiki.split(':');
     setTimeout(async () => { if (k === 'mi') { MI.fichaClave = v; await miWiki(v); } else { abrir('biblioteca'); if (v && v !== 'inicio') { BIB.vista = v; if (p) BIB.pozo = p; vistaBiblioteca(); } }
       if (window.abrirCajon) abrirCajon(); document.body.classList.remove('hoja'); }, 400);

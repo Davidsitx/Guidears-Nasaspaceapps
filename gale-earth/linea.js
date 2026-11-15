@@ -18,7 +18,7 @@ function fechaLinda(e) {
 function claseEv(e) { return e.tipo === 'geologia' ? 'geo' : e.gale ? 'gale' : (e.res === 'fallo' || e.res === 'fallo_fin') ? 'mal' : (e.res === 'futuro' || e.res === 'en_camino') ? 'fut' : e.res === 'parcial' ? 'med' : 'bien'; }
 
 async function abrirLinea(idEvento) {
-  try { await cargarLinea(); } catch (e) { return avisar(location.protocol === 'file:' ? 'La línea de tiempo necesita abrir Gale Earth con abrir.bat / servir.py (el navegador bloquea leer archivos desde file://).' : e.message, 9000); }
+  try { await cargarLinea(); } catch (e) { return avisar(location.protocol === 'file:' ? 'La línea de tiempo necesita abrir Maps in Mars con abrir.bat / servir.py (el navegador bloquea leer archivos desde file://).' : e.message, 9000); }
   cerrarCajon();
   document.body.classList.add('lineaAbierta'); $('linea').classList.remove('oculto');
   pintarBarra();

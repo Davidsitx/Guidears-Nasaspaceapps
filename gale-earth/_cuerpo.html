@@ -319,7 +319,7 @@ async function prepararNube() {
       new Promise(ok => navigator.serviceWorker.addEventListener('controllerchange', ok, { once: true })),
       new Promise(ok => setTimeout(ok, 4000))]);
     return reg;
-  } catch (e) { console.warn('[Gale Earth] sin teselas en la nube:', e); }
+  } catch (e) { console.warn('[Maps in Mars] sin teselas en la nube:', e); }
 }
 (async () => {
   let t = null;
@@ -344,7 +344,7 @@ async function prepararNube() {
     } catch (e) {
       avisar('No se pudo cargar Cesium Mars (' + (e.message || e) + '). Revisá la conexión o elegí el motor "Marte completo" en la pestaña Motor.');
     }
-    if (!t && location.protocol === 'file:') setTimeout(() => avisar('Abriste el archivo directo: se ve Cesium Mars. Para el globo completo de Marte (CTX 5 m, terreno propio y HiRISE 25 cm) abrí Gale Earth con abrir.bat.', 15000), 4000);
+    if (!t && location.protocol === 'file:') setTimeout(() => avisar('Abriste el archivo directo: se ve Cesium Mars. Para el globo completo de Marte (CTX 5 m, terreno propio y HiRISE 25 cm) abrí Maps in Mars con abrir.bat.', 15000), 4000);
   }
   $('cargando').style.opacity = 0; setTimeout(() => $('cargando').classList.add('oculto'), 500);
   irA('marte', 0);
@@ -411,7 +411,7 @@ async function cargarCheminPozos() {
   if (CHEMIN_POZOS) return CHEMIN_POZOS;
   try { CHEMIN_POZOS = await (await fetch('capas/minerales/pozos_chemin.json')).json();
     for (const p of POZOS) { const q = CHEMIN_POZOS.pozos[p.nombre]; if (q) { p.ch_arcillas = q.arcillas; p.ch_sulfatos = q.sulfatos; p.ch_hematita = q.hematita; p.ch_amorfo = q.amorfo; } } }
-  catch { avisar('Para pintar los pozos por mineral abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
+  catch { avisar('Para pintar los pozos por mineral abrí Maps in Mars con abrir.bat (o desde la página publicada).'); }
   return CHEMIN_POZOS;
 }
 let colorPor = 'zona';
@@ -869,7 +869,7 @@ function fichaOrbitador(n) {
   cont().innerHTML = `<button class="btn" id="volver">← Orbitadores</button>
     <h3 style="margin-top:10px"><span class="chip" style="background:${el.color}"></span>${n}</h3><div class="sub">${el.agencia} · en Marte desde ${el.llegada} · ${el.estado}</div>
     <p>${el.mision}</p><p><b>Instrumentos:</b> ${el.instrumentos}</p>
-    <div class="astro"><b>Qué aporta a Gale Earth</b><ul><li>${el.aporta}</li></ul></div>
+    <div class="astro"><b>Qué aporta a Maps in Mars</b><ul><li>${el.aporta}</li></ul></div>
     <div class="ind"><div><small>Altura ahora</small><b>${fmt(r - 3389.5)} <small>km</small></b></div><div><small>Sobre</small><b style="font-size:14px">${la.toFixed(1)}°, ${((lo + 360) % 360).toFixed(1)}° E</b></div>
       <div><small>Vuelta completa</small><b>${fmt(el.pr / 3600, 2)} <small>h</small></b></div><div><small>Próximo paso sobre Gale</small><b style="font-size:13px">${pas ? fechaDeJd(pas).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : 'en +3 días'}</b></div></div>
     ${el.ent.model ? `<div class="btns"><button class="btn prim" id="verNave">Ver la nave en 3D de cerca</button></div>` : ''}
@@ -906,7 +906,7 @@ async function capaAnalisis(id, on, alfa) {
       const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id === 'dosis' ? 'dosis_' + HORARIO_RAD : id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
       CAPA_A[id] = capasImagen().addImageryProvider(prov);
     } catch (e) {
-      return avisar(location.protocol === 'file:' ? 'Para ver esta capa abrí Gale Earth con abrir.bat (Windows) o abrir.sh: el navegador no permite usar imágenes locales en 3D desde file://.' : 'No se pudo cargar la capa ' + id + ': ' + (e.message || e), 14000);
+      return avisar(location.protocol === 'file:' ? 'Para ver esta capa abrí Maps in Mars con abrir.bat (Windows) o abrir.sh: el navegador no permite usar imágenes locales en 3D desde file://.' : 'No se pudo cargar la capa ' + id + ': ' + (e.message || e), 14000);
     }
   }
   if (CAPA_A[id]) { CAPA_A[id].show = on; CAPA_A[id].alpha = alfa; }
@@ -927,7 +927,7 @@ function leyendaRad() {
 // capas/minerales/manchas.json sale de herramientas/manchas_minerales.py (contornos: cálculo propio sobre CRISM).
 let MANCHAS = null; const CAPA_M = {};
 async function capaMineral(id, on) {
-  if (!MANCHAS) try { MANCHAS = await (await fetch('capas/minerales/manchas.json')).json(); } catch { return avisar('Para ver los minerales abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
+  if (!MANCHAS) try { MANCHAS = await (await fetch('capas/minerales/manchas.json')).json(); } catch { return avisar('Para ver los minerales abrí Maps in Mars con abrir.bat (o desde la página publicada).'); }
   if (on && !CAPA_M[id]) {
     CAPA_M[id] = [];
     for (const m of MANCHAS.manchas.filter(x => x.mineral === id)) {
@@ -967,7 +967,7 @@ const MIN_LISTA = [['arcillas', 'Arcillas de Fe/Mg', '#40c4ff'], ['sulfatos', 'S
 // ---------- pestaña Motor: qué globo se usa ----------
 function vistaMotor() {
   const tarj = (v, t, d) => `<div class="tarjeta ${MODO === v ? 'activa' : ''}" data-motor="${v}" style="cursor:pointer"><b>${MODO === v ? '● ' : ''}${t}</b><div class="sub">${d}</div></div>`;
-  cont().innerHTML = `<p class="sub">Gale Earth puede dibujar Marte con dos motores. El primero es el principal; el segundo queda como respaldo por si algo falla. Ninguno pide claves ni registros.</p>
+  cont().innerHTML = `<p class="sub">Maps in Mars puede dibujar Marte con dos motores. El primero es el principal; el segundo queda como respaldo por si algo falla. Ninguno pide claves ni registros.</p>
     ${tarj('globo', 'Marte completo (recomendado)', 'Todo el planeta con el mosaico CTX de 5 m por píxel y el relieve HRSC/MOLA de 200 m; en la zona de Curiosity, relieve de 1 m (a 5 m), ortofoto de 1 m y fotos HiRISE de 25 cm. Tiene todas las capas.')}
     ${tarj('cesium', 'Cesium Mars (respaldo)', 'Modelo 3D de Marte de NASA, ESA y Cesium (MOLA + HRSC y un sector de Gale en alta resolución). Usa la clave de evaluación que trae Cesium. Algunas capas propias no funcionan con este motor.')}
     ${MODO === 'globo' ? `<h2>Imagen</h2>
@@ -1199,7 +1199,7 @@ viewer.scene.preRender.addEventListener(() => {
     f.innerHTML = `<b style="color:var(--texto)">Fuentes</b><p>Imagen global: mosaico CTX de 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri) y color Viking MDIM 2.1 (NASA/USGS).
       HiRISE 25 cm y ortofoto 1 m: NASA/JPL/Univ. of Arizona, mosaicos USGS Astrogeology. Terreno: HRSC/MOLA Blend 200 m y DEM MSL 1 m (USGS Astrogeology; ESA/DLR/FU Berlin; NASA/GSFC).
       Recorrido: NASA/JPL. Pozos: base de mineralogía y geoquímica del cráter Gale (CheMin/APXS/SAM, NASA PDS y OPScI). Órbitas: JPL Horizons.
-      Cielo: estrellas del catálogo Hipparcos (ESA) y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial (BSD).</p>${cr ? '<p>' + cr + '</p>' : ''}<p class="fuente">Motor: CesiumJS (Apache 2.0). Gale Earth · NASA Space Apps 2026, San Luis.</p>`;
+      Cielo: estrellas del catálogo Hipparcos (ESA) y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial (BSD).</p>${cr ? '<p>' + cr + '</p>' : ''}<p class="fuente">Motor: CesiumJS (Apache 2.0). Maps in Mars · NASA Space Apps 2026, San Luis.</p>`;
     f.classList.remove('oculto');
   };
 
@@ -1212,14 +1212,14 @@ viewer.scene.preRender.addEventListener(() => {
     if (!local && location.protocol.startsWith('http')) urls = [location.href.split('#')[0]];
     else { try { const r = await fetch('red.json', { cache: 'no-store' }); if (r.ok) urls = (await r.json()).urls || []; } catch {} }
     if (!urls.length) { info.innerHTML = location.protocol === 'file:'
-      ? 'Abriste el archivo directamente. Para verlo en el celular abrí Gale Earth con <b>abrir.bat</b>: el servidor muestra la dirección y el QR.'
+      ? 'Abriste el archivo directamente. Para verlo en el celular abrí Maps in Mars con <b>abrir.bat</b>: el servidor muestra la dirección y el QR.'
       : 'No encontré la dirección de la PC en la red. Usá el <b>servir.py</b> nuevo (lo trae esta versión) y volvé a abrir con abrir.bat.'; return; }
     info.innerHTML = `<p>Con el celular conectado al <b>mismo Wi-Fi</b> que esta computadora, escaneá el código o escribí la dirección:</p>
       <div id="qr"></div><div class="url">${urls[0]}</div>${urls.length > 1 ? `<p class="sub">Otras direcciones: ${urls.slice(1).join(' · ')}</p>` : ''}
       <p class="sub">La primera vez Windows puede preguntar si Python puede usar la red: elegí <b>Redes privadas</b>. La PC tiene que quedar prendida con el servidor abierto.</p>`;
     try {
       if (!window.qrcode) await new Promise((ok, mal) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = ok; s.onerror = mal; document.head.appendChild(s); });
-      const qr = qrcode(0, 'M'); qr.addData(urls[0]); qr.make(); $('qr').innerHTML = qr.createImgTag(6, 8, 'Código QR de Gale Earth');
+      const qr = qrcode(0, 'M'); qr.addData(urls[0]); qr.make(); $('qr').innerHTML = qr.createImgTag(6, 8, 'Código QR de Maps in Mars');
     } catch { $('qr').remove(); }
   };
 

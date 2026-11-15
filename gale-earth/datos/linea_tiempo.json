@@ -162,7 +162,7 @@
    "ag": "NASA",
    "tipo": "aterrizador",
    "res": "exito",
-   "txt": "El primer aterrizador que funciona durante años (hasta 1982) en Chryse Planitia. Hizo los primeros experimentos para buscar vida, con resultados que todavía se discuten. Su orbitador mapeó el planeta en color: es el mapa base que usa Gale Earth.",
+   "txt": "El primer aterrizador que funciona durante años (hasta 1982) en Chryse Planitia. Hizo los primeros experimentos para buscar vida, con resultados que todavía se discuten. Su orbitador mapeó el planeta en color: es el mapa base que usa Maps in Mars.",
    "fuente": "NASA NSSDCA, Chronology of Mars Exploration (nssdc.gsfc.nasa.gov/planetary/chronology_mars.html)",
    "lat": 22.27,
    "lon": -47.95
@@ -224,7 +224,7 @@
    "ag": "NASA",
    "tipo": "orbitador",
    "res": "exito",
-   "txt": "Su altímetro láser MOLA midió la altura de todo Marte: es la \"superficie cero\" (esfera de 3.396 km) contra la que Gale Earth mide las elevaciones. Funcionó hasta 2006.",
+   "txt": "Su altímetro láser MOLA midió la altura de todo Marte: es la \"superficie cero\" (esfera de 3.396 km) contra la que Maps in Mars mide las elevaciones. Funcionó hasta 2006.",
    "fuente": "NASA NSSDCA, Chronology of Mars Exploration (nssdc.gsfc.nasa.gov/planetary/chronology_mars.html)"
   },
   {
@@ -258,7 +258,7 @@
    "ag": "ESA",
    "tipo": "orbitador",
    "res": "activo",
-   "txt": "Primera misión planetaria de Europa, todavía activa. Su cámara estéreo HRSC dio el modelo de terreno global que usa Gale Earth. Su aterrizador británico Beagle 2 se posó pero no abrió los paneles (HiRISE lo encontró en 2015).",
+   "txt": "Primera misión planetaria de Europa, todavía activa. Su cámara estéreo HRSC dio el modelo de terreno global que usa Maps in Mars. Su aterrizador británico Beagle 2 se posó pero no abrió los paneles (HiRISE lo encontró en 2015).",
    "fuente": "NASA NSSDCA, Chronology of Mars Exploration (nssdc.gsfc.nasa.gov/planetary/chronology_mars.html)",
    "orbitador": "Mars Express"
   },
@@ -511,7 +511,7 @@
    "tipo": "gale",
    "res": "activo",
    "txt": "Curiosity sigue subiendo el Monte Sharp. En la Biblioteca están los datos de cada uno de los 49 pozos.",
-   "fuente": "Datos de la Biblioteca de Gale Earth",
+   "fuente": "Datos de la Biblioteca de Maps in Mars",
    "gale": true,
    "hoy": true
   },

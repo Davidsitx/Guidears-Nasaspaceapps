@@ -11,9 +11,9 @@
   // Un error en una parte (una capa, un archivo que no carga) no tiene que dejar la página en blanco:
   // se avisa una vez, con una frase clara, y el resto sigue funcionando.
   { let ultimo = 0;
-    const avisarError = m => { console.error('[Gale Earth]', m); if (Date.now() - ultimo > 8000) { ultimo = Date.now(); avisar('Algo no cargó bien (' + String(m).slice(0, 90) + '). El resto sigue funcionando; si se ve raro, recargá la página.', 9000); } };
+    const avisarError = m => { console.error('[Maps in Mars]', m); if (Date.now() - ultimo > 8000) { ultimo = Date.now(); avisar('Algo no cargó bien (' + String(m).slice(0, 90) + '). El resto sigue funcionando; si se ve raro, recargá la página.', 9000); } };
     addEventListener('error', e => { if (e.message && !/ResizeObserver/.test(e.message)) avisarError(e.message); });
-    addEventListener('unhandledrejection', e => console.warn('[Gale Earth] promesa sin resolver:', e.reason));   // teselas que no llegan, etc.: no se molesta al usuario
+    addEventListener('unhandledrejection', e => console.warn('[Maps in Mars] promesa sin resolver:', e.reason));   // teselas que no llegan, etc.: no se molesta al usuario
     // Si el celular o la placa de video "pierden" WebGL (pasa al cambiar de app o con poca memoria), se avisa en vez de quedar en negro.
     viewer.scene.canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); avisar('El navegador pausó el 3D (falta de memoria o cambio de app). Recargá la página para seguir.', 0); });
     viewer.scene.renderError.addEventListener((s, err) => avisar('El 3D se detuvo por un error del navegador: ' + String(err && err.message || err).slice(0, 100) + '. Recargá la página.', 0));
@@ -193,7 +193,7 @@
     f.innerHTML = `<b style="color:var(--texto)">Fuentes</b><p>Imagen global: mosaico CTX de 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri) y color Viking MDIM 2.1 (NASA/USGS).
       HiRISE 25 cm y ortofoto 1 m: NASA/JPL/Univ. of Arizona, mosaicos USGS Astrogeology. Terreno: HRSC/MOLA Blend 200 m y DEM MSL 1 m (USGS Astrogeology; ESA/DLR/FU Berlin; NASA/GSFC).
       Recorrido: NASA/JPL. Pozos: base de mineralogía y geoquímica del cráter Gale (CheMin/APXS/SAM, NASA PDS y OPScI). Órbitas: JPL Horizons.
-      Cielo: estrellas del catálogo Hipparcos (ESA) y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial (BSD).</p>${cr ? '<p>' + cr + '</p>' : ''}<p class="fuente">Motor: CesiumJS (Apache 2.0). Gale Earth · NASA Space Apps 2026, San Luis.</p>`;
+      Cielo: estrellas del catálogo Hipparcos (ESA) y contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial (BSD).</p>${cr ? '<p>' + cr + '</p>' : ''}<p class="fuente">Motor: CesiumJS (Apache 2.0). Maps in Mars · NASA Space Apps 2026, San Luis.</p>`;
     f.classList.remove('oculto');
   };
 

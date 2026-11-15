@@ -1,6 +1,6 @@
 {
-  "name": "Gale Earth · Marte en 3D",
-  "short_name": "Gale Earth",
+  "name": "Maps in Mars · Marte en 3D",
+  "short_name": "Maps in Mars",
   "description": "Marte en 3D con datos de NASA y ESA: el cráter Gale como sitio para la primera base humana.",
   "start_url": "index.html",
   "display": "fullscreen",

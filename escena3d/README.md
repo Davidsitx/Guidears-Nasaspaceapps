@@ -51,7 +51,7 @@ Es la fusión de dos trabajos del equipo:
   y arena en el destino, a menos de 20 m y en el camino; cartel al acercarse a un destino riesgoso.
 - **Expedición:** arranca en 4 min; **Manejar a mano** maneja el rover o el astronauta sobre el terreno de 12 m, con aviso en
   vivo de la pendiente donde está y la que viene (8–40 m).
-- **Perforaciones:** cada ficha suma lo de la Biblioteca de Gale Earth (`gale-earth/datos/biblioteca.json`): hallazgo con fuente,
+- **Perforaciones:** cada ficha suma lo de la Biblioteca de Maps in Mars (`gale-earth/datos/biblioteca.json`): hallazgo con fuente,
   foto MAHLI, minerales (CheMin), química (APXS), agua en minerales y datos crudos. `armar.py` hace la foto chica con Pillow.
 - **Primera persona con dos vistas** (botón "Vista" o tecla B): *ojos* (casco, balanceo de la cabeza al caminar,
   partículas de polvo en el aire) y *detrás* (cámara que sigue al astronauta o al rover). Arrastrar o flechas: mirar
@@ -136,16 +136,16 @@ Detalles:
 - Falta: celular real, y medir fluidez en una computadora con placa de video común.
 
 
-## Unión con Gale Earth (todo Marte)
+## Unión con Maps in Mars (todo Marte)
 - En la barra de vistas de arriba aparece **"Marte completo ↗"** cuando la escena está al lado de `gale-earth/` (repo, `gale-earth/servir.py` o GitHub Pages). Lleva a `../gale-earth/index.html#curiosity`. En una copia suelta (por ejemplo el artifact publicado) el botón no aparece.
-- Si la escena se abre con `#desde-gale-earth` (el botón "Misión Curiosity · 3D" de Gale Earth), arranca con un descenso desde lo alto hasta la zona de hoy y no abre la ayuda.
+- Si la escena se abre con `#desde-gale-earth` (el botón "Misión Curiosity · 3D" de Maps in Mars), arranca con un descenso desde lo alto hasta la zona de hoy y no abre la ayuda.
 - No cambia nada de la lógica de la misión: es solo navegación.
 
 ## Globo de Marte de fondo
 - Alrededor del terreno de la travesía ya no queda gris: hay relieve MOLA (16 píxeles/grado, ~3,7 km) con color Viking, sobre la esfera de Marte con su curvatura. Cerca de la travesía la grilla es de 1/128° (~460 m, interpolada), alrededor de Gale de 1/16° y en el resto del planeta de 1°. Un "delantal" une el borde del terreno de 12 m con el fondo.
-- El botón **"Marte completo"** aleja la cámara hasta ver el planeta; la rueda o el pellizco vuelven a acercar. Funciona también en el artifact publicado. **"Gale Earth ↗"** abre la app del compañero cuando está al lado.
+- El botón **"Marte completo"** aleja la cámara hasta ver el planeta; la rueda o el pellizco vuelven a acercar. Funciona también en el artifact publicado. **"Maps in Mars ↗"** abre la app del compañero cuando está al lado.
 - Es solo fondo: no entra en rutas, alertas ni capas. Datos: `data/terreno/globo/` (`python herramientas/globo.py /ruta/megt90n000eb.img`).
-- **Imagen:** todo Marte lleva el mosaico Viking como textura (~2,6 km/píxel). Alrededor de Gale se suma la imagen **CTX** (la misma de Gale Earth): ~40 m/píxel en ±0,75° y ~330–650 m en la región, con el detalle de CTX y el color de Viking.
+- **Imagen:** todo Marte lleva el mosaico Viking como textura (~2,6 km/píxel). Alrededor de Gale se suma la imagen **CTX** (la misma de Maps in Mars): ~40 m/píxel en ±0,75° y ~330–650 m en la región, con el detalle de CTX y el color de Viking.
   - **Para que quede dentro del archivo** (sin internet y en el artifact): en una PC con internet, `pip install pillow`, `python herramientas/bajar_ctx.py` y después `python escena3d/armar.py`. Escribe `data/terreno/globo/ctx_*.jpg` (~2 MB en total).
   - **Si no está en el archivo**, la escena la baja sola en vivo cuando hay internet. Sin internet queda el Viking.
 - **Publicar en un sitio con tope por archivo** (el artifact acepta hasta 16 MB por página): `python escena3d/armar.py --globo-aparte --salida <carpeta>/index.html` deja el globo en `globo.json` al lado y la página lo pide al abrir.

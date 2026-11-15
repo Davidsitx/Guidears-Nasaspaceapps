@@ -1,4 +1,4 @@
-# Gale Earth · Google Mars
+# Maps in Mars · Google Mars
 
 > Carpeta `gale-earth/` del repo. Dueño: compañero (con Claude). Las teselas pesadas (`teselas/`, ~6 GB) no se versionan: ver "Marte completo en 3D".
 
@@ -20,7 +20,7 @@ Marte en 3D, al estilo Google Earth, con todo lo que Curiosity midió en Gale. P
 - **Pantalla de carga:** render propio del horizonte de Marte (`capas/carga/`, se regenera con `python horizonte_marte.py`) a partir del mapa en color Viking. La neblina del limbo es estética, no un dato.
 
 ### Tecnología
-Gale Earth es una página web: HTML + JavaScript + WebGL, con el motor CesiumJS (código abierto, Apache 2.0). Google Earth web usa la misma base (WebGL en el navegador; su motor está escrito en C++ y compilado a WebAssembly). Por eso funciona en Chrome, Edge, Firefox y Safari, en PC y en celular, sin instalar nada.
+Maps in Mars es una página web: HTML + JavaScript + WebGL, con el motor CesiumJS (código abierto, Apache 2.0). Google Earth web usa la misma base (WebGL en el navegador; su motor está escrito en C++ y compilado a WebAssembly). Por eso funciona en Chrome, Edge, Firefox y Safari, en PC y en celular, sin instalar nada.
 Las teselas de Marte (varios GB) están en la PC o en Google Drive: por eso el celular las pide a la PC por Wi-Fi. Para abrirlo desde cualquier lugar habría que subir las teselas a un hosting (por ejemplo Cloudflare R2 o un bucket de Google Cloud) y publicar la página.
 
 ## Qué tiene
@@ -31,7 +31,7 @@ Las teselas de Marte (varios GB) están en la PC o en Google Drive: por eso el c
 - **Capas → Radiación (día / noche)**: dosis de RAD (0,64 mSv/día) con la variación día-noche medida por RAD (~5 %, Rafkin et al. 2014) y el cielo que tapa el relieve. **Capas → Minerales desde órbita**: indicadores CRISM (arcillas, sulfatos, agua, hematita, olivino, piroxeno) sobre la travesía; los pozos se pueden pintar por lo que midió CheMin. Se arman con `herramientas/capas_minerales_radiacion.py`.
 - **Capas → Todo Marte**: colores de altitud (datum MOLA), infrarrojo nocturno THEMIS, topónimos de la IAU, lugares de aterrizaje y día/noche en este momento (`marte.js`, `herramientas/capas_globales.py`).
 - **Reloj EN VIVO** (pestaña Órbitas): hora UTC, año marciano, Ls y estación en Gale (algoritmo Mars24 de NASA).
-- La Expedición (rutas seguras) quedó en `para-companero/expedicion/` para que la siga un compañero; no se carga en Gale Earth.
+- La Expedición (rutas seguras) quedó en `para-companero/expedicion/` para que la siga un compañero; no se carga en Maps in Mars.
 - **Biblioteca**: las 49 perforaciones con ficha completa (minerales CheMin, química APXS, gases SAM con su estado de verificación, fotos, qué falta y archivos crudos), tabla para comparar pozos, temas para futuras misiones y fuentes. Se arma con `python armar_biblioteca.py RUTA_PERFORACIONES` desde la carpeta del Drive `Marte/Perforaciones Datos Crudos` y escribe `datos/biblioteca.json` y `capas/pozos/`. Los enlaces a archivos crudos funcionan solo si `servir.py` encuentra esa carpeta (variable `GALE_PERFORACIONES` o `G:`).
 - **Línea de tiempo** (estilo Google Earth): desde la formación de Gale y los primeros telescopios hasta hoy, cada misión que llegó o intentó llegar a Marte, los sitios de aterrizaje que aparecen en el globo y los hallazgos de Curiosity. Datos y fuentes en `datos/linea_tiempo.json`; las edades geológicas están marcadas como estimadas.
 - **Capas**: mostrar u ocultar elementos, colorear los pozos por recurso, exagerar el relieve y cargar una clave propia de Cesium ion.
@@ -45,7 +45,7 @@ Desde el 15/11, la misión que antes abría otra página (GALE-3D) vive acá, en
   - Curiosity o el **GX-2** en la salida, con el astronauta al lado.
   - El **rover tripulado GX-3** estacionado en la Base Gale (ficha, Alas, Modo cangrejo, Dron y Perforar 2 m), con la **ruta T** de la base a la zona de hoy.
   - Cada cartel, la base y el rover abren su ficha en el panel, con las mismas fuentes ("?").
-  - Al pasar el mouse, cualquier cartel (también los pozos y zonas de Gale Earth) muestra la mano, se agranda y dice qué es.
+  - Al pasar el mouse, cualquier cartel (también los pozos y zonas de Maps in Mars) muestra la mano, se agranda y dice qué es.
 - **Barra de la misión:** En pareja · Rover ruta A · A pie ruta B · Tripulado GX-3 (desde la base o la ruta C, con caminatas por los suitports) · Expedición sur · Base Gale · Curiosity / GX-2.
   - Todo recorrido arranca **en pausa** ("Listos para salir") y dura **4 min** por defecto (1, 2, 4 u 8).
   - Se detiene en cada parada y tiene vista desde atrás o con los ojos del astronauta. Esc sale.
@@ -54,7 +54,7 @@ Desde el 15/11, la misión que antes abría otra página (GALE-3D) vive acá, en
 - **Datos:** `datos/mision.json` y `capas/mision/*.glb` salen de la escena con `python herramientas/exportar_mision.py`, desde la raíz del repo, con los mismos números y textos. La escena anterior queda como "versión clásica" (`../escena3d/`).
 - Desde GALE-3D, el botón **"Marte completo ↗"** vuelve acá con `#curiosity`.
 - `servir.py` ahora también sirve `/escena3d/` (la carpeta hermana, solo lectura) y acepta `/gale-earth/...`, así la ida y vuelta funciona con `abrir.bat`. En GitHub Pages y con doble clic funciona por rutas relativas.
-- `index.html` en la raíz del repo redirige a Gale Earth: es la entrada del proyecto.
+- `index.html` en la raíz del repo redirige a Maps in Mars: es la entrada del proyecto.
 
 ## Clave de Cesium ion
 Funciona con la clave de evaluación que trae Cesium. Para la presentación conviene una propia (gratis):
@@ -85,13 +85,13 @@ Nota: los datos de NASA usan latitud planetocéntrica; la app la convierte a la 
 
 En la pestaña **Capas → Análisis del terreno** se pueden pegar sobre el 3D: relieve en color, foto HiRISE coloreada por altura, zonas prohibidas por pendiente y radiación estimada. Cubren todo el área de Curiosity (33 × 57 km).
 
-- Para verlas hay que abrir Gale Earth con **abrir.bat** (Windows) o **abrir.sh** (Mac/Linux): levantan un servidor local con Python. Abriendo `index.html` con doble clic el navegador no deja usar imágenes locales en 3D.
+- Para verlas hay que abrir Maps in Mars con **abrir.bat** (Windows) o **abrir.sh** (Mac/Linux): levantan un servidor local con Python. Abriendo `index.html` con doble clic el navegador no deja usar imágenes locales en 3D.
 - Se generan con `herramientas/gale_datos.py procesar` desde el DEM de 1 m y el mosaico HiRISE de 25 cm del área MSL (USGS Astrogeology / NASA PDS). Las versiones completas (GeoTIFF para QGIS) están en el Drive del equipo, carpeta `Marte/gale_capas_5m`; el mosaico de 25 cm en `Marte/gale_25cm_hirise_color` (8 partes).
 - `relieve_color` y `orto_color` son falso color (el color indica altura). La dosis es un cálculo propio y provisorio.
 
 ## Marte completo en 3D (globo propio)
 
-Desde esta versión Gale Earth tiene su propio globo de todo Marte. Ya no depende del parche de alta resolución de Cesium Mars:
+Desde esta versión Maps in Mars tiene su propio globo de todo Marte. Ya no depende del parche de alta resolución de Cesium Mars:
 
 | Qué | Dónde | Resolución | Fuente |
 |---|---|---|---|

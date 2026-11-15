@@ -157,7 +157,7 @@ async function pmrConstruir(paradas, opc = {}) {
   if (MI.modo) miSalirModo(false);
   const et = lg('Guía de la expedición', 'Expedition guide');
   miCard(et, lg('Calculando la ruta más segura…', 'Computing the safest route…'), lg('Cargando el terreno de 12 m (elevación, pendiente, arena y cielo tapado).', 'Loading the 12 m terrain (elevation, slope, sand and sky blocked).'), []);
-  try { await pmrTerreno(); } catch (e) { miCard(et, lg('No se pudo cargar el terreno', 'Could not load the terrain'), lg('Abrí Gale Earth con abrir.bat o desde la página publicada.', 'Open Gale Earth with abrir.bat or from the published page.'), [[lg('Cerrar', 'Close'), () => miCard(), true]]); return null; }
+  try { await pmrTerreno(); } catch (e) { miCard(et, lg('No se pudo cargar el terreno', 'Could not load the terrain'), lg('Abrí Maps in Mars con abrir.bat o desde la página publicada.', 'Open Maps in Mars with abrir.bat or from the published page.'), [[lg('Cerrar', 'Close'), () => miCard(), true]]); return null; }
   const ini = pmrInicio(), b = MI.D.base, lista = paradas.filter(P => pmrDentro(P.lon, P.lat));
   const fuera = paradas.length - lista.length;
   const tramos = []; let p = [ini.lon, ini.lat], rumbo = ini.rumbo, k = 0;
