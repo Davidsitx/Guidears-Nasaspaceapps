@@ -76,6 +76,7 @@ async function alturasTesela(x, y, n) {
   let r = null;
   for (let intento = 0; intento < 4 && !r; intento++) {
     r = await fetch(`teselas/terreno/${k}.bin`).catch(() => null);
+    if (r && r.status >= 500) r = null;          // 503: la nube o el servidor no respondió; no es "no hay tesela"
     if (!r) await new Promise(ok => setTimeout(ok, 300 * (intento + 1)));
   }
   if (!r) falloRed = true;
@@ -269,8 +270,23 @@ function crearImagenes(t) {
     minimumLevel: 9, maximumLevel: 16, rectangle: C.Rectangle.fromDegrees(137.3267, geodetica(-4.8756), 137.4786, geodetica(-4.5551)),
     credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }));
 }
+// Teselas en la nube: si la página está publicada (https) y nube.json dice dónde están, un service worker (sw.js)
+// las saca de los .zip guardados en Cloudflare R2. Con servir.py (abrir.bat) se usan las de la PC.
+async function prepararNube() {
+  if (!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) return;
+  try {
+    const n = await (await fetch('nube.json', { cache: 'no-store' })).json();
+    if (!n || !n.teselas) return;
+    const reg = await navigator.serviceWorker.register('sw.js');
+    if (!navigator.serviceWorker.controller) await Promise.race([
+      new Promise(ok => navigator.serviceWorker.addEventListener('controllerchange', ok, { once: true })),
+      new Promise(ok => setTimeout(ok, 4000))]);
+    return reg;
+  } catch (e) { console.warn('[Gale Earth] sin teselas en la nube:', e); }
+}
 (async () => {
   let t = null;
+  await prepararNube();
   try { if (location.protocol.startsWith('http')) t = await (await fetch('teselas.json')).json(); } catch {}
   let pref = null; try { pref = localStorage.getItem('galeEarthMotor'); } catch {}
   MODO = t && t.terreno && pref !== 'cesium' ? 'globo' : 'cesium';
@@ -539,12 +555,13 @@ viewer.screenSpaceEventHandler.setInputAction(m => {
 let pestaña = 'explorar';
 function abrir(t, mostrar = true) {
   pestaña = t; document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.toggle('on', mostrar && b.dataset.t === t));
-  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca' })[t];
+  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca', expedicion: 'Expedición: rutas seguras' })[t];
   $('cajon').classList.remove('ancho');
   $('reloj').classList.toggle('oculto', t !== 'orbita');
+  if (t !== 'expedicion') try { EXP.modo = null; expMostrarZona(false); } catch {}
   if (mostrar && window.abrirCajon) abrirCajon();
   $('contenido').scrollTop = 0;
-  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca })[t](); }
+  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca, expedicion: vistaExpedicion })[t](); }
 const cont = () => $('contenido');
 
 function vistaExplorar() {
@@ -623,7 +640,7 @@ function fichaPozo(p, volar) {
     ${p.agua_kg_t != null ? `<div class="ind"><div><small>Agua en minerales</small><b style="color:var(--agua)">${fmt(p.agua_kg_t)} <small>kg/t</small></b></div><div><small>CO₂ en carbonatos</small><b style="color:#d9a441">${fmt(p.co2_kg_t)} <small>kg/t</small></b></div><div><small>Óxidos de hierro</small><b style="color:#e5534b">${fmt(p.oxidos_fe_pct, 1)} <small>%</small></b></div><div><small>Cloro (APXS)</small><b style="color:var(--ok)">${fmt(p.cloro_pct, 2)} <small>%</small></b></div></div>` : ''}
     <div class="astro"><b>Para la base</b><ul>${usos.map(u => `<li>${u}</li>`).join('')}</ul></div>
     <div class="btns"><a class="btn" href="${p.enlace_datos}" target="_blank" rel="noopener">Datos en NASA</a>
-      ${D.mapa2d ? `<a class="btn" href="${D.mapa2d}#pozo-${p.n ?? 'atacama'}">Mapa 2D</a>` : ''}
+      <a class="btn" href="../Guidears-Nasaspaceapps-main/prototipo/mapa-perforaciones/index.html#pozo-${p.n ?? 'atacama'}">Mapa 2D</a>
       <button class="btn prim" id="aBib">Ficha completa en la Biblioteca</button></div>
     <p class="fuente">Hallazgo: ${p.fuente_hallazgo}. Posición: ${p.fuente_posicion}.</p>`;
   $('volver').onclick = () => { sel = null; repintar(); vistaExplorar(); };

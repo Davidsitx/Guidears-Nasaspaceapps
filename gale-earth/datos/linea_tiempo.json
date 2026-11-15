@@ -440,6 +440,21 @@
    "lon": 77.45
   },
   {
+   "id": "s30b",
+   "f": "2024-05-20",
+   "etq": "2024",
+   "t": "La mayor tormenta solar medida en Gale",
+   "ag": "NASA",
+   "tipo": "gale",
+   "res": "exito",
+   "txt": "Un fulgor X12 y su nube de partículas llegan a Marte. RAD mide 8.100 µGy en el evento, como unas 30 radiografías de tórax: la mayor subida desde 2012. Para una base: hace falta un refugio con blindaje (acantilados, cuevas o regolito).",
+   "fuente": "NASA, 10-06-2024 (Curiosity y MAVEN durante la tormenta solar)",
+   "gale": true,
+   "lat": -4.7855,
+   "lon": 137.409,
+   "sitio": "Curiosity el sol 4190"
+  },
+  {
    "id": "s31",
    "f": "2024-05-30",
    "etq": "2024",

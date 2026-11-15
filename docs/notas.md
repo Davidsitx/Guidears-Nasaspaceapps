@@ -2,12 +2,76 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada · Compañero (con Claude) · EXPEDICIÓN: ARENA, ROVER DE MARTE, TRAJE, CLIMA, TORMENTA Y COMUNICACIÓN
+- **Arena (indicio):** `herramientas/themis_noche.py` lee por rangos la ventana de Gale del mosaico **THEMIS Night IR** de Mars Odyssey (USGS, 100 m, cualitativo de 8 bits). Arma `capas/expedicion/themis_noche.png` y el percentil de "frío de noche" por celda.
+  - Validación: el recorrido real de Curiosity va por terreno tibio (mediana en el percentil 21) y **nunca pisó el 10% más frío**.
+  - Por eso el rover evita ese 10%, con una casilla que se puede desactivar. La caminata solo avisa.
+  - La inercia térmica cuantitativa de USGS está en astropedia/astrogeology, que no es accesible desde acá. Si se consigue, reemplaza este indicio.
+- **Rover presurizado:** 3 km/h por defecto, según **NASA DRA 5.0** (SP-2009-566, p. 43, velocidad de diseño en Marte). Se puede pasar a 10 km/h (SEV lunar).
+- **Traje:**
+  - 1700 BTU/h caminando con traje a 3,6 km/h en gravedad de Marte, cerca del límite sostenible;
+  - 1200 BTU/h de promedio para dimensionar una salida en Marte.
+  - Fuente: NASA ICES-2026, Ogilvie et al., NTRS 20260003038, con datos de Norcross et al. 2009. Se muestran las kcal por salida.
+- **Blindaje:** la cabina de un rover tiene ≈1 g/cm² (Kim et al., NASA, WRMISS 2012) y NASA sugiere 20 g/cm² para un refugio (Clowdsley, NTRS 20210009760). Por eso dentro del rover se cuenta la misma dosis que afuera y el rover no es refugio de tormenta.
+- **Horario:** se eligen la estación (Ls) y la hora de salida (LMST).
+  - Muestra mínimas, máximas, récords y UV de REMS por estación y el viento por hora (REMS, muestra hasta 2016).
+  - Avisa si la caminata cae de noche (aproximado: 06–18 LMST).
+  - La hora marciana dura 1,0275 h terrestres.
+- **Tormenta solar:** botón ☢ en la simulación. Usa los 8,1 mGy que midió RAD el 20/5/2024 (NASA, 10/6/2024) y calcula:
+  - minutos hasta el rover y tiempo de regreso a la base;
+  - el lugar con más cielo tapado a ≤ 10 min a pie.
+- **Comunicación:** línea de vista entre astronauta y rover sobre el relieve de 20 m más la curvatura de Marte. Las antenas a 2 y 3 m son supuesto. Da minutos sin línea de vista por parada y un aviso en vivo.
+- **Arreglado:** el panel de la simulación ya no se redibuja entero, así que los botones responden.
+
 ## 2026-11-14 noche · David (con Claude) · REDISEÑO DE LA INTERFAZ (rama `david/union-gale-earth`)
 - **Portada nueva:** lo primero que se ve tapa la escena (que carga detrás). Tres pasos: inicio con Marte girado hacia Gale (proyección del mosaico Viking), "¿Qué zona querés prospectar?" (zona de hoy, travesía 2012 → hoy, expedición sur, Marte completo, Gale Earth) y "¿Cómo la querés recorrer?" según la zona. El botón "Inicio" de la barra vuelve a abrirla. Desde Gale Earth (`#desde-gale-earth`) no aparece.
 - **Panel izquierdo en apartados plegables**, todos cerrados al abrir y con un valor corto en el encabezado: capa sobre el terreno · travesía 2012 → hoy (con "Viajar del aterrizaje a hoy") · por qué explorar Gale y perforaciones · expedición sur · clima según la fecha (salida, Aeolus 2028, personas en Marte y datos de Curiosity, cada uno plegable) · **Paradas** (botón naranja) · rutas · perfil de elevación · calidad · fuentes.
 - **Barra de abajo:** una sola fila centrada con los modos (recorrido guiado, caminar, seguir al rover, viaje, expedición) y tres botones que abren una ventanita: Rutas (marcar, calcular, borrar), Escena (cámara, hora, estación, velocidad, teclas) e Inicio. Los avisos salen arriba, al centro.
 - **Derecha:** "Datos en vivo" en tres grupos plegables (rover, astronauta, entorno) con un resumen cuando están cerrados; el del astronauta se abre solo cuando baja del rover. Debajo, brújula y centrar juntos, y los botones de manejo en una columna del mismo ancho.
 - Solo cambia la presentación: los modos, rutas, cálculos y fuentes son los mismos (mismos ids y funciones).
+
+## 2026-11-14 noche (4) · Compañero (con Claude) · GALE EARTH: EXPEDICIÓN CON RUTAS SEGURAS (20 km)
+- **Pestaña nueva "Expedición"** en Gale Earth. Es un círculo de 20 km alrededor de Curiosity: se elige el inicio del rover presurizado y una o varias muestras (tocando el mapa, al azar o un pozo). Calcula:
+  - la ruta del rover;
+  - dónde estacionar para que el astronauta quede a ≤ 30 min a pie;
+  - la ida y la vuelta a pie, la salida con traje y la dosis.
+  Trae también una comparación "solo a pie" y "si lo hiciera Curiosity" (en soles), y una **simulación en vivo** con posición, pendiente, dosis y tiempo fuera del rover.
+- **Relieve:** `gale-earth/capas/expedicion/` (5,5 MB), armado por `herramientas/zona_expedicion.py` desde el DEM USGS de 1 m llevado a 5 m. Es una grilla de 20 m con:
+  - pendiente media;
+  - cuántos tramos de 5 m pasan los 20°;
+  - cielo tapado, con el mismo método que `herramientas/travesia.py`.
+  El DEM fino cubre el 100% de los primeros 10 km y el 73% del círculo. **Donde no hay DEM fino no se rutea** (no se rellena con el de 200 m).
+- **Reglas:** las de `data/parametros.json` (20° del traje, Tobler a 2,5 km/h, 0,64 mSv/día con 0,25 × cielo tapado, 30 min a un refugio, salida de 6/8 h, rover SEV a 10 km/h). No cambié el archivo compartido. Se suman:
+  - **Rover:** pendiente media ≤ 20° y como mucho 6 de 16 tramos de 5 m sobre 20°. El umbral está calibrado con el recorrido real: el 99% de las celdas que pisó Curiosity cumple, y con un umbral de 0 se bloqueaba el 5% de su camino real.
+  - **Suitport:** 10 min por salida (ficha NASA SEV).
+  - **Minutos por muestra:** 30, como supuesto; se cambia en el panel.
+- **Validación:** sobre el recorrido real de Curiosity la pendiente media es 7,9° y el 99% está bajo 20,8° (el blog da 99% bajo 17,4° en el boxwork). Los cálculos tardan 0,3 a 4 s.
+- **Falta (sin dato para toda la zona):**
+  - arena y megaripples;
+  - rocas que dañan ruedas;
+  - blindaje del rover presurizado (dentro se cuenta la misma dosis que afuera);
+  - velocidad del rover según la pendiente;
+  - gasto del traje según el esfuerzo;
+  - pendiente máxima de un rover presurizado en Marte (se usa 20°, con el Apollo LRV de 20–23° como referencia).
+
+## 2026-11-14 noche (3) · Compañero (con Claude) · TESELAS EN LA NUBE: HUGGING FACE
+- Las teselas (6,5 GB) están en el dataset público **huggingface.co/datasets/ChuchuTEA/gale-earth-teselas**, que es gratis y no pide tarjeta. Cloudflare R2 no aceptó la tarjeta, así que quedó como alternativa.
+- `gale-earth/nube.json` ya apunta a ese dataset. `sw.js` no cambió: Hugging Face responde pedidos por rangos de bytes y desde otros sitios (CORS). Se probó una tesela HiRISE y una de relieve, menos de 1 s cada una.
+- Para volver a subir: `gale-earth/subir_hf.bat` (ver `gale-earth/NUBE.md`).
+- Pendiente: fusionar este PR y activar GitHub Pages (David) para que el jurado tenga el link. Después, probar la página publicada.
+
+## 2026-11-14 noche (2) · Compañero (con Claude) · VIENTO, HUMEDAD Y POZOS NUEVOS
+- **Viento y humedad:** salen de los datos crudos calibrados de REMS en el PDS, leídos por partes (unas 112 jornadas de toda la misión). El viento aparece en el PDS hasta alrededor del sol 1482 (2016): unos 7 m/s al mediodía y un máximo de 19,6 m/s en la muestra. Solo se citan el PDS y artículos con revisión de pares. La humedad nocturna es mayor en otoño e invierno, con muy poco vapor (decenas de ppm). Las tablas van por las 4 estaciones (Ls). Está en Biblioteca → Clima y radiación.
+- **Pozos 40-46:** química APXS desde el PDS (que llega hasta el sol 4842). Nevado Sajama y Nevado Sajama 2 están confirmados por el blog; Mineral King, Altadena y Valle de la Luna quedan como probables. Se sumó el experimento TMAH de Nevado Sajama 2 (orgánicos, 3 corridas), con los picos del cromatógrafo.
+- **Pozos 47-49** (Campo Marte, Basque Lakes, Nazca): sus números todavía no están en el PDS. La ficha muestra lo que dijo el equipo en el blog, resumido.
+- Pendiente: cuando salga la próxima entrega del PDS, volver a correr `armar_biblioteca.py` para sumar CheMin, APXS y SAM de los pozos 46-49.
+
+## 2026-11-14 noche · Compañero (con Claude) · GALE EARTH: CLIMA, RADIACIÓN Y REVISIÓN DE SAM
+- **Clima (REMS):** hay datos hasta el **sol 4995 (25-08-2026)**, no solo hasta 2023. Biblioteca → "Clima y radiación": temperatura del aire y del suelo, presión y UV por estación, récords, el último año marciano en un gráfico y la tendencia por año. La presión media baja de 848 a 784 Pa porque Curiosity subió unos 1.000 m. Cada ficha de pozo muestra el clima del día de la perforación.
+- **Radiación (RAD):** los datos del PDS son cuentas sin calibrar, así que se usan los valores publicados: 0,64 mSv/día (Hassler 2014), +50 % hacia el mínimo solar (Guo 2021), efecto de la presión (Guo 2015) y la tormenta del 20-05-2024 (8.100 µGy, NASA). Hay cálculos propios marcados: salida de 6 h ≈ 0,16 mSv y 500 soles ≈ 330 mSv.
+- **SAM revisado con las notas de PDS:** 79 experimentos confirmados (antes 51), 6 probables, 8 de arenas (Gobabeb, Ogunquit Beach) y 11 que no son muestra (blancos, calibración, atmósfera). Los valores imposibles para una porción de ~45 mg (supuesto) se marcan ⚠: Mojave 2 y Telegraph Peak (HCl, NO, H₂S), un HCl de Cumberland y el H₂O de Glen Etive (error de tabla).
+- Línea de tiempo: nuevo evento, la tormenta solar de mayo de 2024 en Gale.
+- **Para David:** la escena usa 0,64 mSv/día. Los +50 % hacia el mínimo solar y el efecto de la presión pueden servir para la capa de radiación.
 
 ## 2026-11-14 tarde (5) · David (con Claude) · IMAGEN DE MARTE MÁS NÍTIDA (rama `david/union-gale-earth`)
 - El globo pasó de colores por vértice (1° ≈ 59 km) a **texturas de imagen**: Viking en todo Marte (~2,6 km/píxel) y en la región de Gale.
@@ -27,6 +91,7 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
 - **Ojo (para el compañero):** `gale-earth/capas/gale_5m/capas.json` calcula la dosis con 0,67 mSv/día; el valor medido por RAD es 0,64 (Hassler et al. 2014, ver CLAUDE.md).
 - Probado con `servir.py`: Gale Earth → misión → Marte completo, ida y vuelta.
 - Prueba final en celular (390 px): la barra de abajo de la misión ahora es una sola fila que se desliza, los mensajes salen como aviso breve y las vistas usan nombres cortos (Marte, Travesía, Hoy) debajo de Panel/Datos. Sin internet, Gale Earth no carga Cesium, pero el botón a la misión funciona igual (es un enlace).
+
 
 ## 2026-11-14 tarde (2) · David (con Claude) · QA: FUENTES "?", CINTA AL PISO, CARTELES, E1–E5, VISOR AL MANEJAR
 - **"?" en cada ítem:** capas, leyendas, fichas de paradas y perforaciones, panel derecho, clima, expedición y "¿Por qué perforar en Gale?". Al tocarlo se abre una ventanita con la fuente y "Abrir la fuente". Lista completa de enlaces: `docs/fuentes-enlaces.md` (`herramientas/listar_fuentes.py`).

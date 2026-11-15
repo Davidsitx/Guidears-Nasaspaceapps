@@ -1,0 +1,58 @@
+{
+ "medidos": [
+  {
+   "t": "Dosis en la superficie de Gale (rayos cósmicos)",
+   "v": "0,21 ± 0,04 mGy por día",
+   "eq": "0,64 ± 0,12 mSv por día (dosis equivalente)",
+   "cuando": "ago 2012 – jun 2013, cerca del máximo solar 24",
+   "fuente": "Hassler et al. 2014, Science 343 (RAD)"
+  },
+  {
+   "t": "Más radiación con el Sol tranquilo",
+   "v": "≈ +50 %",
+   "eq": "La radiación cósmica en la superficie subió cerca de un 50 % desde el máximo solar 24 hasta el mínimo de 2019-2020",
+   "cuando": "2012 – dic 2020",
+   "fuente": "Guo et al. 2021, Astron. Astrophys. Rev. 29:8"
+  },
+  {
+   "t": "La atmósfera protege",
+   "v": "250 Pa más de presión ≈ 32,5 µGy/día menos",
+   "eq": "Por eso la dosis baja de noche y en las estaciones de presión alta, y sube a medida que Curiosity escala el Monte Sharp",
+   "cuando": "primer año marciano de RAD",
+   "fuente": "Guo et al. 2015, ApJ 810 (relación empírica)"
+  },
+  {
+   "t": "Tormenta solar del 20 de mayo de 2024 (sol 4190)",
+   "v": "8.100 µGy en el evento",
+   "eq": "Como unas 30 radiografías de tórax; la mayor subida que midió RAD desde 2012",
+   "cuando": "20 may 2024",
+   "fuente": "NASA, 10-06-2024 (Curiosity y MAVEN durante la tormenta solar)"
+  },
+  {
+   "t": "Viaje de ida y vuelta (órbita de Hohmann)",
+   "v": "0,65 ± 0,24 Sv (máximo solar) · 1,59 ± 0,12 Sv (mínimo solar)",
+   "eq": "Solo rayos cósmicos, sin contar el tiempo en superficie",
+   "cuando": "estimación con datos de crucero de RAD",
+   "fuente": "Guo et al. 2021, Astron. Astrophys. Rev. 29:8"
+  }
+ ],
+ "calculados": [
+  {
+   "t": "Salida a pie de 6 h",
+   "v": "≈ 0,16 mSv",
+   "como": "0,64 mSv/día × 6/24 (sin tormenta solar ni blindaje del relieve)"
+  },
+  {
+   "t": "500 soles en Gale",
+   "v": "≈ 330 mSv",
+   "como": "0,64 mSv/día × 500 soles × 1,0275 días/sol; el límite de carrera de NASA es 600 mSv (NASA-STD-3001)"
+  },
+  {
+   "t": "Una tormenta como la de mayo de 2024",
+   "v": "≈ 39 días de dosis normal",
+   "como": "8.100 µGy ÷ 210 µGy/día (dosis absorbida)"
+  }
+ ],
+ "pds": "Los datos de RAD están en el PDS (Planetary Plasma Interactions, MSL-M-RAD-3-RDR-V1.0) hasta el sol 4843 (marzo de 2026), pero son cuentas por canal: pasarlas a dosis requiere la calibración del equipo de RAD. Por eso usamos los valores publicados.",
+ "limite": "NASA-STD-3001: límite de dosis de carrera de 600 mSv"
+}
