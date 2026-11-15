@@ -20,6 +20,27 @@ async function mgRampa(on) {
   if (MG.rampa) for (const L of MG.rampa) { L.show = on; L.alpha = MG.alfa; }
   await mgRampaLocal();
 }
+// ---- radiación en superficie de todo Marte (estimación: RAD en Gale + presión según la altura; capas_globales.py --radiacion) ----
+async function mgRadiacion(on) {
+  MG.vis.radiacion = on;
+  if (on && !MG.rad) {
+    try { const a = (await mgMeta()).radiacion, capas = capasImagen(); if (!capas || !a) return mgError(); MG.rad = [];
+      for (const [arch, o, e] of [[a.oeste, -180, 0], [a.este, 0, 180]])
+        MG.rad.push(capas.addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/global/' + arch, { rectangle: C.Rectangle.fromDegrees(o, -90, e, 90) })));
+    } catch { MG.rad = false; return mgError(); }
+  }
+  if (MG.rad) for (const L of MG.rad) { L.show = on; L.alpha = MG.alfa; }
+  const ley = $('mgLeyRad'); if (ley) ley.innerHTML = on ? mgLeyendaRad() : '';
+}
+function mgLeyendaRad() {
+  const a = MG.meta && MG.meta.radiacion; if (!a) return '';
+  const g = `linear-gradient(90deg,${a.rampa.map(([v, c]) => `${c} ${Math.round((v - a.rampa[0][0]) / (a.rampa[a.rampa.length - 1][0] - a.rampa[0][0]) * 100)}%`).join(',')})`;
+  const x = a.ejemplos, P = a.parametros;
+  return `<div class="sub" style="display:flex;align-items:center;gap:8px"><span>${fmt(a.rampa[0][0], 2)}</span><span style="flex:1;height:10px;border-radius:5px;background:${g}"></span><span>${fmt(a.rampa[a.rampa.length - 1][0], 2)} mSv/día</span></div>
+    <div class="sub">Gale ${fmt(x.gale, 2)} · Jezero ${fmt(x.jezero, 2)} · Hellas ${fmt(x.hellas, 2)} · cumbre del Olympus Mons ${fmt(x.olympus, 2)} mSv/día.</div>
+    <div class="sub">Nadie midió la radiación en todo Marte: el único detector en la superficie es RAD, en Gale. Esta capa la estima con datos reales: lo que midió RAD en Gale (${fmt(P.dosis_gale_mSv, 2)} mSv/día con ${fmt(P.presion_ref_Pa)} Pa), cuánto protege el aire según RAD (250 Pa más ≈ ${fmt(32.5, 1)} µGy/día menos) y la presión de cada lugar según su altura (altura de escala ${fmt(P.altura_escala_m / 1000, 1)} km). Menos aire encima (montañas) = más radiación; fondos de cuencas = menos. Fuera del rango que midió RAD (~700 a 950 Pa) es una extrapolación. No incluye tormentas solares; con el Sol tranquilo la dosis sube cerca de un 50 %. <span class="tag">medido + estimación</span></div>
+    <p class="fuente">${url('https://doi.org/10.1126/science.1244797', 'Hassler et al. 2014, Science (RAD)')}; ${url('https://doi.org/10.1088/0004-637X/810/1/24', 'Guo et al. 2015, ApJ 810 (presión y dosis)')}; presión de Gale: REMS (NASA PDS); altura de escala: ${url('https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html', 'NASA, Mars Fact Sheet')}; relieve: USGS HRSC-MOLA. Mapas globales parecidos con MOLA: Saganti et al. 2004, Space Sci. Rev. 110.</p>`;
+}
 // detalle fino en el área de Curiosity (DEM USGS de 1 m llevado a 5 m): con la escala de todo Marte o con más contraste
 async function mgRampaLocal() {
   const r = D.capas5m && D.capas5m.rect_geodetico, capas = capasImagen(); if (!r || !capas) return;
@@ -69,7 +90,7 @@ async function mgNombres(on) {
       if (typeof LUGARES !== 'undefined' && LUGARES.some(L => L.nombre === n)) continue;   // los lugares clave también
       const grande = d >= 1000, medio = d >= 200;
       const lejos = Math.min(2.6e7, Math.max(1.5e5, d * 5000));  // los grandes se ven desde lejos; los chicos al acercarse
-      etiquetas.push({ n, d, lon, lat, l: MG.nombres.add({ position: pos(lon, lat, 0), text: n,
+      etiquetas.push({ n, d, lon, lat, p: pos(lon, lat, 0), l: MG.nombres.add({ position: pos(lon, lat, 0), text: n,
         font: grande ? '600 15px system-ui' : medio ? '500 13px system-ui' : '12px system-ui',
         fillColor: C.Color.fromCssColorString(grande ? '#ffffff' : '#f2e8dc'), outlineColor: C.Color.BLACK, outlineWidth: 4,
         style: C.LabelStyle.FILL_AND_OUTLINE, horizontalOrigin: C.HorizontalOrigin.CENTER, verticalOrigin: C.VerticalOrigin.CENTER,
@@ -77,6 +98,7 @@ async function mgNombres(on) {
         disableDepthTestDistance: 0 }) });   // pegados al suelo y con prueba de profundidad: el relieve tapa los que quedan detrás de un cerro o del horizonte
     }
     // altura aproximada de montes y llanuras grandes, leída del relieve del globo
+    MG.etiquetas = etiquetas;
     const conAltura = etiquetas.filter(e => e.d >= 150 && /\b(Mons|Montes|Planitia|Planum|Tholus|Patera)\b/.test(e.n));
     if (MODO === 'globo') try {
       const hs = await alturas(conAltura.map(e => C.Cartographic.fromDegrees(e.lon, geodetica(e.lat))));
@@ -142,6 +164,8 @@ function mgSeccionCapas() {
     <div class="fila"><span>Escala</span><span class="seg" id="mgEsc"><button data-e="marte" class="${MG.escala === 'marte' ? 'on' : ''}">Marte entero</button><button data-e="zona" class="${MG.escala === 'zona' ? 'on' : ''}">Zona de Curiosity</button></span></div>
     <div class="fila"><span>Opacidad</span><input type="range" id="mgAlfa" min="0.2" max="1" step="0.05" value="${MG.alfa}" style="width:140px"></div>
     <div id="mgLey">${mgLeyendaRampa()}</div>
+    ${f('radiacion', 'Radiación en superficie (todo Marte)', '')}
+    <div id="mgLeyRad">${MG.vis.radiacion ? mgLeyendaRad() : ''}</div>
     ${f('themis', 'Infrarrojo nocturno (THEMIS)', 'Cómo se ve Marte de noche con la cámara térmica de la sonda Mars Odyssey (NASA): claro = más tibio (roca, costras), oscuro = más frío (polvo, arena fina). De 65°S a 65°N. <span class="tag">medido · cualitativo</span>')}
     ${f('nombres', 'Topónimos (IAU)', 'Los nombres oficiales de montes, llanuras, valles y cráteres aprobados por la Unión Astronómica Internacional. Los más grandes se ven de lejos; los chicos, al acercarse. Entre paréntesis, la altura aproximada en el centro de montes y llanuras grandes (datum MOLA; la cumbre o el fondo pueden estar más arriba o más abajo).')}
     ${f('aterrizajes', 'Lugares de aterrizaje (Misiones)', 'Las misiones que llegaron a la superficie, con los datos de la pestaña Historia.')}
@@ -150,10 +174,20 @@ function mgSeccionCapas() {
 }
 function mgEnganchar() {
   cont().querySelectorAll('#mgEsc button').forEach(b => b.onclick = async () => { MG.escala = b.dataset.e; cont().querySelectorAll('#mgEsc button').forEach(x => x.classList.toggle('on', x === b)); $('mgLey').innerHTML = mgLeyendaRampa(); await mgRampaLocal(); });
-  if ($('mgAlfa')) $('mgAlfa').oninput = e => { MG.alfa = +e.target.value; if (MG.rampa) for (const L of MG.rampa) L.alpha = MG.alfa; if (MG.local) MG.local.alpha = Math.min(1, MG.alfa + 0.1); };
-  cont().querySelectorAll('[data-mg]').forEach(el => el.onchange = () => ({ rampa: mgRampa, themis: mgThemis, nombres: mgNombres, aterrizajes: mgAterrizajes, noche: mgNoche })[el.dataset.mg](el.checked));
+  if ($('mgAlfa')) $('mgAlfa').oninput = e => { MG.alfa = +e.target.value; if (MG.rampa) for (const L of MG.rampa) L.alpha = MG.alfa; if (MG.rad) for (const L of MG.rad) L.alpha = MG.alfa; if (MG.local) MG.local.alpha = Math.min(1, MG.alfa + 0.1); };
+  cont().querySelectorAll('[data-mg]').forEach(el => el.onchange = () => ({ rampa: mgRampa, radiacion: mgRadiacion, themis: mgThemis, nombres: mgNombres, aterrizajes: mgAterrizajes, noche: mgNoche })[el.dataset.mg](el.checked));
 }
 
+// Carteles del otro lado del planeta: Cesium no siempre los tapa con el globo (dibuja por tramos de distancia y el
+// suelo lejano no está cargado), así que se ocultan los que quedan detrás del horizonte. Cinco veces por segundo.
+{ const elipse = new C.Ellipsoid(A - 9000, A - 9000, B - 9000); let t0 = 0;
+  viewer.scene.preRender.addEventListener(() => {
+    const t = performance.now(); if (t - t0 < 200) return; t0 = t;
+    const oc = new C.EllipsoidalOccluder(elipse, viewer.camera.positionWC);
+    if (MG.etiquetas && MG.vis.nombres) for (const e of MG.etiquetas) e.l.show = oc.isPointVisible(e.p);
+    for (const e of window.ETQ_LUGARES || []) e.label.show = oc.isPointVisible(e._p);
+  });
+}
 // Los nombres oficiales se muestran desde el inicio (se pueden apagar en Capas → Todo Marte).
 MG.vis.nombres = true;
 setTimeout(() => { if (MG.vis.nombres && location.protocol.startsWith('http')) mgNombres(true); }, 3500);

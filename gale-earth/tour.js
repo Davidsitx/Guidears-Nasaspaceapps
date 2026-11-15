@@ -67,8 +67,9 @@ async function iniciarTour() {
   const ui = tourUI(); TOUR.activo = true; TOUR.corte = false;
   // estado para dejar todo como estaba
   const antes = { mins: Object.fromEntries(Object.entries(CAPA_M).map(([k, v]) => [k, !!(v[0] && v[0].show)])), dosis: !!(CAPA_A.dosis && CAPA_A.dosis.show),
-    horario: HORARIO_RAD, exag: viewer.scene.verticalExaggeration, anim: viewer.clock.shouldAnimate };
+    horario: HORARIO_RAD, radG: !!MG.vis.radiacion, exag: viewer.scene.verticalExaggeration, anim: viewer.clock.shouldAnimate };
   if (window.cerrarCajon) cerrarCajon();
+  const eeAntes = viewer.scene.globe.maximumScreenSpaceError; viewer.scene.globe.maximumScreenSpaceError = Math.max(eeAntes, 2);   // carga más rápido en los vuelos
   document.body.classList.add('enTour'); ui.classList.remove('oculto');
   requestAnimationFrame(() => ui.classList.add('on'));
   const N = 7, paso = k => `${String(k).padStart(2, '0')} / ${String(N).padStart(2, '0')}`;
@@ -101,8 +102,8 @@ async function iniciarTour() {
       const [a, b] = [tramos[i], tramos[i + 1]];
       const rumbo = Math.atan2((b[0] - a[0]) * Math.cos(a[1] * Math.PI / 180), b[1] - a[1]);
       const c = await tCentro(b[0], b[1]);
-      await new Promise((ok, mal) => viewer.camera.flyToBoundingSphere(new C.BoundingSphere(c, 10), { offset: new C.HeadingPitchRange(rumbo, C.Math.toRadians(-24), 3800),
-        duration: i === 0 ? 4.5 : 3.2, easingFunction: i === 0 ? C.EasingFunction.QUADRATIC_IN_OUT : C.EasingFunction.LINEAR_NONE, complete: ok, cancel: () => mal('corte') }));
+      await new Promise((ok, mal) => viewer.camera.flyToBoundingSphere(new C.BoundingSphere(c, 10), { offset: new C.HeadingPitchRange(rumbo, C.Math.toRadians(-30), 6200),
+        duration: i === 0 ? 4.5 : 4.2, easingFunction: i === 0 ? C.EasingFunction.QUADRATIC_IN_OUT : C.EasingFunction.LINEAR_NONE, complete: ok, cancel: () => mal('corte') }));
     }
 
     // 4 · lo que vio el satélite
@@ -115,14 +116,19 @@ async function iniciarTour() {
     const gt = NUM.find(p => /Glen Etive/.test(p.nombre)) || NUM[30];
     tTexto(tx(`<b>Then Curiosity drilled.</b> Its CheMin instrument measured ${arc ? `<b>${fmt(arc[0])}–${fmt(arc[1])} % clay</b>` : 'clay'} right where orbit pointed, and ${hem ? `<b>up to ${fmt(hem[1])} % hematite</b>` : 'hematite'} on Vera Rubin ridge. <i>Seen from orbit, confirmed on the ground.</i>`,
               `<b>Después perforó Curiosity.</b> Su instrumento CheMin midió ${arc ? `<b>${fmt(arc[0])} a ${fmt(arc[1])} % de arcilla</b>` : 'arcilla'} justo donde apuntaba el satélite, y ${hem ? `<b>hasta ${fmt(hem[1])} % de hematita</b>` : 'hematita'} en la cresta Vera Rubin. <i>Visto desde órbita, confirmado en el suelo.</i>`), paso(5));
-    await tIrYGirar(await tCentro(gt.lon, gt.lat), C.Math.toRadians(150), C.Math.toRadians(-48), 3400, 4, 8.5, 40);
+    await tIrYGirar(await tCentro(gt.lon, gt.lat), C.Math.toRadians(150), C.Math.toRadians(-48), 4300, 4, 8.5, 40);
     for (const k of ['arcillas', 'hematita', 'sulfatos']) await capaMineral(k, false);
 
-    // 6 · radiación
+    // 6 · radiación: primero la estimación de todo Marte, después la capa fina de Gale
+    await mgRadiacion(true);
+    tTexto(tx('<b>Radiation</b> is an astronaut\'s invisible enemy. Curiosity\'s RAD is the only detector on the surface; from it and the relief we estimate the whole planet: <b>less air above = more dose</b>. Mountains get more, deep basins less.',
+              'La <b>radiación</b> es el enemigo invisible del astronauta. RAD, en Curiosity, es el único detector en la superficie; con él y el relieve estimamos todo el planeta: <b>menos aire encima = más dosis</b>. Las montañas reciben más; las cuencas profundas, menos.'), paso(6));
+    await tIrYGirar(await tCentro(137.8, -5.4), C.Math.toRadians(0), C.Math.toRadians(-62), 2.6e6, 4.5, 6, 25);
+    await mgRadiacion(false);
     if (HORARIO_RAD !== 'dia') await cambiarHorarioRad('dia');
     await capaAnalisis('dosis', true, 0.55);
-    tTexto(tx('<b>Radiation</b> is an astronaut\'s invisible enemy: <b>0.64 mSv per day</b> on the surface, measured by Curiosity\'s RAD. Cliffs and buttes block part of the sky and lower the dose.',
-              'La <b>radiación</b> es el enemigo invisible del astronauta: <b>0,64 mSv por día</b> en la superficie, medidos por RAD en Curiosity. Los acantilados tapan parte del cielo y bajan la dosis.'), paso(6));
+    tTexto(tx('In Gale, RAD measured <b>0.64 mSv per day</b>. Up close, cliffs and buttes block part of the sky and lower the dose.',
+              'En Gale, RAD midió <b>0,64 mSv por día</b>. De cerca, los acantilados tapan parte del cielo y bajan la dosis.'));
     await tIrYGirar(await tCentro(137.40, -4.85), C.Math.toRadians(30), C.Math.toRadians(-40), 26000, 4, 6, 18);
     await cambiarHorarioRad('noche');
     tTexto(tx('At night the air is denser and the dose drops about 5 %.', 'De noche el aire es más denso y la dosis baja cerca de un 5 %.'));
@@ -150,8 +156,9 @@ async function iniciarTour() {
   TOUR.corte = false; viewer.trackedEntity = undefined; viewer.camera.lookAtTransform(C.Matrix4.IDENTITY);
   for (const k of ['arcillas', 'hematita', 'sulfatos']) if (CAPA_M[k]) await capaMineral(k, !!antes.mins[k]);
   if (HORARIO_RAD !== antes.horario) await cambiarHorarioRad(antes.horario);
+  if (MG.rad) await mgRadiacion(!!antes.radG);
   if (CAPA_A.dosis) await capaAnalisis('dosis', antes.dosis, CAPA_A.dosis.alpha);
-  viewer.scene.verticalExaggeration = antes.exag; viewer.clock.shouldAnimate = antes.anim;
+  viewer.scene.globe.maximumScreenSpaceError = eeAntes; viewer.scene.verticalExaggeration = antes.exag; viewer.clock.shouldAnimate = antes.anim;
   ui.classList.remove('on'); $('tNegro').classList.remove('vis'); $('tTitulo').classList.remove('vis'); $('tTexto').classList.remove('vis');
   setTimeout(() => ui.classList.add('oculto'), 700);
   document.body.classList.remove('enTour'); TOUR.activo = false;

@@ -2,6 +2,21 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (8) · Compañero (con Claude) · RADIACIÓN EN TODO MARTE, CARTELES DETRÁS DEL PLANETA Y AJUSTES DEL TOUR
+- **Radiación en superficie (todo Marte)**, en Capas → Todo Marte: `capas/global/radiacion_{oeste,este}.jpg`, generadas con `capas_globales.py --radiacion`. Es una ESTIMACIÓN con datos reales:
+  - lo que midió RAD en Gale: 0,21 mGy/día = 0,64 mSv/día (Hassler 2014), con la presión media de ese año, 847,5 Pa (REMS, año marciano 31, a -4.520 m);
+  - +250 Pa ≈ -32,5 µGy/día (Guo 2015, ApJ 810, doi:10.1088/0004-637X/810/1/24);
+  - la presión según la altura HRSC-MOLA, con altura de escala de 11,1 km (NASA Mars Fact Sheet).
+  - Resultado: Gale 0,64; Jezero 0,69; Hellas 0,58; cumbre del Olympus 0,94 mSv/día.
+  - Fuera de ~700–950 Pa es extrapolación lineal (Guo y colegas vieron un efecto no lineal), y no incluye el ciclo solar ni las tormentas. Todo eso lo dice la leyenda. Hay antecedentes de mapas globales con MOLA (Saganti 2004; De Angelis 2004, NASA Langley).
+- **Carteles detrás del planeta:** los topónimos y los lugares clave que quedan detrás del horizonte se ocultan, con un test de horizonte cinco veces por segundo. Antes se veían nombres del otro lado del planeta sobre Gale.
+- **Tour:**
+  - el vuelo bajo va más alto (6,2 km) y más lento;
+  - en la escena de CheMin la cámara queda a más de 3,5 km, para que no se pisen los nombres de los pozos;
+  - la escena de radiación muestra primero la estimación de todo Marte y después la capa fina de Gale;
+  - durante el tour las teselas cargan más rápido (error de pantalla 2).
+- Pendiente: las teselas superpuestas en el vuelo bajo (cambio de nivel de detalle entre ortofoto, HiRISE y CTX) no se pueden reproducir acá porque CTX está bloqueado. Revisar en la PC con el tour nuevo.
+
 ## 2026-11-15 mañana (7) · Compañero (con Claude) · INGLÉS POR DEFECTO, TOUR DE 2 MINUTOS Y RELIEVE DE JEZERO
 - Hecho (gale-earth/):
   - **Idioma:** botón EN/ES en el riel; inglés por defecto (se guarda en localStorage `galeEarthIdioma`).

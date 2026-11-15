@@ -104,5 +104,53 @@
    "solo_astronauta": 0.0,
    "ambos": 0.231
   }
+ },
+ "radiacion": {
+  "oeste": "radiacion_oeste.jpg",
+  "este": "radiacion_este.jpg",
+  "esquema": "geodetica",
+  "rampa": [
+   [
+    0.4,
+    "#285ac8"
+   ],
+   [
+    0.52,
+    "#50aae6"
+   ],
+   [
+    0.64,
+    "#fadc5a"
+   ],
+   [
+    0.76,
+    "#f07832"
+   ],
+   [
+    0.9,
+    "#c81e28"
+   ],
+   [
+    1.0,
+    "#780a3c"
+   ]
+  ],
+  "unidad": "mSv/día",
+  "min": 0.498,
+  "max": 0.942,
+  "ejemplos": {
+   "gale": 0.642,
+   "olympus": 0.936,
+   "hellas": 0.581,
+   "jezero": 0.693
+  },
+  "parametros": {
+   "dosis_gale_mGy": 0.21,
+   "dosis_gale_mSv": 0.64,
+   "presion_ref_Pa": 847.5,
+   "altura_ref_m": -4520.0,
+   "uGy_por_Pa": -0.13,
+   "altura_escala_m": 11100.0
+  }
  }
 }

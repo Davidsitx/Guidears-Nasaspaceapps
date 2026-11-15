@@ -587,10 +587,11 @@ for (const L of LUGARES) {
   capas.borde.push(viewer.entities.add({ polyline: { positions: L.puntos.map(p => pos(p[0], p[1])), width: 5, clampToGround: true, classificationType: C.ClassificationType.BOTH,
       material: new C.PolylineGlowMaterialProperty({ glowPower: 0.22, taperPower: 1, color: C.Color.fromCssColorString('#ff9f43') }) }, properties: { tipo: 'lugar', id: L.id } }));
   const n = L.puntos.reduce((a, p) => p[1] > a[1] ? p : a), lejos = Math.max(2.0e6, L.diametro_iau_km * 1000 * 30);
-  capas.borde.push(viewer.entities.add({ position: pos(n[0], n[1]), properties: { tipo: 'lugar', id: L.id },
+  const etqL = viewer.entities.add({ position: pos(n[0], n[1]), properties: { tipo: 'lugar', id: L.id },
     label: { text: `${L.nombre} · ${fmt(L.diametro_iau_km)} km`, font: '700 15px system-ui', fillColor: col, outlineColor: C.Color.BLACK, outlineWidth: 5,
       style: C.LabelStyle.FILL_AND_OUTLINE, heightReference: CLAMP, verticalOrigin: C.VerticalOrigin.BOTTOM, pixelOffset: new C.Cartesian2(0, -8), eyeOffset: new C.Cartesian3(0, 0, -3000),
-      distanceDisplayCondition: new C.DistanceDisplayCondition(0, Math.min(2.4e7, lejos)) } }));
+      distanceDisplayCondition: new C.DistanceDisplayCondition(0, Math.min(2.4e7, lejos)) } });
+  etqL._p = pos(n[0], n[1], 0); capas.borde.push(etqL); (window.ETQ_LUGARES = window.ETQ_LUGARES || []).push(etqL);
 }
 function fichaLugar(id) {
   const L = LUGARES.find(x => x.id === id); if (!L) return;
