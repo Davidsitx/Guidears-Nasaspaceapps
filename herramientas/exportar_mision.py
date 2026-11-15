@@ -1,6 +1,7 @@
 """Exporta la misión de la escena (GALE-3D) para Gale Earth: una sola pantalla, los mismos números.
 
-Abre escena3d/index.html en un navegador sin ventana (Playwright + Chromium), y con las mismas funciones de la escena saca:
+Abre escena3d/index.html en un navegador sin ventana (Playwright + Chromium), y con las mismas funciones de la escena saca
+(y al final suma la ruta T del rover tripulado GX-3 con herramientas/ruta_base.py):
   - gale-earth/datos/mision.json: paradas (con su ficha y su muestra simulada), rutas A, B y C, expedición sur, Base Gale,
     Curiosity hoy, fichas del GX-2, estaciones, parámetros y fuentes;
   - gale-earth/capas/mision/*.glb: Curiosity, GX-2, astronauta y Base Gale (modelos 3D, con las piezas móviles nombradas).
@@ -64,6 +65,10 @@ def main():
                 f.write(base64.b64decode(v))
             print(f"{os.path.relpath(ruta, RAIZ)}: {os.path.getsize(ruta) / 1024:.0f} KB", flush=True)
         b.close()
+    # ruta T: el GX-3 de la Base Gale a la zona de hoy (A* sobre el terreno de contexto), dentro del mismo mision.json
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import ruta_base
+    ruta_base.main()
     print(f"Listo en {time.time() - t0:.0f} s. Si cambió Gale Earth: dentro de gale-earth/, python _ensamblar.py y python armar.py.")
 
 

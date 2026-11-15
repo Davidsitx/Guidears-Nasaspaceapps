@@ -20,7 +20,7 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Velocidad de caminata según pendiente (escena 3D) | Función de Tobler (Tobler, 1993), normalizada a la velocidad en llano de data/parametros.json. Es terrestre: provisoria |
 | Límite de pendiente del astronauta (20°) y alcance de caminata (1,38 km) | NASA NTRS 20210026296 (EVA lunar, Artemis) |
 | Radiación junto a relieve | Ehresmann et al. 2021 (doi:10.1029/2021JE006851); Guo et al. 2021 (doi:10.1029/2021GL093912) |
-| Rover presurizado (10 km/h, 125 km) | NASA Space Exploration Vehicle, ficha FS-2011-08-045-JSC |
+| Rover presurizado (10 km/h; con dos o más vehículos, más de 125 millas ≈ 200 km en cualquier dirección; antes figuraba 125 km por error de unidades) | NASA Space Exploration Vehicle, ficha FS-2011-08-045-JSC |
 | Agua en el subsuelo (DAN, 0 a 6,1%) | Mitrofanov et al. 2022 (PMC9788246) |
 | Capa de yardangs (panorámica del sol 4982, teoría de ceniza volcánica) | NASA/JPL-Caltech/MSSS, imagen del día (enlace pendiente) |
 | Polvo fino y ultrafino en materiales de trajes | Perseverance PIXL/SHERLOC, PNAS, 27 de octubre de 2026 (VanBommel et al.; DOI pendiente) |
@@ -103,7 +103,7 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 | Demora de la luz Tierra–Marte (misión en pareja y wiki) | NASA JPL Solar System Dynamics, "Approximate Positions of the Planets" (elementos de Standish, 1800–2050); cálculo propio de la distancia y del tiempo de la luz |
 
 | Base Gale: lugar (Zona 2 de tres centros con círculo libre de 250 m en la llanura del aterrizaje) | Análisis de sitios del equipo, 15/11 (`data/base/sitios_base.geojson`): DEM USGS de Gale 1 m (Calef y Parker 2016) a 4 m, HiRISE color a 3 m, pendiente < 10° en 20 m (Calef 2015), 1 km del recorrido y 2 km de los hitos (supuesto, analogía NASA 2011, sitios Apollo). Cálculo propio, umbrales provisorios |
-| Modelos 3D de la misión en Gale Earth (Curiosity, GX-2, astronauta, Base Gale) | Diseño propio del equipo, exportado de la escena con el GLTFExporter de three.js r170 (MIT, `escena3d/vendor/GLTFExporter.js`); `herramientas/exportar_mision.py` |
+| Modelos 3D de la misión en Gale Earth (Curiosity, GX-2, GX-3, astronauta, Base Gale) | Diseño propio del equipo, exportado de la escena con el GLTFExporter de three.js r170 (MIT, `escena3d/vendor/GLTFExporter.js`); `herramientas/exportar_mision.py` |
 | Base Gale: hábitat con blindaje de hielo (idea) | NASA Langley 2016, Mars Ice Home (phys.org/news/2016-12-nasa-ice-house-mars.html) |
 | Base Gale: reactor de fisión de al menos 40 kW | NASA Glenn, Fission Surface Power (nasa.gov/centers-and-facilities/glenn/nasas-fission-surface-power-project-energizes-lunar-exploration) |
 | Base Gale: oxígeno del CO₂ (122 g en 16 corridas, hasta 12 g/h) | NASA 2023, MOXIE (phys.org/news/2023-09-nasa-oxygen-generating-moxie-mars-mission.html) |
@@ -113,6 +113,10 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 | Curiosity perfora 6,4 cm | NASA, "Curiosity's First Sample Drilling" (science.nasa.gov/resource/curiositys-first-sample-drilling) |
 | Rover GX-2: dron (72 vuelos, ~128,8 min, 17 km) | NASA, Ingenuity Mars Helicopter (science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/) |
 | Rover GX-2: MMRTG de ~110 W al empezar | NASA, hoja técnica del MMRTG (science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf) |
+| Rover tripulado GX-3: cabina para 2 (4 en emergencia), hasta 14 días, ~10 km/h, 12 ruedas que giran 360°, suitports (menos de 10 min), esclusa con 2,5 cm de agua congelada, protección hasta 72 h; SEV de 4,5 m × 3 m | NASA, hoja técnica del Space Exploration Vehicle (nasa.gov/wp-content/uploads/2015/08/464826main_sev_factsheet_508.pdf) |
+| Rover tripulado GX-3: batería (60 a 200 kWh), 5.193 kg con 60 kWh (+933 kg por 140 kWh), 8 km/h, 1,85 kW de cabina, carga a 3 kW con el reactor, panel de 3,5 kW | NASA Mars Architecture Team, Chappell et al., "Human Mars Surface Mission Surface Power Impacts on Timeline and Traverse Capabilities", IEEE Aerospace 2022 (ntrs.nasa.gov/citations/20210022250) |
+| Rover tripulado GX-3: manejar suma ~5 kW a los ~2 kW de la cabina | NASA, "Human Mars Surface Mission Nuclear Power Considerations", IEEE Aerospace 2018 (ntrs.nasa.gov/citations/20170006519) |
+| Ruta T (Base Gale → zona de hoy), energía y tiempo del GX-3 | Cálculo propio: `herramientas/ruta_base.py` (A* sobre data/terreno/travesia_sur, parámetros en data/parametros.json → vehiculo_tripulado; eficiencia de motores 0,8 supuesta) → `data/rutas/ruta_base_gx3.geojson` |
 
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
 | Relieve de todo Marte (fondo de la escena: alrededores de Gale y el planeta) | MOLA MEGDR 16 píxeles/grado, megt90n000eb.img (MGS MOLA, Smith et al. 2003, NASA PDS Geosciences Node). Copia pública: github.com/benbrittain/Barsoom (data/MEGDR). Control: −4509 m en el sitio de aterrizaje (publicado −4501 m); contra el DEM de la travesía, +5 ± 41 m |

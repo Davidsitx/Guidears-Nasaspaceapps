@@ -2035,7 +2035,8 @@ function mgEnganchar() {
 // Base Gale, rover (Curiosity o GX-2), astronauta y misión en pareja. Mismos números y textos que la escena 3D: los saca
 // herramientas/exportar_mision.py a datos/mision.json y capas/mision/*.glb. Módulo de David (con Claude), 15/11/2026.
 const MI = { D: null, activo: false, cargando: null, modo: null, rover: 'curiosity', mod: {}, ds: null, lineas: {}, excluir: [],
-  dur: 240, parar: true, fovOjos: C.Math.toRadians(82), fov0: null, cam: { h: 0, p: -0.32, r: 12 }, siguiendo: false, ult: 0, quieto: 0, hover: null };
+  dur: 240, parar: true, fovOjos: C.Math.toRadians(82), fov0: null, cam: { h: 0, p: -0.32, r: 12 }, siguiendo: false, ult: 0, quieto: 0, hover: null,
+  g3: { alas: 0, alasObj: 0, cang: 0, cangObj: 0, lidar: 0, dron: null, perf: null }, camDe: {} };
 try { MI.dur = +localStorage.getItem('galeMisionDur') || 240; MI.rover = localStorage.getItem('galeMisionRover') || 'curiosity'; } catch {}
 const M_GRADO = 3396190 * d2r;     // d2r ya existe en Gale Earth
 const miNum = (v, d = 0) => v == null || !isFinite(v) ? '—' : Number(v).toLocaleString('es-AR', { maximumFractionDigits: d, minimumFractionDigits: d });
@@ -2151,7 +2152,7 @@ body.mi-pareja #miPlay .fila label:first-of-type{font-size:12px}
 body.cajonAbierto #miBarra [data-m=info]{display:none}
 body.hoja #miBarra{opacity:0;pointer-events:none}
 @media (max-width:900px){body.mi-activo #bMision{opacity:0;pointer-events:none}
-  #miBarra [data-m=C],#miBarra [data-m=expe],#miBarra [data-m=base],#miBarra .mi-seg{display:none}
+  #miBarra [data-m=trip],#miBarra [data-m=expe],#miBarra [data-m=base],#miBarra .mi-seg{display:none}
   #miBarra .mib{height:34px;padding:0 11px;font-size:12.5px}
   #miVisor,body.mi-pareja #miVisor{width:210px;font-size:11px;bottom:auto;max-height:max(120px,calc(76vh - var(--miPlayH,214px) - 74px - var(--sup-seg) - var(--inf-seg)))}#miComms{width:calc(100vw - 28px);max-height:24vh;bottom:calc(var(--miPlayH,214px) + 50px + var(--inf-seg))}
   #miPlay .dat b{font-size:14px}.mi-tit{display:none}#miBarra{max-width:calc(100vw - 24px);bottom:calc(64px + var(--inf-seg))}}
@@ -2174,7 +2175,7 @@ document.body.insertAdjacentHTML('beforeend', `
   <button class="mib pri" data-m="pareja" title="Misión en pareja: cámara del casco del Astronauta 1, visor del Astronauta 2 y mensajes de las bases">${ICO.pareja}En pareja</button>
   <button class="mib" data-m="A" title="Ruta A del robot (Curiosity o GX-2), desde atrás">${ICO.rover}Rover · ruta A</button>
   <button class="mib" data-m="B" title="Ruta B a pie, ida y vuelta">${ICO.pie}A pie · ruta B</button>
-  <button class="mib" data-m="C" title="Ruta C: rover presurizado tripulado (supuesto)">${ICO.trip}Tripulado · C</button>
+  <button class="mib" data-m="trip" title="Misión tripulada con el rover GX-3: desde la Base Gale o en la zona de hoy (ruta C con caminatas)">${ICO.trip}Tripulado · GX-3</button>
   <button class="mib" data-m="expe" title="Expedición sur: cinco puntos más allá de A4">${ICO.brujula}Expedición sur</button>
   <button class="mib" data-m="base" title="Base Gale, en la Zona 2 de la llanura del aterrizaje">${ICO.base}Base Gale</button>
   <span class="mi-seg" title="Qué rover se ve"><button data-rv="curiosity">Curiosity</button><button data-rv="gx2">GX-2</button></span>
@@ -2212,7 +2213,7 @@ document.body.insertAdjacentHTML('beforeend', `
 </aside>
 <div id="miTip" class="oculto"></div>`);
 $('miDur').value = String(MI.dur);
-const miMostrar = (id, on) => { const e = $(id); if (on) { e.classList.remove('oculto'); requestAnimationFrame(() => e.classList.remove('sale')); } else { e.classList.add('sale'); clearTimeout(e._t); e._t = setTimeout(() => { if (e.classList.contains('sale')) e.classList.add('oculto'); }, 260); } };
+const miMostrar = (id, on) => { const e = $(id); clearTimeout(e._t); if (on) { e.classList.remove('oculto'); requestAnimationFrame(() => e.classList.remove('sale')); } else { e.classList.add('sale'); clearTimeout(e._t); e._t = setTimeout(() => { if (e.classList.contains('sale')) e.classList.add('oculto'); }, 260); } };
 
 // ---------- geometría: puntos de una línea, rumbo, altura del suelo y marco del modelo ----------
 const _cg = new C.Cartographic();
@@ -2227,7 +2228,7 @@ function enLinea(L, d) {
   const P = L.pts; d = Math.max(0, Math.min(L.largo, d)); let lo = 0, hi = P.length - 1;
   while (hi - lo > 1) { const m = (lo + hi) >> 1; if (P[m][2] <= d) lo = m; else hi = m; }
   const a = P[lo], b = P[hi], u = b[2] > a[2] ? Math.min(1, Math.max(0, (d - a[2]) / (b[2] - a[2]))) : 0, f = i => a[i] + (b[i] - a[i]) * u;
-  return { lon: f(0), lat: f(1), d, elev: f(3), marcha: a[4], terr: a[5], cielo: f(6), t: f(7), dosis: f(8), terreno: a[9], min: a[10] };
+  return { lon: f(0), lat: f(1), d, elev: f(3), marcha: a[4], terr: a[5], cielo: f(6), t: f(7), dosis: f(8), terreno: a[9], min: a[10], kwh: a[11] != null ? f(11) : null };
 }
 const rumboDe = (a, b) => Math.atan2((b.lon - a.lon) * Math.cos(a.lat * d2r), b.lat - a.lat);   // desde el norte, hacia el este
 const angDif = a => Math.atan2(Math.sin(a), Math.cos(a));
@@ -2294,12 +2295,117 @@ async function miCargar() {
       try { const m = await C.Model.fromGltfAsync({ url: `capas/mision/${k}.glb`, show: false, id: { mision: clave }, ...opc });
         viewer.scene.primitives.add(m); MI.mod[clave] = m; MI.excluir.push(m); return m; } catch (e) { console.warn('[Misión] sin modelo', k, e); return null; }
     };
-    await Promise.all([cargar('curiosity'), cargar('gx2'), cargar('astronauta'), cargar('astronauta', {}, 'a2'),
+    miPrepararGX3();
+    await Promise.all([cargar('curiosity'), cargar('gx2'), cargar('astronauta'), cargar('astronauta', {}, 'a2'), D.gx3 ? cargar('gx3') : null,
       D.base ? cargar('base_gale', { heightReference: C.HeightReference.RELATIVE_TO_GROUND, scene: viewer.scene }) : null]);
     if (MI.mod.base_gale) { const b = D.base; MI.mod.base_gale.modelMatrix = C.Transforms.eastNorthUpToFixedFrame(pos(b.lon, b.lat, b.alto_plataforma), MARS); }
     return true;
   })();
   return MI.cargando;
+}
+// ---------- rover tripulado GX-3: energía, estacionamiento en la base y piezas que se mueven ----------
+function miPrepararGX3() {
+  const D = MI.D, g = D.gx3; if (!g) return;
+  const P = g.par || {}, eKm = ((P.potencia_manejo_kW ?? 5) + (P.potencia_cabina_kW ?? 1.85)) / (P.velocidad_km_h ?? 10), eM = (P.masa_kg ?? 6100) * 3.711 / (P.eficiencia_motores ?? 0.8) / 3.6e6;
+  for (const L of Object.values(MI.lineas)) if (L.tipo === 'tripulado' && L.pts.length && L.pts[0][11] == null) {     // la ruta C viene de la escena sin energía
+    let k = 0; L.pts.forEach((p, i) => { if (i) { const a = L.pts[i - 1]; k += eKm * (p[2] - a[2]) / 1000 + eM * Math.max(0, p[3] - a[3]); } p[11] = Math.round(k * 100) / 100; });
+    L.kwh = Math.round(k * 10) / 10; }
+  if (MI.lineas.C) MI.lineas.C.nombre = 'C · Rover tripulado GX-3, con caminatas (mismo trazado que A)';
+  // de qué parada de la ruta C sale cada caminata (la más cercana a su primer punto)
+  MI.camDe = {};
+  for (const L of Object.values(MI.lineas)) if (/^C-cam/.test(L.id)) { const p0 = L.pts[0]; let mejor = null, dm = 60;
+    for (const o of MI.lineas.C?.paradas || []) { const p = MI.paradas[o.id]; if (!p) continue; const d = Math.hypot((p.lon - p0[0]) * Math.cos(p0[1] * d2r), p.lat - p0[1]) * M_GRADO; if (d < dm) { dm = d; mejor = o.id; } }
+    if (mejor) MI.camDe[mejor] = L.id; }
+}
+const miBat = () => MI.D.gx3?.par?.bateria_kWh || 200;
+function miMarco(centro, rumbo) {
+  const enu = C.Transforms.eastNorthUpToFixedFrame(centro, MARS, _e), E = C.Matrix4.getColumn(enu, 0, new C.Cartesian4()), N = C.Matrix4.getColumn(enu, 1, new C.Cartesian4()), Up = C.Matrix4.getColumn(enu, 2, new C.Cartesian4());
+  const s = Math.sin(rumbo), c = Math.cos(rumbo);
+  return { F: new C.Cartesian3(E.x * s + N.x * c, E.y * s + N.y * c, E.z * s + N.z * c), U: new C.Cartesian3(Up.x, Up.y, Up.z) };
+}
+// estacionado al lado de su garaje, sobre la plataforma de la base (plana: a la altura de la plataforma, no del suelo)
+function miAparcarGX3() {
+  const g = MI.D?.gx3, m = MI.mod.gx3, b = MI.D?.base; if (!g || !m || !b) return;
+  // la altura de la plataforma: la medida a máximo detalle (una vez); mientras tanto, la del terreno que está dibujado
+  if (MI.hBase == null && !MI.hBaseP) MI.hBaseP = hMedida(b.lon, b.lat, b.elev).then(h => { MI.hBase = h; MI.hBaseP = null; if (!MI.modo) miAparcarGX3(); });
+  const centro = pos(g.lon, g.lat, (MI.hBase ?? alturaSuelo(b.lon, b.lat, b.elev)) + (b.alto_plataforma || 0)), { F, U } = miMarco(centro, Math.PI / 2 - g.yaw);
+  m.modelMatrix = ejes(centro, F, U); m.show = true; MI.g3.donde = 'base'; miTrajes(2);
+}
+// estacionado en el punto donde empieza una caminata, con la cola (los suitports) hacia la caminata
+function miGX3EnSalida(L) {
+  const m = MI.mod.gx3; if (!m) return;
+  const q0 = enLinea(L, 0), r0 = rumboDe(q0, enLinea(L, 6)), [lo, la] = corrido(q0.lon, q0.lat, -Math.sin(r0) * 4.4 + Math.cos(r0) * 3.6, -Math.cos(r0) * 4.4 - Math.sin(r0) * 3.6);   // atrás y a la derecha: el Astronauta 2 va a la izquierda
+  m.show = true; colocar(m, lo, la, r0 + Math.PI, q0.elev, 4.0, 3.2, true); MI.g3.donde = 'salida';
+}
+// trajes acoplados en la pared de atrás: los que salieron a caminar no están
+function miTrajes(n) { const m = MI.mod.gx3; if (!m?.ready) return; for (let i = 0; i < 2; i++) { const nd = m.getNode(`traje_${i}`); if (nd) nd.show = i < n; } }
+function nodoTRS(m, nombre, t, s, R) {
+  const n = m.getNode(nombre); if (!n) return;
+  const M = C.Matrix4.fromRotationTranslation(R || C.Matrix3.IDENTITY, t ? new C.Cartesian3(t[0], t[1], t[2]) : C.Cartesian3.ZERO, new C.Matrix4());
+  if (s) C.Matrix4.multiplyByScale(M, new C.Cartesian3(s[0], s[1], s[2]), M);
+  n.matrix = C.Matrix4.multiply(n.originalMatrix, M, new C.Matrix4());
+}
+// cada cuadro: LiDAR, alas, modo cangrejo, dron y taladro (los mismos movimientos que en la escena)
+function miAnimGX3(dt) {
+  const m = MI.mod.gx3, g = MI.g3; if (!m?.ready || !m.show) return;
+  g.lidar += dt * 6; girarNodo(m, 'lidar', g.lidar, 'y');
+  g.alas += (g.alasObj - g.alas) * Math.min(1, dt * 2.2); g.cang += (g.cangObj - g.cang) * Math.min(1, dt * 2.5);
+  girarNodo(m, 'ala_0', -Math.PI * g.alas, 'x'); girarNodo(m, 'ala_1', Math.PI * g.alas, 'x');
+  if (!MI.modo?.trip) for (let i = 0; i < 6; i++) girarNodo(m, `pata_${i}`, g.cang, 'y');
+  const v = g.dron;
+  if (v) {
+    v.t += dt; const T = v.t, sv = x => x * x * (3 - 2 * x), tr = (a, b, f) => { f = sv(Math.min(1, Math.max(0, f))); return a.map((x, i) => x + (b[i] - x) * f); };
+    const base = [0, 0, 0], alto = [0, 8, 0], lejos = [30, 7, 0];
+    const p = T < 2 ? tr(base, alto, T / 2) : T < 5 ? tr(alto, lejos, (T - 2) / 3) : T < 9 ? [30 + Math.sin(T * 1.3) * 2 * Math.min(1, T - 5), 7, Math.cos(T * 1.3) * 2 * Math.min(1, T - 5)]
+      : T < 12 ? tr(lejos, alto, (T - 9) / 3) : tr(alto, base, (T - 12) / 2);
+    nodoTRS(m, 'dron', p.map(x => x / 0.8));
+    girarNodo(m, 'rotor_0', T * 40, 'y'); girarNodo(m, 'rotor_1', -T * 40, 'y');
+    if (T >= 14) { g.dron = null; nodoTRS(m, 'dron'); if (!MI.modo) miCard('Rover tripulado GX-3', 'El dron volvió al techo', 'Miró el terreno 30 m adelante, a unos 10 m del suelo, como Ingenuity con Perseverance.', [['Listo', () => miCard(), true]]); }
+  }
+  const pf = g.perf;
+  if (pf) {
+    const f = Math.min(1, (performance.now() - pf.t0) / 10000), h = Math.max(0, (f - 0.1) / 0.9), k = Math.min(3, Math.floor(h * 4)), s = h * 4 - k;
+    const baj = f < 0.1 ? (f / 0.1) * (f / 0.1) * (3 - 2 * f / 0.1) : 1, prof = 2 * h, cy = f < 0.1 ? 2.1 : 2.1 - 1.2 * s;
+    const tope = cy - 0.34, guard = tope - 0.4, suelo = -0.62, abajo = guard + (suelo - prof - guard) * baj, L = Math.max(0.05, tope - abajo);
+    nodoTRS(m, 'carro', [0, cy - 2.1, 0]); nodoTRS(m, 'sarta', [0, ((tope + abajo) / 2 - 1.56) / 0.4, 0], [1, L / 0.4, 1]); nodoTRS(m, 'mecha', [0, abajo - 1.36, 0]);
+    for (let i = 0; i < 3; i++) { const nd = m.getNode(`barra_${i}`); if (nd) nd.show = i >= k; }
+    $('miCtxt').textContent = f < 0.1 ? 'La torre baja la mecha hasta el suelo…' : `Profundidad: ${miNum(prof, 2)} m de 2 m · ${k ? `barra ${k} de 3 acoplada` : 'solo la mecha'}. La tripulación lo maneja desde la cabina.`;
+    if (f >= 1) { g.perf = null; for (const n of ['carro', 'sarta', 'mecha']) nodoTRS(m, n); for (let i = 0; i < 3; i++) { const nd = m.getNode(`barra_${i}`); if (nd) nd.show = true; } pf.fin?.(); }
+  }
+}
+// al empezar o dejar un recorrido, el dron vuelve al techo y el taladro se guarda (sus avisos no tapan los del recorrido)
+function miGX3Guardar() {
+  const g = MI.g3, m = MI.mod.gx3; g.dron = null; g.perf = null; if (!m?.ready) return;
+  for (const n of ['dron', 'carro', 'sarta', 'mecha']) nodoTRS(m, n); for (let i = 0; i < 3; i++) { const nd = m.getNode(`barra_${i}`); if (nd) nd.show = true; }
+}
+function miGX3Accion(k) {
+  const g = MI.g3; if (!MI.mod.gx3) return;
+  if (k === 'alas') { if (MI.modo?.jugando) return; g.alasObj = g.alasObj ? 0 : 1; return; }
+  if (k === 'cang') { if (MI.modo) return; g.cangObj = g.cangObj ? 0 : Math.PI / 2; return; }
+  if (k === 'dron') { if (!g.dron) { g.dron = { t: 0 }; miCard('Rover tripulado GX-3', 'Dron en el aire', 'Sale del techo, sube 8 m y mira 30 m adelante (supuesto, como Ingenuity).', []); } return; }
+  if (k === 'perf' && !g.perf) {
+    miCard('Perforación profunda · simulación', 'Rover tripulado GX-3 · hasta 2 m', 'La torre baja la mecha hasta el suelo…', []);
+    g.perf = { t0: performance.now(), fin: () => miCard('Perforación profunda · simulación', 'Listo: muestras cada 50 cm hasta 2 m',
+      'Acá va acelerado: con el avance del taladro de Rosalind Franklin (0,3 a 30 mm por minuto) 2 m llevan entre ~1 h y ~111 h según el suelo (cálculo propio).', [['Listo', () => miCard(), true]]) };
+  }
+}
+// Vistas de cerca (base, GX-3, paradas): Cesium sube la cámara si queda a menos de 20 m del terreno que tiene cargado justo
+// debajo, y ahí (fuera de la vista) suele quedar una tesela gruesa que en Gale promedia el borde del cráter: la cámara salta
+// cientos de metros. Mientras nadie toque el mapa se apaga ese empuje; vuelve con el primer clic, rueda, toque o tecla.
+function miSinChoque() {
+  const ctl = viewer.scene.screenSpaceCameraController; if (!ctl.enableCollisionDetection || MI.sinChoque) return;
+  ctl.enableCollisionDetection = false; MI.sinChoque = true;
+  const evs = ['pointerdown', 'wheel', 'touchstart'], volver = () => { ctl.enableCollisionDetection = true; MI.sinChoque = false; evs.forEach(e => viewer.canvas.removeEventListener(e, volver, true)); removeEventListener('keydown', volver, true); };
+  evs.forEach(e => viewer.canvas.addEventListener(e, volver, true)); addEventListener('keydown', volver, true);
+}
+// la cámara apunta a donde está dibujado el modelo (si el terreno todavía no cargó su detalle, el modelo y la cámara usan la misma altura)
+async function miVerGX3() {
+  const g = MI.D.gx3, m = MI.mod.gx3; if (!g || !m || MI.modo) return;
+  if (MI.hBase == null) { const b = MI.D.base; MI.hBase = await hMedida(b.lon, b.lat, b.elev); }
+  miAparcarGX3(); const r = Math.PI / 2 - g.yaw, P = C.Matrix4.getTranslation(m.modelMatrix, new C.Cartesian3());
+  const arriba = MARS.geodeticSurfaceNormal(P, new C.Cartesian3()); C.Cartesian3.add(P, C.Cartesian3.multiplyByScalar(arriba, 1.8, arriba), P);
+  miSinChoque();
+  viewer.camera.flyToBoundingSphere(new C.BoundingSphere(P, 5), { offset: new C.HeadingPitchRange(r + Math.PI - 0.75, -0.42, 30), duration: 2.2, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 200000 });
 }
 // luz del sol para los modelos: alta desde el noroeste, como el sombreado del relieve de Gale Earth (SOL.az 315°)
 function miLuz() {
@@ -2357,8 +2463,14 @@ function fichaParada(id) {
   miSel(id);
 }
 function fichaBase(clave) {
-  miFicha('Base Gale', MI.D.base.ficha, bt('← Curiosity hoy', 'hoy') + bt('Ver la base de cerca', 'verbase', '', true));
+  miFicha('Base Gale', MI.D.base.ficha, bt('← Curiosity hoy', 'hoy') + (MI.D.gx3 ? bt('Rover tripulado GX-3', 'gx3') : '') + bt('Ver la base de cerca', 'verbase', '', true));
   if (clave) { const d = cont().querySelector(`details[data-parte="${clave}"]`); if (d) d.open = true; }
+}
+function fichaGX3() {
+  const g = MI.D.gx3; if (!g) return; const T = MI.lineas.T, C2 = MI.lineas.C, v = g.par?.velocidad_km_h || 10, bat = miBat();
+  const ruta = T ? `<h2>Misión tripulada</h2><p><b>Ruta T · de la base a la zona de hoy:</b> ${miM(T.largo)}, sube ${miNum(T.sube)} m. A ${v} km/h son ${miH(T.horas)} de manejo y ${miNum(T.kwh)} kWh, el ${miNum(T.kwh / bat * 100)} % de la batería. Calculada con A* sobre el terreno de 12 m: rodea las dunas por el oeste, dentro de la franja con datos, y cruza unos ${miM((T.celdasArena || 0) * 5)} de arena probable (a revisar con imagen de detalle). <span class="prov">cálculo propio</span></p>
+    ${C2 ? `<p><b>Ruta C · en la zona de hoy:</b> ${miM(C2.largo)} con ${(C2.paradas || []).length} paradas; en ${Object.keys(MI.camDe).length} de ellas la tripulación sale por los suitports a caminar. ${miNum(C2.kwh)} kWh. <span class="prov">cálculo propio</span></p>` : ''}` : '';
+  miFicha('Rover tripulado GX-3', g.ficha + ruta, bt('← Curiosity hoy', 'hoy') + bt('Ver el GX-3', 'vergx3') + bt('Alas', 'g3', 'data-k="alas"') + bt('Modo cangrejo', 'g3', 'data-k="cang"') + bt('Dron', 'g3', 'data-k="dron"') + bt('Perforar 2 m', 'g3', 'data-k="perf"') + bt('Misión tripulada ▶', 'trip', '', true));
 }
 function fichaRover() {
   const gx = MI.rover === 'gx2';
@@ -2376,9 +2488,10 @@ function fichaHoy() {
     <div class="tarjeta" data-mi="ruta" data-r="pareja"><b>👥 Misión en pareja</b><div class="sub">Cámara del casco del Astronauta 1, visor del Astronauta 2 y mensajes de la base y de la Tierra, con la demora real de la luz. Ruta B, ${miM(L.B.largo3d || L.B.largo)}.</div></div>
     ${tarj('A', 'Rover · ruta A', `${miM(L.A.largo)} · ${L.A.paradas.length} paradas · ${Math.ceil(L.A.largo / D.parametros.PR.porSol[1])}–${Math.ceil(L.A.largo / D.parametros.PR.porSol[0])} soles de manejo (calculado)`)}
     ${tarj('B', 'A pie · ruta B', `${miM(L.B.largo)} ida y vuelta · ${miH(L.B.horas)} de marcha · ${miNum(L.B.dosis, 1)} µSv (cálculo propio)`)}
-    ${tarj('C', 'Tripulado · ruta C', `Rover presurizado a ~10 km/h (supuesto, concepto SEV) y tres caminatas cortas`)}
+    ${D.gx3 ? `<div class="tarjeta" data-mi="trip"><b>🚐 Misión tripulada · GX-3</b><div class="sub">El rover presurizado sale de la Base Gale${L.T ? ` (ruta T, ${miM(L.T.largo)}, ${miH(L.T.horas)})` : ''}, recorre la ruta C y la tripulación sale a caminar por los suitports.</div></div>` : tarj('C', 'Tripulado · ruta C', 'Rover presurizado a ~10 km/h (supuesto, concepto SEV) y tres caminatas cortas')}
     ${ex ? tarj('expe', 'Expedición sur', `Cinco puntos más allá de A4: rover ${miM(ex.lineas.vehiculo?.largo)} o a pie ${miM(ex.lineas.astronauta?.largo)}`, 'expe') : ''}
     ${D.base ? `<div class="tarjeta" data-mi="base"><b>Base Gale · Zona 2</b><div class="sub">En la llanura del aterrizaje, a ${miM(D.base.drec)} del recorrido y ${miM(D.base.dc)} de Curiosity hoy.</div></div>` : ''}
+    ${D.gx3 ? `<div class="tarjeta" data-mi="gx3"><b>Rover tripulado GX-3 · en la Base Gale</b><div class="sub">Nuestro vehículo para personas: cabina para dos, doce ruedas, suitports, taladro de 2 m, dron y alas solares.</div></div>` : ''}
     <div class="tarjeta" data-mi="rover"><b>Rover: Curiosity o GX-2</b><div class="sub">El GX-2 es nuestra versión para las próximas excavaciones: taladro de 2 m, dron y alas solares.</div></div>
     ${grupo('Paradas del robot (ruta A)', ['S', 'A1', 'A2', 'A3', 'A4', 'Z1'])}${grupo('Paradas a pie (ruta B)', ['B1', 'B2', 'Q1', 'M1'])}${grupo('Rover tripulado (ruta C)', ['C2', 'C3', 'C4', 'R1'])}
     ${ex ? grupo('Expedición sur', ex.paradas.map(e => e.id)) : ''}
@@ -2407,17 +2520,23 @@ function miAccion(a, ds) {
   if (a === 'rover') return fichaRover();
   if (a === 'rvgx') { miRover('gx2'); return fichaRover(); }
   if (a === 'rvcur') { miRover('curiosity'); return fichaRover(); }
+  if (a === 'gx3') { fichaGX3(); return miVerGX3(); }
+  if (a === 'vergx3') return miVerGX3();
+  if (a === 'g3') return miGX3Accion(ds.k);
+  if (a === 'trip') { const T = MI.lineas.T, C2 = MI.lineas.C;
+    return miCard('Misión tripulada · GX-3', '¿Desde dónde arranca?', `${T ? `Desde la Base Gale: ruta T, ${miM(T.largo)} hasta la zona de hoy (${miH(T.horas)} a ${MI.D.gx3?.par?.velocidad_km_h || 10} km/h). ` : ''}En la zona de hoy: ruta C${C2 ? `, ${miM(C2.largo)}` : ''}, con caminatas por los suitports.`,
+      [...(T ? [['Desde la Base Gale ▶', () => miModo('T'), true]] : []), ['En la zona de hoy · ruta C', () => miModo('C'), !T], ['Cancelar', () => miCard()]]); }
 }
 async function hMedida(lon, lat, elev) {      // la más precisa: la del terreno a máximo detalle (Gale Earth: alturas)
   try { const h = await alturas([C.Cartographic.fromDegrees(lon, geodetica(lat))]); if (h && h[0] != null && isFinite(h[0])) return h[0] * (viewer.scene.verticalExaggeration || 1); } catch {}
   return alturaSuelo(lon, lat, elev);
 }
 async function miVolarA(p, rango = 420) {
-  const h = await hMedida(p.lon, p.lat, p.elev);
+  const h = await hMedida(p.lon, p.lat, p.elev); miSinChoque();
   viewer.camera.flyToBoundingSphere(new C.BoundingSphere(pos(p.lon, p.lat, h), 20), { offset: new C.HeadingPitchRange(viewer.camera.heading, -0.55, rango), duration: 1.8, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 200000 });
 }
 async function miVerBase() {
-  const b = MI.D.base, h = await hMedida(b.lon, b.lat, b.elev);
+  const b = MI.D.base, h = await hMedida(b.lon, b.lat, b.elev); miSinChoque();
   viewer.camera.flyToBoundingSphere(new C.BoundingSphere(pos(b.lon, b.lat, h + 4), 40), { offset: new C.HeadingPitchRange(0.6, -0.42, 150), duration: 2.4, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 200000 });
 }
 function miRover(k) {
@@ -2459,6 +2578,7 @@ function miQuieto(forzar) {
   const a = MI.mod.astronauta; if (a) { a.show = true; const [lo, la] = corrido(c.lon, c.lat, -Math.cos(rumbo) * 3.2, Math.sin(rumbo) * 3.2); colocar(a, lo, la, rumbo, c.elev, 0, 0, false); if (a.ready) pasoAstro(a, 0, 0); }
   if (MI.mod.a2) MI.mod.a2.show = false;
   if (MI.mod.base_gale) MI.mod.base_gale.show = true;
+  miAparcarGX3();
 }
 
 // ---------- tarjeta de arriba ----------
@@ -2472,11 +2592,12 @@ function miCard(et, tit, txt, botones = []) {
 
 // ---------- recorridos: rover, a pie, tripulado, expedición y misión en pareja ----------
 const esRover = L => /vehiculo|tripulado/.test(L.tipo);
-function miModo(id, tipo = 'ruta') {
+function miModo(id, tipo = 'ruta', opc = {}) {
   const L = MI.lineas[id]; if (!L) return;
   if (MI.modo) miSalirModo(false);
-  const pareja = tipo === 'pareja', rover = esRover(L);
-  MI.modo = { L, id, tipo, d: 0, jugando: false, mov: 0, rueda: 0, vista: pareja ? 'ojos' : 'detras', rover, vistos: new Set(), dosisAviso: 0, fin: false };
+  miGX3Guardar();
+  const pareja = tipo === 'pareja', rover = esRover(L), trip = L.tipo === 'tripulado';
+  MI.modo = { L, id, tipo, d: Math.min(L.largo, opc.d || 0), jugando: false, mov: 0, rueda: 0, vista: pareja ? 'ojos' : 'detras', rover, trip, vistos: new Set(), dosisAviso: 0, fin: false, volver: opc.volver || null };
   MI.siguiendo = false; if (window.cerrarCajon) cerrarCajon();
   document.body.classList.add('mi-modo'); document.body.classList.toggle('mi-pareja', pareja);
   viewer.entities.show = false; miCartelesCerca(true, id);
@@ -2485,28 +2606,33 @@ function miModo(id, tipo = 'ruta') {
   const color = L.color || '#f28c38';
   $('miPid').textContent = pareja ? '👥' : id.startsWith('E-') ? 'E' : id.startsWith('C-') ? 'C' : id; $('miPid').style.background = color;
   $('miPnomR').textContent = pareja ? 'Misión en pareja · ruta B' : L.nombre;
-  $('miPsub').textContent = `${miM(L.largo)}${L.idaVuelta ? ' ida y vuelta' : ''} · ${(L.paradas || []).length} paradas`;
-  $('miL1').textContent = rover ? 'horas de manejo' : 'tiempo de marcha'; $('miL4').textContent = rover ? 'soles de manejo' : 'dosis acumulada';
-  $('miVistas').classList.toggle('oculto', rover);
+  const np = (L.paradas || []).length; $('miPsub').textContent = `${miM(L.largo)}${L.idaVuelta ? ' ida y vuelta' : ''}${np ? ` · ${np} parada${np === 1 ? '' : 's'}` : id === 'T' ? ' · Base Gale → zona de hoy' : ''}`;
+  $('miL1').textContent = trip ? 'tiempo de manejo' : rover ? 'horas de manejo' : 'tiempo de marcha'; $('miL4').textContent = trip ? 'batería' : rover ? 'soles de manejo' : 'dosis acumulada';
+  $('miVistas').classList.toggle('oculto', rover && !trip); $('miVistas').querySelector('[data-v=ojos]').textContent = trip ? 'Cabina' : 'Ojos';
+  if (trip) { MI.g3.alasObj = 0; MI.g3.cangObj = 0; }
   document.querySelectorAll('#miVistas [data-v]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === MI.modo.vista));
   $('miPlayB').textContent = '▶ Salir'; $('miParar').checked = MI.parar; $('miDur').value = String(MI.dur);
-  for (const k of ['curiosity', 'gx2', 'astronauta', 'a2']) if (MI.mod[k]) MI.mod[k].show = false;
+  for (const k of ['curiosity', 'gx2', 'astronauta', 'a2', 'gx3']) if (MI.mod[k]) MI.mod[k].show = false;
+  // la tripulación llegó en el GX-3: queda estacionado donde empieza la caminata y salen por los suitports de atrás
+  if (!rover && (id === 'B' || /^C-cam/.test(id))) { miGX3EnSalida(L); miTrajes(pareja ? 0 : 1); }
   if (pareja) miParejaEntrar(L);
   miMostrar('miPlay', true);
   miActualizar(0, true);
   // vuelo hasta la salida y, al llegar, la tarjeta "Listos para salir" (nada se mueve solo)
-  const q0 = enLinea(L, 0), q1 = enLinea(L, 4), rumbo = rumboDe(q0, q1); MI.cam = { h: rumbo, p: rover ? -0.24 : -0.2, r: rover ? 15 : 7.5 };
-  const hs = alturaSuelo(q0.lon, q0.lat, q0.elev), P = pos(q0.lon, q0.lat, hs + (pareja ? 1.7 : 1.2));
-  let hecho = false; const listo = () => { if (hecho || MI.modo?.L !== L) return; hecho = true; MI.siguiendo = true; miListos(); };
+  const d0 = MI.modo.d, q0 = enLinea(L, d0), q1 = enLinea(L, Math.min(L.largo, d0 + 4)), rumbo = rumboDe(q0, q1); MI.cam = { h: rumbo, p: rover ? -0.24 : -0.2, r: trip ? 22 : rover ? 15 : 7.5 };
+  const hs = id === 'T' && !d0 && MI.D.base ? (MI.hBase ?? alturaSuelo(MI.D.base.lon, MI.D.base.lat, MI.D.base.elev)) + (MI.D.base.alto_plataforma || 0) : alturaSuelo(q0.lon, q0.lat, q0.elev), P = pos(q0.lon, q0.lat, hs + (pareja ? 1.7 : trip ? 1.8 : 1.2));
+  let hecho = false; const listo = () => { if (hecho || MI.modo?.L !== L) return; hecho = true; MI.siguiendo = true; if (opc.seguir) { miCard(); miJugar(true); } else miListos(); };
   if (MI.modo.vista === 'ojos') viewer.camera.flyTo({ destination: P, orientation: { heading: rumbo, pitch: -0.08, roll: 0 }, duration: 2.6, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 200000, complete: listo, cancel: listo });
   else viewer.camera.flyToBoundingSphere(new C.BoundingSphere(P, 1), { offset: new C.HeadingPitchRange(rumbo, MI.cam.p, MI.cam.r), duration: 2.6, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 200000, complete: listo, cancel: listo });
 }
 function miListos() {
   const m = MI.modo; if (!m || m.jugando || m.d > 0.5) return; const L = m.L, PR = MI.D.parametros.PR, EVA = MI.D.parametros.EVA, n = (L.paradas || []).length;
-  const txt = m.tipo === 'pareja' ? `La base autoriza la salida: ruta B, ${miM(L.largo3d || L.largo)} ida y vuelta, ${n} paradas. Salida nominal de ${EVA.nom} h (máximo ${EVA.max} h, traje xEMU). Van siempre a la vista uno del otro.`
+  const v3 = MI.D.gx3?.par?.velocidad_km_h || 10, bat = miBat();
+  const txt = m.trip ? `${m.id === 'T' ? 'Sale del garaje de la Base Gale con dos personas adentro y va hasta la zona de hoy, donde está Curiosity: ' : ''}${miM(L.largo)}${n ? `, ${n} paradas` : ''}${L.sube ? `, sube ${miNum(L.sube)} m` : ''}. A ${v3} km/h (supuesto, como el SEV) son ${miH(L.horas)} de manejo y ${miNum(L.kwh)} kWh, el ${miNum(L.kwh / bat * 100)} % de la batería (cálculo propio). Acá lo ves en ${$('miDur').selectedOptions[0].text}.`
+    : m.tipo === 'pareja' ? `Llegaron en el GX-3 y salen por los suitports de atrás. La base autoriza la salida: ruta B, ${miM(L.largo3d || L.largo)} ida y vuelta, ${n} paradas. Salida nominal de ${EVA.nom} h (máximo ${EVA.max} h, traje xEMU). Van siempre a la vista uno del otro.`
     : m.rover ? `${L.nombre}: ${miM(L.largo)}, ${n} paradas. Al ritmo de Curiosity (${PR.porSol[0]}–${PR.porSol[1]} m por sol de manejo) serían ${Math.ceil(L.largo / PR.porSol[1])}–${Math.ceil(L.largo / PR.porSol[0])} soles (calculado). Acá lo ves en ${$('miDur').selectedOptions[0].text}.`
     : `${L.nombre}: ${miM(L.largo)}, ${miH(L.horas ?? enLinea(L, L.largo).t)} de marcha y ${miNum(L.dosis ?? enLinea(L, L.largo).dosis, 1)} µSv de dosis (cálculo propio). Acá lo ves en ${$('miDur').selectedOptions[0].text}.`;
-  miCard(m.tipo === 'pareja' ? 'Base Gale · listos para salir' : 'Listos para salir', m.tipo === 'pareja' ? 'Misión en pareja' : miEsc(L.nombre), txt,
+  miCard(m.tipo === 'pareja' ? 'Base Gale · listos para salir' : m.trip ? 'GX-3 · listos para salir' : 'Listos para salir', m.tipo === 'pareja' ? 'Misión en pareja' : miEsc(L.nombre), txt + (m.volver ? ' Al terminar vuelven al GX-3.' : !m.trip && /^C-cam/.test(m.id) ? ' Salen por los suitports del GX-3.' : ''),
     [['▶ Salir', () => miJugar(true), true], ['Cambiar ruta', () => miSalirModo(true)]]);
 }
 function miJugar(on) {
@@ -2530,6 +2656,7 @@ function miSalirModo(volver = true) {
 }
 // cada cuadro: avanza, apoya los modelos, mueve la cámara y actualiza los datos
 function miTick(dt) {
+  try { miAnimGX3(dt); } catch (e) { console.warn('[GX-3]', e); }
   const m = MI.modo;
   if (!m) { if (MI.activo && (MI.quieto = (MI.quieto + 1) % 30) === 0) { miQuieto(); miOrbitas(viewer.camera.positionCartographic.height > 300000); } return; }
   const L = m.L;
@@ -2546,7 +2673,13 @@ function miActualizar(dt, inicio = false) {
   const rumbo = rumboDe(qa.d < qb.d ? qa : q, qb.d > qa.d ? qb : q);
   m.mov += ((m.jugando && m.d < L.largo ? 1 : 0) - m.mov) * Math.min(1, dt * 6);
   let objetivo;
-  if (m.rover) {
+  if (m.trip) {
+    // sobre la plataforma de la base (los primeros metros de la ruta T) va a la altura de la plataforma, sin inclinar
+    const b = MI.D.base, enPlat = b && m.id === 'T' && Math.hypot((q.lon - b.lon) * Math.cos(b.lat * d2r), q.lat - b.lat) * M_GRADO < 27;
+    const alza = enPlat ? Math.max(0, (MI.hBase ?? alturaSuelo(b.lon, b.lat, b.elev)) + (b.alto_plataforma || 0) - alturaSuelo(q.lon, q.lat, q.elev)) : 0;
+    const rv = MI.mod.gx3; if (rv) { rv.show = true; objetivo = colocar(rv, q.lon, q.lat, rumbo, q.elev, 4.0, 3.2, !enPlat, alza);
+      if (rv.ready) { for (let i = 0; i < 12; i++) girarNodo(rv, `rueda_${i}`, -m.d / 0.5); for (let i = 0; i < 6; i++) girarNodo(rv, `pata_${i}`, 0, 'y'); } }
+  } else if (m.rover) {
     const rv = MI.mod[MI.rover]; if (rv) { rv.show = true; objetivo = colocar(rv, q.lon, q.lat, rumbo, q.elev, MI.rover === 'gx2' ? 3.4 : 2.2, 2.5, true);
       m.rueda = m.d; const R = MI.rover === 'gx2' ? 0.4 : 0.25; if (rv.ready) for (let i = 0; i < 6; i++) girarNodo(rv, `rueda_${i}`, -m.rueda / R); }
   } else if (m.tipo === 'pareja') {
@@ -2563,10 +2696,10 @@ function miActualizar(dt, inicio = false) {
   if (MI.siguiendo && objetivo) miCamara(dt, objetivo, rumbo, m);
   // datos de la barra
   const PR = MI.D.parametros.PR;
-  $('miD1').textContent = m.rover ? `${miNum(m.d / PR.vRover, 1)} h` : miH(q.t);
+  $('miD1').textContent = m.trip ? miH(q.t) : m.rover ? `${miNum(m.d / PR.vRover, 1)} h` : miH(q.t);
   $('miD2').textContent = miM(m.d);
   $('miD3').textContent = `${miNum(q.marcha || q.terr, 1)}°`; $('miC3').classList.toggle('alerta', (q.marcha || 0) > (m.rover ? PR.rMax : PR.pMax));
-  $('miD4').textContent = m.rover ? `${miNum(m.d / PR.porSol[1], 0)}–${miNum(m.d / PR.porSol[0], 0)}` : `${miNum(q.dosis, 1)} µSv`;
+  $('miD4').textContent = m.trip ? `${miNum(100 - (q.kwh || 0) / miBat() * 100)} %` : m.rover ? `${miNum(m.d / PR.porSol[1], 0)}–${miNum(m.d / PR.porSol[0], 0)}` : `${miNum(q.dosis, 1)} µSv`;
   if (!m.arrastrando) $('miBar').value = Math.round(m.d / L.largo * 1000);
 }
 const _arriba = new C.Cartesian3();
@@ -2575,7 +2708,9 @@ function miCamara(dt, objetivo, rumbo, m) {
   MI.cam.h += angDif(rumbo - MI.cam.h) * k;
   if (m.vista === 'ojos') {
     MARS.geodeticSurfaceNormal(objetivo, _arriba);
-    const ojo = C.Cartesian3.add(objetivo, C.Cartesian3.multiplyByScalar(_arriba, 1.7, new C.Cartesian3()), new C.Cartesian3());
+    const ojo = C.Cartesian3.add(objetivo, C.Cartesian3.multiplyByScalar(_arriba, m.trip ? 2.2 : 1.7, new C.Cartesian3()), new C.Cartesian3());
+    // cabina: justo delante del parabrisas (desde adentro el vidrio taparía la vista), con el taladro a la derecha y el brazo a la izquierda
+    if (m.trip) { const { F } = miMarco(objetivo, rumbo); C.Cartesian3.add(ojo, C.Cartesian3.multiplyByScalar(F, 3.05, new C.Cartesian3()), ojo); }
     // la mirada sigue la pendiente de lo que viene (8 m adelante), con un campo visual más abierto, como un casco
     const q = enLinea(m.L, m.d), qa = enLinea(m.L, Math.min(m.L.largo, m.d + 8)), pObj = Math.max(-0.35, Math.min(0.3, Math.atan2(qa.elev - q.elev, 8) - 0.06));
     MI.cam.pj = (MI.cam.pj ?? pObj) + (pObj - (MI.cam.pj ?? pObj)) * Math.min(1, dt * 1.5);
@@ -2585,7 +2720,7 @@ function miCamara(dt, objetivo, rumbo, m) {
   }
   if (MI.fov0 && cam.frustum.fov !== MI.fov0) cam.frustum.fov = MI.fov0;
   MARS.geodeticSurfaceNormal(objetivo, _arriba);
-  const T = C.Cartesian3.add(objetivo, C.Cartesian3.multiplyByScalar(_arriba, m.rover ? 1.4 : 1.1, new C.Cartesian3()), new C.Cartesian3());
+  const T = C.Cartesian3.add(objetivo, C.Cartesian3.multiplyByScalar(_arriba, m.trip ? 2.0 : m.rover ? 1.4 : 1.1, new C.Cartesian3()), new C.Cartesian3());
   cam.lookAt(T, new C.HeadingPitchRange(MI.cam.h, MI.cam.p, MI.cam.r));
   // que la cámara no se meta en el terreno: si queda baja, mira más desde arriba
   const cg = cam.positionCartographic, suelo = alturaSuelo(C.Math.toDegrees(cg.longitude), C.Math.toDegrees(Math.atan(Math.tan(cg.latitude) * (B * B) / (A * A))), null);
@@ -2594,12 +2729,21 @@ function miCamara(dt, objetivo, rumbo, m) {
 }
 function miLlegada(id) {
   const p = MI.paradas[id]; if (!p) return;
-  miCard('Llegaste a la parada', `<span class="mi-pill" style="background:${p.color}">${p.id}</span>${miEsc(p.nombre)}`, miEsc((p.motivo || '').slice(0, 170)) + ((p.motivo || '').length > 170 ? '…' : ''),
-    [['Ver la parada', () => { fichaParada(id); $('cajon').classList.add('mi-libre'); }], ['Perforación simulada', () => { miAccion('muestra', { id }); $('cajon').classList.add('mi-libre'); }], ['Seguir ▶', () => { $('cajon').classList.remove('mi-libre'); if (window.cerrarCajon) cerrarCajon(); miJugar(true); }, true]]);
+  const m = MI.modo, cam = m?.trip ? MI.camDe[id] : null, seguir = () => { $('cajon').classList.remove('mi-libre'); if (window.cerrarCajon) cerrarCajon(); miJugar(true); };
+  const perf = m?.trip ? ['Perforar 2 m (GX-3)', () => { miGX3Accion('perf'); const fin = MI.g3.perf?.fin; if (MI.g3.perf) MI.g3.perf.fin = () => { fin?.(); miAccion('muestra', { id }); $('cajon').classList.add('mi-libre'); miLlegada(id); }; }]
+    : ['Perforación simulada', () => { miAccion('muestra', { id }); $('cajon').classList.add('mi-libre'); }];
+  miCard(m?.trip ? 'El GX-3 llegó a la parada' : 'Llegaste a la parada', `<span class="mi-pill" style="background:${p.color}">${p.id}</span>${miEsc(p.nombre)}`, miEsc((p.motivo || '').slice(0, 170)) + ((p.motivo || '').length > 170 ? '…' : '') + (cam ? ' Desde acá sale una caminata: la tripulación se pone el traje en el suitport en menos de 10 minutos.' : ''),
+    [['Ver la parada', () => { fichaParada(id); $('cajon').classList.add('mi-libre'); }], perf, ...(cam ? [['Salir a caminar ▶', () => miModo(cam, 'ruta', { volver: { id: m.id, d: m.d } }), true]] : []), ['Seguir ▶', seguir, !cam]]);
   if (MI.modo?.tipo === 'pareja') { miMsg('a1', `Llegamos a ${p.id} · ${miEsc(p.nombre)}.`); setTimeout(() => MI.modo && miMsg('base', 'Recibido. Fotografíen la capa y tomen la muestra; el Astronauta 2 vigila el tiempo.'), 1200); }
 }
 function miFin() {
   const m = MI.modo; m.fin = true; const q = enLinea(m.L, m.L.largo);
+  if (m.id === 'T') return miCard('Llegaste a la zona de hoy', 'GX-3 junto a Curiosity', `${miM(m.L.largo)} desde la Base Gale en ${miH(m.L.horas)} de manejo, con ${miNum(m.L.kwh)} kWh (${miNum(m.L.kwh / miBat() * 100)} % de la batería). Ahora la ruta C, con caminatas por los suitports.`,
+    [['Seguir con la ruta C ▶', () => miModo('C'), true], ['Volver a Curiosity hoy', () => miSalirModo(true)]]);
+  if (m.volver) { const v = m.volver; return miCard('De vuelta en el GX-3', miEsc(m.L.nombre), `${miH(q.t)} de caminata y ${miNum(q.dosis, 1)} µSv (cálculo propio). Entran por los suitports y siguen en la cabina.`,
+    [['Seguir con la ruta C ▶', () => miModo(v.id, 'ruta', { d: v.d + 1, seguir: true }), true], ['Volver a Curiosity hoy', () => miSalirModo(true)]]); }
+  if (m.trip) return miCard('Fin del recorrido', miEsc(m.L.nombre), `${miM(m.L.largo)} en ${miH(m.L.horas)} de manejo, ${miNum(m.L.kwh)} kWh (${miNum(m.L.kwh / miBat() * 100)} % de la batería). Cálculo propio.`,
+    [['Repetir', () => miJugar(true)], ['Volver a Curiosity hoy', () => miSalirModo(true), true]]);
   miCard('Fin del recorrido', miEsc(m.tipo === 'pareja' ? 'De vuelta en la base' : m.L.nombre),
     m.rover ? `${miM(m.L.largo)} en ${miNum(m.L.largo / MI.D.parametros.PR.porSol[1], 0)}–${miNum(m.L.largo / MI.D.parametros.PR.porSol[0], 0)} soles de manejo (calculado).` : `${miH(q.t)} de marcha y ${miNum(q.dosis, 1)} µSv por persona (cálculo propio).`,
     [['Repetir', () => miJugar(true)], ['Volver a Curiosity hoy', () => miSalirModo(true), true]]);
@@ -2614,9 +2758,9 @@ $('miBar').addEventListener('input', e => { const m = MI.modo; if (!m) return; m
 $('miBar').addEventListener('change', () => { if (MI.modo) MI.modo.arrastrando = false; });
 document.querySelectorAll('#miVistas [data-v]').forEach(b => b.onclick = () => { const m = MI.modo; if (!m) return; m.vista = b.dataset.v;
   document.querySelectorAll('#miVistas [data-v]').forEach(o => o.setAttribute('aria-pressed', o === b)); if (m.vista !== 'ojos') viewer.camera.lookAtTransform(C.Matrix4.IDENTITY);
-  const a = MI.mod.astronauta; if (a && m.tipo !== 'pareja') a.show = m.vista !== 'ojos';
+  const a = MI.mod.astronauta; if (a && m.tipo !== 'pareja' && !m.trip) a.show = m.vista !== 'ojos';
   $('miVivoT').textContent = m.vista === 'ojos' ? 'Cámara del casco · Astronauta 1' : 'Desde atrás · Astronautas 1 y 2'; });
-document.querySelectorAll('#miBarra [data-m]').forEach(b => b.onclick = () => miAccion(b.dataset.m === 'pareja' ? 'ruta' : b.dataset.m === 'info' ? 'hoy' : ['A', 'B', 'C'].includes(b.dataset.m) ? 'ruta' : b.dataset.m, { r: b.dataset.m === 'pareja' ? 'pareja' : b.dataset.m }));
+document.querySelectorAll('#miBarra [data-m]').forEach(b => b.onclick = () => miAccion(b.dataset.m === 'pareja' ? 'ruta' : b.dataset.m === 'info' ? 'hoy' : ['A', 'B'].includes(b.dataset.m) ? 'ruta' : b.dataset.m, { r: b.dataset.m === 'pareja' ? 'pareja' : b.dataset.m }));
 document.querySelectorAll('#miBarra [data-rv]').forEach(b => b.onclick = () => miRover(b.dataset.rv));
 
 // ---------- misión en pareja: visor del Astronauta 2, mensajes de las bases, minimapa ----------
@@ -2710,7 +2854,7 @@ $('miComms').addEventListener('click', e => {
   if (b.dataset.r === 'pronostico') { miMsg('a2', 'Pedimos el pronóstico a la Tierra.'); const e0 = estacion(MI.par.ls), l = e0.lineas[1] || e0.lineas[0];
     setTimeout(() => miMsg('tierra', `${l[0]} ${miFq(l[1])} En la realidad esta respuesta tarda ${miNum(MI.par.demora * 2)} min (ida y vuelta). Con Aeolus (2028) habría pronóstico del día ${miFq('aeolus')}.`), 2200); }
   if (b.dataset.r === 'ayuda') { miMsg('a2', 'Necesitamos ayuda.', 'alerta');
-    setTimeout(() => miMsg('base', `Rover en camino: ${miM(dB)} a ${miNum(PR.vTrip / 1000)} km/h, unos ${miNum(Math.max(1, dB / PR.vTrip * 60))} min (rover presurizado: supuesto). Busquen reparo del relieve mientras tanto.`, 'alerta'), 1100); }
+    setTimeout(() => miMsg('base', `El GX-3 sale a buscarlos desde donde lo dejaron: ${miM(dB)} a ${miNum(PR.vTrip / 1000)} km/h, unos ${miNum(Math.max(1, dB / PR.vTrip * 60))} min (supuesto). Busquen reparo del relieve mientras tanto.`, 'alerta'), 1100); }
 });
 
 // ---------- puntero: mano y realce sobre todo lo que se puede tocar (pines de Gale Earth y de la misión) ----------
@@ -2729,7 +2873,7 @@ $('miComms').addEventListener('click', e => {
       let t = null;
       if (ent) { const pr = ent.properties, tipo = pr.tipo.getValue(), nom = pr.nombre?.getValue?.() ?? ent.label?.text?.getValue?.() ?? ent.name;
         t = nom ? `${miEsc(nom)}<small>${tipo === 'mruta' ? 'Tocá para recorrerla' : 'Tocá para ver la ficha'}</small>` : null; }
-      else if (mod) t = { curiosity: 'Curiosity · sol 5070', gx2: 'Rover GX-2 · próximas excavaciones', astronauta: 'Astronauta', a2: 'Astronauta 2', base_gale: 'Base Gale · Zona 2' }[mod] + '<small>Tocá para ver la ficha</small>';
+      else if (mod) t = { curiosity: 'Curiosity · sol 5070', gx2: 'Rover GX-2 · próximas excavaciones', astronauta: 'Astronauta', a2: 'Astronauta 2', base_gale: 'Base Gale · Zona 2', gx3: 'Rover tripulado GX-3' }[mod] + '<small>Tocá para ver la ficha</small>';
       if (t) { tip.innerHTML = t; tip.style.left = p.x + 'px'; tip.style.top = p.y + 'px'; tip.classList.remove('oculto'); } else tip.classList.add('oculto');
     });
   }, C.ScreenSpaceEventType.MOUSE_MOVE);
@@ -2747,7 +2891,7 @@ $('miComms').addEventListener('click', e => {
       if (tipo === 'mbase') { fichaBase(); return; }
       if (tipo === 'mruta') { if (id === 'B' || id === 'A') return miModo(id); if (MI.lineas[id]) return miModo(id); return; }
     }
-    if (o && o.id && o.id.mision) { const k = o.id.mision; if (k === 'base_gale') return fichaBase(); if (k === 'curiosity' || k === 'gx2') return fichaRover(); return; }
+    if (o && o.id && o.id.mision) { const k = o.id.mision; if (k === 'base_gale') return fichaBase(); if (k === 'gx3') { if (!MI.activo) miEntrar(false); return fichaGX3(); } if (k === 'curiosity' || k === 'gx2') return fichaRover(); return; }
     if (MI.modo) return;
     if (previo) previo(m);
   }, C.ScreenSpaceEventType.LEFT_CLICK);
@@ -2779,12 +2923,12 @@ $('miComms').addEventListener('click', e => {
   let ultimo = performance.now();
   viewer.scene.preRender.addEventListener(() => { const ahora = performance.now(), dt = Math.min(0.1, (ahora - ultimo) / 1000); ultimo = ahora; try { miTick(dt); } catch (e) { console.error('[Misión]', e); } });
   // la misión se carga en segundo plano apenas termina de abrir el globo (así "Curiosity hoy" responde enseguida)
-  // enlaces directos (por ejemplo desde la escena clásica o una presentación): #pareja, #rover, #apie, #tripulado, #expedicion, #base
-  const DIRECTO = { pareja: ['B', 'pareja'], rover: ['A'], apie: ['B'], tripulado: ['C'], expedicion: ['E-vehiculo'] };
-  const pedido = (location.hash.match(/^#(pareja|rover|apie|tripulado|expedicion|base)$/) || [])[1];
+  // enlaces directos (por ejemplo desde la escena clásica o una presentación): #pareja, #rover, #apie, #tripulado, #desdebase, #gx3, #expedicion, #base
+  const DIRECTO = { pareja: ['B', 'pareja'], rover: ['A'], apie: ['B'], tripulado: ['C'], desdebase: ['T'], expedicion: ['E-vehiculo'] };
+  const pedido = (location.hash.match(/^#(pareja|rover|apie|tripulado|desdebase|gx3|expedicion|base)$/) || [])[1];
   setTimeout(() => { miCargar().then(async ok => { if (!ok) return; miQuieto(true);
-    if (pedido) { await miEntrar(false); setTimeout(() => pedido === 'base' ? (fichaBase(), miVerBase()) : miModo(...DIRECTO[pedido]), 2800); } }); }, pedido ? 2600 : 3500);
-  window.__mision = { MI, alturaSuelo, pos, entrar: miEntrar, modo: miModo, salir: miSalirModo, jugar: miJugar, ficha: fichaParada, base: fichaBase, hoy: fichaHoy, rover: miRover, enLinea };
+    if (pedido) { await miEntrar(false); setTimeout(() => pedido === 'base' ? (fichaBase(), miVerBase()) : pedido === 'gx3' ? (fichaGX3(), miVerGX3()) : miModo(...DIRECTO[pedido]), 2800); } }); }, pedido ? 2600 : 3500);
+  window.__mision = { MI, alturaSuelo, pos, entrar: miEntrar, modo: miModo, salir: miSalirModo, jugar: miJugar, ficha: fichaParada, base: fichaBase, hoy: fichaHoy, rover: miRover, enLinea, gx3: fichaGX3, verGX3: miVerGX3, g3: miGX3Accion, accion: miAccion, llegada: miLlegada };
 }
 abrir('explorar', false);
 const h = location.hash.match(/pozo-(\d+)/); if (h) setTimeout(() => fichaPozo(NUM[+h[1] - 1], true), 3500);
