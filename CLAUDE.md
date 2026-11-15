@@ -59,7 +59,7 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 - Dos visualizaciones principales: **Misión en pareja** (cámara del Astronauta 1, visor del Astronauta 2, mensajes de la base y de la Tierra con la demora real de la luz) y **Rover y astronauta**.
 - Rama `david/union-gale-earth` (PR #5): ya incluye la rama del compañero (#6). Guía completa en `docs/desarrollo/`.
 - **Decisión (15/11): Gale Earth es la única pantalla.** Todo lo de GALE-3D se pasa al mismo globo. El plan, con hallazgos de QA, reglas de transiciones y fases, está en `docs/desarrollo/qa-unificacion.md`.
-- En la escena: **Base Gale** (lugar elegido con los datos del terreno, partes con ficha y fuente) y **Rover GX-2**, la versión nueva para las próximas excavaciones (taladro de 2 m, dron, alas solares; diseño propio). Se elige en Escena → Rover.
+- En la escena: **Base Gale** en la **Zona 2** del análisis de sitios del equipo (`data/base/sitios_base.geojson`, llanura del aterrizaje, a 1,7 km del recorrido; partes con ficha y fuente) y **Rover GX-2**, la versión nueva para las próximas excavaciones (taladro de 2 m, dron, alas solares; diseño propio). Se elige en Escena → Rover.
 
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).

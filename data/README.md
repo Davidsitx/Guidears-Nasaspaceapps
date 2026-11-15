@@ -5,6 +5,7 @@ Versionados acá (livianos, GeoJSON):
 - `curiosity/paradas_boxwork.geojson` — estadías largas en el boxwork (Altadena, Nevado Sajama...).
 - `curiosity/posicion_sol5070.geojson` — posición actual.
 - `rutas/ruta_sol5070_cualitativa.geojson` — borrador de rutas, sin elevación.
+- `base/sitios_base.geojson` — análisis de sitios del equipo para la base (zonas 1, 2 y 3 en la llanura del aterrizaje, con criterios y fuente). La Base Gale va en la Zona 2 (`elegida: true`).
 - `terreno/sol5070/` — terreno de la zona del sol 5070 con el formato de docs/contrato.md §1 (`dem_2m.bin`, `meta.json`, `orto.jpg`). El `dem.tif` de 1 m no se versiona: se regenera con `herramientas/recortar_terreno.py` (ver `terreno/sol5070/README.md`).
 
 No versionados (descargar a `data/raw/`):

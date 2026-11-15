@@ -17,6 +17,8 @@ Este documento sale de la grabación de QA del 15/11 (`Grabación_2026-11-15_015
 
 Las capturas están en `capturas/qa/`.
 
+> **Para el equipo:** los mensajes para pegarle a Claude en cada fase, y qué revisar al terminar, están en [prompts-unificacion.md](prompts-unificacion.md).
+
 > **Para Claude:** antes de tocar `gale-earth/`, leé `gale-earth/README.md`. Esa carpeta es del compañero: el código nuevo va en archivos nuevos (`gale-earth/portada.js`, `gale-earth/mision.js`) que `_ensamblar.py` suma, y cada cambio se anota en `docs/notas.md`. No se edita `plantilla.html` ni `index.html` a mano, en ninguna de las dos carpetas.
 
 ---
@@ -212,17 +214,17 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 - **Qué:** un archivo `gale-earth/datos/mision.json` con todo lo de la zona de hoy, en longitud y latitud:
   - **paradas:** id, letra, color, nombre, motivo científico, quién va, suelo, CRISM y radiación;
   - **rutas A, B y C y expedición E1–E5:** línea más una muestra cada 5 m con distancia, elevación, pendiente, cielo tapado y arena;
-  - **Base Gale:** posición, rumbo y partes, con sus textos y fuentes;
+  - **Base Gale:** en la **Zona 2** de `data/base/sitios_base.geojson` (la que tiene `elegida: true`), con su rumbo (la esclusa mira al punto más cercano del recorrido) y sus partes, con textos y fuentes;
   - **mensajes de la base** y **parámetros:** salida a pie, velocidades y dosis;
   - las claves de `FUENTES_URL` que usen.
 - **Dónde:** una opción nueva `--exportar-mision` en `escena3d/armar.py`, que sale de `data/rutas/*.geojson`, `data/curiosity/*` y la grilla de 2 m.
-  - El lugar de la base hay que calcularlo en Python con el mismo criterio que `const BASE`: círculo de 26 m, 95 % bajo 8°, nada sobre 12°, casi sin arena, a más de 20 m de las rutas y a menos de 750 m de Curiosity.
+  - El lugar de la base no se calcula: se lee de `data/base/sitios_base.geojson`, el análisis de sitios del equipo (zonas 1, 2 y 3 en la llanura del aterrizaje). La base va en la Zona 2.
   - Para pasar a longitud y latitud se usa la misma conversión que `mundoALonLat`.
 - **Cómo:** con las muestras por tramo, el visor y los avisos ya no necesitan la grilla de 2 m en el navegador.
 - **Terminado cuando:**
   - el JSON pesa menos de 2 MB;
   - `gale-earth/armar.py` lo mete en la página y avisa si falta;
-  - la base cae a menos de 2 m de donde está en GALE-3D.
+  - la base cae en la Zona 2, a menos de 2 m de donde está en GALE-3D.
 
 ### Fase 2 · La portada dentro de Gale Earth (M)
 - **Qué:** la portada (tres pasos, cuatro entradas, modos agrupados) pasa a ser una capa `#portada` encima del globo de Cesium. El Marte de la derecha es el globo de Gale Earth, corrido con `viewer.camera.frustum.xOffset = -0.35`.

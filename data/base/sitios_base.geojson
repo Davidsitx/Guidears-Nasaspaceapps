@@ -1,0 +1,71 @@
+{
+ "type": "FeatureCollection",
+ "name": "sitios_base",
+ "metadatos": {
+  "que_es": "Centros propuestos para una base con zona de aterrizaje en la llanura del aterrizaje de Curiosity, sin pisar su recorrido. Cada centro tiene un círculo libre de 250 m.",
+  "fuente": "Análisis de sitios del equipo, figura 'Gale: dónde ubicar una base con zona de aterrizaje cerca de la travesía de Curiosity, sin pisarla' (15/11/2026). Datos: DEM USGS de Gale 1 m (Calef y Parker 2016) a 4 m; HiRISE color (NASA/JPL/UArizona) a 3 m; recorrido y pozos del equipo.",
+  "criterios": "Excluye: pendiente > 10° en 20 m (Calef 2015); peligros > 20° del rover (data/parametros.json) y arena oscura en HiRISE, con 150-250 m de margen; 1 km del recorrido de Curiosity (patrimonio) y 2 km del aterrizaje 2012 y de Curiosity hoy (supuesto, por analogía con NASA 2011, sitios Apollo). Pesos: pendiente 0,30, peligro 0,25, cercanía 0,20, rugosidad 0,15, elevación 0,10. Área apta: 9,05 % de la franja.",
+  "tipo": "cálculo propio; umbrales provisorios",
+  "proyeccion": "lon y lat planetocéntricas en grados; la figura mide en km sobre la franja de data/terreno/travesia_sur/meta.json (equirectangular, paralelo estándar 0, R = 3.396.190 m)",
+  "decision": "La Base Gale va en la Zona 2 (David, 15/11). Las zonas 1 y 3 quedan como alternativas."
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.38709,
+     -4.59349
+    ]
+   },
+   "properties": {
+    "id": "zona1",
+    "nombre": "Zona 1",
+    "rol": "mejor puntaje",
+    "elegida": false,
+    "origen_posicion": "coordenadas escritas en la figura",
+    "elev_m": -4492,
+    "pendiente_deg": 2.7,
+    "mancha_apta_km2": 8.97,
+    "a_recorrido_km": 2.2,
+    "a_peligro_km": 1.5,
+    "a_aterrizaje_2012_km": 3.2
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.37501,
+     -4.61681
+    ]
+   },
+   "properties": {
+    "id": "zona2",
+    "nombre": "Zona 2",
+    "rol": "alternativa; elegida por el equipo para la Base Gale (15/11)",
+    "elegida": true,
+    "origen_posicion": "centro leído de la figura, en km desde el borde noroeste de la franja de la travesía (±10 m: un píxel de la figura son 9 m; el mismo método da la Zona 1 a menos de 1 m de sus coordenadas escritas)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.35716,
+     -4.63468
+    ]
+   },
+   "properties": {
+    "id": "zona3",
+    "nombre": "Zona 3",
+    "rol": "alternativa",
+    "elegida": false,
+    "origen_posicion": "centro leído de la figura, en km desde el borde noroeste de la franja de la travesía (±10 m: un píxel de la figura son 9 m; el mismo método da la Zona 1 a menos de 1 m de sus coordenadas escritas)"
+   }
+  }
+ ]
+}

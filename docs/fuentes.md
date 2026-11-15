@@ -98,6 +98,7 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 
 | Demora de la luz Tierra–Marte (misión en pareja y wiki) | NASA JPL Solar System Dynamics, "Approximate Positions of the Planets" (elementos de Standish, 1800–2050); cálculo propio de la distancia y del tiempo de la luz |
 
+| Base Gale: lugar (Zona 2 de tres centros con círculo libre de 250 m en la llanura del aterrizaje) | Análisis de sitios del equipo, 15/11 (`data/base/sitios_base.geojson`): DEM USGS de Gale 1 m (Calef y Parker 2016) a 4 m, HiRISE color a 3 m, pendiente < 10° en 20 m (Calef 2015), 1 km del recorrido y 2 km de los hitos (supuesto, analogía NASA 2011, sitios Apollo). Cálculo propio, umbrales provisorios |
 | Base Gale: hábitat con blindaje de hielo (idea) | NASA Langley 2016, Mars Ice Home (phys.org/news/2016-12-nasa-ice-house-mars.html) |
 | Base Gale: reactor de fisión de al menos 40 kW | NASA Glenn, Fission Surface Power (nasa.gov/centers-and-facilities/glenn/nasas-fission-surface-power-project-energizes-lunar-exploration) |
 | Base Gale: oxígeno del CO₂ (122 g en 16 corridas, hasta 12 g/h) | NASA 2023, MOXIE (phys.org/news/2023-09-nasa-oxygen-generating-moxie-mars-mission.html) |

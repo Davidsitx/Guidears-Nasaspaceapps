@@ -141,11 +141,11 @@ Al elegir, el globo se corre al centro con Gale en el medio, la portada se funde
 
 ![Base Gale](capturas/08_base_gale.jpg)
 
-- **Base Gale:** está en la zona de hoy, con el marcador "BG". El lugar sale de los datos (llano, sin arena, cerca de Curiosity y lejos de las rutas). Cada parte se toca y abre su ficha con fuente:
+- **Base Gale:** está en la **Zona 2** del análisis de sitios del equipo, en la llanura del aterrizaje (lon 137,37501°, lat −4,61681°), con el marcador "BG". Queda a 1,7 km del recorrido, a 4,3 km del aterrizaje de 2012 y a 12,4 km de Curiosity hoy. El lugar sale de `data/base/sitios_base.geojson` (zonas 1, 2 y 3; la 2 la eligió el equipo). Cada parte se toca y abre su ficha con fuente:
   - hábitat, túneles, laboratorio y esclusa con suitports;
   - invernadero, campo solar, reactor, antena y estación meteorológica;
   - planta de oxígeno, agua, garaje, luces y plataforma.
-- **Código:** bloque `const BASE` (elección del lugar) y `if (BASE) { … }` (modelos) en `plantilla.html`. Las partes van con `parte(clave, objeto)` y sus textos están en `PARTES_BASE`.
+- **Código:** bloque `const BASE` (lee el lugar elegido del archivo y mide pendiente, cielo tapado y distancias sobre el terreno de la travesía) y `if (BASE) { … }` (modelos) en `plantilla.html`. Las partes van con `parte(clave, objeto)` y sus textos están en `PARTES_BASE`.
 
 ![Rover GX-2](capturas/09_rover_gx2.jpg)
 

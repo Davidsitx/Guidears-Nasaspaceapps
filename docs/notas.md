@@ -2,6 +2,20 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada (5) · David (con Claude) · BASE GALE EN LA ZONA 2 Y PROMPTS PARA EL PASO A PASO
+- **Decidió (David):** la Base Gale va en la **Zona 2** del análisis de sitios del equipo, en la llanura del aterrizaje. Las zonas 1 (mejor puntaje) y 3 quedan como alternativas.
+- **Hizo:**
+  - `data/base/sitios_base.geojson` con las tres zonas, los criterios y la fuente.
+    - La Zona 1 tiene las coordenadas escritas en la figura.
+    - Las zonas 2 y 3 están leídas de la figura en km desde el borde noroeste de la franja de la travesía (la misma de `data/terreno/travesia_sur/`). El método da la Zona 1 a menos de 1 m de sus coordenadas.
+  - **La escena** ya no elige el lugar dentro de la zona de hoy: lee la zona elegida y mide sobre el terreno de 12 m.
+    - Resultado: pendiente media de 3,5° (máxima 6°) y 3 % de cielo tapado.
+    - Distancias: 1,69 km del recorrido, 4,26 km del aterrizaje y 12,41 km de Curiosity hoy.
+    - La esclusa mira al punto más cercano del recorrido.
+    - La ficha explica el lugar y nombra las alternativas.
+  - `docs/desarrollo/prompts-unificacion.md`: un mensaje listo para pegar en Claude por cada fase del plan, con cómo verlo y qué revisar.
+- **Para el compañero:** si el script del análisis da otras coordenadas para las zonas 2 y 3, reemplazarlas en `data/base/sitios_base.geojson` y volver a armar la escena. Nada más cambia.
+
 ## 2026-11-15 madrugada (4) · David (con Claude) · QA DEL SITIO PUBLICADO Y DECISIÓN: GALE EARTH ES LA ÚNICA PANTALLA
 - **Decidió (David):** Gale Earth es la única pantalla. Todo lo de GALE-3D pasa al mismo globo:
   - portada;

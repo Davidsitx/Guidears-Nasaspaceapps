@@ -1068,6 +1068,7 @@ const FUENTES_URL = {
   curDrill: ['NASA: primera perforación de Curiosity (John Klein, sol 182), agujero de 1,6 cm de ancho y 6,4 cm de profundidad', 'https://science.nasa.gov/resource/curiositys-first-sample-drilling'],
   ingenuity: ['NASA: Ingenuity hizo 72 vuelos, unos 128,8 minutos en el aire y 17 km recorridos', 'https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/'],
   mmrtg: ['NASA: el MMRTG da unos 110 W eléctricos al empezar la misión', 'https://science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf'],
+  sitiosBase: ['Análisis de sitios del equipo (15/11): tres centros para una base con zona de aterrizaje en la llanura del aterrizaje, con el DEM USGS de 1 m, HiRISE y el recorrido de Curiosity (data/base/sitios_base.geojson)', 'https://github.com/Davidsitx/Guidears-Nasaspaceapps/blob/main/data/base/sitios_base.geojson'],
   suitport: ['NASA JSC (2012): suitports, el traje queda acoplado afuera; la preparación de una salida pasa de horas a menos de 30 minutos y el polvo no entra', 'https://ntrs.nasa.gov/citations/20120018014'],
   jplApprox: ['NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte', 'https://ssd.jpl.nasa.gov/planets/approx_pos.html'],
   odometria: ['NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos', 'https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/'],
@@ -4446,38 +4447,34 @@ renderer.setAnimationLoop(ahora => {
   datosEscena();
 }
 
-// ---------- Base Gale: hábitat del equipo junto a Curiosity (propuesta propia, ubicada con los datos del terreno) ----------
-// Lugar: dentro de la zona de 2 m, un círculo de 26 m donde el 95 % del suelo está bajo 8° (y nada pasa de 12°), casi sin
-// arena, a más de 20 m de las rutas y a menos de 750 m de Curiosity. Entre esos, gana el de menos pendiente y desnivel, con
-// más cielo tapado por el relieve (menos radiación) y más cerca. Cálculo propio sobre la grilla de 2 m.
+// ---------- Base Gale: hábitat del equipo en la Zona 2 del análisis de sitios, en la llanura del aterrizaje (propuesta propia) ----------
+// Lugar: la Zona 2 del análisis de sitios del equipo (data/base/sitios_base.geojson), en la llanura del aterrizaje: un círculo
+// de 250 m libre, con pendiente bajo 10° en 20 m, lejos de los peligros del rover y de la arena oscura, y a más de 1 km del
+// recorrido de Curiosity para no pisarlo. Acá solo se mide, sobre el terreno de la travesía (celdas de 12 m), lo que muestra
+// la ficha: pendiente, cielo tapado, desnivel y distancias. Cálculo propio.
 const BASE = (() => {
-  const R = 26, rc = Math.ceil(R / CS);
-  const pr = []; for (const r of rutas) for (let i = 0; i < r.pts.length; i += 8) pr.push(r.pts[i]);
-  let mejor = null;
-  for (let f = rc; f < H - rc; f += 4) for (let c = rc; c < W - rc; c += 4) {
-    const [x, z] = centroDe([c, f]), dc = Math.hypot(x - CUR_X, z - CUR_Z);
-    if (dc < 60 || dc > 750 || pr.some(p => Math.hypot(p.x - x, p.z - z) < 20)) continue;
-    let malo = false, sc = 0, sp = 0, n = 0, pm = 0, sobre = 0, arena = 0;
-    for (let di = -rc; di <= rc && !malo; di += 2) for (let dj = -rc; dj <= rc; dj += 2) {
-      if (di * di + dj * dj > rc * rc) continue;
-      const k = (f + di) * W + (c + dj), p = PEND[k];
-      if (p > 12) { malo = true; break; }
-      if (p > 8) sobre++; if (CLASE[k] === 4) arena++;
-      sc += CIELO[k]; sp += p; pm = Math.max(pm, p); n++;
-    }
-    if (malo || sobre > 0.05 * n || arena > 0.01 * n) continue;
-    const hs = [alturaEn(x, z)]; for (const rr of [R / 3, 2 * R / 3, R]) for (let a = 0; a < 8; a++) hs.push(alturaEn(x + Math.cos(a * Math.PI / 4 + rr) * rr, z + Math.sin(a * Math.PI / 4 + rr) * rr));
-    const rango = Math.max(...hs) - Math.min(...hs), puntaje = sc / n - 0.015 * sp / n - 0.008 * rango - 0.00004 * dc;
-    if (!mejor || puntaje > mejor.puntaje) mejor = { x, z, puntaje, cielo: sc / n, pend: sp / n, pmax: pm, rango, dc, hmax: Math.max(...hs), hmin: Math.min(...hs) };
+  const S = D.sitios_base?.features?.find(f => f.properties.elegida);
+  if (!S || !CTX) return null;
+  const [lon, lat] = S.geometry.coordinates, [x, z] = lonlatAMundo(lon, lat), R = 26;
+  const hs = [alturaGlobal(x, z)], ps = [pendGlobal(x, z)], cs = [cieloGlobal(x, z)];
+  for (const rr of [R / 3, 2 * R / 3, R]) for (let a = 0; a < 12; a++) {
+    const xx = x + Math.cos(a * Math.PI / 6) * rr, zz = z + Math.sin(a * Math.PI / 6) * rr;
+    hs.push(alturaGlobal(xx, zz)); ps.push(pendGlobal(xx, zz)); cs.push(cieloGlobal(xx, zz));
   }
-  return mejor;
+  const med = v => v.reduce((s, q) => s + q, 0) / v.length;
+  let cerca = null, drec = Infinity;                        // punto del recorrido más cercano: hacia ahí mira la esclusa
+  if (TR) for (const q of TR.P) { const d = Math.hypot(q.x - x, q.z - z); if (d < drec) { drec = d; cerca = q; } }
+  return { x, z, lon, lat, sitio: S.properties, otros: D.sitios_base.features.filter(f => f !== S),
+    pend: med(ps), pmax: Math.max(...ps), cielo: med(cs), hmax: Math.max(...hs), hmin: Math.min(...hs), rango: Math.max(...hs) - Math.min(...hs),
+    dc: Math.hypot(x - CUR_X, z - CUR_Z), drec: cerca ? drec : null, dater: TR ? Math.hypot(TR.P[0].x - x, TR.P[0].z - z) : null,
+    mira: cerca ? { x: cerca.x, z: cerca.z } : { x: CUR_X, z: CUR_Z } };
 })();
 if (BASE) {
   const g = new THREE.Group(); BASE.grupo = g; BASE.partes = []; BASE.radio = 26;
   const R = BASE.radio;                                     // radio de la plataforma, el mismo con el que se eligió el lugar
   g.position.set(BASE.x, BASE.hmax + 0.35, BASE.z);
-  const dx = CUR_X - BASE.x, dz = CUR_Z - BASE.z, dd = Math.hypot(dx, dz) || 1;
-  g.rotation.y = Math.atan2(dz / dd, -dx / dd);            // la esclusa (lado −x) mira hacia Curiosity
+  const dx = BASE.mira.x - BASE.x, dz = BASE.mira.z - BASE.z, dd = Math.hypot(dx, dz) || 1;
+  g.rotation.y = Math.atan2(dz / dd, -dx / dd);            // la esclusa (lado −x) mira hacia el recorrido de Curiosity
   escena.add(g);
   const M = {
     regolito: new THREE.MeshStandardMaterial({ color: 0x8c6448, roughness: 1, metalness: 0 }),
@@ -4670,7 +4667,9 @@ function htmlBase(clave) {
   if (!BASE) return '<p>La base no entra en esta zona.</p>';
   const orden = ['habitat', 'laboratorio', 'esclusa', 'invernadero', 'tuneles', 'reactor', 'solar', 'isru', 'agua', 'antena', 'meteo', 'garaje', 'plataforma', 'luces'];
   return `<span class="prov">propuesta propia</span><h1 class="parada-cab"><span class="chip" style="background:#d9733f">B</span>Base Gale</h1>
-    <p>Dónde vuelven los astronautas después de cada salida. Elegimos el lugar con los datos del terreno: es de lo más llano de la zona. En 26 m a la redonda la pendiente media es de ${num(BASE.pend, 1)}° (máxima ${num(BASE.pmax, 0)}°), casi no hay arena y el relieve tapa el ${num(BASE.cielo * 100)} % del cielo, así que la radiación baja a ${num(tasaDe(BASE.cielo), 1)} µSv/h (${num(tasaDe(0), 1)} a cielo abierto) ${fq('hassler')}. Está a ${fmtM(BASE.dc)} de Curiosity. <span class="prov">cálculo propio</span></p>
+    <p>Dónde vuelven los astronautas después de cada salida, con su zona de aterrizaje al lado. Está en la <b>${BASE.sitio.nombre}</b> del análisis de sitios del equipo, en la llanura del aterrizaje de Curiosity: un círculo de 250 m libre, con pendiente bajo 10° en 20 m, lejos de los peligros del rover y de la arena oscura, y a más de 1 km del recorrido para no pisarlo ${fq('sitiosBase')} ${fq('usgsOrto')}. <span class="prov">cálculo propio · umbrales provisorios</span></p>
+    <p>Sobre el terreno de la travesía (celdas de 12 m), en 26 m a la redonda la pendiente media es de ${num(BASE.pend, 1)}° (máxima ${num(BASE.pmax, 0)}°) y el relieve tapa el ${num(BASE.cielo * 100)} % del cielo, así que la radiación es de ${num(tasaDe(BASE.cielo), 1)} µSv/h (${num(tasaDe(0), 1)} a cielo abierto) ${fq('hassler')}. Está a ${fmtM(BASE.drec)} del recorrido, a ${fmtM(BASE.dater)} del aterrizaje de 2012 y a ${fmtM(BASE.dc)} de Curiosity hoy. <span class="prov">cálculo propio</span></p>
+    <p class="sub">Alternativas del mismo análisis: ${BASE.otros.map(f => `${f.properties.nombre} (${f.properties.rol})`).join(' y ')}. La Zona 2 la eligió el equipo.</p>
     ${orden.map(k => { const [t, d, f] = PARTES_BASE[k]; return `<details${k === clave ? ' open' : ''} data-parte="${k}"><summary>${t}</summary><p>${d} ${f.map(fq).join(' ')}</p></details>`; }).join('')}
     <div class="botones"><button data-base-ir="1">Ver en 3D</button></div>`;
 }

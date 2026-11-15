@@ -46,6 +46,8 @@ Si ya lo tenían clonado: `git checkout main` y `git pull`.
 
 ## 4. Seguir desarrollando con Claude
 
+> **Ahora:** para unificar todo en Gale Earth, usar los mensajes de [prompts-unificacion.md](prompts-unificacion.md), uno por fase. Lo de abajo sirve para cualquier otro pendiente.
+
 1. Crear una rama propia: `git checkout -b companero/<tema>` (o `david/<tema>`).
 2. Abrir Claude Code en la carpeta del repo.
 3. Pegarle este primer mensaje, cambiando lo que está entre < >:
