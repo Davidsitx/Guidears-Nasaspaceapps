@@ -2,6 +2,11 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana · Compañero (con Claude) · THEMIS SIN RAYAS EN LOS POLOS
+- Las rayas negras cerca de los polos eran franjas sin datos del mosaico THEMIS de USGS, que vienen pintadas de negro. Ahora son transparentes: las franjas THEMIS pasaron de .jpg a .webp con canal alfa.
+- El mosaico THEMIS llega solo hasta ±65°. Más allá se ve la foto de fondo, y el borde se esfuma en los últimos 3° para que no parezca un casquete.
+- La capa "Lugares de aterrizaje" ahora se llama "Lugares de aterrizaje (Misiones)".
+
 ## 2026-11-15 madrugada (3) · Compañero (con Claude) · GALE EARTH: CAPAS DE TODO MARTE
 - **Capas → Todo Marte** (`gale-earth/marte.js`; datos en `capas/global/`, armados con `herramientas/capas_globales.py`):
   - **Colores de altitud:** relieve de todo el planeta en datum MOLA, con leyenda de −8,2 a +21,2 km. Sale de nuestras propias teselas HRSC-MOLA 200 m (nivel 5, ~5 km/px).

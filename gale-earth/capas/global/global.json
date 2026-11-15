@@ -2,22 +2,22 @@
  "themis": {
   "franjas": [
    {
-    "archivo": "themis_noche_0.jpg",
+    "archivo": "themis_noche_0.webp",
     "lon_oeste": -180,
     "lon_este": -90
    },
    {
-    "archivo": "themis_noche_1.jpg",
+    "archivo": "themis_noche_1.webp",
     "lon_oeste": -90,
     "lon_este": 0
    },
    {
-    "archivo": "themis_noche_2.jpg",
+    "archivo": "themis_noche_2.webp",
     "lon_oeste": 0,
     "lon_este": 90
    },
    {
-    "archivo": "themis_noche_3.jpg",
+    "archivo": "themis_noche_3.webp",
     "lon_oeste": 90,
     "lon_este": 180
    }

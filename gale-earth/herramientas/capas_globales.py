@@ -2,7 +2,8 @@
 
 1) Infrarrojo nocturno (THEMIS, Mars Odyssey): USGS Astrogeology, THEMIS Night IR Controlled Mosaics 100 m v2 (oct. 2018),
    versión de vista previa a 2 km/píxel (browse_THEMIS_NightIR_ControlledMosaics_2km.jpg), de 65°S a 65°N.
-   Se corta en 4 franjas de 90° de longitud (themis_noche_0..3.jpg) para que entren como textura en cualquier placa.
+   Se corta en 4 franjas de 90° de longitud (themis_noche_0..3.webp, con transparencia: las franjas sin datos y el
+   borde de ±65° no tapan el mapa) para que entren como textura en cualquier placa.
    Es una imagen cualitativa: más claro = más tibio de noche (roca, costras); más oscuro = más frío (polvo, arena fina).
 2) Topónimos: nomenclatura oficial de la IAU, Gazetteer of Planetary Nomenclature (USGS/IAU),
    https://planetarynames.wr.usgs.gov/ . Se usa la exportación MARS_nomenclature.csv (nombre, diámetro, centro)
@@ -32,11 +33,21 @@ def main():
     Image.MAX_IMAGE_PIXELS = None
     im = Image.open(io.BytesIO(bajar(THEMIS))).convert('L')
     W, H = im.size                                   # 10669 × 3853 a 2 km: de -180° a 180°, de 65°N a 65°S (del .aux.xml)
+    import numpy as np
+    g = np.array(im)
+    # Las franjas sin datos del mosaico vienen en negro (sobre todo cerca de ±65°): se vuelven transparentes,
+    # con 1 píxel de margen para borrar el halo de la compresión JPG. El borde de ±65° se esfuma en los últimos 3°.
+    vacio = g < 10
+    vacio = vacio | np.roll(vacio, 1, 0) | np.roll(vacio, -1, 0) | np.roll(vacio, 1, 1) | np.roll(vacio, -1, 1)
+    alfa = np.where(vacio, 0, 255).astype(np.float32)
+    borde = int(round(3 / 130 * H)); rampa = np.ones(H, np.float32); rampa[:borde] = np.linspace(0, 1, borde); rampa[-borde:] = np.linspace(1, 0, borde)
+    alfa = (alfa * rampa[:, None]).astype(np.uint8)
+    rgba = np.dstack([g, g, g, alfa])
     franjas = []
     for k in range(4):
         x0, x1 = round(W * k / 4), round(W * (k + 1) / 4)
-        im.crop((x0, 0, x1, H)).save(os.path.join(SAL, f'themis_noche_{k}.jpg'), quality=82, optimize=True)
-        franjas.append(dict(archivo=f'themis_noche_{k}.jpg', lon_oeste=-180 + 90 * k, lon_este=-90 + 90 * k))
+        Image.fromarray(rgba[:, x0:x1], 'RGBA').save(os.path.join(SAL, f'themis_noche_{k}.webp'), quality=78, method=6)
+        franjas.append(dict(archivo=f'themis_noche_{k}.webp', lon_oeste=-180 + 90 * k, lon_este=-90 + 90 * k))
     filas = bajar(NOMBRES).decode('utf-8').splitlines()[1:]
     nombres, descartados = [], 0
     for f in filas:
