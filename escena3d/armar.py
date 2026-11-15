@@ -278,6 +278,7 @@ def main():
         "zona": a.zona,
         "contexto": contexto,
         "travesia": travesia,
+        "sitios_base": leer_json(os.path.join(RAIZ, "data", "base", "sitios_base.geojson")) if os.path.exists(os.path.join(RAIZ, "data", "base", "sitios_base.geojson")) else None,
         "pozos": pozos,
         "expedicion": expedicion,
         "crism_ctx": crism_ctx,

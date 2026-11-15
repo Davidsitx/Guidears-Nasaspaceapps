@@ -203,8 +203,8 @@ with sync_playwright() as p:
 Antes de subir, conviene revisar dos cosas más:
 
 ```bash
-# sintaxis de cada <script> de plantilla.html
-python3 -c "import re,subprocess;s=open('escena3d/plantilla.html',encoding='utf-8').read();[print(i,subprocess.run(['node','--check','/dev/stdin'],input=sc,capture_output=True,text=True).returncode) for i,sc in enumerate(re.findall(r'<script(?![^>]*src)[^>]*>(.*?)</script>',s,re.S)) if len(sc)>50]"
+# sintaxis de cada <script> de plantilla.html (node --check no lee de una tubería: va por archivo temporal)
+python3 -c "import re,subprocess;s=open('escena3d/plantilla.html',encoding='utf-8').read();[print(i,(open('/tmp/chk.mjs','w').write(sc),subprocess.run(['node','--check','/tmp/chk.mjs'],capture_output=True,text=True).returncode)[1]) for i,sc in enumerate(re.findall(r'<script(?![^>]*src)[^>]*>(.*?)</script>',s,re.S)) if len(sc)>50]"
 # cada $('id') del código existe en el HTML (un id que falta rompe la carga con "Cannot read properties of null")
 grep -o "\$('[a-zA-Z0-9-]*')" escena3d/plantilla.html | sort -u | sed "s/\$('//; s/')//" | while read id; do grep -q "id=\"$id\"" escena3d/plantilla.html || echo "falta $id"; done
 ```
@@ -219,3 +219,16 @@ grep -o "\$('[a-zA-Z0-9-]*')" escena3d/plantilla.html | sort -u | sed "s/\$('//;
   - `servir.py` sirve `/gale-earth/` y `/escena3d/`;
   - Gale Earth entra a la escena con `#desde-gale-earth`;
   - la escena vuelve con `../gale-earth/index.html#curiosity`, o sin hash para la vista espacial.
+
+## Misión en Gale Earth (pantalla única, desde el 15/11)
+
+- **De dónde salen los datos:** `herramientas/exportar_mision.py` abre `escena3d/index.html` sin ventana (Playwright) y llama a dos funciones de la escena, `window.__exportarMision()` y `window.__exportarModelos(GLTFExporter)`:
+  - la primera escribe `gale-earth/datos/mision.json`: paradas con su ficha y su muestra simulada en HTML, rutas con un punto cada 2 m (lon, lat, distancia, elevación, pendiente de marcha y del suelo, cielo tapado, horas, µSv, terreno, CRISM), expedición, Base Gale, GX-2, estaciones, parámetros y `FUENTES_URL`;
+  - la segunda escribe `gale-earth/capas/mision/*.glb`. Los modelos salen en reposo, girados para que el este de la escena sea el "adelante" de glTF, y con las piezas móviles nombradas: `rueda_0` a `rueda_5`, `muslo_i`, `rodilla_i`, `tobillo_i`, `hombro_i`, `codo_i`, `cadera`, `torso`, `casco`, `lidar` y `rotor_i`.
+- **Cuándo correrlo:** si cambia algo de la misión en la escena (paradas, rutas, textos, modelos). Primero `python escena3d/armar.py`, después `python herramientas/exportar_mision.py`, y en `gale-earth/`: `python _ensamblar.py` y `python armar.py`.
+- **`gale-earth/mision.js`:**
+  - carteles y rutas en un `CustomDataSource('mision')`;
+  - modelos como `Cesium.Model` (se apoyan en el terreno con cuatro muestras de altura, como la suspensión, y se animan con `node.matrix`);
+  - un solo bucle en `scene.preRender`;
+  - envuelve `irA` y el clic del globo, sin tocar el código del compañero.
+- **Probar sin internet:** Cesium del paquete npm (`npm pack cesium@1.147.0`) y un terreno de prueba armado con nuestros DEM en el mismo formato de `teselas/terreno` (cabecera Float32 más Uint16 65 × 65). Los scripts de prueba no están en el repo: pedirle a Claude que los arme de nuevo si hace falta.

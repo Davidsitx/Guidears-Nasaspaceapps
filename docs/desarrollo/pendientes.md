@@ -1,5 +1,7 @@
 # Lo que falta, en orden de prioridad
 
+> **Prioridad nueva (15/11):** unificar todo en Gale Earth. El orden de trabajo está en [qa-unificacion.md](qa-unificacion.md): primero su fase 0 y después sus fases 1 y 3. Los ítems de esta lista siguen valiendo, pero se hacen ya dentro de Gale Earth.
+
 Cada ítem tiene **qué hacer**, **dónde** y **cuándo está terminado**. Al tomar uno, anotarlo en `docs/notas.md`; al terminarlo, sacarlo de esta lista.
 
 ## Para la entrega (prioridad alta)
@@ -59,3 +61,20 @@ Cada ítem tiene **qué hacer**, **dónde** y **cuándo está terminado**. Al to
 ### 12. Prueba automática en el repo
 - **Qué:** guardar la prueba de Playwright de `arquitectura.md` como `herramientas/probar_escena.py`. Tiene que recorrer la portada, cada modo y la wiki, y fallar si hay errores en la consola.
 - **Terminado cuando:** `python herramientas/probar_escena.py` termina con "OK" o con la lista de errores.
+
+## Base Gale y rover GX-2 (prioridad media)
+
+### 13. La misión en pareja sale y vuelve a la Base Gale
+- **Qué:** que la ruta B y la expedición a pie empiecen y terminen en la esclusa de la base, y que "distancia a la base" mida hasta ahí (hoy mide hasta el rover).
+- **Dónde:** `avisosPareja()`, `tickManoExpe()` y `BASE.x / BASE.z`.
+- **Terminado cuando:** el visor dice "Base Gale a N m" con la distancia real a la esclusa.
+
+### 14. Cámara del dron del GX-2
+- **Qué:** mientras el dron vuela, una vista chica de lo que ve (mismo método que el ítem 6), con la pendiente y la arena de la zona que mira.
+- **Terminado cuando:** al tocar "Dron" se ve el terreno de adelante desde 10 m de altura.
+
+### 15. El GX-2 perfora en las paradas y en la expedición
+- **Qué:** si el GX-2 está elegido, "Perforación simulada" en una parada o en E1–E5 usa el taladro de 2 m (la torre baja y entran las barras) en lugar del brazo de Curiosity.
+- **Dónde:** `perforar()` y `rnPerforar()`.
+- **Terminado cuando:** la muestra dice "a 2 m" y el agujero queda bajo la torre.
+

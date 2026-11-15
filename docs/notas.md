@@ -2,6 +2,82 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana · David (con Claude) · MISIÓN CURIOSITY DENTRO DE GALE EARTH: UNA SOLA PANTALLA
+- **Decidió (David):** "Misión Curiosity 3D" va en la misma pantalla que Gale Earth, en "Curiosity hoy", con la misma lógica visual. Nada de saltar a otro Marte.
+- **Hizo:**
+  - **`herramientas/exportar_mision.py`:** abre la escena sin ventana y saca, con sus mismas funciones, `gale-earth/datos/mision.json` y los modelos `gale-earth/capas/mision/*.glb`.
+    - El JSON tiene paradas con ficha y muestra simulada, rutas con datos cada 2 m, expedición, Base Gale, GX-2, estaciones, parámetros y fuentes.
+    - Los modelos son Curiosity, GX-2, astronauta y Base Gale, exportados con el GLTFExporter de three.js (MIT), copiado en `escena3d/vendor/`.
+  - **`gale-earth/mision.js`:** el módulo nuevo, que `_ensamblar.py` suma; no edita el resto de Gale Earth. Trae:
+    - "Curiosity hoy" completo en el globo;
+    - la barra de la misión;
+    - los recorridos de 4 min que arrancan en pausa;
+    - la misión en pareja con visor, comunicaciones y minimapa;
+    - el hover de todos los carteles;
+    - el botón "Misión Curiosity" sin cambio de página;
+    - el vuelo del espacio al cráter sin perder a Marte de vista (`pitchAdjustHeight`).
+  - **Probado sin internet** con Cesium del paquete npm y un terreno de prueba armado con nuestros DEM (MOLA, travesía 12 m, zona 2 m).
+    - Probados: entrada, hover y clic en carteles, fichas, rover por la ruta A, GX-2, expedición, misión en pareja (cámara del casco y desde atrás), base y Esc.
+    - Sin errores en la consola. Capturas en `docs/desarrollo/capturas/gale-earth/`.
+    - En el celular (390 × 844) la barra queda en dos filas, el botón "Misión Curiosity" se esconde mientras la misión está abierta y, en pareja, comunicaciones, visor y reproductor no se pisan (captura `10_celular.jpg`).
+    - Los enlaces directos `#pareja`, `#rover`, `#apie`, `#tripulado`, `#expedicion` y `#base` abren cada modo.
+- **Para el compañero:** `mision.js` es un archivo aparte. En lo tuyo solo cambió `_ensamblar.py` (una línea), y `index.html` y `plantilla.html` se rearmaron. El módulo envuelve `irA` y el clic del globo sin tocar `_cuerpo.html`.
+- **Falta:** la portada dentro de Gale Earth (fase 2), el mundo abierto (fase 7), y animar el taladro y el dron del GX-2 en el globo.
+
+## 2026-11-15 madrugada (5) · David (con Claude) · BASE GALE EN LA ZONA 2 Y PROMPTS PARA EL PASO A PASO
+- **Decidió (David):** la Base Gale va en la **Zona 2** del análisis de sitios del equipo, en la llanura del aterrizaje. Las zonas 1 (mejor puntaje) y 3 quedan como alternativas.
+- **Hizo:**
+  - `data/base/sitios_base.geojson` con las tres zonas, los criterios y la fuente.
+    - La Zona 1 tiene las coordenadas escritas en la figura.
+    - Las zonas 2 y 3 están leídas de la figura en km desde el borde noroeste de la franja de la travesía (la misma de `data/terreno/travesia_sur/`). El método da la Zona 1 a menos de 1 m de sus coordenadas.
+  - **La escena** ya no elige el lugar dentro de la zona de hoy: lee la zona elegida y mide sobre el terreno de 12 m.
+    - Resultado: pendiente media de 3,5° (máxima 6°) y 3 % de cielo tapado.
+    - Distancias: 1,69 km del recorrido, 4,26 km del aterrizaje y 12,41 km de Curiosity hoy.
+    - La esclusa mira al punto más cercano del recorrido.
+    - La ficha explica el lugar y nombra las alternativas.
+  - `docs/desarrollo/prompts-unificacion.md`: un mensaje listo para pegar en Claude por cada fase del plan, con cómo verlo y qué revisar.
+- **Para el compañero:** si el script del análisis da otras coordenadas para las zonas 2 y 3, reemplazarlas en `data/base/sitios_base.geojson` y volver a armar la escena. Nada más cambia.
+
+## 2026-11-15 madrugada (4) · David (con Claude) · QA DEL SITIO PUBLICADO Y DECISIÓN: GALE EARTH ES LA ÚNICA PANTALLA
+- **Decidió (David):** Gale Earth es la única pantalla. Todo lo de GALE-3D pasa al mismo globo:
+  - portada;
+  - paradas, rutas, Base Gale y expedición ("Curiosity hoy");
+  - rover y astronauta ("Misión Curiosity");
+  - misión en pareja ("Vista del astronauta"), mundo abierto y wiki.
+  - Nada de saltar de un Marte a otro.
+- **Hizo:** QA de la grabación del sitio publicado (2 min 24 s): 15 hallazgos con su segundo y su causa en el código. Están en `docs/desarrollo/qa-unificacion.md`, con:
+  - reglas de transiciones, estados de botones y pines y movimientos (4 min por defecto, arrancar en pausa);
+  - las fases 0 a 8 para unificar;
+  - un guion de QA de 15 pasos.
+  - Capturas en `docs/desarrollo/capturas/qa/`.
+- **Para el compañero:** las fases 0.5, 0.6 y 2 a 8 tocan `gale-earth/`. La propuesta es poner el código nuevo en archivos nuevos (`portada.js`, `mision.js`) que sume `_ensamblar.py`, con enganches cortos en lo existente. Avisar si prefieren otra forma.
+- **Falta:** todo el plan. Lo primero es la fase 0 (arreglos sobre lo publicado, para la demo).
+
+## 2026-11-15 madrugada (3) · David (con Claude) · BASE GALE Y ROVER GX-2 EN LA ESCENA (rama `david/union-gale-earth`)
+- **Base Gale** (modelo 3D en la zona de hoy, marcador "BG"; inspirada en las fotos de domos geodésicos y módulos con túneles que trajo David).
+  - **Lugar elegido con los datos:** círculo de 26 m donde el 95 % del suelo está bajo 8° y nada pasa de 12°, casi sin arena, a más de 20 m de las rutas y a menos de 750 m de Curiosity. Gana el de menos pendiente y desnivel, con más cielo tapado. Quedó a 719 m de Curiosity, con pendiente media de 3,4° y 9 % de cielo tapado. Cálculo propio sobre la grilla de 2 m.
+  - **Partes**, cada una con ficha y fuente al tocarla: hábitat geodésico, túneles, laboratorio, esclusa con suitports, invernadero, campo solar, reactor de fisión con cerco y cable, antena, estación meteorológica, planta de oxígeno (tipo MOXIE), tanque de agua, garaje del rover, luces y plataforma.
+  - También aparece en la wiki ("Base Gale"), y los mensajes de la misión en pareja salen de "Base Gale".
+- **Rover GX-2** (versión nueva para las próximas excavaciones; diseño propio, el ER-6 de fable-rover.vercel.app fue solo inspiración visual: no tiene licencia y no se copió nada).
+  - **Dónde:** Escena → Rover: Curiosity o GX-2 · nuevo. Toma la posición, el rumbo y la inclinación del rover de la escena, así que rutas, expedición y manejo siguen igual.
+  - **Sistemas:** seis ruedas de 80 cm con balancín articulado; taladro de 2 m con la mecha y tres barras de 50 cm (como Rosalind Franklin, ESA); dron explorador (como Ingenuity); MMRTG y alas solares; mástil con LiDAR que gira y cámaras; cámara de suelo y focos.
+  - **Acciones:** Alas, Dron (sale 30 m adelante a 10 m del suelo y vuelve) y Perforar 2 m (muestra simulada al final). Tocar el rover abre su ficha; también está en la wiki.
+  - Los números con fuente están en la ficha; lo propio (tamaño, ruedas, LiDAR) dice "supuesto" o "propuesta del equipo".
+- Arreglado: la página no terminaba de cargar porque la base usaba una variable de otro bloque (`R is not defined`). Ahora `BASE.radio`.
+- Falta: ver `docs/desarrollo/pendientes.md` (ítems 13 a 15).
+## 2026-11-15 madrugada (3) · Compañero (con Claude) · GALE EARTH: CAPAS DE TODO MARTE
+- **Capas → Todo Marte** (`gale-earth/marte.js`; datos en `capas/global/`, armados con `herramientas/capas_globales.py`):
+  - **Colores de altitud:** relieve de todo el planeta en datum MOLA, con leyenda de −8,2 a +21,2 km. Sale de nuestras propias teselas HRSC-MOLA 200 m (nivel 5, ~5 km/px).
+    - Las teselas guardan la altura sobre el elipsoide de Cesium; acá se pasa a la esfera de 3396,19 km. Sin esa corrección, Hellas daba +3 km y los polos +20 km.
+    - Comprobación: Olympus Mons +21,1 km y el fondo de Hellas −8,3 km.
+  - **Infrarrojo nocturno THEMIS** (Mars Odyssey) de todo el planeta, de 65°S a 65°N: vista previa a 2 km del mosaico controlado de USGS (2018), cortada en 4 franjas.
+  - **Topónimos IAU:** 1.805 nombres del Gazetteer de USGS/IAU (exportación MARS_nomenclature.csv). Se descartaron 15 con caracteres dañados.
+    - Se ven según el tamaño del accidente.
+    - Montes y llanuras grandes muestran la altura aproximada en el centro (datum MOLA).
+  - **Lugares de aterrizaje:** de `datos/linea_tiempo.json`, cada uno con su fuente.
+  - **Día y noche ahora:** punto subsolar con el algoritmo Mars24 de NASA (comprobado con el aterrizaje de Curiosity, 15:03 hora media local). Sigue el reloj de Órbitas: si se acelera, la noche se mueve.
+- **Candidatos para la base: fuera.** Ya no aparecen en el mapa, en Capas, en la búsqueda ni en la pestaña Base. La pestaña Base conserva el propósito y Mars 3D Home.
+
 ## 2026-11-15 madrugada (2) · Compañero (con Claude) · GALE EARTH: CAPAS DE MINERALES Y RADIACIÓN, RELOJ EN VIVO, POZOS Y FUENTES
 - **Expedición fuera de Gale Earth:** la sigue otro compañero. El código quedó en `gale-earth/para-companero/expedicion/` (ver su README); las capas siguen en `capas/expedicion/`.
 - **Sin "Abrir en el celular" ni QR:** se borraron el botón, la ventana y la librería que se bajaba de internet. El diseño para celular (hoja deslizable) sigue.

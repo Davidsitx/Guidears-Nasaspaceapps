@@ -333,6 +333,7 @@
   .pop label.campo > span { display: flex; justify-content: space-between; } .pop label.campo b { color: var(--texto); font-variant-numeric: tabular-nums; }
   .pop input[type=range] { width: 100%; } .pop select { width: 100%; justify-content: space-between; }
   .pop input[type=number] { width: 100%; padding: 6px 8px; border-radius: 8px; }
+  .pop .rn-campo { display: flex; flex-direction: column; gap: 4px; margin: 0 0 10px; color: var(--tenue); } .pop .rn-campo .seg { width: 100%; } .pop .rn-campo .seg button { flex: 1; padding-inline: 6px; }
   .pop .teclas { border-top: 1px solid var(--borde); padding-top: 8px; font-size: 11.5px; }
 
   /* columna derecha: datos arriba, controles del mapa y de manejo abajo; nunca se pisan */
@@ -628,7 +629,7 @@
 <button id="ver-hud" class="oculto" title="Datos del rover, del astronauta y del entorno">Datos en vivo</button>
 <div id="hud" class="caja">
   <div class="hud-cab"><span class="etq">Datos en vivo</span><button id="cerrar-hud" class="x" title="Ocultar los datos" aria-label="Ocultar los datos">×</button></div>
-  <details class="hgr" id="hg-rover" open><summary><span>Curiosity · vehículo</span><span class="hv" id="hv-rover"></span></summary>
+  <details class="hgr" id="hg-rover" open><summary><span id="hg-rover-nom">Curiosity · vehículo</span><span class="hv" id="hv-rover"></span></summary>
   <div class="fila"><span>Modo</span><b id="hModo">detenido</b></div>
   <div class="fila"><span>Recorrido</span><b id="hDist">0 m</b></div>
   <div class="fila"><span>Soles de manejo</span><b id="hSoles">—</b></div>
@@ -703,6 +704,8 @@
     <option value="astro">Seguir al astronauta</option>
     <option value="cenital">Cenital (desde arriba)</option>
   </select></label>
+  <div class="campo rn-campo"><span>Rover</span><div class="seg" role="group" aria-label="Qué rover se ve"><button id="rnCur" aria-pressed="true" title="El rover de la misión, como es hoy">Curiosity</button><button id="rnGx" aria-pressed="false" title="Propuesta del equipo para las próximas excavaciones">GX-2 · nuevo</button></div></div>
+  <div class="campo rn-campo oculto" id="rn-acc"><span>Rover GX-2</span><div class="seg" role="group" aria-label="Acciones del GX-2"><button id="rnAlas" aria-pressed="true" title="Abrir o plegar las alas solares">Alas</button><button id="rnDron" aria-pressed="false" title="Lanzar el dron explorador">Dron</button><button id="rnPerf" aria-pressed="false" title="Perforación simulada hasta 2 m">Perforar 2 m</button><button id="rnFicha" title="Qué tiene y en qué se basa">Ficha</button></div></div>
   <label class="campo"><span>Hora solar local <b id="popHora">12:00</b></span><input type="range" id="iHora" min="5.5" max="18.5" step="0.25" value="12"></label>
   <label class="campo"><span>Estación (Ls, 0 a 359) <b id="popLs"></b></span><input type="number" id="iLs" min="0" max="359" value="21"></label>
   <label class="campo"><span>Velocidad del tiempo</span><select id="sVel"><option value="1">× 1</option><option value="10">× 10</option><option value="60" selected>× 60</option><option value="300">× 300</option></select></label>
@@ -1057,6 +1060,16 @@ const OJOS = { vehiculo: 2.1, astronauta: 1.7, tripulado: 2.5 };
 const $ = id => document.getElementById(id);
 // ---------- fuentes con enlace: el círculo "?" lleva directo a la fuente ----------
 const FUENTES_URL = {
+  iceHome: ['NASA Langley (2016): Mars Ice Home, hábitat inflable con una cáscara de agua congelada como blindaje contra los rayos cósmicos, que deja pasar luz', 'https://phys.org/news/2016-12-nasa-ice-house-mars.html'],
+  fsp: ['NASA Glenn: Fission Surface Power, reactor de al menos 40 kW por 10 años y menos de 6 t, para la Luna y adaptable a Marte', 'https://www.nasa.gov/centers-and-facilities/glenn/nasas-fission-surface-power-project-energizes-lunar-exploration'],
+  moxie: ['NASA (2023): MOXIE, en Perseverance, produjo 122 g de oxígeno del CO₂ de Marte en 16 corridas, hasta 12 g por hora', 'https://phys.org/news/2023-09-nasa-oxygen-generating-moxie-mars-mission.html'],
+  exoDrill: ['ESA Exploration Science: el taladro de Rosalind Franklin llega a 2 m con la mecha y tres barras de extensión de unos 50 cm, y toma muestras cada 50 cm', 'https://explorationscience.esa.int/?p=2323'],
+  exoDrillTest: ['ESA (2021): prueba en la Tierra a 1,7 m; el taladro avanza entre 0,3 y 30 mm por minuto según el suelo y trabaja con menos de 100 W', 'https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Exploration/ExoMars/First_deep_drilling_success_for_ExoMars'],
+  curDrill: ['NASA: primera perforación de Curiosity (John Klein, sol 182), agujero de 1,6 cm de ancho y 6,4 cm de profundidad', 'https://science.nasa.gov/resource/curiositys-first-sample-drilling'],
+  ingenuity: ['NASA: Ingenuity hizo 72 vuelos, unos 128,8 minutos en el aire y 17 km recorridos', 'https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/'],
+  mmrtg: ['NASA: el MMRTG da unos 110 W eléctricos al empezar la misión', 'https://science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf'],
+  sitiosBase: ['Análisis de sitios del equipo (15/11): tres centros para una base con zona de aterrizaje en la llanura del aterrizaje, con el DEM USGS de 1 m, HiRISE y el recorrido de Curiosity (data/base/sitios_base.geojson)', 'https://github.com/Davidsitx/Guidears-Nasaspaceapps/blob/main/data/base/sitios_base.geojson'],
+  suitport: ['NASA JSC (2012): suitports, el traje queda acoplado afuera; la preparación de una salida pasa de horas a menos de 30 minutos y el polvo no entra', 'https://ntrs.nasa.gov/citations/20120018014'],
   jplApprox: ['NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte', 'https://ssd.jpl.nasa.gov/planets/approx_pos.html'],
   odometria: ['NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos', 'https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/'],
   biblioteca: ['Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR', 'https://galecrater.samples.odr.io/'],
@@ -2155,6 +2168,7 @@ function estirar(m, a, b) { const d = new THREE.Vector3().subVectors(b, a), L = 
 const susp = [1, -1].map(lado => ({ lado, rDel: brazo(0.035), rTras: brazo(0.035), bMed: brazo(0.03), bTras: brazo(0.03), postes: [brazo(0.03), brazo(0.03), brazo(0.03)], bog: malla(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 14), MAT.gris, rover) }));
 const manchaSombra = new THREE.Mesh(new THREE.CircleGeometry(1.9, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18, depthWrite: false }));
 manchaSombra.rotation.x = -Math.PI / 2; manchaSombra.position.y = 0.03; rover.add(manchaSombra);
+let RN = null;      // rover GX-2 (se arma más abajo, junto a la base)
 
 // ---------- astronauta (1,7 m), articulado para caminar ----------
 // Traje genérico de superficie (sin marcas): casco de burbuja con visera dorada, mochila de soporte vital (PLSS),
@@ -3022,6 +3036,7 @@ function conectarBotones(cont) {
   cont.querySelectorAll('[data-expe-ir]').forEach(b => b.onclick = () => irAExpe(EXP.paradas.find(e => e.id === b.dataset.expeIr)));
   cont.querySelectorAll('[data-expe-hasta]').forEach(b => b.onclick = () => { $('ficha').classList.add('oculto'); entrarExpe(b.dataset.quien, b.dataset.expeHasta); expe.jugando = true; $('ex-play').textContent = '❚❚ Pausa'; });
   cont.querySelectorAll('[data-perforar-expe]').forEach(b => b.onclick = () => { const e = EXP.paradas.find(o => o.id === b.dataset.perforarExpe); $('ficha').classList.add('oculto'); irAExpe(e); perforar({ x: e.x, z: e.z, nombre: e.parada, quien: e.quien === 'astronauta' ? 'astronauta' : 'vehiculo' }); });
+  cont.querySelectorAll('[data-rn]').forEach(b => b.onclick = () => rnBoton(b.dataset.rn));
   cont.querySelectorAll('[data-pozo-viaje]').forEach(b => b.onclick = () => { $('ficha').classList.add('oculto'); entrarViaje(POZOS[+b.dataset.pozoViaje].dTR); });
 }
 function listarParadas() {
@@ -3035,6 +3050,7 @@ function mostrarFicha(m) {
   const d = m.datos; let html;
   if (d.tipo === 'pozo') { mostrarPozo(d.pozo); return; }
   if (d.tipo === 'expedicion') { mostrarFichaExpe(d.e); return; }
+  if (d.tipo === 'base') { mostrarBase(); return; }
   if (d.tipo === 'curiosity') {
     const p = d.f.properties;
     html = `<h1>Curiosity, sol ${p.sol}</h1><p>Elevación del terreno: ${num(D.zmin + m.y, 1)} m</p><p class="sub">Fuente: ${p.fuente || ''}</p>`;
@@ -3059,6 +3075,11 @@ lienzo.addEventListener('pointerup', e => {
   rayo.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camara);
   const hit = rayo.intersectObjects(marcadores.map(m => m.sp), false)[0];
   if (hit && !marcando && !destinoModo) { mostrarFicha(hit.object.userData.marcador); return; }
+  if (BASE && !marcando && !destinoModo && !fp) {          // tocar una parte de la base abre su ficha
+    const hb = rayo.intersectObjects(BASE.partes, true)[0];
+    if (hb) { let o = hb.object; while (o && !o.userData.parteBase) o = o.parent; if (o) { mostrarBase(o.userData.parteBase); return; } }
+  }
+  if (RN?.activo && !marcando && !destinoModo && !fp && rayo.intersectObject(RN.g, true).length) { mostrarGX(); return; }
   if (fp) return;
   if (destinoModo) { const p = puntoTerreno(e); if (p) ponerDestino(p.x, p.z); else decir('Tocá sobre el terreno de la zona de hoy.'); return; }
   if (!marcando) return;
@@ -4320,6 +4341,7 @@ renderer.setAnimationLoop(ahora => {
   }
   const andando = (fp && fp.r.tipo === 'vehiculo' && fp.jugando) || (est.auto && rutaRover && sRover < rutaRover.largo);
   cabeza.rotation.y += ((andando ? 0 : 0.7 * Math.sin(relojEscena * 0.35)) - cabeza.rotation.y) * Math.min(1, dtReal * 2);
+  if (RN?.activo) { RN.seguir(); RN.tick(dtReal); }
   cieloDomo.position.copy(camara.position);
   // sombra del sol alrededor del rover
   if (expe.activo) sol.target.position.copy(controles.target); else sol.target.position.set(est.x, rover.position.y, est.z); sol.position.copy(sol.target.position).addScaledVector(dirSol, 400);
@@ -4425,6 +4447,457 @@ renderer.setAnimationLoop(ahora => {
   datosEscena();
 }
 
+// ---------- Base Gale: hábitat del equipo en la Zona 2 del análisis de sitios, en la llanura del aterrizaje (propuesta propia) ----------
+// Lugar: la Zona 2 del análisis de sitios del equipo (data/base/sitios_base.geojson), en la llanura del aterrizaje: un círculo
+// de 250 m libre, con pendiente bajo 10° en 20 m, lejos de los peligros del rover y de la arena oscura, y a más de 1 km del
+// recorrido de Curiosity para no pisarlo. Acá solo se mide, sobre el terreno de la travesía (celdas de 12 m), lo que muestra
+// la ficha: pendiente, cielo tapado, desnivel y distancias. Cálculo propio.
+const BASE = (() => {
+  const S = D.sitios_base?.features?.find(f => f.properties.elegida);
+  if (!S || !CTX) return null;
+  const [lon, lat] = S.geometry.coordinates, [x, z] = lonlatAMundo(lon, lat), R = 26;
+  const hs = [alturaGlobal(x, z)], ps = [pendGlobal(x, z)], cs = [cieloGlobal(x, z)];
+  for (const rr of [R / 3, 2 * R / 3, R]) for (let a = 0; a < 12; a++) {
+    const xx = x + Math.cos(a * Math.PI / 6) * rr, zz = z + Math.sin(a * Math.PI / 6) * rr;
+    hs.push(alturaGlobal(xx, zz)); ps.push(pendGlobal(xx, zz)); cs.push(cieloGlobal(xx, zz));
+  }
+  const med = v => v.reduce((s, q) => s + q, 0) / v.length;
+  let cerca = null, drec = Infinity;                        // punto del recorrido más cercano: hacia ahí mira la esclusa
+  if (TR) for (const q of TR.P) { const d = Math.hypot(q.x - x, q.z - z); if (d < drec) { drec = d; cerca = q; } }
+  return { x, z, lon, lat, sitio: S.properties, otros: D.sitios_base.features.filter(f => f !== S),
+    pend: med(ps), pmax: Math.max(...ps), cielo: med(cs), hmax: Math.max(...hs), hmin: Math.min(...hs), rango: Math.max(...hs) - Math.min(...hs),
+    dc: Math.hypot(x - CUR_X, z - CUR_Z), drec: cerca ? drec : null, dater: TR ? Math.hypot(TR.P[0].x - x, TR.P[0].z - z) : null,
+    mira: cerca ? { x: cerca.x, z: cerca.z } : { x: CUR_X, z: CUR_Z } };
+})();
+if (BASE) {
+  const g = new THREE.Group(); BASE.grupo = g; BASE.partes = []; BASE.radio = 26;
+  const R = BASE.radio;                                     // radio de la plataforma, el mismo con el que se eligió el lugar
+  g.position.set(BASE.x, BASE.hmax + 0.35, BASE.z);
+  const dx = BASE.mira.x - BASE.x, dz = BASE.mira.z - BASE.z, dd = Math.hypot(dx, dz) || 1;
+  g.rotation.y = Math.atan2(dz / dd, -dx / dd);            // la esclusa (lado −x) mira hacia el recorrido de Curiosity
+  escena.add(g);
+  const M = {
+    regolito: new THREE.MeshStandardMaterial({ color: 0x8c6448, roughness: 1, metalness: 0 }),
+    sinter: new THREE.MeshStandardMaterial({ color: 0x9a7a62, roughness: 0.95, metalness: 0 }),
+    panel: new THREE.MeshStandardMaterial({ color: 0xefe9df, roughness: 0.55, metalness: 0.05, flatShading: true, emissive: 0x231f1b }),
+    vidrioDomo: new THREE.MeshStandardMaterial({ color: 0x1a2c38, roughness: 0.08, metalness: 0.7, flatShading: true, emissive: 0x0d1820 }),
+    inver: new THREE.MeshStandardMaterial({ color: 0xdff0e2, roughness: 0.15, metalness: 0.1, transparent: true, opacity: 0.42, flatShading: true, side: THREE.DoubleSide, depthWrite: false }),
+    planta: new THREE.MeshStandardMaterial({ color: 0x3f8a46, roughness: 0.8, emissive: 0x1b4a22 }),
+    maceta: new THREE.MeshStandardMaterial({ color: 0x5a4334, roughness: 0.9 }),
+    celda: null, naranja: new THREE.MeshStandardMaterial({ color: 0xd9733f, roughness: 0.5, metalness: 0.2 }),
+    luz: new THREE.MeshStandardMaterial({ color: 0xfff1d0, emissive: 0xffdca0, emissiveIntensity: 1.4 }),
+    roja: new THREE.MeshStandardMaterial({ color: 0xff4040, emissive: 0xff2a2a, emissiveIntensity: 1.6 }),
+    aviso: new THREE.MeshStandardMaterial({ color: 0xf2c230, roughness: 0.6 }),
+    oxi: new THREE.MeshStandardMaterial({ color: 0xe8edf2, roughness: 0.35, metalness: 0.3 }),
+    azul: new THREE.MeshStandardMaterial({ color: 0x2f6fb0, roughness: 0.5 }),
+  };
+  { // celdas solares: una textura compartida con la grilla de celdas
+    const cv = document.createElement('canvas'); cv.width = 128; cv.height = 64; const x = cv.getContext('2d');
+    x.fillStyle = '#132447'; x.fillRect(0, 0, 128, 64); x.strokeStyle = '#5f7fae'; x.lineWidth = 1;
+    for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i + 0.5, 0); x.lineTo(i + 0.5, 64); x.stroke(); }
+    for (let j = 0; j <= 64; j += 16) { x.beginPath(); x.moveTo(0, j + 0.5); x.lineTo(128, j + 0.5); x.stroke(); }
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    M.celda = new THREE.MeshStandardMaterial({ map: t, roughness: 0.25, metalness: 0.55 });
+  }
+  const Y = new THREE.Vector3(0, 1, 0);
+  const parte = (clave, ...objs) => { objs.forEach(o => { o.userData.parteBase = clave; BASE.partes.push(o); }); };
+  const grupo = (clave, x = 0, y = 0, z = 0, ry = 0) => { const s = new THREE.Group(); s.position.set(x, y, z); s.rotation.y = ry; g.add(s); parte(clave, s); return s; };
+  const cil = (r1, r2, h, mat, padre, p, rot, seg = 24) => malla(new THREE.CylinderGeometry(r1, r2, h, seg), mat, padre, p, rot);
+  const caja = (w, h, d, mat, padre, p, rot) => malla(new THREE.BoxGeometry(w, h, d), mat, padre, p, rot);
+  // cilindro entre dos puntos (locales del padre)
+  const entre = (a, b, r, mat, padre, seg = 20) => { const v = new THREE.Vector3().subVectors(b, a), m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, v.length(), seg), mat);
+    m.position.copy(a).addScaledVector(v, 0.5); m.quaternion.setFromUnitVectors(Y, v.normalize()); m.castShadow = m.receiveShadow = true; padre.add(m); return m; };
+  const anillo = (r, t, mat, padre, p, rot) => malla(new THREE.TorusGeometry(r, t, 8, 40), mat, padre, p, rot);
+  // domo geodésico: icosaedro subdividido cortado apenas debajo del ecuador; paneles opacos, algunos vidriados, y la estructura en líneas
+  function domo(r, det, matP, matV, padre, cadaV = 0) {
+    const ico = new THREE.IcosahedronGeometry(r, det), P = ico.attributes.position.array, op = [], vi = []; let k = 0;
+    for (let i = 0; i < P.length; i += 9) {
+      const cy = (P[i + 1] + P[i + 4] + P[i + 7]) / 3; if (cy < -0.05 * r) continue;
+      const t = Array.from(P.slice(i, i + 9)); k++;
+      (cadaV && cy > 0.12 * r && cy < 0.5 * r && k % cadaV === 0 ? vi : op).push(...t);
+    }
+    const geo = a => { const gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(a, 3)); gg.computeVertexNormals(); return gg; };
+    const go = geo(op), m1 = new THREE.Mesh(go, matP); m1.castShadow = m1.receiveShadow = true; padre.add(m1);
+    if (vi.length) { const m2 = new THREE.Mesh(geo(vi), matV); padre.add(m2); }
+    const todo = geo(op.concat(vi)), aristas = new THREE.LineSegments(new THREE.EdgesGeometry(todo, 1), new THREE.LineBasicMaterial({ color: 0x5b5650 }));
+    aristas.scale.setScalar(1.002); padre.add(aristas);
+    return m1;
+  }
+
+  // 1) plataforma de regolito compactado (nivela el terreno) y berma
+  const alto = BASE.hmax - BASE.hmin + 1.2;
+  const pad = cil(R, R + 1.5, alto, M.sinter, g, [0, -alto / 2, 0], [0, 0, 0], 64); pad.castShadow = false;
+  anillo(R + 0.2, 0.18, M.regolito, g, [0, 0.02, 0], [Math.PI / 2, 0, 0]);
+  parte('plataforma', pad);
+  // 2) hábitat principal: domo geodésico de 13 m sobre un anillo con bulones, berma de regolito alrededor
+  const hab = grupo('habitat');
+  cil(6.9, 7.1, 0.7, MAT.gris, hab, [0, 0.35, 0], [0, 0, 0], 48);
+  for (let i = 0; i < 32; i++) { const a = i / 32 * Math.PI * 2; cil(0.07, 0.07, 0.12, MAT.oscuro, hab, [Math.cos(a) * 6.95, 0.74, Math.sin(a) * 6.95], [0, 0, 0], 6); }
+  const dh = new THREE.Group(); dh.position.y = 0.7; hab.add(dh); domo(6.5, 3, M.panel, M.vidrioDomo, dh, 9);
+  cil(0.5, 0.6, 0.35, MAT.alu, hab, [0, 7.35, 0], [0, 0, 0], 16); cil(0.04, 0.04, 1.6, MAT.alu, hab, [0.3, 8.2, 0], [0, 0, 0], 6);
+  const berma = anillo(7.9, 0.85, M.regolito, hab, [0, 0.15, 0], [Math.PI / 2, 0, 0]); berma.scale.z = 0.55;
+  // 3) túneles con fuelles: al laboratorio (+x), a la esclusa (−x) y al invernadero (+z)
+  const tunel = (a, b) => {
+    const t = grupo('tuneles'); entre(a, b, 1.05, M.panel, t);
+    const v = new THREE.Vector3().subVectors(b, a), L = v.length(), d = v.clone().normalize();
+    for (let s = 0.4; s < L; s += 0.55) { const r = anillo(1.12, 0.06, MAT.gris, t, [0, 0, 0]); r.position.copy(a).addScaledVector(d, s); r.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), d); }
+    for (const e of [a, b]) { const c = anillo(1.2, 0.13, MAT.alu, t, [0, 0, 0]); c.position.copy(e); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), d); }
+    // patas cada 1,5 m
+    for (let s = 0.75; s < L; s += 1.5) { const p = new THREE.Vector3().copy(a).addScaledVector(d, s); entre(new THREE.Vector3(p.x, 0, p.z), new THREE.Vector3(p.x, p.y - 1.0, p.z), 0.08, MAT.alu, t, 8); }
+  };
+  tunel(new THREE.Vector3(6.2, 1.8, 0), new THREE.Vector3(9.4, 1.9, 0));
+  tunel(new THREE.Vector3(-6.2, 1.8, 0), new THREE.Vector3(-8.6, 1.8, 0));
+  tunel(new THREE.Vector3(0, 1.7, 6.2), new THREE.Vector3(0, 1.6, 10.6));
+  // 4) laboratorio: módulo cilíndrico de 10 m con costillas, ojos de buey, cunas y radiadores arriba
+  const lab = grupo('laboratorio', 14.5, 2.15, 0);
+  cil(1.95, 1.95, 10, M.panel, lab, [0, 0, 0], [0, 0, Math.PI / 2], 32);
+  const tapa = malla(new THREE.SphereGeometry(1.95, 28, 16, 0, Math.PI * 2, 0, Math.PI / 2), M.panel, lab, [5, 0, 0], [0, 0, -Math.PI / 2]); tapa.scale.y = 0.45;
+  for (let s = -4.6; s <= 4.7; s += 1.15) anillo(1.98, 0.05, MAT.gris, lab, [s, 0, 0], [0, Math.PI / 2, 0]);
+  anillo(1.99, 0.12, M.naranja, lab, [-3.4, 0, 0], [0, Math.PI / 2, 0]);
+  for (const s of [-2.2, -0.5, 1.2, 2.9]) for (const lado of [-1, 1]) {
+    cil(0.32, 0.32, 0.08, M.vidrioDomo, lab, [s, 0.35, lado * 1.93], [Math.PI / 2, 0, 0], 20);
+    anillo(0.34, 0.05, MAT.alu, lab, [s, 0.35, lado * 1.97], [0, 0, 0]);
+  }
+  for (const s of [-3.6, 0, 3.6]) { caja(0.5, 0.9, 3.2, MAT.gris, lab, [s, -1.75, 0]); caja(0.8, 0.12, 3.6, MAT.oscuro, lab, [s, -2.15, 0]); }
+  for (const lado of [-1, 1]) { entre(new THREE.Vector3(-1.5, 1.9, lado * 0.4), new THREE.Vector3(-1.5, 2.6, lado * 1.2), 0.04, MAT.alu, lab, 6);
+    entre(new THREE.Vector3(1.5, 1.9, lado * 0.4), new THREE.Vector3(1.5, 2.6, lado * 1.2), 0.04, MAT.alu, lab, 6);
+    caja(4.2, 0.05, 1.3, MAT.alu, lab, [0, 2.65, lado * 1.25], [lado * 0.35, 0, 0]); }
+  // 5) esclusa con dos suitports: los trajes quedan acoplados afuera, de espaldas a la pared (el polvo no entra)
+  const esc = grupo('esclusa', -10.6, 1.8, 0);
+  cil(1.5, 1.5, 4, M.panel, esc, [0, 0, 0], [0, 0, Math.PI / 2], 28);
+  for (const s of [-1.4, 0, 1.4]) anillo(1.53, 0.05, MAT.gris, esc, [s, 0, 0], [0, Math.PI / 2, 0]);
+  cil(1.55, 1.55, 0.25, MAT.alu, esc, [-2.05, 0, 0], [0, 0, Math.PI / 2], 28);
+  for (const s of [-0.55, 0.55]) { anillo(0.42, 0.07, MAT.oscuro, esc, [-2.2, 0.1, s], [0, Math.PI / 2, 0]); cil(0.38, 0.38, 0.06, MAT.gris, esc, [-2.2, 0.1, s], [0, 0, Math.PI / 2], 20); }
+  caja(2.4, 0.15, 3.4, MAT.gris, esc, [-3.0, -1.55, 0]);
+  for (let i = 0; i < 3; i++) caja(0.45, 0.14, 1.6, MAT.oscuro, esc, [-4.4 - i * 0.45, -1.55 - (i + 1) * 0.25, 0]);
+  for (const s of [-1.6, 1.6]) { entre(new THREE.Vector3(-4.1, -1.5, s), new THREE.Vector3(-4.1, -0.5, s), 0.035, MAT.alu, esc, 6); entre(new THREE.Vector3(-1.9, -1.5, s), new THREE.Vector3(-1.9, -0.5, s), 0.035, MAT.alu, esc, 6); entre(new THREE.Vector3(-4.1, -0.5, s), new THREE.Vector3(-1.9, -0.5, s), 0.035, MAT.alu, esc, 6); }
+  for (const s of [-0.55, 0.55]) { const t = astro.clone(true); t.visible = true; t.position.set(-2.75, -1.48, s); t.rotation.y = Math.PI; t.scale.setScalar(0.98); esc.add(t); }
+  // 6) invernadero: domo translúcido con canteros iluminados
+  const inv = grupo('invernadero', 0, 0, 15);
+  cil(4.6, 4.75, 0.5, MAT.gris, inv, [0, 0.25, 0], [0, 0, 0], 40);
+  const di = new THREE.Group(); di.position.y = 0.5; inv.add(di); domo(4.4, 2, M.inver, M.inver, di, 0);
+  for (let f = -2; f <= 2; f++) { caja(5.6 - Math.abs(f) * 0.9, 0.35, 0.55, M.maceta, inv, [0, 0.7, f * 1.1]);
+    for (let s = -2.4 + Math.abs(f) * 0.45; s <= 2.4 - Math.abs(f) * 0.45; s += 0.42) malla(new THREE.ConeGeometry(0.16, 0.42, 6), M.planta, inv, [s, 1.08, f * 1.1]); }
+  malla(new THREE.SphereGeometry(0.22, 12, 8), M.luz, inv, [0, 3.6, 0]);
+  // 7) energía: campo solar (12 paneles) y reactor de fisión lejos, con su cable enterrado y vallado
+  const sol = grupo('solar', 15, 0, -15);
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) {
+    const p = new THREE.Group(); p.position.set(j * 2.6 - 3.9, 0, i * 2.6 - 2.6); sol.add(p);
+    cil(0.06, 0.08, 0.9, MAT.alu, p, [0, 0.45, 0], [0, 0, 0], 8);
+    const fr = caja(2.3, 0.06, 1.3, MAT.alu, p, [0, 1.0, 0], [-0.26, 0, 0]);
+    caja(2.2, 0.02, 1.2, M.celda, p, [0, 1.04, 0.01], [-0.26, 0, 0]);
+  }
+  caja(1.0, 0.9, 0.7, MAT.gris, sol, [6.4, 0.45, 0]); caja(0.9, 0.06, 0.6, M.naranja, sol, [6.4, 0.93, 0]);
+  const reac = new THREE.Group(); BASE.reactor = reac; escena.add(reac); parte('reactor', reac);
+  {
+    const lp = new THREE.Vector3(-34, 0, 30).applyEuler(g.rotation).add(new THREE.Vector3(BASE.x, 0, BASE.z));
+    reac.position.set(lp.x, alturaGlobal(lp.x, lp.z), lp.z);
+    cil(1.1, 1.3, 2.4, MAT.rtg, reac, [0, 1.2, 0], [0, 0, 0], 24);
+    malla(new THREE.ConeGeometry(3.4, 3.2, 32, 1, true), new THREE.MeshStandardMaterial({ color: 0xc9c6bf, roughness: 0.35, metalness: 0.8, side: THREE.DoubleSide }), reac, [0, 3.9, 0]);
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; entre(new THREE.Vector3(Math.cos(a) * 0.3, 5.45, Math.sin(a) * 0.3), new THREE.Vector3(Math.cos(a) * 3.35, 2.35, Math.sin(a) * 3.35), 0.03, MAT.gris, reac, 4); }
+    cil(0.55, 0.55, 0.5, MAT.gris, reac, [0, 5.7, 0], [0, 0, 0], 16);
+    const bm = anillo(3.0, 1.0, M.regolito, reac, [0, 0.2, 0], [Math.PI / 2, 0, 0]); bm.scale.z = 0.6;
+    for (let i = 0; i < 18; i++) { const a = i / 18 * Math.PI * 2, x = Math.cos(a) * 9, z = Math.sin(a) * 9, y = alturaGlobal(reac.position.x + x, reac.position.z + z) - reac.position.y;
+      cil(0.05, 0.05, 1.1, i % 2 ? M.aviso : MAT.oscuro, reac, [x, y + 0.55, z], [0, 0, 0], 6); }
+    // cable a la base, apoyado en el suelo
+    const pts = []; const ini = reac.position.clone(), fin = new THREE.Vector3(-10, 0, 8).applyEuler(g.rotation).add(new THREE.Vector3(BASE.x, 0, BASE.z));
+    for (let s = 0; s <= 1.0001; s += 1 / 24) { const p = ini.clone().lerp(fin, s); p.y = Math.max(alturaGlobal(p.x, p.z), s > 0.6 ? g.position.y : -Infinity) + 0.08; pts.push(p.sub(reac.position)); }
+    malla(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 60, 0.07, 6), MAT.oscuro, reac);
+  }
+  // 8) comunicaciones: antena de alta ganancia en trípode y baliza
+  const ant = grupo('antena', 6.5, 0, -9.5);
+  for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; entre(new THREE.Vector3(Math.cos(a) * 1.3, 0, Math.sin(a) * 1.3), new THREE.Vector3(0, 3.2, 0), 0.06, MAT.alu, ant, 8); }
+  cil(0.12, 0.12, 4.2, MAT.alu, ant, [0, 2.1, 0], [0, 0, 0], 12);
+  malla(new THREE.SphereGeometry(1.5, 32, 12, 0, Math.PI * 2, 0, 0.75), new THREE.MeshStandardMaterial({ color: 0xefe9df, roughness: 0.5, metalness: 0.1, side: THREE.DoubleSide }), ant, [0, 4.6, 0], [-0.7, 0.6, 0]);
+  cil(0.06, 0.06, 1.1, MAT.oscuro, ant, [0.2, 5.2, -0.45], [0.7, 0, 0.2], 8);
+  cil(0.04, 0.04, 6.5, MAT.alu, ant, [1.6, 3.25, 1.2], [0, 0, 0], 6); malla(new THREE.SphereGeometry(0.14, 10, 8), M.roja, ant, [1.6, 6.55, 1.2]);
+  // 9) estación meteorológica (como REMS: viento, temperatura, presión, UV)
+  const met = grupo('meteo', -5, 0, 10);
+  cil(0.05, 0.07, 3.2, MAT.alu, met, [0, 1.6, 0], [0, 0, 0], 8);
+  for (const [h, a] of [[2.4, 0], [2.9, Math.PI * 0.66]]) { const b = new THREE.Group(); b.position.y = h; b.rotation.y = a; met.add(b); caja(0.9, 0.05, 0.05, MAT.alu, b, [0.45, 0, 0]); caja(0.16, 0.12, 0.12, MAT.blanco, b, [0.9, 0, 0]); }
+  for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; caja(0.35, 0.02, 0.02, MAT.alu, met, [Math.cos(a) * 0.17, 3.25, Math.sin(a) * 0.17], [0, -a, 0]); malla(new THREE.SphereGeometry(0.06, 8, 6), MAT.blanco, met, [Math.cos(a) * 0.34, 3.25, Math.sin(a) * 0.34]); }
+  caja(0.5, 0.35, 0.4, MAT.gris, met, [0, 0.18, 0.35]);
+  // 10) oxígeno del aire (ISRU, como MOXIE pero en grande) con dos tanques y caño al laboratorio
+  const isru = grupo('isru', 10.5, 0, 9.5);
+  caja(2.2, 1.4, 1.6, MAT.blanco, isru, [0, 0.7, 0]); caja(2.25, 0.08, 1.65, MAT.gris, isru, [0, 1.44, 0]);
+  for (let i = 0; i < 6; i++) caja(0.04, 0.6, 0.02, MAT.oscuro, isru, [-0.8 + i * 0.32, 0.8, 0.81]);
+  cil(0.35, 0.35, 0.3, MAT.oscuro, isru, [0.6, 1.62, 0.3], [0, 0, 0], 16);
+  for (const s of [-0.55, 0.55]) { const t = malla(new THREE.CapsuleGeometry(0.42, 1.6, 6, 16), M.oxi, isru, [s, 0.55, -1.6], [Math.PI / 2, 0, 0]); anillo(0.43, 0.06, M.azul, isru, [s, 0.55, -1.6], [0, 0, 0]); }
+  entre(new THREE.Vector3(-1.1, 1.0, 0), new THREE.Vector3(-1.1, 1.0, -7.5), 0.05, MAT.alu, isru, 8);
+  entre(new THREE.Vector3(-1.1, 1.0, -7.5), new THREE.Vector3(-1.1, 2.0, -7.5), 0.05, MAT.alu, isru, 8);
+  // 11) tanque de agua (hielo derretido; también es blindaje)
+  const agua = grupo('agua', -10.5, 0, 9.5);
+  cil(1.5, 1.5, 3.0, M.oxi, agua, [0, 1.6, 0], [0, 0, 0], 28); malla(new THREE.SphereGeometry(1.5, 28, 10, 0, Math.PI * 2, 0, Math.PI / 2), M.oxi, agua, [0, 3.1, 0]).scale.y = 0.35;
+  for (const h of [0.6, 1.6, 2.6]) anillo(1.53, 0.05, M.azul, agua, [0, h, 0], [Math.PI / 2, 0, 0]);
+  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + 0.4; cil(0.08, 0.1, 0.4, MAT.gris, agua, [Math.cos(a) * 1.25, 0.2, Math.sin(a) * 1.25], [0, 0, 0], 8); }
+  // 12) garaje del rover presurizado: techo solar sobre postes, enchufe de carga y franjas en el piso
+  const gar = grupo('garaje', -9, 0, -15);
+  for (const [x, z] of [[-3.5, -2.6], [3.5, -2.6], [-3.5, 2.6], [3.5, 2.6]]) cil(0.1, 0.12, 3.6, MAT.alu, gar, [x, 1.8, z], [0, 0, 0], 10);
+  caja(7.6, 0.12, 5.8, MAT.alu, gar, [0, 3.65, 0]); caja(7.2, 0.03, 5.4, M.celda, gar, [0, 3.73, 0]);
+  caja(0.5, 1.2, 0.4, MAT.gris, gar, [3.1, 0.6, -2.2]); caja(0.3, 0.2, 0.05, M.naranja, gar, [3.1, 0.9, -1.99]);
+  for (const s of [-2.9, 2.9]) caja(7, 0.02, 0.15, M.aviso, gar, [0, 0.02, s]);
+  // 13) luces de la plataforma (para la noche)
+  for (const a of [0.4, 2.5, 4.4]) { const lx = Math.cos(a) * 22, lz = Math.sin(a) * 22, lu = grupo('luces', lx, 0, lz);
+    cil(0.06, 0.08, 4.2, MAT.alu, lu, [0, 2.1, 0], [0, 0, 0], 8); caja(0.55, 0.3, 0.3, MAT.oscuro, lu, [0, 4.25, 0]); caja(0.45, 0.04, 0.22, M.luz, lu, [0, 4.09, 0]); }
+  // 14) senderos: del borde de la plataforma a la esclusa y al garaje
+  for (const [a, b] of [[[-26, 0], [-13.8, 0]], [[-9, -11], [-9, -2]], [[2, 7], [9, 9]]]) {
+    const L = Math.hypot(b[0] - a[0], b[1] - a[1]), s = caja(L, 0.03, 1.4, MAT.gris, g, [(a[0] + b[0]) / 2, 0.02, (a[1] + b[1]) / 2], [0, -Math.atan2(b[1] - a[1], b[0] - a[0]), 0]); parte('plataforma', s); }
+  g.traverse(o => { if (o.isMesh && o !== pad) o.castShadow = true; });
+  // cartel sobre el hábitat
+  BASE.marcador = agregarMarcador('BG', '#ffcf7a', BASE.x, BASE.z, { tipo: 'base' }, 64, g.position.y + 9.5);
+}
+// textos de la base: cada parte con lo que es, por qué está y su fuente (lo que es propuesta del equipo se marca)
+const PARTES_BASE = {
+  habitat: ['Hábitat principal', 'Domo de 13 m (supuesto) para cuatro personas: dormir, comer y trabajar. Sigue la idea de la Mars Ice Home de NASA Langley: una cáscara inflable que se llena con agua congelada, que frena los rayos cósmicos y deja pasar luz.', ['iceHome']],
+  tuneles: ['Túneles presurizados', 'Unen los módulos sin salir al exterior. Los fuelles absorben la dilatación entre el día y la noche (de −80 °C a +15 °C en Gale).', ['remsExtremos']],
+  laboratorio: ['Laboratorio', 'Módulo de 10 m para analizar las muestras de las perforaciones con equipos como los de Curiosity (CheMin y SAM), pero con personas.', ['biblioteca']],
+  esclusa: ['Esclusa con suitports', 'Los trajes quedan acoplados afuera, de espaldas a la pared: se entra por la mochila y el polvo no pasa al hábitat. NASA midió que reduce la preparación de una salida de horas a menos de 30 minutos.', ['suitport']],
+  invernadero: ['Invernadero', 'Domo translúcido con canteros y luz propia. Es parte de la propuesta del equipo: no hay todavía un invernadero probado en Marte.', []],
+  solar: ['Campo solar', 'Doce paneles de respaldo. En la temporada de polvo (Ls 180–360) rinden menos; por eso la energía principal es el reactor.', ['polvoTemp']],
+  reactor: ['Reactor de fisión', 'Como el que NASA desarrolla para la Luna: al menos 40 kW durante 10 años, en menos de 6 toneladas, y adaptable a Marte. Va lejos del hábitat, con un vallado y una berma de regolito, y un cable enterrado.', ['fsp']],
+  antena: ['Antena a la Tierra', 'Enlace directo con el control en la Tierra: los mensajes tardan de 3 a 22 minutos según la posición de los planetas. La baliza roja marca la base de noche.', ['jplApprox']],
+  meteo: ['Estación meteorológica', 'Viento, temperatura, presión y UV, como REMS en Curiosity: avisa las tormentas de polvo antes de una salida.', ['remsPds']],
+  isru: ['Planta de oxígeno', 'Saca oxígeno del CO₂ del aire, como MOXIE en Perseverance (122 g en 16 corridas, hasta 12 g por hora), pero en grande. Los tanques azules guardan el oxígeno.', ['moxie']],
+  agua: ['Tanque de agua', 'Agua de hielo derretido o sacada de los minerales (unos kg por tonelada de roca, ver las fichas de perforaciones). También sirve como blindaje.', ['biblioteca']],
+  garaje: ['Garaje del rover presurizado', 'Techo solar, carga y lugar para el rover con el que el astronauta hace las salidas largas (supuesto: 10 km/h, como el SEV).', []],
+  plataforma: ['Plataforma y senderos', 'Regolito compactado para nivelar el piso, y senderos marcados para no levantar polvo cerca de la esclusa.', []],
+  luces: ['Luces', 'Iluminan la plataforma de noche (en Gale el día dura 24 h 40 min).', []],
+};
+function htmlBase(clave) {
+  if (!BASE) return '<p>La base no entra en esta zona.</p>';
+  const orden = ['habitat', 'laboratorio', 'esclusa', 'invernadero', 'tuneles', 'reactor', 'solar', 'isru', 'agua', 'antena', 'meteo', 'garaje', 'plataforma', 'luces'];
+  return `<span class="prov">propuesta propia</span><h1 class="parada-cab"><span class="chip" style="background:#d9733f">BG</span>Base Gale</h1>
+    <p>Dónde vuelven los astronautas después de cada salida, con su zona de aterrizaje al lado. Está en la <b>${BASE.sitio.nombre}</b> del análisis de sitios del equipo, en la llanura del aterrizaje de Curiosity: un círculo de 250 m libre, con pendiente bajo 10° en 20 m, lejos de los peligros del rover y de la arena oscura, y a más de 1 km del recorrido para no pisarlo ${fq('sitiosBase')} ${fq('usgsOrto')}. <span class="prov">cálculo propio · umbrales provisorios</span></p>
+    <p>Sobre el terreno de la travesía (celdas de 12 m), en 26 m a la redonda la pendiente media es de ${num(BASE.pend, 1)}° (máxima ${num(BASE.pmax, 0)}°) y el relieve tapa el ${num(BASE.cielo * 100)} % del cielo, así que la radiación es de ${num(tasaDe(BASE.cielo), 1)} µSv/h (${num(tasaDe(0), 1)} a cielo abierto) ${fq('hassler')}. Está a ${fmtM(BASE.drec)} del recorrido, a ${fmtM(BASE.dater)} del aterrizaje de 2012 y a ${fmtM(BASE.dc)} de Curiosity hoy. <span class="prov">cálculo propio</span></p>
+    <p class="sub">Alternativas del mismo análisis: ${BASE.otros.map(f => `${f.properties.nombre} (${f.properties.rol})`).join(' y ')}. La Zona 2 la eligió el equipo.</p>
+    ${orden.map(k => { const [t, d, f] = PARTES_BASE[k]; return `<details${k === clave ? ' open' : ''} data-parte="${k}"><summary>${t}</summary><p>${d} ${f.map(fq).join(' ')}</p></details>`; }).join('')}
+    <div class="botones"><button data-base-ir="1">Ver en 3D</button></div>`;
+}
+function irABase() { if (!BASE) return; if (fp) salirFP(false); modoCam = 'libre'; $('sCam').value = 'libre'; seguirTras = null; const o = BASE.grupo.position.clone().add(new THREE.Vector3(0, 3, 0)); volarA(o.clone().add(new THREE.Vector3(48, 30, 52)), o, 1.8); }
+function mostrarBase(clave = null) {
+  $('ficha-texto').innerHTML = htmlBase(clave); $('ficha').classList.remove('oculto');
+  $('ficha-texto').querySelectorAll('[data-base-ir]').forEach(b => b.onclick = irABase);
+  if (clave) $('ficha-texto').querySelector(`[data-parte="${clave}"]`)?.scrollIntoView({ block: 'center' });
+}
+
+// ---------- Rover GX-2: versión nueva para las próximas excavaciones (diseño propio del equipo) ----------
+// Toma la posición, el rumbo y la inclinación del rover de la escena: se dibuja en su lugar y todo lo demás (rutas,
+// expedición, manejo) sigue igual. Sistemas: seis ruedas con balancín, taladro profundo de 2 m con tres barras de 50 cm
+// (como el de Rosalind Franklin, ESA), dron explorador (como Ingenuity), MMRTG y alas solares, mástil con LiDAR y
+// cámaras, cámara de suelo y focos. Se elige en Escena → Rover.
+RN = (() => {
+  const g = new THREE.Group(); g.visible = false; rover.add(g);
+  const cuerpo = new THREE.Group(); g.add(cuerpo);
+  const M = {
+    casco: new THREE.MeshStandardMaterial({ color: 0xf1ece4, roughness: 0.5, metalness: 0.1, emissive: 0x241f1b }),
+    naranja: new THREE.MeshStandardMaterial({ color: 0xd9733f, roughness: 0.45, metalness: 0.2 }),
+    goma: new THREE.MeshStandardMaterial({ color: 0x4a4540, roughness: 0.85, metalness: 0.2 }),
+    lente: new THREE.MeshStandardMaterial({ color: 0x0b1820, roughness: 0.05, metalness: 0.8, emissive: 0x0a2430 }),
+    luz: new THREE.MeshStandardMaterial({ color: 0xfff1d0, emissive: 0xffdca0, emissiveIntensity: 1.5 }),
+    lidar: new THREE.MeshStandardMaterial({ color: 0x1c1f24, roughness: 0.2, metalness: 0.6, emissive: 0x08303a }),
+  };
+  { const cv = document.createElement('canvas'); cv.width = 128; cv.height = 64; const x = cv.getContext('2d');
+    x.fillStyle = '#16284f'; x.fillRect(0, 0, 128, 64); x.strokeStyle = '#6a8bbd';
+    for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i + 0.5, 0); x.lineTo(i + 0.5, 64); x.stroke(); }
+    for (let j = 0; j <= 64; j += 16) { x.beginPath(); x.moveTo(0, j + 0.5); x.lineTo(128, j + 0.5); x.stroke(); }
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; M.celda = new THREE.MeshStandardMaterial({ map: t, roughness: 0.25, metalness: 0.5 }); }
+  const Y = new THREE.Vector3(0, 1, 0), V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const cil = (r1, r2, h, mat, padre, p, rot, seg = 20) => malla(new THREE.CylinderGeometry(r1, r2, h, seg), mat, padre, p, rot);
+  const caja = (w, h, d, mat, padre, p, rot) => malla(new THREE.BoxGeometry(w, h, d), mat, padre, p, rot);
+  const entre = (a, b, r, mat, padre, seg = 10) => { const v = new THREE.Vector3().subVectors(b, a), m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, v.length(), seg), mat);
+    m.position.copy(a).addScaledVector(v, 0.5); m.quaternion.setFromUnitVectors(Y, v.normalize()); m.castShadow = true; padre.add(m); return m; };
+  const geoBarra = new THREE.CylinderGeometry(1, 1, 1, 10), barra = (r, mat = MAT.alu) => { const m = malla(geoBarra, mat, g); m.userData.r = r; return m; };
+  const RW = 0.4, XS = [1.55, 0.05, -1.45], ZS = 1.45, ZB = 1.16;
+  // ruedas de 80 cm: aluminio con 16 garras en V, cubo y motor del lado de adentro (mismo orden que las de Curiosity)
+  const ruedasGX = [];
+  for (const lado of [1, -1]) for (const x of XS) {
+    const w = new THREE.Group(); w.position.set(x, RW, lado * ZS); g.add(w);
+    const giro = new THREE.Group(); w.add(giro);
+    cil(RW, RW, 0.42, MAT.alu, giro, [0, 0, 0], [Math.PI / 2, 0, 0], 28);
+    cil(RW * 0.7, RW * 0.7, 0.44, MAT.gris, giro, [0, 0, 0], [Math.PI / 2, 0, 0], 20);
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2;
+      for (const h of [-1, 1]) caja(0.045, 0.035, 0.2, M.goma, giro, [Math.cos(a) * (RW + 0.012), Math.sin(a) * (RW + 0.012), h * 0.1], [0, h * 0.4, a]); }
+    cil(0.13, 0.13, 0.2, MAT.oscuro, w, [0, 0, -lado * 0.3], [Math.PI / 2, 0, 0], 14);
+    ruedasGX.push({ w, giro, x, z: lado * ZS });
+  }
+  // balancín y bogie: barras que se estiran cada cuadro entre el pivote del cuerpo y las ruedas
+  const susp = [1, -1].map(lado => ({ lado, del: barra(0.06), tras: barra(0.06), med: barra(0.05), bt: barra(0.05), postes: [barra(0.045, MAT.gris), barra(0.045, MAT.gris), barra(0.045, MAT.gris)],
+    bog: cil(0.09, 0.09, 0.14, MAT.oscuro, g, [0, 0, 0], [Math.PI / 2, 0, 0], 14), piv: cil(0.11, 0.11, 0.16, MAT.oscuro, g, [0, 0, 0], [Math.PI / 2, 0, 0], 14) }));
+  entre(V(0.25, 1.68, -1.0), V(0.25, 1.68, 1.0), 0.04, MAT.alu, cuerpo);           // barra diferencial sobre el cuerpo
+  // cuerpo: caja térmica, cubierta, franja naranja, mantas doradas, radiadores con aletas
+  caja(3.0, 0.72, 1.9, M.casco, cuerpo, [0, 1.28, 0]);
+  caja(3.08, 0.05, 1.98, MAT.alu, cuerpo, [0, 1.66, 0]);
+  caja(3.02, 0.08, 1.92, M.naranja, cuerpo, [0, 0.96, 0]);
+  for (const lado of [1, -1]) {
+    caja(1.5, 0.42, 0.02, MAT.oro, cuerpo, [-0.55, 1.3, lado * 0.96]);
+    for (let i = 0; i < 9; i++) caja(0.03, 0.5, 0.08, MAT.oscuro, cuerpo, [0.45 + i * 0.09, 1.3, lado * 0.99]);
+  }
+  for (let i = 0; i < 6; i++) cil(0.025, 0.025, 0.04, MAT.oscuro, cuerpo, [-1.35 + i * 0.54, 1.7, 0.9], [0, 0, 0], 6);
+  caja(0.12, 0.3, 1.7, MAT.gris, cuerpo, [1.56, 1.15, 0]);                          // paragolpes
+  // focos y cámara de suelo adelante
+  for (const z of [0.05, 0.6]) { caja(0.06, 0.12, 0.26, MAT.oscuro, cuerpo, [1.6, 1.45, z]); caja(0.02, 0.08, 0.22, M.luz, cuerpo, [1.635, 1.45, z]); }
+  entre(V(1.5, 0.95, 0.35), V(1.95, 0.7, 0.35), 0.03, MAT.alu, cuerpo, 6); caja(0.16, 0.12, 0.14, MAT.oscuro, cuerpo, [1.98, 0.64, 0.35]);
+  cil(0.05, 0.05, 0.03, M.luz, cuerpo, [1.98, 0.575, 0.35], [0, 0, 0], 12);
+  // mástil con cámaras estéreo y un LiDAR que gira
+  const mastil = new THREE.Group(); mastil.position.set(0.95, 1.68, 0.55); cuerpo.add(mastil);
+  cil(0.06, 0.07, 1.5, MAT.alu, mastil, [0, 0.75, 0], [0, 0, 0], 12);
+  caja(0.26, 0.2, 0.5, M.casco, mastil, [0.04, 1.6, 0]);
+  for (const z of [-0.15, 0.15]) cil(0.045, 0.045, 0.06, M.lente, mastil, [0.18, 1.62, z], [0, 0, Math.PI / 2], 14);
+  const lidar = new THREE.Group(); lidar.position.set(0.02, 1.82, 0); mastil.add(lidar);
+  cil(0.1, 0.1, 0.13, M.lidar, lidar, [0, 0, 0], [0, 0, 0], 18); caja(0.04, 0.05, 0.02, M.luz, lidar, [0.09, 0, 0]);
+  // antena de alta ganancia y antena UHF
+  cil(0.34, 0.34, 0.05, M.casco, cuerpo, [-0.6, 1.95, -0.5], [0.5, 0, 0.3], 24); cil(0.04, 0.04, 0.3, MAT.alu, cuerpo, [-0.6, 1.8, -0.5]);
+  cil(0.02, 0.02, 0.55, MAT.alu, cuerpo, [-1.2, 1.95, -0.8], [0, 0, 0], 6);
+  // MMRTG atrás, inclinado, con 8 aletas
+  const rtg = new THREE.Group(); rtg.position.set(-1.75, 1.42, 0); rtg.rotation.z = 0.55; cuerpo.add(rtg);
+  cil(0.2, 0.2, 0.7, MAT.rtg, rtg, [0, 0, 0], [0, 0, 0], 16);
+  for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; caja(0.02, 0.66, 0.14, MAT.rtg, rtg, [Math.cos(a) * 0.27, 0, Math.sin(a) * 0.27], [0, -a, 0]); }
+  // alas solares: bisagra en cada borde de la cubierta; plegadas quedan paradas, abiertas quedan horizontales
+  const alas = [];
+  for (const lado of [1, -1]) { const b = new THREE.Group(); b.position.set(-0.25, 1.7, lado * 0.99); cuerpo.add(b); alas.push({ b, lado });
+    caja(2.3, 0.05, 1.25, MAT.alu, b, [0, 0, lado * 0.64]); caja(2.22, 0.02, 1.17, M.celda, b, [0, 0.03, lado * 0.64]);
+    cil(0.03, 0.03, 2.3, MAT.gris, b, [0, 0, 0], [0, 0, Math.PI / 2], 8); }
+  // taladro profundo, adelante y afuera del cuerpo: torre con dos rieles, carro con motor y sarta que baja al suelo
+  const torre = new THREE.Group(); torre.position.set(1.8, 0.7, -0.5); cuerpo.add(torre);
+  caja(0.36, 0.1, 0.36, MAT.gris, cuerpo, [1.66, 0.78, -0.5]); caja(0.36, 0.1, 0.36, MAT.gris, cuerpo, [1.66, 1.6, -0.5]);   // soportes al cuerpo
+  for (const z of [-0.12, 0.12]) caja(0.06, 2.3, 0.05, MAT.alu, torre, [0, 1.15, z]);
+  caja(0.2, 0.1, 0.36, MAT.gris, torre, [0, 2.32, 0]);
+  for (let h = 0.3; h < 2.2; h += 0.4) caja(0.04, 0.03, 0.26, MAT.alu, torre, [0, h, 0]);
+  const carro = new THREE.Group(); carro.position.set(0, 2.1, 0); torre.add(carro);
+  caja(0.26, 0.3, 0.3, M.naranja, carro, [0.06, 0, 0]); cil(0.06, 0.06, 0.2, MAT.oscuro, carro, [0.06, -0.24, 0], [0, 0, 0], 12);
+  const sarta = cil(0.035, 0.035, 1, MAT.alu, torre, [0.06, 0, 0], [0, 0, 0], 10);
+  const mecha = cil(0.05, 0.02, 0.12, MAT.oscuro, torre, [0.06, 0, 0], [0, 0, 0], 10);
+  const barras = [0, 1, 2].map(i => cil(0.03, 0.03, 0.5, MAT.alu, cuerpo, [1.3 - i * 0.1, 1.75, -0.5], [0, 0, Math.PI / 2], 8));   // las 3 barras de 50 cm, en su soporte
+  caja(0.34, 0.05, 0.12, MAT.gris, cuerpo, [1.2, 1.71, -0.5]);
+  // brazo corto con pala (plegado)
+  const brazoGX = new THREE.Group(); brazoGX.position.set(1.55, 1.25, 0.95); cuerpo.add(brazoGX);
+  entre(V(0, 0, 0), V(0.35, 0.2, 0), 0.05, MAT.alu, brazoGX); entre(V(0.35, 0.2, 0), V(0.25, -0.3, 0), 0.045, MAT.alu, brazoGX);
+  caja(0.16, 0.08, 0.14, MAT.gris, brazoGX, [0.25, -0.36, 0]);
+  // dron explorador sobre su plataforma, atrás
+  const PLAT = [-1.1, 1.72, 0.4];
+  cil(0.3, 0.3, 0.03, MAT.oscuro, cuerpo, [PLAT[0], 1.7, PLAT[2]], [0, 0, 0], 20);
+  const dron = new THREE.Group(); dron.position.set(...PLAT); cuerpo.add(dron);
+  caja(0.2, 0.16, 0.2, M.casco, dron, [0, 0.16, 0]);
+  for (let i = 0; i < 4; i++) { const a = Math.PI / 4 + i * Math.PI / 2; entre(V(Math.cos(a) * 0.08, 0.1, Math.sin(a) * 0.08), V(Math.cos(a) * 0.22, 0, Math.sin(a) * 0.22), 0.012, MAT.alu, dron, 5); }
+  cil(0.015, 0.015, 0.3, MAT.alu, dron, [0, 0.38, 0], [0, 0, 0], 6);
+  const rotores = [0.42, 0.5].map(h => { const r = new THREE.Group(); r.position.y = h; dron.add(r); caja(1.0, 0.012, 0.07, MAT.oscuro, r, [0, 0, 0]); return r; });
+  caja(0.1, 0.008, 0.1, M.celda, dron, [0, 0.54, 0]);
+  return { g, cuerpo, ruedasGX, susp, alas, lidar, carro, sarta, mecha, barras, torre, dron, rotores, PLAT, RW, ZB,
+    activo: false, alasOn: true, alasT: 1, prof: 0, bajada: 0, perforando: false, vuelo: null };
+})();
+// cada cuadro: copia la inclinación del chasis de Curiosity y apoya cada rueda del GX-2 donde apoya la de Curiosity
+RN.seguir = () => {
+  RN.cuerpo.rotation.copy(chasis.rotation); RN.cuerpo.updateMatrix();
+  const tb = Math.tan(chasis.rotation.z), tc = Math.tan(-chasis.rotation.x);
+  RN.ruedasGX.forEach((w, i) => {
+    const q = ruedas[i], resto = q.g.position.y - RUEDA_R - (tb * q.xi + tc * q.zi);
+    w.w.position.y = RN.RW + tb * w.x + tc * w.z + resto; w.giro.rotation.z = q.giro.rotation.z * RUEDA_R / RN.RW;
+  });
+  for (const sp of RN.susp) {
+    const o = sp.lado > 0 ? 0 : 3, [wF, wM, wR] = [0, 1, 2].map(k => RN.ruedasGX[o + k].w.position), z = sp.lado * RN.ZB;
+    const piv = new THREE.Vector3(0.25, 1.1, z).applyMatrix4(RN.cuerpo.matrix); piv.z = z;
+    const alto = (p, h) => new THREE.Vector3(p.x, p.y + h, z), fA = alto(wF, 0.5), mA = alto(wM, 0.36), rA = alto(wR, 0.5);
+    const bog = new THREE.Vector3((wM.x + wR.x) / 2, (mA.y + rA.y) / 2 + 0.12, z);
+    estirar(sp.del, piv, fA); estirar(sp.tras, piv, bog); estirar(sp.med, bog, mA); estirar(sp.bt, bog, rA);
+    [[fA, wF], [mA, wM], [rA, wR]].forEach(([a, w], k) => estirar(sp.postes[k], a, new THREE.Vector3(w.x, w.y, z)));
+    sp.bog.position.copy(bog); sp.piv.position.copy(piv);
+  }
+};
+RN.tick = dt => {
+  RN.lidar.rotation.y += dt * 6;
+  RN.alasT += ((RN.alasOn ? 1 : 0) - RN.alasT) * Math.min(1, dt * 2.5);
+  for (const { b, lado } of RN.alas) b.rotation.x = -lado * (1 - RN.alasT) * 1.45;
+  // sarta del taladro: del carro hacia abajo; guardada mide 40 cm, perforando llega al suelo y entra RN.prof metros
+  RN.torre.updateMatrixWorld();
+  const pie = new THREE.Vector3(0.06, 0, 0).applyMatrix4(RN.torre.matrixWorld), suelo = RN.torre.worldToLocal(new THREE.Vector3(pie.x, alturaGlobal(pie.x, pie.z), pie.z)).y;
+  const tope = RN.carro.position.y - 0.34, guardada = tope - 0.4, abajo = RN.perforando ? guardada + (suelo - RN.prof - guardada) * RN.bajada : guardada;
+  RN.sarta.scale.y = Math.max(0.05, tope - abajo); RN.sarta.position.y = (tope + abajo) / 2; RN.mecha.position.y = abajo - 0.02;
+  // dron: sube 8 m, vuela 30 m adelante a 10 m del suelo, da vueltas mirando y vuelve a la plataforma
+  const v = RN.vuelo;
+  if (v) {
+    RN.rotores.forEach((r, i) => { r.rotation.y += (i ? -1 : 1) * dt * 40; });
+    v.t += dt; const T = v.t;
+    const base = new THREE.Vector3(...RN.PLAT).applyMatrix4(RN.cuerpo.matrixWorld), fw = new THREE.Vector3(Math.cos(est.yaw), 0, -Math.sin(est.yaw));
+    const lejos = base.clone().addScaledVector(fw, 30); lejos.y = alturaGlobal(lejos.x, lejos.z) + 10;
+    const alto = base.clone(); alto.y += 8;
+    const tramo = (a, b, f) => a.clone().lerp(b, suave(Math.min(1, Math.max(0, f))));
+    RN.dron.position.copy(T < 2 ? tramo(base, alto, T / 2) : T < 5 ? tramo(alto, lejos, (T - 2) / 3)
+      : T < 9 ? lejos.clone().add(new THREE.Vector3(Math.sin(T * 1.3) * 2, 0, Math.cos(T * 1.3) * 2).multiplyScalar(Math.min(1, T - 5)))
+      : T < 12 ? tramo(lejos, alto, (T - 9) / 3) : tramo(alto, base, (T - 12) / 2));
+    if (T >= 14) rnAterrizar(true);
+  }
+};
+function rnAterrizar(avisar) {
+  RN.cuerpo.attach(RN.dron); RN.dron.position.set(...RN.PLAT); RN.dron.rotation.set(0, 0, 0); RN.vuelo = null;
+  $('rnDron').setAttribute('aria-pressed', false); if (avisar) decir('El dron volvió a su plataforma.');
+}
+function rnActivar(on) {
+  if (RN.activo === on) return;
+  if (!on && RN.vuelo) rnAterrizar(false);
+  RN.activo = on; RN.g.visible = on;
+  for (const c of rover.children) if (c !== RN.g && c !== manchaSombra) c.visible = !on;
+  manchaSombra.scale.setScalar(on ? 1.35 : 1);
+  $('rnCur').setAttribute('aria-pressed', !on); $('rnGx').setAttribute('aria-pressed', on);
+  $('rn-acc').classList.toggle('oculto', !on); $('hg-rover-nom').textContent = on ? 'Rover GX-2 · vehículo' : 'Curiosity · vehículo';
+  if (on) RN.seguir();
+  decir(on ? 'Rover GX-2: la versión nueva para las próximas excavaciones. Probá "Alas", "Dron" y "Perforar 2 m".' : 'Volviste a Curiosity.');
+}
+function rnPerforar() {
+  if (!RN.activo || RN.perforando) return;
+  RN.perforando = true; RN.prof = 0; RN.bajada = 0; $('rnPerf').setAttribute('aria-pressed', true);
+  const p = new THREE.Vector3(0.06, 0, 0).applyMatrix4(RN.torre.matrixWorld), x = p.x, z = p.z, y = alturaGlobal(x, z), dur = 10000, t0 = performance.now();
+  llegada('Perforación profunda · SIMULACIÓN', 'Rover GX-2 · hasta 2 m', '', []);
+  $('ll-prog').classList.remove('oculto');
+  const paso = () => {
+    if (!RN.activo) { RN.perforando = false; RN.prof = 0; RN.barras.forEach(b => { b.visible = true; }); $('rnPerf').setAttribute('aria-pressed', false); cerrarLlegada(); return; }
+    const f = Math.min(1, (performance.now() - t0) / dur), bajar = Math.min(1, f / 0.1), h = Math.max(0, (f - 0.1) / 0.9);
+    RN.bajada = suave(bajar); RN.prof = 2 * h;
+    const k = Math.min(3, Math.floor(h * 4)), s = h * 4 - k;                       // tramo k: la mecha (k = 0) y después cada barra
+    RN.carro.position.y = f < 0.1 ? 2.1 : 2.1 - 1.2 * s;
+    RN.barras.forEach((b, i) => { b.visible = i >= k; });
+    $('ll-prog').firstElementChild.style.width = `${Math.round(f * 100)}%`;
+    $('ll-sub').textContent = f < 0.1 ? 'La torre baja la mecha hasta el suelo…' : `Profundidad: ${num(RN.prof, 2)} m de 2 m · ${k ? `barra ${k} de 3 acoplada` : 'solo la mecha'}. Las muestras se toman cada 50 cm, como en el plan de Rosalind Franklin.`;
+    if (Math.random() < 0.6) soplarPolvo(new THREE.Vector3(x, y, z), 3, 0.3);
+    if (f < 1) { requestAnimationFrame(paso); return; }
+    RN.carro.position.y = 2.1; RN.prof = 0; RN.perforando = false; RN.barras.forEach(b => { b.visible = true; }); $('rnPerf').setAttribute('aria-pressed', false);
+    const hh = new THREE.Mesh(new THREE.CircleGeometry(0.12, 16).rotateX(-Math.PI / 2), matHoyo); hh.position.set(x, y + 0.04, z); hh.renderOrder = 4; escena.add(hh); hoyos.push(hh);
+    cerrarLlegada(); mostrarMuestra(x, z, 'Rover GX-2 · muestra a 2 m', 'vehiculo');
+  };
+  requestAnimationFrame(paso);
+}
+function rnDron() {
+  if (!RN.activo || RN.vuelo) return;
+  RN.cuerpo.updateMatrixWorld(); escena.attach(RN.dron); RN.vuelo = { t: 0 }; $('rnDron').setAttribute('aria-pressed', true);
+  decir('El dron sale a mirar 30 m adelante, a 10 m del suelo, como Ingenuity con Perseverance.');
+}
+function htmlGX() {
+  const f = (t, d, k, abierto) => `<details${abierto ? ' open' : ''}><summary>${t}</summary><p>${d} ${k.map(fq).join(' ')}</p></details>`;
+  return `<span class="prov">propuesta del equipo</span><h1 class="parada-cab"><span class="chip" style="background:#d9733f">GX</span>Rover GX-2 · próximas excavaciones</h1>
+    <p>La versión nueva del rover para seguir perforando en Gale. Mantiene la idea de Curiosity (seis ruedas con balancín, energía nuclear, laboratorio a bordo) y suma lo que hace falta para buscar debajo de la superficie, donde la radiación no llega. Es un diseño nuestro: cada sistema se apoya en uno que ya existe, con su fuente.</p>
+    ${f('Taladro profundo de 2 m', 'Una torre adelante con la mecha y tres barras de extensión de unos 50 cm: llega a 2 m, como el taladro de Rosalind Franklin (ESA), que junta muestras cada 50 cm. Curiosity perfora unos 6,4 cm. Según el suelo, ese taladro avanza entre 0,3 y 30 mm por minuto, así que 2 m llevan entre ~1 h y ~111 h de taladro (cálculo propio). Acá va acelerado.', ['exoDrill', 'exoDrillTest', 'curDrill'], true)}
+    ${f('Dron explorador', 'Sale de la plataforma de atrás y mira el terreno adelante, como Ingenuity hizo para Perseverance: 72 vuelos, unos 128,8 minutos en el aire y 17 km recorridos.', ['ingenuity'])}
+    ${f('Energía', 'Un MMRTG atrás, el mismo tipo que lleva Curiosity (unos 110 W eléctricos al empezar), más dos alas solares plegables para sumar en la temporada de cielo limpio. El taladro de Rosalind Franklin trabaja con menos de 100 W.', ['mmrtg', 'exoDrillTest', 'polvoTemp'])}
+    ${f('Mástil con LiDAR y cámaras estéreo', 'El LiDAR gira y arma el relieve en 3D para elegir por dónde ir con poca luz o con polvo. Propuesta del equipo, sin medición.', [])}
+    ${f('Cámara de suelo y focos', 'Mira el piso adelante de las ruedas para ver arena y piedras filosas antes de pisarlas; los focos permiten trabajar de noche. Propuesta del equipo.', [])}
+    ${f('Ruedas y tamaño', 'Ruedas de 80 cm con garras en V para pasar mejor la arena; el cuerpo mide 3 × 1,9 m. Son supuestos del equipo, no medidas de un rover real.', [])}
+    <div class="botones"><button data-rn="alas">Alas</button><button data-rn="dron">Dron</button><button class="pri" data-rn="perf">Perforar 2 m</button></div>`;
+}
+// botones de la ficha y de la wiki: si hace falta, cambia al GX-2 y acerca la cámara antes de la acción
+function rnBoton(k) {
+  $('wiki').classList.add('oculto');
+  if (!RN.activo) rnActivar(true);
+  const p = rover.position, lejos = camara.position.distanceTo(p) > 40;
+  if (lejos) { const fw = new THREE.Vector3(Math.cos(est.yaw), 0, -Math.sin(est.yaw)); volarA(p.clone().addScaledVector(fw, 9).add(new THREE.Vector3(fw.z * 7, 5, -fw.x * 7)), p.clone().setY(p.y + 1.2)); }
+  setTimeout(() => ({ alas: () => $('rnAlas').click(), dron: rnDron, perf: rnPerforar })[k](), lejos ? 1500 : 0);
+}
+function mostrarGX() { $('ficha-texto').innerHTML = htmlGX(); $('ficha').classList.remove('oculto'); conectarBotones($('ficha-texto')); }
+$('rnCur').onclick = () => rnActivar(false);
+$('rnGx').onclick = () => rnActivar(true);
+$('rnAlas').onclick = () => { RN.alasOn = !RN.alasOn; $('rnAlas').setAttribute('aria-pressed', RN.alasOn); decir(RN.alasOn ? 'Alas solares abiertas.' : 'Alas solares plegadas.'); };
+$('rnDron').onclick = rnDron;
+$('rnPerf').onclick = rnPerforar;
+$('rnFicha').onclick = mostrarGX;
+
 // ---------- misión en pareja: el Astronauta 1 muestra lo que ve (cámara del casco) y el Astronauta 2 lleva los datos en el
 // visor; la base (el rover) y el control en la Tierra les mandan avisos armados con los datos de la escena ----------
 // demora de la luz Tierra–Marte: posiciones aproximadas de los planetas (JPL, elementos de Standish, válidos 1800–2050)
@@ -4446,7 +4919,7 @@ function demoraLuz(fecha) {
 const pareja = { activo: false, adelante: 6, lado: 1.1, mov: 0, vistos: new Set(), dosisAviso: 0, ultMapa: 0, demora: 0, ls: 0 };
 const fmtT = h => { const m = Math.round(h * 60); return `T+${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
 function msgPareja(de, txt, extra = '') {
-  const DE = { base: 'Base · rover', tierra: 'Control en la Tierra', a1: 'Astronauta 1', a2: 'Astronauta 2' };
+  const DE = { base: BASE ? 'Base Gale' : 'Base · rover', tierra: 'Control en la Tierra', a1: 'Astronauta 1', a2: 'Astronauta 2' };
   const q = fp ? puntoEn(fp.r, fp.d) : { t: 0 }, li = document.createElement('li');
   li.className = de + (extra ? ' ' + extra : '');
   li.innerHTML = `<b>${DE[de]}<i>${fmtT(q.t)}${de === 'tierra' ? ` · enviado hace ${num(pareja.demora, 0)} min` : ''}</i></b>${txt}`;
@@ -4551,6 +5024,8 @@ const WIKI = [
     CAMPANAS.map(c => `<h3>${c.nombre}</h3><p class="sub">${c.idea}</p><div class="wiki-lista">${c.pozos.map(p => `<button data-wpozo="${POZOS.indexOf(p)}"><b>${p.pozo} · ${p.nombre}</b><span>sol ${p.sol}${p.bib?.roca ? ' · ' + p.bib.roca : ''}</span></button>`).join('')}</div>`).join('')],
   ['expe', 'Expedición sur', () => EXP ? `<h2>Expedición sur · E1 a E5</h2><p class="sub">${$('expe-resumen').innerHTML}</p>` + EXP.paradas.map(e => `<h3>${e.parada}</h3>${fichaExpe(e, true)}`).join('') : '<h2>Expedición sur</h2><p>No está en esta versión.</p>'],
   ['clima', 'Clima y estaciones', () => `<h2>Clima en Gale</h2>` + ESTACIONES.map(e => `<h3>Ls ${e.de}°–${e.a}° · ${e.nombre}</h3><ul>${e.lineas.map(([t, f]) => `<li>${t} ${fq(f)}</li>`).join('')}</ul>`).join('') + `<h3>Lo que viene</h3><div>${$('clima').innerHTML}</div>`],
+  ['base', 'Base Gale', () => htmlBase()],
+  ['gx2', 'Rover GX-2 (próximas excavaciones)', () => htmlGX()],
   ['seguridad', 'Rover y astronauta', () => `<h2>Límites del rover y del astronauta</h2>
     <table class="tabla"><tr><td>Pendiente máxima del traje</td><td>${PR.pMax}° ${fq('evaConops')}</td></tr><tr><td>Pendiente máxima del rover</td><td>${PR.rMax}° <span class="prov">supuesto</span></td></tr>
     <tr><td>Velocidad a pie en llano</td><td>${num(PR.vCam * 3.6, 1)} km/h, corregida por pendiente (Tobler) <span class="prov">supuesto</span></td></tr>
@@ -4679,6 +5154,119 @@ document.getElementById('cargando').remove();
     history.replaceState(null, '', location.pathname + location.search);
   }
 }
+// ---------- exportar la misión para Gale Earth (herramientas/exportar_mision.py) ----------
+// Gale Earth es la única pantalla: estas dos funciones sacan de la escena, con los mismos cálculos y textos, todo lo de
+// "Curiosity hoy" (paradas, rutas, expedición, base, fichas, parámetros) y los modelos 3D (.glb). No cambian nada visible.
+const LL = (x, z) => mundoALonLat(x, z).map(v => +v.toFixed(7));
+function limpiarFicha(html) {
+  const d = document.createElement('div'); d.innerHTML = html;
+  d.querySelectorAll('.botones, button, .nav-tour, [data-tour]').forEach(e => e.remove());
+  d.querySelectorAll('a.q').forEach(a => { a.removeAttribute('data-f'); });
+  return d.innerHTML.replace(/\s+/g, ' ').trim();
+}
+function muestraHTML(x, z, nombre, quien) {
+  const antes = $('ficha-texto').innerHTML; mostrarMuestra(x, z, nombre, quien);
+  const h = limpiarFicha($('ficha-texto').innerHTML); $('ficha-texto').innerHTML = antes; $('ficha').classList.add('oculto'); return h;
+}
+window.__exportarMision = () => {
+  const r2 = v => Math.round(v * 100) / 100, r1 = v => Math.round(v * 10) / 10;
+  const terrenos = ['—', 'claro', 'intermedio', 'oscuro'], minerales = [], minIdx = new Map();
+  const terrenoDe = (lon, lat) => { const br = CR ? brilloRelativo(lon, lat) : null; return br == null ? 0 : br > 0.7 ? 1 : br < 0.3 ? 3 : 2; };
+  const mineralDe = (lon, lat) => {
+    const L = lecturaMineral(lon, lat, 0); if (!L || !L.length) return -1;
+    const k = L.map(i => i.k + i.nivel).join();
+    if (!minIdx.has(k)) { minIdx.set(k, minerales.length); minerales.push(L.map(i => [i.corto, i.nivel])); }
+    return minIdx.get(k);
+  };
+  // puntos de una línea cada ~2 m: lon, lat, d, elevación, pendiente de marcha, pendiente del suelo, cielo, horas, µSv, terreno, minerales
+  const puntos = (pts, conSuelo) => {
+    const out = []; let ult = -1e9;
+    pts.forEach((q, i) => {
+      if (q.d - ult < 2 && i < pts.length - 1) return; ult = q.d;
+      const [lon, lat] = LL(q.x, q.z), enZ = enZona(q.x, q.z);
+      out.push([lon, lat, r1(q.d), r1(D.zmin + (q.y ?? alturaGlobal(q.x, q.z))), r1(q.marcha ?? 0), r1(q.terr ?? pendGlobal(q.x, q.z)), r2(q.cielo ?? cieloGlobal(q.x, q.z)),
+        Math.round((q.t ?? 0) * 1e4) / 1e4, r1(q.dosis ?? 0), conSuelo && enZ ? terrenoDe(lon, lat) : 0, conSuelo && enZ ? mineralDe(lon, lat) : -1]);
+    });
+    return out;
+  };
+  const paradas = paradasGeo.filter(pa => pa.x != null).map(pa => {
+    const p = pa.props, [lon, lat] = LL(pa.x, pa.z), nom = nombreSinId(p);
+    return { id: String(p.parada), nombre: nom, color: colorParada(p), quien: p.quien || '', tipo: p.tipo || '', lon, lat, elev: r1(D.zmin + alturaGlobal(pa.x, pa.z)),
+      motivo: p.motivo_cientifico || '',
+      ficha: limpiarFicha(`<h1 class="parada-cab"><span class="chip" style="background:${colorParada(p)}">${p.parada}</span>${nom}</h1>${fichaParada(pa)}`),
+      muestra: muestraHTML(pa.x, pa.z, `${p.parada} · ${nom}`, /rover|vehic/i.test(p.quien || '') ? 'vehiculo' : 'astronauta') };
+  });
+  const lista = rutas.filter(r => r.fija && !r.aOjo);
+  const rutasX = lista.map((r, i) => ({
+    id: /Caminata (\d)/.test(r.nombre) ? `C-cam${r.nombre.match(/Caminata (\d)/)[1]}` : (r.nombre.match(/^([A-C]) ·/) || [])[1] || `R${i}`,
+    nombre: r.nombre, tipo: r.tipo, color: r.color, largo: r1(r.largo), largo3d: r1(r.largo3d), horas: Math.round(r.horas * 1000) / 1000, dosis: r1(r.dosis),
+    sube: r1(r.sube), baja: r1(r.baja), maxMarcha: r1(r.maxMarcha), lim: r.lim, idaVuelta: !!r.idaVuelta, cieloMedio: r2(r.cieloMedio),
+    paradas: paradasDeRuta(r).filter(o => !(o.d < 15 || /^S$/i.test(String(o.pa.props.parada)))).map(o => ({ id: String(o.pa.props.parada), d: r1(o.d) })),
+    pts: puntos(r.pts, true) }));
+  const expe = EXP ? {
+    nota: EXP.nota || '', resumen: $('expe-resumen')?.innerHTML || '',
+    lineas: Object.fromEntries(Object.entries(EXP.lineas).map(([k, L]) => [k, { color: COLORES[k], largo: r1(L.largo), props: L.props,
+      paradas: L.paradas.map(o => ({ id: o.e.id, d: r1(o.d) })), pts: puntos(L.pts, false) }])),
+    paradas: EXP.paradas.map(e => ({ id: e.id, nombre: e.parada, quien: e.quien || '', lon: e.lon, lat: e.lat, elev: r1(D.zmin + e.y), color: '#e0703a',
+      ficha: limpiarFicha(fichaExpe(e)), muestra: muestraHTML(e.x, e.z, e.parada, e.quien === 'astronauta' ? 'astronauta' : 'vehiculo') })) } : null;
+  const [clon, clat] = LL(est.x, est.z);
+  const base = BASE ? { lon: BASE.lon, lat: BASE.lat, elev: r1(D.zmin + alturaGlobal(BASE.x, BASE.z)), alto_plataforma: r2(BASE.grupo.position.y - alturaGlobal(BASE.x, BASE.z)), sitio: BASE.sitio,
+    ficha: limpiarFicha(htmlBase()), partes: Object.fromEntries(Object.entries(PARTES_BASE).map(([k, v]) => [k, v[0]])),
+    pend: r1(BASE.pend), cielo: r2(BASE.cielo), drec: Math.round(BASE.drec), dater: Math.round(BASE.dater), dc: Math.round(BASE.dc) } : null;
+  return {
+    version: 1, generado: new Date().toISOString(), sol: 5070,
+    zona: { lon_oeste: M.lon_oeste, lon_este: M.lon_este, lat_norte: M.lat_norte, lat_sur: M.lat_sur },
+    curiosity: { lon: clon, lat: clat, yaw: r2(est.yaw), elev: r1(D.zmin + alturaGlobal(est.x, est.z)) },
+    paradas, rutas: rutasX, expedicion: expe, base, gx2: limpiarFicha(htmlGX()),
+    terrenos, minerales,
+    estaciones: ESTACIONES.map(e => ({ de: e.de, a: e.a, nombre: e.nombre, lineas: e.lineas })),
+    parametros: { PR: { ...PR }, EVA: { ...EVA }, zancada: ZANCADA },
+    fuentes: FUENTES_URL,
+  };
+};
+// modelos 3D: cada uno se exporta en reposo, con las piezas que se mueven nombradas, girado para que el este de la escena
+// quede como el "adelante" de glTF (+Z): así, en Gale Earth, el modelo queda bien orientado sobre el marco este-norte-arriba.
+window.__exportarModelos = async GLTFExporter => {
+  if (RN.activo) rnActivar(false);
+  ruedas.forEach((w, i) => { w.g.position.set(w.xi, RUEDA_R, w.zi); w.giro.rotation.set(0, 0, 0); w.giro.name = `rueda_${i}`; });
+  chasis.rotation.set(0, 0, 0); chasis.updateMatrix(); cabeza.name = 'cabeza';
+  const L = v => v.clone().applyMatrix4(chasis.matrix);
+  susp.forEach(sp => {                                       // la misma cuenta de ubicarRover, con el piso plano
+    const off = sp.lado > 0 ? 0 : 3, wF = ruedas[off].g.position, wM = ruedas[off + 1].g.position, wR = ruedas[off + 2].g.position;
+    const piv = L(PIV(sp.lado)), zIn = sp.lado * (WZ - RUEDA_A / 2 - 0.16), arriba = (p, h) => new THREE.Vector3(p.x, p.y + h, zIn);
+    const fA = arriba(wF, 0.32), mA = arriba(wM, 0.16), rA = arriba(wR, 0.32), bog = new THREE.Vector3((wM.x + wR.x) / 2 + 0.05, (mA.y + rA.y) / 2 + 0.06, zIn);
+    estirar(sp.rDel, piv, fA); estirar(sp.rTras, piv, bog); estirar(sp.bMed, bog, mA); estirar(sp.bTras, bog, rA);
+    estirar(sp.postes[0], fA, new THREE.Vector3(wF.x, wF.y, zIn)); estirar(sp.postes[1], mA, new THREE.Vector3(wM.x, wM.y, zIn)); estirar(sp.postes[2], rA, new THREE.Vector3(wR.x, wR.y, zIn));
+    sp.bog.position.copy(bog); sp.bog.rotation.set(Math.PI / 2, 0, 0);
+  });
+  RN.alasOn = true; RN.alasT = 1; RN.seguir(); RN.tick(0);
+  RN.ruedasGX.forEach((w, i) => { w.giro.name = `rueda_${i}`; });
+  RN.lidar.name = 'lidar'; RN.rotores.forEach((r, i) => { r.name = `rotor_${i}`; });
+  poseAstro(0, 0);
+  piernas.forEach((p, i) => { p.muslo.name = `muslo_${i}`; p.rodilla.name = `rodilla_${i}`; p.tobillo.name = `tobillo_${i}`; });
+  brazos.forEach((b, i) => { b.hombro.name = `hombro_${i}`; b.codo.name = `codo_${i}`; });
+  cadera.name = 'cadera'; torso.name = 'torso'; casco.name = 'casco';
+  const sinLuces = o => { const fuera = []; o.traverse(c => { if (c.isLight || c.isSprite) fuera.push(c); }); fuera.forEach(c => c.parent && c.parent.remove(c)); return o; };
+  const preparar = (obj, mantenerGiro) => {
+    const c = sinLuces(obj.clone(true)); c.position.set(0, 0, 0); if (!mantenerGiro) c.rotation.set(0, 0, 0); c.visible = true;
+    const w = new THREE.Group(); w.rotation.y = -Math.PI / 2; w.add(c); const s = new THREE.Scene(); s.add(w); s.updateMatrixWorld(true); return s;
+  };
+  const curiosity = rover.clone(true);
+  [...curiosity.children].forEach((c, i) => { const o = rover.children[i]; if (o === RN.g || o === manchaSombra) curiosity.remove(c); });
+  const gx = RN.g.clone(true); gx.visible = true;
+  const astroC = astro.clone(true); astroC.visible = true;
+  const piezas = { curiosity: preparar(curiosity), gx2: preparar(gx), astronauta: preparar(astroC) };
+  if (BASE) piezas.base_gale = preparar(BASE.grupo, true);
+  const ex = new GLTFExporter(), out = {};
+  for (const [k, s] of Object.entries(piezas)) {
+    const buf = await ex.parseAsync(s, { binary: true, onlyVisible: true });
+    let bin = ''; const u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) bin += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+    out[k] = btoa(bin);
+  }
+  ubicarRover();
+  return out;
+};
+window.__base = BASE; window.__mostrarBase = mostrarBase; window.__V3 = THREE.Vector3; window.__THREE = THREE; window.__RN = RN; window.__rn = { activar: rnActivar, perforar: rnPerforar, dron: rnDron, ficha: mostrarGX };
 window.__escena = { GLOBO, expe, EXP, entrarExpe, salirExpe, perforar, lsDeFecha, pintarClima, muestraOrbital, llegadaParada, paradasDeRuta, get kPolvo() { return kPolvo; }, AL, get cartel() { return cartelClave; }, get CTX() { return CTX; }, TR, POZOS, viaje, entrarViaje, salirViaje, vistaTravesia, mostrarPozo, controles, BASE_S, fijarCamara: (p, t) => { vuelo = null; seguirTras = null; modoCam = 'libre'; camara.position.set(...p); controles.target.set(...t); controles.update(); }, dibujarCapa, evaluarAlertas, yo, setControl, volverABase, abrirPerfil, agente, campoRegreso, get control() { return control; }, huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>

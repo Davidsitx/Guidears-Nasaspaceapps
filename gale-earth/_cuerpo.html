@@ -407,6 +407,7 @@ for (const s of SITIOS) {
     properties: { tipo: 'sitio', id: s.id } });
   s.radio = viewer.entities.add({ position: pos(s.lon, s.lat), ellipse: { semiMajorAxis: s.radio_km * 1000, semiMinorAxis: s.radio_km * 1000, material: C.Color.fromCssColorString('#ffd166').withAlpha(0.12), classificationType: C.ClassificationType.BOTH } });
   capas.base.push(s.ent, s.radio);
+  s.ent.show = false; s.radio.show = false;          // candidatos de base: fuera del mapa (pedido del 15/11)
 }
 const zRef = Math.max(...SITIOS.map(s => s.elev));
 for (const s of SITIOS) s.columna = Math.exp((zRef - s.elev) / 11100);     // atmósfera sobre el sitio, relativa al sitio más alto
@@ -709,10 +710,6 @@ function vistaBase() {
   cont().innerHTML = `<h2>Nuestro propósito</h2>
     <p>Usar todo lo que Curiosity midió en 14 años para elegir dónde instalar la <b>primera base humana en Gale</b>: agua, materiales, terreno firme, protección contra la radiación y ciencia cerca.</p>
     <p class="sub">En el taller de NASA de 2015 sobre sitios para misiones humanas, Gale quedó entre las tres zonas de exploración más votadas, junto con Melas Chasma y Jezero.</p>
-    <h2>Sitios candidatos <span class="tag">propuesta del equipo</span></h2>
-    <table><tr><th>Sitio</th><th>Agua kg/t</th><th>CO₂ kg/t</th><th>Pozos</th><th>Atmósfera extra</th><th>Pendiente</th></tr>${filas}</table>
-    <p class="fuente">Agua y CO₂: máximo de los pozos a menos del radio de cada sitio (cálculo propio, CheMin). Atmósfera extra: columna de aire sobre el sitio respecto del más alto, con altura de escala ~11 km (a más aire, menos radiación). Pendiente: medida en vivo sobre el terreno 3D de Cesium Mars (±150 m).</p>
-    ${SITIOS.map(s => `<div class="tarjeta" data-s="${s.id}"><b>★ ${s.nombre}</b><div class="sub">${s.resumen}</div></div>`).join('')}
     <h2>El interior: un antecedente argentino</h2>
     <p><b>Mars 3D Home</b> (UNCuyo, con integrantes de San Luis) ganó el premio Mejor Concepto de Misión del Space Apps 2022: el interior de un hábitat y herramientas impresas en 3D para que cuatro astronautas vivan un año en Marte. Nuestra base aporta <i>dónde</i>; su trabajo, <i>cómo vivir adentro</i>.</p>
     <div class="btns"><a class="btn" target="_blank" rel="noopener" href="https://2022.spaceappschallenge.org/challenges/2022-challenges/mars-habitat/teams/mars-3d-home">Ver Mars 3D Home</a></div>`;
@@ -834,10 +831,11 @@ async function capaMineral(id, on) {
 const MIN_LISTA = [['arcillas', 'Arcillas de Fe/Mg', '#40c4ff'], ['sulfatos', 'Sulfatos hidratados', '#ffd640'], ['agua', 'Agua en minerales', '#78ffc8'], ['hematita', 'Óxidos férricos / hematita', '#ff503c'], ['olivino', 'Olivino', '#96ff5a'], ['piroxeno', 'Piroxeno alto en calcio', '#c878ff']];
 function vistaCapas() {
   cont().innerHTML = `<h2>Capas</h2>
-    ${[['recorrido', 'Recorrido de Curiosity por zonas'], ['pozos', 'Las 49 perforaciones'], ['etiquetas', 'Nombres de zonas'], ['base', 'Sitios candidatos para la base'], ['orbitas', 'Orbitadores y órbitas']].map(([k, t]) => `<label class="fila"><span>${t}</span><input type="checkbox" data-c="${k}" ${VIS[k] ? 'checked' : ''}></label>`).join('')}
+    ${[['recorrido', 'Recorrido de Curiosity por zonas'], ['pozos', 'Las 49 perforaciones'], ['etiquetas', 'Nombres de zonas'], ['orbitas', 'Orbitadores y órbitas']].map(([k, t]) => `<label class="fila"><span>${t}</span><input type="checkbox" data-c="${k}" ${VIS[k] ? 'checked' : ''}></label>`).join('')}
     <div class="fila"><span>Color de los pozos</span><select id="colorPor"><option value="zona">zona</option><option value="agua">agua en minerales</option><option value="co2">carbonatos (CO₂)</option><option value="fe">óxidos de hierro</option><option value="cl">cloro</option><option value="arcillas">arcillas (CheMin)</option><option value="sulfatos">sulfatos (CheMin)</option><option value="hematita">hematita (CheMin)</option><option value="amorfo">material amorfo (CheMin)</option></select></div>
     <p class="sub" id="leyColor"></p>
     <div class="fila"><span>Exagerar el relieve</span><select id="exag"><option value="1">×1 (real)</option><option value="1.5">×1,5</option><option value="2">×2</option><option value="3">×3</option></select></div>
+    ${mgSeccionCapas()}
     ${D.capas5m ? `<h2>Análisis del terreno (5 m)</h2><p class="sub">Todo el área de Curiosity en Gale (${Math.round(D.capas5m.caja_planetocentrica.ancho * 5 / 1000)} × ${Math.round(D.capas5m.caja_planetocentrica.alto * 5 / 1000)} km). Elevación ${Math.round(D.capas5m.elev_min)} a ${Math.round(D.capas5m.elev_max)} m. Límite de pendiente: astronauta ${D.capas5m.parametros.pendiente_astronauta}°, rover ${D.capas5m.parametros.pendiente_rover}°.</p>
     ${ANALISIS.map(([k, t, d, a]) => `<label class="fila"><span title="${d}">${t}</span><input type="checkbox" data-a="${k}" ${CAPA_A[k] && CAPA_A[k].show ? 'checked' : ''}></label><div class="fila"><span class="sub">${d}</span><input type="range" min="0.1" max="1" step="0.05" data-o="${k}" value="${CAPA_A[k] ? CAPA_A[k].alpha : a}" style="width:90px"></div>`).join('')}` : ''}
     ${D.capas5m ? leyendaRad() : ''}
@@ -867,6 +865,7 @@ function vistaCapas() {
   $('colorPor').value = colorPor; ley();
   $('colorPor').onchange = async e => { colorPor = e.target.value; if (ESCALAS[colorPor] && ESCALAS[colorPor].campo.startsWith('ch_')) await cargarCheminPozos(); repintar(); ley(); };
   cont().querySelectorAll('[data-m]').forEach(el => el.onchange = () => capaMineral(el.dataset.m, el.checked));
+  mgEnganchar();
   cont().querySelectorAll('#radHora button').forEach(b => b.onclick = async () => { cont().querySelectorAll('#radHora button').forEach(x => x.classList.toggle('on', x === b)); await cambiarHorarioRad(b.dataset.h); });
   $('exag').value = String(viewer.scene.verticalExaggeration || 1); $('exag').onchange = e => { const v = +e.target.value; viewer.scene.verticalExaggeration = v; $('relBadge').textContent = '×' + String(v).replace('.', ','); $('relBadge').classList.toggle('oculto', v === 1); };
   $('guardarTok').onclick = () => { const v = $('tok').value.trim(); if (v && !v.startsWith('••')) { try { localStorage.setItem('galeEarthToken', v); } catch {} location.reload(); } };

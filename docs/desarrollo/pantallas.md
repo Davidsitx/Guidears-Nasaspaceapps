@@ -2,6 +2,39 @@
 
 Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)). Si algo cambia, se actualiza este archivo.
 
+## 0. Gale Earth · Curiosity hoy: la pantalla única (desde el 15/11)
+
+![Curiosity hoy en Gale Earth](capturas/gale-earth/01_curiosity_hoy.jpg)
+
+- **Entrada:** el botón **"Misión Curiosity"** (arriba a la derecha), el chip "Curiosity hoy" o el buscador. No cambia de página: el globo vuela a la zona de hoy, abre el panel **Curiosity hoy** (cómo recorrerla, paradas, base y rover) y muestra la **barra de la misión** abajo.
+- **En el mapa:**
+  - carteles de las paradas, con su color, y rutas pegadas al terreno (A azul, B naranja, caminatas de C);
+  - expedición E1–E5 y la **Base Gale** en la Zona 2;
+  - Curiosity (o el GX-2) y el astronauta en la salida.
+  - Al pasar el mouse por cualquier cartel (también los de Gale Earth) aparece la mano, se agranda y dice qué es; un toque abre la ficha en el panel.
+- **Barra:** En pareja · Rover ruta A · A pie ruta B · Tripulado C · Expedición sur · Base Gale · Curiosity / GX-2 · Todo.
+
+![Rover por la ruta A](capturas/gale-earth/03_rover_ruta_A.jpg)
+
+- **Recorridos:**
+  - la cámara vuela a la salida y aparece **"Listos para salir"**; nada se mueve hasta tocar "▶ Salir";
+  - **4 min** por defecto (1, 2, 4 u 8);
+  - se detiene en cada parada con "Ver la parada", "Perforación simulada" y "Seguir ▶";
+  - vista desde atrás o con los ojos (a pie);
+  - "Salir (Esc)" vuelve a Curiosity hoy.
+
+![Misión en pareja](capturas/gale-earth/04_pareja_casco.jpg)
+
+- **Misión en pareja:**
+  - **cámara del casco** del Astronauta 1, con campo visual amplio, que sigue la pendiente;
+  - el Astronauta 2 a 6 m;
+  - **visor** a la derecha (minimapa, próxima parada, suelo, CRISM, radiación y refugio);
+  - **comunicaciones** a la izquierda (Base Gale, Tierra con la demora de la luz y respuestas rápidas).
+![En el celular: misión en pareja y barra de la misión](capturas/gale-earth/10_celular.jpg)
+
+- **En el celular (390 × 844):** la barra de la misión queda en dos filas (En pareja, Rover ruta A, A pie ruta B y Todo; el resto sigue en el panel Curiosity hoy); el botón "Misión Curiosity" se esconde mientras la misión está abierta; en pareja, las comunicaciones se apoyan siempre arriba del reproductor y el visor se achica para no taparlas.
+- **Código:** `gale-earth/mision.js`. Datos y modelos con `python herramientas/exportar_mision.py` (sección "Cómo se arma" de `arquitectura.md`). Lo que sigue más abajo es la escena anterior, que queda como **versión clásica**.
+
 ## 1. Portada (tapa la escena mientras carga)
 
 ### Paso 1 · Inicio
@@ -125,7 +158,7 @@ Al elegir, el globo se corre al centro con Gale en el medio, la portada se funde
 ![Wiki](capturas/07_wiki.jpg)
 
 - Pantalla completa con el mismo fondo que la portada: buscador arriba, secciones a la izquierda y contenido a la derecha.
-- **Secciones:** Por qué Gale · Paradas de hoy · Perforaciones · Expedición sur · Clima y estaciones · Rover y astronauta · Comunicaciones · Fuentes.
+- **Secciones:** Por qué Gale · Paradas de hoy · Perforaciones · Expedición sur · Clima y estaciones · Rover y astronauta · Comunicaciones · Base Gale · Rover GX-2 · Fuentes.
 - **Buscador:** filtra las secciones, cuenta las coincidencias y las resalta (`<mark>`).
 - **Perforaciones:** lista por campaña. Al tocar una, se ve la ficha completa dentro de la wiki, con "← Todas las perforaciones".
 - Los botones que llevan a la escena ("Ver en 3D", "Caminar hasta acá", "Viajar hasta acá") cierran la wiki.
@@ -136,3 +169,19 @@ Al elegir, el globo se corre al centro con Gale en el medio, la portada se funde
 - **Globo de Marte en CesiumJS:** órbitas (MRO, Odyssey, Mars Express, TGO, Hope), Fobos y Deimos, base, Biblioteca de los 49 pozos, línea de tiempo y expedición de 20 km.
 - **Desde la portada:** sin hash arranca en el espacio (`irA('marte')`) y a los 2,6 s vuela a la vista del cráter (`irA('gale')`).
 - **Vuelta:** su botón "Misión Curiosity · 3D" vuelve a la escena (`#desde-gale-earth`), que baja desde lo alto hasta la zona de hoy.
+
+## 8. Base Gale y rover GX-2 (próximas excavaciones)
+
+![Base Gale](capturas/08_base_gale.jpg)
+
+- **Base Gale:** está en la **Zona 2** del análisis de sitios del equipo, en la llanura del aterrizaje (lon 137,37501°, lat −4,61681°), con el marcador "BG". Queda a 1,7 km del recorrido, a 4,3 km del aterrizaje de 2012 y a 12,4 km de Curiosity hoy. El lugar sale de `data/base/sitios_base.geojson` (zonas 1, 2 y 3; la 2 la eligió el equipo). Cada parte se toca y abre su ficha con fuente:
+  - hábitat, túneles, laboratorio y esclusa con suitports;
+  - invernadero, campo solar, reactor, antena y estación meteorológica;
+  - planta de oxígeno, agua, garaje, luces y plataforma.
+- **Código:** bloque `const BASE` (lee el lugar elegido del archivo y mide pendiente, cielo tapado y distancias sobre el terreno de la travesía) y `if (BASE) { … }` (modelos) en `plantilla.html`. Las partes van con `parte(clave, objeto)` y sus textos están en `PARTES_BASE`.
+
+![Rover GX-2](capturas/09_rover_gx2.jpg)
+
+- **Rover GX-2:** en Escena → Rover se elige entre Curiosity y GX-2. Copia la posición, el rumbo y la inclinación del rover de la escena (`RN.seguir()` en el bucle), así que todo lo demás sigue igual.
+- **Acciones:** Alas, Dron y Perforar 2 m. Tocarlo abre la ficha (`htmlGX`), que también está en la wiki.
+- **Código:** `RN` en `plantilla.html`; las funciones son `rnActivar`, `rnPerforar`, `rnDron` y `rnBoton`.

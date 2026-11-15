@@ -86,6 +86,10 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Gale Earth: fecha marciana (Ls y año marciano) | Allison y McEwen 2000, Planet. Space Sci. 48:215 (algoritmo Mars24 de NASA GISS); Clancy et al. 2000, JGR 105:9553 (año marciano 1 = 11/4/1955). |
 | Gale Earth: minerales desde órbita | CRISM (MRO, NASA/JHU-APL), mosaicos GMWG de Gale 2012 (Seelos et al.), https://crism.jhuapl.edu/msl_landing_sites/ ; recorte y percentiles en data/mineralogia/crism_contexto (David). |
 | Gale Earth: fuentes oficiales de cada pozo | Base de mineralogía y geoquímica del cráter Gale (equipo CheMin), https://doi.org/10.48484/JN48-YW52 ; NASA PDS Geosciences, https://pds-geosciences.wustl.edu/missions/msl/index.htm ; NASA, "Curiosity's 42 Drill Holes" (PIA26403), https://science.nasa.gov/photojournal/curiositys-42-drill-holes/ |
+| Gale Earth: colores de altitud de todo Marte | USGS Astrogeology, Mars MGS MOLA - MEX HRSC Blended DEM Global 200 m, https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m (desde nuestras teselas, datum de esfera 3396,19 km). |
+| Gale Earth: infrarrojo nocturno de todo Marte | USGS Astrogeology, THEMIS Night IR Controlled Mosaics 100 m v2 (2018), vista previa a 2 km: https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars/THEMIS_controlled_mosaics/AA_mosaics/ |
+| Gale Earth: topónimos | IAU/USGS, Gazetteer of Planetary Nomenclature, https://planetarynames.wr.usgs.gov/ (exportación MARS_nomenclature.csv, copia en github.com/planetserver/ps2-www-client). |
+| Gale Earth: día y noche en Marte | Allison y McEwen 2000 (Mars24, NASA GISS), https://www.giss.nasa.gov/tools/mars24/ |
 | Por qué se eligió Gale (minerales vistos desde órbita en las capas del Monte Sharp, 5,5 km) | Smithsonian NASM 2022 (airandspace.si.edu/stories/editorial/10-years-curiosity-mars); Spaceflight Now 2011 |
 | Primer pozo: Gale tuvo un lago de agua dulce habitable | NASA/JPL 2013, "Curiosity Rover Hits Paydirt" (science.nasa.gov/resource/curiosity-rover-hits-paydirt); Vaniman et al. 2014, doi:10.1126/science.1243480 |
 | Moléculas orgánicas más grandes de Marte (Cumberland, 2025) | NASA/JPL, 24/3/2025 |
@@ -97,6 +101,18 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 | Fichas de las 49 perforaciones en la escena (hallazgo, CheMin, APXS, SAM, fotos, agua en minerales) | Biblioteca de Gale Earth (`gale-earth/datos/biblioteca.json`, del compañero), que sale del PDS (CheMin, APXS, SAM), la base ODR (Bristow y Lafuente, doi:10.48484/JN48-YW52), artículos y el blog de Curiosity; fotos crudas NASA/JPL-Caltech/MSSS |
 
 | Demora de la luz Tierra–Marte (misión en pareja y wiki) | NASA JPL Solar System Dynamics, "Approximate Positions of the Planets" (elementos de Standish, 1800–2050); cálculo propio de la distancia y del tiempo de la luz |
+
+| Base Gale: lugar (Zona 2 de tres centros con círculo libre de 250 m en la llanura del aterrizaje) | Análisis de sitios del equipo, 15/11 (`data/base/sitios_base.geojson`): DEM USGS de Gale 1 m (Calef y Parker 2016) a 4 m, HiRISE color a 3 m, pendiente < 10° en 20 m (Calef 2015), 1 km del recorrido y 2 km de los hitos (supuesto, analogía NASA 2011, sitios Apollo). Cálculo propio, umbrales provisorios |
+| Modelos 3D de la misión en Gale Earth (Curiosity, GX-2, astronauta, Base Gale) | Diseño propio del equipo, exportado de la escena con el GLTFExporter de three.js r170 (MIT, `escena3d/vendor/GLTFExporter.js`); `herramientas/exportar_mision.py` |
+| Base Gale: hábitat con blindaje de hielo (idea) | NASA Langley 2016, Mars Ice Home (phys.org/news/2016-12-nasa-ice-house-mars.html) |
+| Base Gale: reactor de fisión de al menos 40 kW | NASA Glenn, Fission Surface Power (nasa.gov/centers-and-facilities/glenn/nasas-fission-surface-power-project-energizes-lunar-exploration) |
+| Base Gale: oxígeno del CO₂ (122 g en 16 corridas, hasta 12 g/h) | NASA 2023, MOXIE (phys.org/news/2023-09-nasa-oxygen-generating-moxie-mars-mission.html) |
+| Base Gale: suitports (salida en menos de 30 min, sin polvo adentro) | NASA JSC 2012, NTRS 20120018014 |
+| Rover GX-2: taladro de 2 m, tres barras de ~50 cm, muestras cada 50 cm | ESA Exploration Science, ExoMars Rosalind Franklin (explorationscience.esa.int/?p=2323) |
+| Rover GX-2: avance de 0,3 a 30 mm/min, menos de 100 W, prueba a 1,7 m | ESA 2021, "First deep drilling success for ExoMars" (esa.int) |
+| Curiosity perfora 6,4 cm | NASA, "Curiosity's First Sample Drilling" (science.nasa.gov/resource/curiositys-first-sample-drilling) |
+| Rover GX-2: dron (72 vuelos, ~128,8 min, 17 km) | NASA, Ingenuity Mars Helicopter (science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/) |
+| Rover GX-2: MMRTG de ~110 W al empezar | NASA, hoja técnica del MMRTG (science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf) |
 
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
 | Relieve de todo Marte (fondo de la escena: alrededores de Gale y el planeta) | MOLA MEGDR 16 píxeles/grado, megt90n000eb.img (MGS MOLA, Smith et al. 2003, NASA PDS Geosciences Node). Copia pública: github.com/benbrittain/Barsoom (data/MEGDR). Control: −4509 m en el sitio de aterrizaje (publicado −4501 m); contra el DEM de la travesía, +5 ± 41 m |

@@ -1,0 +1,90 @@
+{
+ "themis": {
+  "franjas": [
+   {
+    "archivo": "themis_noche_0.jpg",
+    "lon_oeste": -180,
+    "lon_este": -90
+   },
+   {
+    "archivo": "themis_noche_1.jpg",
+    "lon_oeste": -90,
+    "lon_este": 0
+   },
+   {
+    "archivo": "themis_noche_2.jpg",
+    "lon_oeste": 0,
+    "lon_este": 90
+   },
+   {
+    "archivo": "themis_noche_3.jpg",
+    "lon_oeste": 90,
+    "lon_este": 180
+   }
+  ],
+  "lat_norte": 65.0,
+  "lat_sur": -65.0,
+  "fuente": "THEMIS (Mars Odyssey, NASA/ASU): USGS Astrogeology, THEMIS Night IR Controlled Mosaics 100 m v2 (2018), vista previa a 2 km/píxel.",
+  "enlace": "https://astrogeology.usgs.gov/search/map/themis_night_ir_controlled_mosaics_100m_v2",
+  "como": "Imagen cualitativa: claro = más tibio de noche (roca, costras), oscuro = más frío (polvo, arena fina)."
+ },
+ "nombres": {
+  "archivo": "toponimos.json",
+  "n": 1805,
+  "descartados": 15,
+  "fuente": "IAU / USGS, Gazetteer of Planetary Nomenclature (nombres aprobados por la IAU).",
+  "enlace": "https://planetarynames.wr.usgs.gov/"
+ },
+ "altitud": {
+  "oeste": "altitud_oeste.jpg",
+  "este": "altitud_este.jpg",
+  "esquema": "geodetica",
+  "rampa": [
+   [
+    -8200,
+    "#2b0f54"
+   ],
+   [
+    -4400,
+    "#3b4cc0"
+   ],
+   [
+    -2400,
+    "#2fa6d6"
+   ],
+   [
+    0,
+    "#46c08a"
+   ],
+   [
+    3400,
+    "#cfe05a"
+   ],
+   [
+    6500,
+    "#f2a23c"
+   ],
+   [
+    9400,
+    "#d9573b"
+   ],
+   [
+    13800,
+    "#c8649a"
+   ],
+   [
+    18200,
+    "#f2e4f0"
+   ],
+   [
+    21200,
+    "#ffffff"
+   ]
+  ],
+  "fuente": "Relieve HRSC-MOLA Blended DEM 200 m (USGS Astrogeology), desde las teselas del globo (nivel 5, ~5 km/píxel), altura sobre la esfera de 3396,19 km (≈ datum MOLA).",
+  "comprobacion": {
+   "olympus": 20141,
+   "hellas": -6318
+  }
+ }
+}
