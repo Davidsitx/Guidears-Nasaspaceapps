@@ -2,6 +2,19 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada (3) · Compañero (con Claude) · GALE EARTH: CAPAS DE TODO MARTE
+- **Capas → Todo Marte** (`gale-earth/marte.js`; datos en `capas/global/`, armados con `herramientas/capas_globales.py`):
+  - **Colores de altitud:** relieve de todo el planeta en datum MOLA, con leyenda de −8,2 a +21,2 km. Sale de nuestras propias teselas HRSC-MOLA 200 m (nivel 5, ~5 km/px).
+    - Las teselas guardan la altura sobre el elipsoide de Cesium; acá se pasa a la esfera de 3396,19 km. Sin esa corrección, Hellas daba +3 km y los polos +20 km.
+    - Comprobación: Olympus Mons +21,1 km y el fondo de Hellas −8,3 km.
+  - **Infrarrojo nocturno THEMIS** (Mars Odyssey) de todo el planeta, de 65°S a 65°N: vista previa a 2 km del mosaico controlado de USGS (2018), cortada en 4 franjas.
+  - **Topónimos IAU:** 1.805 nombres del Gazetteer de USGS/IAU (exportación MARS_nomenclature.csv). Se descartaron 15 con caracteres dañados.
+    - Se ven según el tamaño del accidente.
+    - Montes y llanuras grandes muestran la altura aproximada en el centro (datum MOLA).
+  - **Lugares de aterrizaje:** de `datos/linea_tiempo.json`, cada uno con su fuente.
+  - **Día y noche ahora:** punto subsolar con el algoritmo Mars24 de NASA (comprobado con el aterrizaje de Curiosity, 15:03 hora media local). Sigue el reloj de Órbitas: si se acelera, la noche se mueve.
+- **Candidatos para la base: fuera.** Ya no aparecen en el mapa, en Capas, en la búsqueda ni en la pestaña Base. La pestaña Base conserva el propósito y Mars 3D Home.
+
 ## 2026-11-15 madrugada (2) · Compañero (con Claude) · GALE EARTH: CAPAS DE MINERALES Y RADIACIÓN, RELOJ EN VIVO, POZOS Y FUENTES
 - **Expedición fuera de Gale Earth:** la sigue otro compañero. El código quedó en `gale-earth/para-companero/expedicion/` (ver su README); las capas siguen en `capas/expedicion/`.
 - **Sin "Abrir en el celular" ni QR:** se borraron el botón, la ventana y la librería que se bajaba de internet. El diseño para celular (hoja deslizable) sigue.

@@ -137,7 +137,6 @@
   add('Aterrizaje de Curiosity (Bradbury)', '6 de agosto de 2012', '↓', '#4FA3D9', () => volarA(RC[0][0], RC[0][1], 2500), 'bradbury landing');
   for (const z of ZONAS) add(z.nombre, `Zona · soles ${z.sol[0]}–${Math.min(z.sol[1], RS[RS.length - 1])}`, '〰', z.color, () => { abrir('explorar'); fichaZona(z.id); });
   for (const p of POZOS) add(p.nombre, p.n != null ? `Perforación ${p.n} · sol ${p.sol}` : 'Perforación', p.n ?? '×', colorDe(p), () => { abrir('explorar'); fichaPozo(p, true); }, `pozo ${p.n ?? ''}`);
-  for (const s of SITIOS) add(s.nombre, 'Sitio candidato para la base', '★', '#ffd166', () => { abrir('base'); fichaSitio(s.id); });
   for (const n of Object.keys(O.orbitadores)) add(n, 'Orbitador', '◌', O.orbitadores[n].color, () => { abrir('orbita'); fichaOrbitador(n); }, 'satelite orbita');
   add('Línea de tiempo', 'Historia de la exploración de Marte', '⏱', '#2a4f8f', () => abrirLinea(), 'historia misiones viking mariner galileo cronologia timeline');
   for (const n of Object.keys(O.lunas || {})) add(n, 'Luna de Marte', '●', O.lunas[n].color, () => { abrir('orbita'); fichaLuna(n); }, n === 'Fobos' ? 'phobos luna satelite natural' : 'luna satelite natural');
