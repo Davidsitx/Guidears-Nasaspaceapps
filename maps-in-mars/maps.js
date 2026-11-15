@@ -28,7 +28,13 @@ body.ur-control #miPad{display:flex}
   rec.title = lg('Las rutas planificadas desde la posición de Curiosity hoy (A, B, C, T y expedición sur), con la Base Gale, el PMR y la misión en pareja', 'The planned routes from Curiosity\'s position today (A, B, C, T and southern expedition), with Gale Base, the PMR and the two-person mission');
   rec.insertAdjacentHTML('beforebegin', `<button class="mi-int" id="urIntNuevo" style="--c:${UR_COL.ok}" aria-pressed="false" title="${lg('Armá tu propio recorrido con pines en el mapa: te avisa si pasa por pendientes peligrosas, arena o fuera del terreno con datos', 'Build your own route with pins on the map: it warns you about dangerous slopes, sand or areas without terrain data')}"><i></i>${lg('Nuevo recorrido', 'New route')}</button>`);
   rec.onclick = async () => { const on = rec.getAttribute('aria-pressed') !== 'true'; await miVerRecorrido(on); if (on) miEntrar(); };
-  $('urIntNuevo').onclick = () => urAbrir();
+  // primer toque: abre el armado; con un recorrido ya armado, el botón lo muestra u oculta
+  $('urIntNuevo').onclick = () => {
+    const b = $('urIntNuevo'), on = b.getAttribute('aria-pressed') === 'true';
+    if (!on || !UR.ds) return urAbrir();
+    urMarcar(false); UR.oculto = !UR.oculto; b.setAttribute('aria-pressed', String(!UR.oculto)); miVisibles();
+    if (!UR.oculto) { urFicha(); urEncuadre(); }
+  };
 }
 
 // ---------- botón "Base" del panel: además de la información, lleva a la Base Gale en el mapa ----------
@@ -64,7 +70,7 @@ document.querySelector('.rb[data-t="base"]')?.addEventListener('click', () => se
       const id = e.properties.id.getValue();
       e.show = t === 'gparada' ? G.paradas[id] === G.tramos[G.i]?.parada : id === m.L.id;
     }
-    if (UR.ds) UR.ds.show = !m || m.id === UR.id;
+    if (UR.ds) UR.ds.show = !UR.oculto && (!m || m.id === UR.id);
   };
 }
 
@@ -118,7 +124,7 @@ function urLeyenda(m) {
     document.body.classList.toggle('ur-apie', !m.rover && !m.libre);
     $('urControl').setAttribute('aria-pressed', 'false');
     if (tipo === 'pareja') miMsg('base', lg('Si querés, manejá vos al Astronauta 1 con «Manejar al astronauta» (W A S D). Te avisamos pendiente, arena, dosis y distancia al PMR.', 'If you like, walk Astronaut 1 yourself with "Walk the astronaut" (W A S D). We will flag slope, sand, dose and distance to the PMR.'));
-    if (/^U\d+$/.test(id)) miVisibles();
+    if (/^U\d+$/.test(id)) { miVisibles(); $('miPid').textContent = lg('Tú', 'You'); }
   };
   const salir0 = miSalirModo;
   miSalirModo = function (volver = true) { document.body.classList.remove('ur-ley', 'ur-apie', 'ur-control'); salir0(volver); };
@@ -312,7 +318,7 @@ function urFicha() {
   $('urVolver').onchange = e => { UR.volver = e.target.checked; urCalcular(); };
 }
 function urMarcar(on) {
-  UR.marcando = on; document.body.classList.toggle('ur-marcando', on); $('urIntNuevo').setAttribute('aria-pressed', String(on || UR.pines.length > 0));
+  UR.marcando = on; document.body.classList.toggle('ur-marcando', on); $('urIntNuevo').setAttribute('aria-pressed', String(!UR.oculto && (on || UR.pines.length > 0)));
   if (on) { if (PMR.marcar) pmrMarcar(false); miCard(lg('Nuevo recorrido', 'New route'), lg('Tocá el mapa para poner pines', 'Tap the map to drop pins'),
     lg('Cada toque agrega un pin (al menos uno). Vale dentro del terreno de la travesía, de Bradbury a la zona de hoy. Esc o «Listo» para terminar.', 'Each tap adds a pin (at least one). Works inside the traverse terrain, from Bradbury to today\'s area. Esc or "Done" to finish.'),
     [[lg('Listo', 'Done'), () => urMarcar(false), true], [lg('Deshacer', 'Undo'), () => { UR.pines.pop(); urCalcular(); }]]); }
@@ -326,7 +332,7 @@ function urEncuadre() {
   viewer.camera.flyToBoundingSphere(new C.BoundingSphere(pos(cx, cy, alturaSuelo(cx, cy, null)), r), { offset: new C.HeadingPitchRange(0, -1.15, r * 2.4), duration: 2.2, pitchAdjustHeight: 1500000, easingFunction: C.EasingFunction.CUBIC_IN_OUT });
 }
 async function urAbrir() {
-  if (MI.modo) miSalirModo(false);
+  if (MI.modo) miSalirModo(false); UR.oculto = false;
   if (!(await miCargar())) return;
   try { await pmrTerreno(); } catch { return avisar(lg('No se pudo cargar el terreno de 12 m (abrí con abrir.bat).', 'Could not load the 12 m terrain (open with abrir.bat).')); }
   if (!MI.activo) { MI.activo = true; document.body.classList.add('mi-activo'); }
@@ -367,11 +373,12 @@ function urRecorrer() {
 // Lo que más traba es pedir teselas finas en cada cuadro del vuelo (error de pantalla 1,5 px, más fino que el 2 de Cesium por defecto)
 // y bajar demasiadas a la vez. Mientras la cámara se mueve se pide menos detalle y, 350 ms después de parar, se vuelve al detalle completo.
 {
-  const G = viewer.scene.globe, base = { sse: G.maximumScreenSpaceError, lim: Math.min(G.loadingDescendantLimit, 20) };
-  G.loadingDescendantLimit = base.lim;
+  // el detalle de reposo se guarda una sola vez (si se volviera a leer en cada movimiento, un tour empezado en pleno giro quedaría con poco detalle para siempre)
+  const G = viewer.scene.globe, BASE = G.maximumScreenSpaceError;
+  G.loadingDescendantLimit = Math.min(G.loadingDescendantLimit, 20);
   let t = null, mov = false;
-  const movimiento = () => { clearTimeout(t); if (!mov) { mov = true; base.sse = G.maximumScreenSpaceError; G.maximumScreenSpaceError = Math.max(base.sse, 2.6); } };
-  const quieto = () => { clearTimeout(t); t = setTimeout(() => { if (mov) { mov = false; G.maximumScreenSpaceError = base.sse; } }, 350); };
+  const movimiento = () => { clearTimeout(t); if (!mov) { mov = true; G.maximumScreenSpaceError = Math.max(BASE, 2.6); } };
+  const quieto = () => { clearTimeout(t); t = setTimeout(() => { if (mov && !(typeof TOUR !== 'undefined' && TOUR.activo)) { mov = false; G.maximumScreenSpaceError = BASE; } }, 350); };
   // en un recorrido la cámara se mueve sola todo el tiempo: ahí se deja el detalle fijo (2) para que no "respire"
   viewer.camera.moveStart.addEventListener(() => { if (!MI.modo && !(typeof TOUR !== 'undefined' && TOUR.activo)) movimiento(); });
   viewer.camera.moveEnd.addEventListener(quieto);

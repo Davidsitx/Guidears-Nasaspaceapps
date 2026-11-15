@@ -1,6 +1,6 @@
 """Una sola verdad para los 49 pozos de Curiosity en todo el proyecto.
 
-Fuente única: gale-earth/datos/biblioteca.json (la Wiki de Gale Earth). Cada pozo tiene ahí su
+Fuente única: maps-in-mars/datos/biblioteca.json (la Wiki de Gale Earth). Cada pozo tiene ahí su
 hallazgo, su fuente y los datos medidos por CheMin, APXS y SAM. Los 49 hallazgos se verificaron
 contra su artículo o página de NASA el 15/11/2026 (docs/notas.md).
 
@@ -8,7 +8,7 @@ Este script copia el hallazgo, la fuente y la marca de verificado a los otros ar
 repiten, para que la escena 3D clásica, la guía del PMR y la Wiki digan lo mismo:
   - data/curiosity/perforaciones_hallazgos.json  (unidad y campañas de David; el texto queda igual al de la Wiki)
   - data/curiosity/perforaciones.geojson         (escena 3D clásica; lo regenera travesia_datos.py con los datos pesados)
-  - gale-earth/datos/entrada/perforaciones.geojson (pines del globo de Gale Earth y guía del PMR)
+  - maps-in-mars/datos/entrada/perforaciones.geojson (pines del globo de Gale Earth y guía del PMR)
 
 Uso:  python herramientas/unificar_pozos.py            (copia y avisa qué cambió)
       python herramientas/unificar_pozos.py --revisar  (solo revisa; sale con error si algo no coincide)
@@ -16,10 +16,10 @@ Uso:  python herramientas/unificar_pozos.py            (copia y avisa qué cambi
 import json, os, sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIB = os.path.join(RAIZ, 'gale-earth', 'datos', 'biblioteca.json')
+BIB = os.path.join(RAIZ, 'maps-in-mars', 'datos', 'biblioteca.json')
 HALL = os.path.join(RAIZ, 'data', 'curiosity', 'perforaciones_hallazgos.json')
 ESC = os.path.join(RAIZ, 'data', 'curiosity', 'perforaciones.geojson')
-GE = os.path.join(RAIZ, 'gale-earth', 'datos', 'entrada', 'perforaciones.geojson')
+GE = os.path.join(RAIZ, 'maps-in-mars', 'datos', 'entrada', 'perforaciones.geojson')
 FECHA = '2026-11-15'
 
 
@@ -56,7 +56,7 @@ def main():
             cambios.append(f'perforaciones_hallazgos.json · pozo {k} ({b["nombre"]})')
             h.update(nuevo)
     H['_nota'] = ('Unidad y campaña de cada perforación de Curiosity. El hallazgo y la fuente son los de la Wiki de Gale Earth '
-                  '(gale-earth/datos/biblioteca.json), la fuente única del proyecto; los copia herramientas/unificar_pozos.py. '
+                  '(maps-in-mars/datos/biblioteca.json), la fuente única del proyecto; los copia herramientas/unificar_pozos.py. '
                   'Los 49 se verificaron contra su artículo o página de NASA el 15/11/2026. En todas las perforaciones el taladro '
                   'saca roca en polvo que analizan CheMin (minerales) y SAM (gases); fuente: NASA, PIA26403.')
 
@@ -78,7 +78,7 @@ def main():
             continue
         for x in ('hallazgo', 'tecnico', 'fuente_hallazgo'):
             if pr.get(x) != b.get(x):
-                cambios.append(f'gale-earth/entrada · pozo {pr["n"]} · {x}')
+                cambios.append(f'maps-in-mars/entrada · pozo {pr["n"]} · {x}')
                 pr[x] = b[x]
 
     if revisar:

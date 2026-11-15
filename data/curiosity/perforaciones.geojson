@@ -1,7 +1,7 @@
 {
  "type": "FeatureCollection",
  "name": "perforaciones",
- "nota": "Unidad y campaña de cada perforación de Curiosity. El hallazgo y la fuente son los de la Wiki de Gale Earth (gale-earth/datos/biblioteca.json), la fuente única del proyecto; los copia herramientas/unificar_pozos.py. Los 49 se verificaron contra su artículo o página de NASA el 15/11/2026. En todas las perforaciones el taladro saca roca en polvo que analizan CheMin (minerales) y SAM (gases); fuente: NASA, PIA26403. Posición, sol y altura: GeoPackage del equipo. Cielo tapado, pendiente y dosis: cálculo propio sobre el DEM de 4 m.",
+ "nota": "Unidad y campaña de cada perforación de Curiosity. El hallazgo y la fuente son los de la Wiki de Gale Earth (maps-in-mars/datos/biblioteca.json), la fuente única del proyecto; los copia herramientas/unificar_pozos.py. Los 49 se verificaron contra su artículo o página de NASA el 15/11/2026. En todas las perforaciones el taladro saca roca en polvo que analizan CheMin (minerales) y SAM (gases); fuente: NASA, PIA26403. Posición, sol y altura: GeoPackage del equipo. Cielo tapado, pendiente y dosis: cálculo propio sobre el DEM de 4 m.",
  "features": [
   {
    "type": "Feature",

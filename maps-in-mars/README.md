@@ -1,6 +1,6 @@
 # Maps in Mars · Google Mars
 
-> Carpeta `gale-earth/` del repo. Dueño: compañero (con Claude). Las teselas pesadas (`teselas/`, ~6 GB) no se versionan: ver "Marte completo en 3D".
+> Carpeta `maps-in-mars/` del repo. Dueño: compañero (con Claude). Las teselas pesadas (`teselas/`, ~6 GB) no se versionan: ver "Marte completo en 3D".
 
 Marte en 3D, al estilo Google Earth, con todo lo que Curiosity midió en Gale. Propósito: elegir dónde instalar la **primera base humana en el cráter Gale**.
 
@@ -53,7 +53,7 @@ Desde el 15/11, la misión que antes abría otra página (GALE-3D) vive acá, en
 - **Enlaces directos:** `#pareja`, `#rover`, `#apie`, `#tripulado`, `#expedicion` y `#base`.
 - **Datos:** `datos/mision.json` y `capas/mision/*.glb` salen de la escena con `python herramientas/exportar_mision.py`, desde la raíz del repo, con los mismos números y textos. La escena anterior queda como "versión clásica" (`../escena3d/`).
 - Desde GALE-3D, el botón **"Marte completo ↗"** vuelve acá con `#curiosity`.
-- `servir.py` ahora también sirve `/escena3d/` (la carpeta hermana, solo lectura) y acepta `/gale-earth/...`, así la ida y vuelta funciona con `abrir.bat`. En GitHub Pages y con doble clic funciona por rutas relativas.
+- `servir.py` ahora también sirve `/escena3d/` (la carpeta hermana, solo lectura) y acepta `/maps-in-mars/...`, así la ida y vuelta funciona con `abrir.bat`. En GitHub Pages y con doble clic funciona por rutas relativas.
 - `index.html` en la raíz del repo redirige a Maps in Mars: es la entrada del proyecto.
 
 ## Clave de Cesium ion
@@ -101,7 +101,7 @@ Desde esta versión Maps in Mars tiene su propio globo de todo Marte. Ya no depe
 | Relieve de todo Marte | `teselas/terreno_marte_global_n0-7.zip` | ~1,3 km | HRSC/MOLA Blend 200 m (USGS) |
 | Relieve del cráter Gale | `teselas/terreno_gale_n8-15.zip` | 160 m (cráter) y 5 m (zona de Curiosity) | HRSC/MOLA 200 m y DEM MSL 1 m (USGS) |
 
-**Cómo abrirlo:** doble clic en `abrir.bat` (hace falta Python 3). `servir.py` busca los .zip en `gale-earth/teselas/` o en `G:\Mi unidad\Marte\teselas\` y los lee directo, sin descomprimir.
+**Cómo abrirlo:** doble clic en `abrir.bat` (hace falta Python 3). `servir.py` busca los .zip en `maps-in-mars/teselas/` o en `G:\Mi unidad\Marte\teselas\` y los lee directo, sin descomprimir.
 Si no encuentra las teselas, o si abrís `index.html` con doble clic, se usa Cesium Mars como antes. En **Capas → Motor 3D** se puede elegir el motor.
 
 **Límites, para decirlo en la presentación:**
@@ -110,4 +110,4 @@ Si no encuentra las teselas, o si abrís `index.html` con doble clic, se usa Ces
 - El color es aproximado: brillo real de CTX con una paleta de Marte más el color de Viking. No es una foto en color.
 - Las alturas están referidas al areoide en los datos originales; en el globo se pasan al elipsoide de Cesium sin corregir el areoide. Es una aproximación visual.
 
-Las teselas se regeneran con los scripts de `gale-earth/herramientas/` (`teselas_terreno*.py`, `teselas_hirise.py`, `teselas_orto.py`). Para la página publicada, las teselas se sirven desde Cloudflare R2 con un service worker (`sw.js`): ver **NUBE.md**.
+Las teselas se regeneran con los scripts de `maps-in-mars/herramientas/` (`teselas_terreno*.py`, `teselas_hirise.py`, `teselas_orto.py`). Para la página publicada, las teselas se sirven desde Cloudflare R2 con un service worker (`sw.js`): ver **NUBE.md**.

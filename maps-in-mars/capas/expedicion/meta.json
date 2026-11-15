@@ -32,7 +32,7 @@
   "pendiente": "Cálculo propio sobre ese DEM a 5 m (gradiente central) y resumido a 20 m.",
   "cielo": "Cálculo propio, mismo método que herramientas/travesia.py (seno del ángulo del horizonte)."
  },
- "armado_con": "gale-earth/herramientas/zona_expedicion.py",
+ "armado_con": "maps-in-mars/herramientas/zona_expedicion.py",
  "themis_noche": {
   "archivo": "themis_noche.png",
   "ancho": 409,

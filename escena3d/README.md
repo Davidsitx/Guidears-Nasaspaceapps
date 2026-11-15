@@ -51,7 +51,7 @@ Es la fusión de dos trabajos del equipo:
   y arena en el destino, a menos de 20 m y en el camino; cartel al acercarse a un destino riesgoso.
 - **Expedición:** arranca en 4 min; **Manejar a mano** maneja el rover o el astronauta sobre el terreno de 12 m, con aviso en
   vivo de la pendiente donde está y la que viene (8–40 m).
-- **Perforaciones:** cada ficha suma lo de la Biblioteca de Maps in Mars (`gale-earth/datos/biblioteca.json`): hallazgo con fuente,
+- **Perforaciones:** cada ficha suma lo de la Biblioteca de Maps in Mars (`maps-in-mars/datos/biblioteca.json`): hallazgo con fuente,
   foto MAHLI, minerales (CheMin), química (APXS), agua en minerales y datos crudos. `armar.py` hace la foto chica con Pillow.
 - **Primera persona con dos vistas** (botón "Vista" o tecla B): *ojos* (casco, balanceo de la cabeza al caminar,
   partículas de polvo en el aire) y *detrás* (cámara que sigue al astronauta o al rover). Arrastrar o flechas: mirar
@@ -137,7 +137,7 @@ Detalles:
 
 
 ## Unión con Maps in Mars (todo Marte)
-- En la barra de vistas de arriba aparece **"Marte completo ↗"** cuando la escena está al lado de `gale-earth/` (repo, `gale-earth/servir.py` o GitHub Pages). Lleva a `../gale-earth/index.html#curiosity`. En una copia suelta (por ejemplo el artifact publicado) el botón no aparece.
+- En la barra de vistas de arriba aparece **"Marte completo ↗"** cuando la escena está al lado de `maps-in-mars/` (repo, `maps-in-mars/servir.py` o GitHub Pages). Lleva a `../maps-in-mars/index.html#curiosity`. En una copia suelta (por ejemplo el artifact publicado) el botón no aparece.
 - Si la escena se abre con `#desde-gale-earth` (el botón "Misión Curiosity · 3D" de Maps in Mars), arranca con un descenso desde lo alto hasta la zona de hoy y no abre la ayuda.
 - No cambia nada de la lógica de la misión: es solo navegación.
 

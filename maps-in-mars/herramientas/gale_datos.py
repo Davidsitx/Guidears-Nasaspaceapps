@@ -25,7 +25,7 @@ import numpy as np
 
 R_MARTE = 3396190.0
 CRS_MARTE = "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +R=3396190 +units=m +no_defs"
-RAIZ = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # raíz del repo (gale-earth/herramientas/ → ../..)
+RAIZ = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # raíz del repo (maps-in-mars/herramientas/ → ../..)
 GALE = dict(lon_oeste=136.3, lon_este=139.3, lat_norte=-3.9, lat_sur=-6.9)   # todo el cráter con borde
 
 # ------------------------------------------------------------------------------------------------------------------

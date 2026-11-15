@@ -151,10 +151,12 @@ class Manejador(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         ruta = self.path.split("?")[0]
-        # unión con GALE-3D: /gale-earth/... es esta misma carpeta y /escena3d/... es la misión de Curiosity en 3D (carpeta hermana)
-        if ruta.startswith("/gale-earth/"):
-            self.path = self.path[len("/gale-earth"):]
-            ruta = ruta[len("/gale-earth"):]
+        # unión con GALE-3D: /maps-in-mars/... es esta misma carpeta y /escena3d/... es la misión de Curiosity en 3D (carpeta hermana)
+        for pre in ("/maps-in-mars", "/gale-earth"):      # nombre nuevo de la carpeta y el viejo (enlaces guardados)
+            if ruta.startswith(pre + "/"):
+                self.path = self.path[len(pre):]
+                ruta = ruta[len(pre):]
+                break
         if ruta.startswith("/escena3d/"):
             from urllib.parse import unquote
             base = os.path.realpath(os.path.join(AQUI, "..", "escena3d"))

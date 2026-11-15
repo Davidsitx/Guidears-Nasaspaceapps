@@ -16,7 +16,7 @@ Este archivo lo leen los asistentes Claude de los dos integrantes del equipo. Ma
 | Ciencia, rutas y motor de cálculo | David + su Claude | `docs/ciencia.md`, `docs/rover-salud.md`, `data/curiosity/`, `data/rutas/`, `prototipo/planificador/` |
 | Motor 3D (`escena3d/`: rover a escala, rutas, cámara, panel) | David + su Claude (acordado el 13/11) | `escena3d/` |
 | Capas satelitales y terreno (alimentan la escena por el contrato) | Compañero + su Claude | `data/terreno/` |
-| Gale Earth (globo de Marte estilo Google Earth, Biblioteca, línea de tiempo) | Compañero + su Claude | `gale-earth/` |
+| Gale Earth (globo de Marte estilo Google Earth, Biblioteca, línea de tiempo) | Compañero + su Claude | `maps-in-mars/` |
 | Compartido (cambiar solo avisando en docs/notas.md) | ambos | `CLAUDE.md`, `docs/contrato.md`, `data/parametros.json`, `docs/tareas.md` |
 
 Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/notas.md** (traspasos) y **docs/tareas.md**.
@@ -50,22 +50,22 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 
 ## Estado al 14 de noviembre de 2026
 - La escena suma toda la travesía de Curiosity (aterrizaje → hoy): terreno de contexto, recorrido real, 49 perforaciones con ficha y viaje por soles. Ver **docs/travesia.md**.
-- Las 49 fichas de perforaciones de la escena usan la Biblioteca de Gale Earth: hallazgo con fuente, CheMin, APXS y foto (15/11). **Fuente única de los 49 pozos: `gale-earth/datos/biblioteca.json`**, verificada el 15/11; `python herramientas/unificar_pozos.py` la copia a la escena y al globo (con `--revisar`, solo compara).
-- Unión con Gale Earth (`gale-earth/`, todo Marte en CesiumJS): botón "Misión Curiosity · 3D" → escena3d, y "Marte completo ↗" de vuelta. `index.html` de la raíz entra por Gale Earth. Solo navegación: la lógica de la misión no cambia.
+- Las 49 fichas de perforaciones de la escena usan la Biblioteca de Gale Earth: hallazgo con fuente, CheMin, APXS y foto (15/11). **Fuente única de los 49 pozos: `maps-in-mars/datos/biblioteca.json`**, verificada el 15/11; `python herramientas/unificar_pozos.py` la copia a la escena y al globo (con `--revisar`, solo compara).
+- Unión con Gale Earth (`maps-in-mars/`, todo Marte en CesiumJS): botón "Misión Curiosity · 3D" → escena3d, y "Marte completo ↗" de vuelta. `index.html` de la raíz entra por Gale Earth. Solo navegación: la lógica de la misión no cambia.
 - Expedición sur (E1–E5, más allá de A4), perforación simulada (muestra ficticia, marcada como tal), clima según la fecha (Ls, REMS, Aeolus 2028) y círculos "?" con la fuente. Ver docs/notas.md y docs/paradas.md.
 
 ## Estado al 15 de noviembre de 2026
 - Portada en tres pasos con cuatro entradas: **Mars Earth** (Gale Earth en el espacio, con foco en Gale), **Recorrido en Marte**, **Mundo abierto** e **Información / wiki**.
 - Dos visualizaciones principales: **Misión en pareja** (cámara del Astronauta 1, visor del Astronauta 2, mensajes de la base y de la Tierra con la demora real de la luz) y **Rover y astronauta**.
 - Rama `david/union-gale-earth` (PR #5): ya incluye la rama del compañero (#6). Guía completa en `docs/desarrollo/`.
-- **Hecho (15/11, mañana):** "Misión Curiosity" vive dentro de Gale Earth, en "Curiosity hoy" (`gale-earth/mision.js`): paradas, rutas, expedición, Base Gale, rover (Curiosity o GX-2), astronauta y misión en pareja, sin cambiar de página. Datos y modelos: `python herramientas/exportar_mision.py`. La escena `escena3d/` queda como versión clásica.
+- **Hecho (15/11, mañana):** "Misión Curiosity" vive dentro de Gale Earth, en "Curiosity hoy" (`maps-in-mars/mision.js`): paradas, rutas, expedición, Base Gale, rover (Curiosity o GX-2), astronauta y misión en pareja, sin cambiar de página. Datos y modelos: `python herramientas/exportar_mision.py`. La escena `escena3d/` queda como versión clásica.
 - **Hecho (15/11, mañana 2):** **Rover tripulado GX-3**, aparte de Curiosity y el GX-2: estacionado en la Base Gale, cabina para dos, suitports, 12 ruedas, taladro, dron y alas. Ruta T de la base a la zona de hoy (`herramientas/ruta_base.py`, 14,1 km). En Gale Earth: "Tripulado · GX-3", ruta C con caminatas por los suitports. Ver docs/notas.md.
-- **Hecho (15/11, tarde):** el GX-3 pasa a llamarse **PMR (rover presurizado)**. Guía de la expedición calculada en el navegador (`gale-earth/pmr.js`): recomendada, armada por el usuario o a una perforación, más manejo libre. En pareja, visor del casco para el que camina y pantalla del PMR para el que queda adentro. Interruptores "49 perforaciones" y "Recorrido nuevo" arriba (apagados al empezar), pines con la forma de la lámina de estilo, "Biblioteca" pasa a "Wiki" (se puede abrir en otra pestaña), logo nuevo y todo en EN/ES (diccionario `gale-earth/datos/idioma_en_mision.json`). Guía de estilo en `docs/desarrollo/guia-de-estilo.md`.
+- **Hecho (15/11, tarde):** el GX-3 pasa a llamarse **PMR (rover presurizado)**. Guía de la expedición calculada en el navegador (`maps-in-mars/pmr.js`): recomendada, armada por el usuario o a una perforación, más manejo libre. En pareja, visor del casco para el que camina y pantalla del PMR para el que queda adentro. Interruptores "49 perforaciones" y "Recorrido nuevo" arriba (apagados al empezar), pines con la forma de la lámina de estilo, "Biblioteca" pasa a "Wiki" (se puede abrir en otra pestaña), logo nuevo y todo en EN/ES (diccionario `maps-in-mars/datos/idioma_en_mision.json`). Guía de estilo en `docs/desarrollo/guia-de-estilo.md`.
 - **Decisión (15/11): Gale Earth es la única pantalla.** Todo lo de GALE-3D se pasa al mismo globo. El plan, con hallazgos de QA, reglas de transiciones y fases, está en `docs/desarrollo/qa-unificacion.md`.
 - En la escena: **Base Gale** en la **Zona 2** del análisis de sitios del equipo (`data/base/sitios_base.geojson`, llanura del aterrizaje, a 1,7 km del recorrido; partes con ficha y fuente) y **Rover GX-2**, la versión nueva para las próximas excavaciones (taladro de 2 m, dron, alas solares; diseño propio). Se elige en Escena → Rover.
 
 ## Estado al 15 de noviembre de 2026 (noche)
-- **El producto se llama Maps in Mars** (antes Gale Earth; la carpeta sigue siendo `gale-earth/`). Arriba: "49 perforaciones", "Nuevo recorrido" (pines del usuario con avisos de terreno) y "Misión Curiosity". Lo nuevo vive en `gale-earth/maps.js`. Ver docs/notas.md.
+- **El producto se llama Maps in Mars** (antes Gale Earth); la carpeta pasó de `gale-earth/` a `maps-in-mars/`. Arriba: "49 perforaciones", "Nuevo recorrido" (pines del usuario con avisos de terreno) y "Misión Curiosity". Lo nuevo vive en `maps-in-mars/maps.js`. Ver docs/notas.md.
 
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).

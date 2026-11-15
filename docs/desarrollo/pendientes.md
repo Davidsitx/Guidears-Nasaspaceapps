@@ -35,21 +35,21 @@ Cada ítem tiene **qué hacer**, **dónde** y **cuándo está terminado**. Al to
 - **Terminado cuando:** se ven las dos vistas a más de 20 cuadros por segundo en una PC común.
 
 ### 7. Mensajes según el clima del día
-- **Qué:** usar `gale-earth/datos/clima_rems.json` y `viento_humedad.json` (del compañero) para los mensajes de la Tierra: mínima, máxima, viento y UV de la estación.
+- **Qué:** usar `maps-in-mars/datos/clima_rems.json` y `viento_humedad.json` (del compañero) para los mensajes de la Tierra: mínima, máxima, viento y UV de la estación.
 - **Terminado cuando:** "Pedir pronóstico" responde con números de REMS y su fuente.
 
 ## Datos (prioridad media)
 
 ### 8. Imagen CTX alrededor de Gale en la escena
-- **Qué:** correr `python herramientas/bajar_ctx.py` en una PC con internet y subir `data/terreno/globo/ctx_*`. También se puede leer de las teselas de Gale Earth en Hugging Face (`gale-earth/nube.json`).
+- **Qué:** correr `python herramientas/bajar_ctx.py` en una PC con internet y subir `data/terreno/globo/ctx_*`. También se puede leer de las teselas de Gale Earth en Hugging Face (`maps-in-mars/nube.json`).
 - **Terminado cuando:** `armar.py` dice "globo: imagen CTX incluida" y alrededor de la travesía se ven cráteres chicos.
 
 ### 9. Pozos 47 a 49 cuando el PDS publique sus datos
-- **Qué:** volver a correr `gale-earth/armar_biblioteca.py` (compañero) y después `escena3d/armar.py`. Las fichas se actualizan solas.
+- **Qué:** volver a correr `maps-in-mars/armar_biblioteca.py` (compañero) y después `escena3d/armar.py`. Las fichas se actualizan solas.
 - **Terminado cuando:** CheMin y APXS aparecen en esas fichas.
 
 ### 10. Arena en el terreno de contexto
-- **Qué:** la expedición a mano y el destino fuera de la zona de hoy solo miran la pendiente. Gale Earth tiene un indicio de arena con THEMIS de noche (`gale-earth/capas/expedicion/`). Sumarlo como grilla de 12 m.
+- **Qué:** la expedición a mano y el destino fuera de la zona de hoy solo miran la pendiente. Gale Earth tiene un indicio de arena con THEMIS de noche (`maps-in-mars/capas/expedicion/`). Sumarlo como grilla de 12 m.
 - **Terminado cuando:** el aviso en vivo de la expedición también dice "posible arena".
 
 ## Calidad (prioridad baja)

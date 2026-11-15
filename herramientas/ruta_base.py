@@ -8,8 +8,8 @@ Qué hace (cálculo propio sobre datos con fuente):
 5. Para cada punto calcula elevación, pendiente de marcha, cielo tapado, tiempo a la velocidad del PMR y energía de la batería:
    (manejo + cabina) / velocidad · distancia  +  masa · g · subida / eficiencia   (parámetros en data/parametros.json, vehiculo_tripulado).
 
-Uso:  /usr/bin/python3.12 herramientas/ruta_base.py            (lee y actualiza gale-earth/datos/mision.json)
-Salida: data/rutas/ruta_base_pmr.geojson y la ruta "T" dentro de gale-earth/datos/mision.json.
+Uso:  /usr/bin/python3.12 herramientas/ruta_base.py            (lee y actualiza maps-in-mars/datos/mision.json)
+Salida: data/rutas/ruta_base_pmr.geojson y la ruta "T" dentro de maps-in-mars/datos/mision.json.
 exportar_mision.py lo llama solo al final, así que normalmente no hace falta correrlo aparte.
 """
 import json, math, os, heapq
@@ -20,7 +20,7 @@ R = 3396190.0
 G_MARTE = 3.711
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CTXD = os.path.join(RAIZ, 'data/terreno/travesia_sur')
-MISION = os.path.join(RAIZ, 'gale-earth/datos/mision.json')
+MISION = os.path.join(RAIZ, 'maps-in-mars/datos/mision.json')
 SALIDA = os.path.join(RAIZ, 'data/rutas/ruta_base_pmr.geojson')
 
 

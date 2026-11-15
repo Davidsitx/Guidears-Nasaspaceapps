@@ -1,4 +1,4 @@
-# Martian Map: rover vs. astronaut routes from Curiosity's current position
+# Maps in Mars — Martian Map: rover vs. astronaut routes from Curiosity's current position
 
 NASA Space Apps Challenge 2026 · Challenge: *Interplanetary Survival Guide: Martian Map* · Local event: San Luis, Argentina.
 
@@ -37,7 +37,7 @@ Our code and documents are released under the **Apache License 2.0** (see [`LICE
 
 Third-party components keep their own licenses:
 - three.js r170 (MIT), bundled in `escena3d/vendor/` with `LICENSE-three-MIT.txt`.
-- CesiumJS 1.147 (Apache 2.0), loaded from jsDelivr by `gale-earth/`.
-- Star catalog and Milky Way outline via d3-celestial (BSD), see `gale-earth/README.md`.
+- CesiumJS 1.147 (Apache 2.0), loaded from jsDelivr by `maps-in-mars/`.
+- Star catalog and Milky Way outline via d3-celestial (BSD), see `maps-in-mars/README.md`.
 
 NASA, USGS and ESA data are used under their public data policies and are credited in `docs/fuentes.md`. The "ER-6 Terrain Explorer" simulator was visual inspiration only; no code was copied.

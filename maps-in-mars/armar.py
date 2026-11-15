@@ -1,6 +1,6 @@
-"""Arma gale-earth/index.html (Maps in Mars): un solo archivo con los datos adentro.
+"""Arma maps-in-mars/index.html (Maps in Mars): un solo archivo con los datos adentro.
 
-Uso (desde la carpeta gale-earth):
+Uso (desde la carpeta maps-in-mars):
     python armar.py
 
 Lee los datos de Curiosity de datos/entrada/ (perforaciones, zonas y recorrido oficial) y datos/orbitadores.json.
@@ -12,7 +12,7 @@ import time
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 ENTRADA = os.path.join(AQUI, "datos", "entrada")   # copia propia: el esquema de perforaciones.geojson difiere del de data/curiosity/
-REPO = os.path.dirname(AQUI)                        # raíz del repo (gale-earth/ está al lado de prototipo/ y data/)
+REPO = os.path.dirname(AQUI)                        # raíz del repo (maps-in-mars/ está al lado de prototipo/ y data/)
 
 SITIOS = [
     dict(id="bradbury", nombre="Bradbury · llanura de aterrizaje", lat=-4.5895, lon=137.4417, radio_km=3,

@@ -77,7 +77,7 @@ print('cielo tapado en el recorrido: media %.1f%%, p90 %.1f%%' % (100 * cp.mean(
 # 4) perforaciones con hallazgos y valores del modelo
 H = json.load(open(os.path.join(RAIZ, 'data/curiosity/perforaciones_hallazgos.json')))
 # hallazgo y fuente: los de la Wiki de Gale Earth, la fuente única (herramientas/unificar_pozos.py)
-BIB = {b['n']: b for b in json.load(open(os.path.join(RAIZ, 'gale-earth/datos/biblioteca.json'), encoding='utf-8'))['pozos']}
+BIB = {b['n']: b for b in json.load(open(os.path.join(RAIZ, 'maps-in-mars/datos/biblioteca.json'), encoding='utf-8'))['pozos']}
 camp = {n: c for c in H['campanas'] for n in c['pozos']}
 feats = []
 for p in pozos:

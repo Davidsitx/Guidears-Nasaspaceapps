@@ -768,8 +768,8 @@
 // Portada: corre apenas se lee la página, mientras la escena 3D carga detrás. La escena avisa cuando está lista (window.__portada.listo).
 (() => {
   const po = document.getElementById('ayuda'), $p = id => document.getElementById(id);
-  if (/desde-gale-earth/.test(location.hash)) po.classList.add('oculto');
-  // Maps in Mars solo cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages)
+  if (/desde-maps-in-mars/.test(location.hash)) po.classList.add('oculto');
+  // Maps in Mars solo cuando la escena está al lado de maps-in-mars/ (repo, servir.py o GitHub Pages)
   const alLado = location.protocol === 'file:' ? /\/escena3d\/[^/]*$/.test(location.pathname) : /\/escena3d\//.test(location.pathname);
   const ic = {
     flag: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/></svg>',
@@ -809,7 +809,7 @@
   function cerrar() { po.classList.add('sale'); setTimeout(() => { po.classList.add('oculto'); po.classList.remove('sale'); }, 350); }
   function elegir(k, boton) {
     po.querySelectorAll('.elegido').forEach(b => b.classList.remove('elegido')); boton?.classList.add('elegido');
-    if (k === 'ge') { location.href = '../gale-earth/index.html#curiosity'; return; }
+    if (k === 'ge') { location.href = '../maps-in-mars/index.html#curiosity'; return; }
     if (k === 'me') { if (alLado) return irMarsEarth(); k = 'marte'; }   // sin Maps in Mars al lado: Marte completo dentro de la escena
     if (!acc) { pend = [k, boton]; po.classList.add('esperando'); return; }
     if (!acc[k]) { $p('po-estado').textContent = 'Esa zona no está en esta versión de la escena.'; return; }
@@ -825,7 +825,7 @@
     po.classList.add('entrando');
     return g;
   }
-  function irMarsEarth() { centrarGlobo(); setTimeout(() => { location.href = '../gale-earth/index.html'; }, 1250); }
+  function irMarsEarth() { centrarGlobo(); setTimeout(() => { location.href = '../maps-in-mars/index.html'; }, 1250); }
   // entrada: Marte se corre al centro con Gale en el medio, la portada se funde con el planeta 3D y la cámara baja hasta la zona
   function entrar(k) {
     const fn = acc[k];
@@ -3197,7 +3197,7 @@ $('bTour').onclick = () => tourIr(0);
 $('bCaminar').onclick = () => { visorOn = true; caminar(); };
 $('bSeguir').onclick = seguirRover;
 $('bAyuda').onclick = () => window.__portada?.abrir(2);
-const DESDE_GE = /desde-gale-earth/.test(location.hash);
+const DESDE_GE = /desde-maps-in-mars/.test(location.hash);
 
 // ---------- presupuesto de la salida a pie (data/parametros.json → eva) ----------
 const EVA = { nom: P.eva?.duracion_nominal_h ?? 6, max: P.eva?.duracion_max_h ?? 8, refugio: P.eva?.tiempo_max_a_refugio_min ?? 30, reserva: P.eva?.reserva_regreso_min ?? 30 };
@@ -3583,7 +3583,7 @@ function irAPozo(p) {
 }
 const FUENTE_POZO = { 1: 'vaniman', 2: 'organicos', 36: 'tutolo', 37: 'tutolo', 38: 'tutolo', 39: 'tutolo', 42: 'pia26403', 43: 'blog4804', 44: 'blog4709', 45: 'blog4709', 46: 'blog4804', 47: 'blog4893' };
 const fqPozo = p => fq(FUENTE_POZO[p.pozo] || 'an');
-// lo que suma la Biblioteca de Maps in Mars (armar.py lo trae de gale-earth/datos/biblioteca.json): hallazgo con fuente, foto, minerales, química, agua y datos crudos
+// lo que suma la Biblioteca de Maps in Mars (armar.py lo trae de maps-in-mars/datos/biblioteca.json): hallazgo con fuente, foto, minerales, química, agua y datos crudos
 const escB = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 function bibPozo(p) {
   const b = p.bib; if (!b || !b.hallazgo) return '';
@@ -5394,8 +5394,8 @@ window.__portada?.listo({
   'po-trav-dim': TR ? `+38 km · ${POZOS.length} perforaciones · ${Math.round(TR.P[TR.P.length - 1].sol)} soles` : null,
 });
 document.getElementById('cargando').remove();
-// ---------- unión con Maps in Mars (../gale-earth/index.html): ida y vuelta entre Marte completo y la misión ----------
-// Solo se ofrece cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages); en una copia suelta no hay a dónde ir.
+// ---------- unión con Maps in Mars (../maps-in-mars/index.html): ida y vuelta entre Marte completo y la misión ----------
+// Solo se ofrece cuando la escena está al lado de maps-in-mars/ (repo, servir.py o GitHub Pages); en una copia suelta no hay a dónde ir.
 {
   const alLado = location.protocol === 'file:' ? /\/escena3d\/[^/]*$/.test(location.pathname) : /\/escena3d\//.test(location.pathname);
   if (alLado && TR) {
@@ -5403,7 +5403,7 @@ document.getElementById('cargando').remove();
     $('vMarteGE').onclick = () => {
       if (viaje.activo) salirViaje(); if (expe.activo) salirExpe();
       vistaTravesia(); setTimeout(() => $('transicion').classList.add('on'), 1300);
-      setTimeout(() => { location.href = '../gale-earth/index.html#curiosity'; }, 1950);
+      setTimeout(() => { location.href = '../maps-in-mars/index.html#curiosity'; }, 1950);
     };
   }
   if (DESDE_GE && CTX) {                                  // llegada desde Maps in Mars: se baja desde lo alto hasta la zona de hoy

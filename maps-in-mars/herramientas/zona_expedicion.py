@@ -4,7 +4,7 @@ Fuente única de relieve: USGS Astrogeology, MSL_Gale_DEM_Mosaic_1m_v3 (Calef y 
 (el mismo `msl_5m.npy` con que se armaron las teselas del globo). Donde ese DEM no existe la celda queda
 "sin dato fino" (255) y el planificador no pasa por ahí: no se rellena con el DEM global de 200 m.
 
-Salida (gale-earth/capas/expedicion/), grilla de 20 m centrada en Curiosity, fila 0 = norte:
+Salida (maps-in-mars/capas/expedicion/), grilla de 20 m centrada en Curiosity, fila 0 = norte:
   elev_i16.bin.gz   altura en metros (int16; -32768 = sin dato)            · dato medido (DEM)
   pend_u8.bin.gz    pendiente media de las celdas de 5 m, grados x 4        · cálculo propio
   empin_u8.bin.gz   cuántas de las 16 celdas de 5 m pasan los 20° (0-16)    · cálculo propio
@@ -106,7 +106,7 @@ def main():
             dem='USGS Astrogeology, MSL_Gale_DEM_Mosaic_1m_v3 (Calef y Parker 2016), promediado a 5 m. Dato medido.',
             pendiente='Cálculo propio sobre ese DEM a 5 m (gradiente central) y resumido a 20 m.',
             cielo='Cálculo propio, mismo método que herramientas/travesia.py (seno del ángulo del horizonte).'),
-        armado_con='gale-earth/herramientas/zona_expedicion.py')
+        armado_con='maps-in-mars/herramientas/zona_expedicion.py')
     json.dump(meta, open(os.path.join(SALIDA, 'meta.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('listo', W, H, 'cobertura', cob, flush=True)
 
