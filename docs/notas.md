@@ -2,6 +2,9 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 noche (5) · compañero (con Claude) · RIEL CON SU TAMAÑO DE SIEMPRE
+- Pedido del equipo: el riel no se achica. Mantiene íconos con nombre y el espaciado de antes; si la pantalla es baja, se desplaza con la rueda (barra fina). Lo demás de la tanda (4) sigue: botones de la derecha, barra del planificador en dos columnas y botones de arriba en segunda fila en pantallas angostas.
+
 ## 2026-11-15 noche (4) · compañero (con Claude) · PANTALLAS DE CUALQUIER TAMAÑO
 - En notebooks (1366 × 768 deja ~650 px de alto en el navegador) el riel no entraba: Ajustes, idioma, Ayuda y Pantalla quedaban fuera de la vista. Con el planificador abierto, su barra y los botones de la derecha se salían por arriba; a 1024 px de ancho los botones de arriba se pisaban con "Misión Curiosity · hasta hoy".
 - Reglas por alto y ancho al final de `maps-in-mars/maps.js`: hasta 900 px de alto el riel y los botones se compactan y la barra del planificador pasa a dos columnas; hasta 680 px el riel queda solo con íconos (el nombre sale al pasar el mouse); hasta 560 px se ocultan el logo, Pantalla y +/−. Hasta 1200 px de ancho, los botones de arriba bajan a una segunda fila. El riel además se puede desplazar como último recurso.
