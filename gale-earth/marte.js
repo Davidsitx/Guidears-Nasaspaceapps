@@ -20,6 +20,23 @@ async function mgRampa(on) {
   if (MG.rampa) for (const L of MG.rampa) { L.show = on; L.alpha = MG.alfa; }
   await mgRampaLocal();
 }
+// ---- agua en el primer metro del suelo, medida por el espectrómetro de rayos gamma de Mars Odyssey (PDS) ----
+async function mgAgua(on) {
+  MG.vis.agua = on;
+  if (on && !MG.agua) {
+    try { const a = (await mgMeta()).agua, capas = capasImagen(); if (!capas || !a) return mgError();
+      MG.agua = capas.addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/global/' + a.archivo, { rectangle: C.Rectangle.fromDegrees(-180, geodetica(a.lat_sur), 180, geodetica(a.lat_norte)) }));
+    } catch { MG.agua = false; return mgError(); }
+  }
+  if (MG.agua) MG.agua.show = on;
+  const ley = $('mgLeyAgua'); if (ley) ley.innerHTML = on ? mgLeyendaAgua() : '';
+}
+function mgLeyendaAgua() {
+  const a = MG.meta && MG.meta.agua; if (!a) return '';
+  const r = a.rampa, g = `linear-gradient(90deg,${r.map(([v, c]) => `${c} ${Math.round((v - r[0][0]) / (r[r.length - 1][0] - r[0][0]) * 100)}%`).join(',')})`, x = a.ejemplos;
+  return `<div class="sub" style="display:flex;align-items:center;gap:8px"><span>${fmt(r[0][0], 1)} %</span><span style="flex:1;height:10px;border-radius:5px;background:${g}"></span><span>${fmt(r[r.length - 1][0], 1)} %</span></div>
+    <div class="sub">Gale ${fmt(x.gale[0], 1)} ± ${fmt(x.gale[1], 1)} % · Jezero ${fmt(x.jezero[0], 1)} % · Hellas ${fmt(x.hellas[0], 1)} % · Olympus Mons ${fmt(x.olympus[0], 1)} % (% en peso de agua).</div>`;
+}
 // detalle fino en el área de Curiosity (DEM USGS de 1 m llevado a 5 m): con la escala de todo Marte o con más contraste
 async function mgRampaLocal() {
   const r = D.capas5m && D.capas5m.rect_geodetico, capas = capasImagen(); if (!r || !capas) return;
@@ -144,15 +161,17 @@ function mgSeccionCapas() {
     <div class="fila"><span>Opacidad</span><input type="range" id="mgAlfa" min="0.2" max="1" step="0.05" value="${MG.alfa}" style="width:140px"></div>
     <div id="mgLey">${mgLeyendaRampa()}</div>
     ${f('themis', 'Infrarrojo nocturno (THEMIS)', 'Cómo se ve Marte de noche con la cámara térmica de la sonda Mars Odyssey (NASA): claro = más tibio (roca, costras), oscuro = más frío (polvo, arena fina). De 65°S a 65°N. <span class="tag">medido · cualitativo</span>')}
+    ${f('agua', 'Agua en el primer metro del suelo', 'Medida desde órbita por el espectrómetro de rayos gamma de la sonda Mars Odyssey (NASA) entre 2002 y 2005: el hidrógeno del suelo, contado como agua (% en peso). Es agua dentro de minerales o hielo, no agua líquida. Celdas de 5° (cientos de km): sirve para comparar regiones, no lugares puntuales. Cubre de 60°S a 60°N. <span class="tag">medido</span>')}
+    <div id="mgLeyAgua">${MG.vis.agua ? mgLeyendaAgua() : ''}</div>
     ${f('nombres', 'Topónimos (IAU)', 'Los nombres oficiales de montes, llanuras, valles y cráteres aprobados por la Unión Astronómica Internacional. Los más grandes se ven de lejos; los chicos, al acercarse. Entre paréntesis, la altura aproximada en el centro de montes y llanuras grandes (datum MOLA; la cumbre o el fondo pueden estar más arriba o más abajo).')}
     ${f('aterrizajes', 'Lugares de aterrizaje (Misiones)', 'Las misiones que llegaron a la superficie, con los datos de la pestaña Historia.')}
     ${f('noche', 'Día y noche ahora', '<span id="mgSol">Dónde es de día y de noche en Marte en este momento (o en la hora del reloj de Órbitas).</span>')}
-    <p class="fuente">Relieve: ${url('https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m', 'USGS, HRSC-MOLA Blended DEM 200 m')}. THEMIS: ${url('https://astrogeology.usgs.gov/search/map/themis_night_ir_controlled_mosaics_100m_v2', 'USGS, THEMIS Night IR Controlled Mosaics')}. Nombres: ${url('https://planetarynames.wr.usgs.gov/', 'planetarynames.wr.usgs.gov')} (IAU/USGS). Día y noche: algoritmo Mars24 de NASA (${url('https://www.giss.nasa.gov/tools/mars24/', 'giss.nasa.gov/tools/mars24')}).</p>`;
+    <p class="fuente">Relieve: ${url('https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m', 'USGS, HRSC-MOLA Blended DEM 200 m')}. THEMIS: ${url('https://astrogeology.usgs.gov/search/map/themis_night_ir_controlled_mosaics_100m_v2', 'USGS, THEMIS Night IR Controlled Mosaics')}. Agua: ${url('https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/odgm_xxxx/data/smoothed/', 'NASA PDS, Mars Odyssey GRS (ODY-M-GRS-5-ELEMENTS-V1.0, H2O_SR_5X5)')}, Boynton et al. 2007, JGR 112. Nombres: ${url('https://planetarynames.wr.usgs.gov/', 'planetarynames.wr.usgs.gov')} (IAU/USGS). Día y noche: algoritmo Mars24 de NASA (${url('https://www.giss.nasa.gov/tools/mars24/', 'giss.nasa.gov/tools/mars24')}).</p>`;
 }
 function mgEnganchar() {
   cont().querySelectorAll('#mgEsc button').forEach(b => b.onclick = async () => { MG.escala = b.dataset.e; cont().querySelectorAll('#mgEsc button').forEach(x => x.classList.toggle('on', x === b)); $('mgLey').innerHTML = mgLeyendaRampa(); await mgRampaLocal(); });
   if ($('mgAlfa')) $('mgAlfa').oninput = e => { MG.alfa = +e.target.value; if (MG.rampa) for (const L of MG.rampa) L.alpha = MG.alfa; if (MG.local) MG.local.alpha = Math.min(1, MG.alfa + 0.1); };
-  cont().querySelectorAll('[data-mg]').forEach(el => el.onchange = () => ({ rampa: mgRampa, themis: mgThemis, nombres: mgNombres, aterrizajes: mgAterrizajes, noche: mgNoche })[el.dataset.mg](el.checked));
+  cont().querySelectorAll('[data-mg]').forEach(el => el.onchange = () => ({ rampa: mgRampa, agua: mgAgua, themis: mgThemis, nombres: mgNombres, aterrizajes: mgAterrizajes, noche: mgNoche })[el.dataset.mg](el.checked));
 }
 
 // Carteles del otro lado del planeta: Cesium no siempre los tapa con el globo (dibuja por tramos de distancia y el

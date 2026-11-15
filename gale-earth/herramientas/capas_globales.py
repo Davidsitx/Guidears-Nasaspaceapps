@@ -71,7 +71,7 @@ def main():
     print('THEMIS', W, H, '· nombres', len(nombres), 'descartados', descartados)
 
 
-if __name__ == '__main__' and not {'--altitud', '--local', '--pendiente'} & set(sys.argv):
+if __name__ == '__main__' and not {'--altitud', '--local', '--pendiente', '--agua'} & set(sys.argv):
     main()
 
 
@@ -196,3 +196,50 @@ def pendiente_global(zip_global, nivel=7):
 
 if __name__ == '__main__' and '--pendiente' in sys.argv:
     pendiente_global(sys.argv[sys.argv.index('--pendiente') + 1])
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 6) Agua en el primer metro del suelo en todo Marte (capas/global/agua_grs.png): MEDIDA desde órbita por el
+#    espectrómetro de rayos gamma (GRS) de Mars Odyssey, NASA, 2002-2005. Producto oficial del PDS:
+#    ODY-M-GRS-5-ELEMENTS-V1.0, H2O_SR_5X5.TAB (celdas de 5°, suavizado de 10°; % en peso de H2O; 60°S a 60°N).
+#    https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/odgm_xxxx/data/smoothed/
+#    Acá solo se interpola entre celdas para dibujar (la resolución real es de cientos de km).
+#    Uso: python capas_globales.py --agua RUTA/h2o_sr_5x5.tab
+RAMPA_AGUA = [(1.5, (196, 112, 70)), (3.0, (232, 190, 120)), (4.5, (150, 210, 225)), (6.0, (55, 135, 210)), (7.5, (25, 55, 145))]
+
+
+def agua_grs(tab):
+    from scipy import ndimage
+    a = np.loadtxt(tab)
+    G = np.full((36, 72), np.nan, np.float32); S = np.full((36, 72), np.nan, np.float32)   # filas: 87,5 → -87,5; columnas: 2,5 → 357,5 E
+    for lat, lon, c, s, _ in a:
+        f, k = int((87.5 - lat) / 5 + .5), int((lon - 2.5) / 5 + .5)
+        if c < 9000: G[f, k] = c; S[f, k] = s
+    fil = [f for f in range(36) if np.isfinite(G[f]).any()]; f0, f1 = min(fil), max(fil)       # 57,5 … -57,5
+    B = G[f0:f1 + 1]; B = np.where(np.isfinite(B), B, np.nanmean(B))
+    B = np.roll(B, 36, axis=1)                                                                  # columnas desde -180 E
+    Z = 8                                                                                       # 8 píxeles por celda (0,625°)
+    gr = np.concatenate([B[:, -1:], B, B[:, :1]], axis=1)                                       # borde envolvente en longitud
+    gr = np.concatenate([gr[:1], gr, gr[-1:]], axis=0)
+    U = ndimage.zoom(gr, Z, order=1)[Z // 2 + Z // 2: -(Z // 2 + Z // 2), Z: -Z]                 # interpolación lineal entre centros
+    xs = [p[0] for p in RAMPA_AGUA]; cols = np.array([p[1] for p in RAMPA_AGUA], np.float32)
+    rgb = np.stack([np.interp(U, xs, cols[:, k]) for k in range(3)], -1).astype(np.uint8)
+    h = U.shape[0]; alfa = np.full(U.shape, 205, np.uint8)
+    borde = int(h * 2.5 / 120); rampa = np.linspace(0, 1, borde)
+    alfa[:borde] = (alfa[:borde] * rampa[:, None]).astype(np.uint8); alfa[-borde:] = (alfa[-borde:] * rampa[::-1, None]).astype(np.uint8)
+    Image.fromarray(np.dstack([rgb, alfa]), 'RGBA').save(os.path.join(SAL, 'agua_grs.png'), optimize=True)
+    lat_n, lat_s = 87.5 - f0 * 5 + 2.5, 87.5 - f1 * 5 - 2.5
+    def celda(lon, lat):
+        f, k = int((87.5 - lat) / 5 + .5), int(((lon % 360) - 2.5) / 5 + .5); return round(float(G[f, k]), 1), round(float(S[f, k]), 2)
+    meta = json.load(open(os.path.join(SAL, 'global.json'), encoding='utf-8'))
+    meta['agua'] = dict(archivo='agua_grs.png', lat_norte=lat_n, lat_sur=lat_s, esquema='planetocentrica', unidad='% en peso de H2O',
+                        rampa=[[v, '#%02x%02x%02x' % c] for v, c in RAMPA_AGUA], min=round(float(np.nanmin(G)), 1), max=round(float(np.nanmax(G)), 1),
+                        ejemplos=dict(gale=celda(137.4, -5.4), jezero=celda(77.5, 18.4), olympus=celda(226.2, 18.6), hellas=celda(70, -42.4)),
+                        fuente='NASA PDS, ODY-M-GRS-5-ELEMENTS-V1.0 (Mars Odyssey GRS), H2O_SR_5X5.TAB; Boynton et al. 2007, JGR 112, E12S99',
+                        periodo='2002-06-04 a 2005-04-03')
+    json.dump(meta, open(os.path.join(SAL, 'global.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print('agua', U.shape, lat_n, lat_s, meta['agua']['min'], meta['agua']['max'], meta['agua']['ejemplos'])
+
+
+if __name__ == '__main__' and '--agua' in sys.argv:
+    agua_grs(sys.argv[sys.argv.index('--agua') + 1])

@@ -2,6 +2,14 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (10) · Compañero (con Claude) · CAPA "AGUA EN EL PRIMER METRO DEL SUELO" (MEDIDA, TODO MARTE)
+- Nueva capa en Capas → Todo Marte. Es **medida** por el espectrómetro de rayos gamma (GRS) de Mars Odyssey entre 2002 y 2005.
+  - Producto oficial del PDS: ODY-M-GRS-5-ELEMENTS-V1.0, `H2O_SR_5X5.TAB` (5° × 5°, suavizado de 10°, % en peso de H2O, de 60°S a 60°N, con su sigma). Se guardó la copia en `gale-earth/datos/crudos_grs/`.
+  - `capas_globales.py --agua` genera `capas/global/agua_grs.png`. Solo se interpola entre celdas para dibujar.
+  - Valores: Gale 5,4 ± 0,4 %; Jezero 3,5 %; Hellas 4,2 %; Olympus 4,4 %. Rango de 1,6 % a 7,4 %.
+  - La leyenda aclara que es agua en minerales o hielo (no líquida) y que la resolución es de cientos de km.
+- Fuente: Boynton et al. 2007, JGR 112, E12S99. Producto: pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/.
+
 ## 2026-11-15 mañana (9) · Compañero (con Claude) · SE QUITA LA RADIACIÓN GLOBAL; HIRISE SOLO DE CERCA
 - **Se quitó la capa "Radiación en superficie (todo Marte)"** (y su código en `capas_globales.py`). El único detector de radiación que estuvo en la superficie de Marte es RAD, en Curiosity; una capa global sería un modelo, no una medición. Queda solo la capa de radiación de Gale (5 m, día/noche).
   - Las JPG viejas quedaron en la PC en `Google Mars/_to_delete/`, para borrar a mano.

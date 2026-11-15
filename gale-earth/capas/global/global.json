@@ -104,5 +104,56 @@
    "solo_astronauta": 0.0,
    "ambos": 0.231
   }
+ },
+ "agua": {
+  "archivo": "agua_grs.png",
+  "lat_norte": 60.0,
+  "lat_sur": -60.0,
+  "esquema": "planetocentrica",
+  "unidad": "% en peso de H2O",
+  "rampa": [
+   [
+    1.5,
+    "#c47046"
+   ],
+   [
+    3.0,
+    "#e8be78"
+   ],
+   [
+    4.5,
+    "#96d2e1"
+   ],
+   [
+    6.0,
+    "#3787d2"
+   ],
+   [
+    7.5,
+    "#193791"
+   ]
+  ],
+  "min": 1.6,
+  "max": 7.4,
+  "ejemplos": {
+   "gale": [
+    5.4,
+    0.36
+   ],
+   "jezero": [
+    3.5,
+    0.36
+   ],
+   "olympus": [
+    4.4,
+    0.28
+   ],
+   "hellas": [
+    4.2,
+    0.57
+   ]
+  },
+  "fuente": "NASA PDS, ODY-M-GRS-5-ELEMENTS-V1.0 (Mars Odyssey GRS), H2O_SR_5X5.TAB; Boynton et al. 2007, JGR 112, E12S99",
+  "periodo": "2002-06-04 a 2005-04-03"
  }
 }
