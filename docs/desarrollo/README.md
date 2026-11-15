@@ -28,7 +28,7 @@ La portada tiene **tres pasos**: Inicio → Entrada → Recorrido. Desde la **En
 
 | Entrada | Qué hace | Dónde está |
 | --- | --- | --- |
-| **Mars Earth** | Marte desde el espacio, con el cráter Gale en foco. Abre Gale Earth, que arranca en el espacio y se acerca a Gale. Si Gale Earth no está al lado, muestra "Marte completo" dentro de la escena. | `gale-earth/` (CesiumJS, del compañero) |
+| **Mars Earth** | Marte desde el espacio, con el cráter Gale en foco. Abre Gale Earth, que arranca en el espacio y se acerca a Gale. Si Gale Earth no está al lado, muestra "Marte completo" dentro de la escena. | `maps-in-mars/` (CesiumJS, del compañero) |
 | **Recorrido en Marte** | Las **dos visualizaciones principales**: (1) **Misión en pareja** y (2) **Rover y astronauta**, más la expedición sur y el viaje 2012 → hoy. | `escena3d/` |
 | **Mundo abierto** | Sin ruta fija: astronauta, rover o cámara libre, con destino con pin y avisos de peligro. | `escena3d/` |
 | **Información / wiki** | Todo lo que juntamos, con buscador: por qué Gale, paradas, 49 perforaciones, clima, límites, comunicaciones y fuentes. | `escena3d/` |
@@ -49,7 +49,7 @@ escena3d/
   armar.py           ← arma index.html: mete los datos (terreno, rutas, capas) como JSON dentro de la página
   index.html         ← resultado. NO se edita a mano.
   vendor/            ← three.js r170 embebido (sin internet)
-gale-earth/          ← Mars Earth / Gale Earth (del compañero). Se arma con _ensamblar.py + armar.py
+maps-in-mars/          ← Mars Earth / Gale Earth (del compañero). Se arma con _ensamblar.py + armar.py
 data/                ← datos de entrada (terreno, rutas, Curiosity, mineralogía, globo, parametros.json)
 herramientas/        ← scripts que generan los datos (A*, CRISM, expedición, globo, CTX, fuentes)
 docs/                ← documentación interna (castellano). docs/desarrollo/ es esta guía
@@ -60,7 +60,7 @@ docs/                ← documentación interna (castellano). docs/desarrollo/ e
 ```bash
 python escena3d/armar.py                 # arma escena3d/index.html (se abre con doble clic, sin servidor)
 python escena3d/armar.py --globo-aparte --salida /ruta/web/index.html   # versión para publicar (archivos < 16 MB)
-python gale-earth/servir.py              # sirve gale-earth/ y escena3d/ juntos en http://localhost:8765
+python maps-in-mars/servir.py              # sirve maps-in-mars/ y escena3d/ juntos en http://localhost:8765
 python herramientas/listar_fuentes.py    # regenera docs/fuentes-enlaces.md desde FUENTES_URL
 python herramientas/bajar_ctx.py         # opcional, con internet: imagen CTX alrededor de Gale
 ```
@@ -73,7 +73,7 @@ En Windows: `python` o `py`. Hace falta `pip install pillow numpy`.
 2. **Separar medido, cálculo propio y supuesto.** Se marcan con `<span class="prov">supuesto</span>`, "cálculo propio" o "SIMULACIÓN". Nunca se presenta un supuesto como medido.
 3. **No editar `index.html` a mano.** Se edita `plantilla.html` y se corre `armar.py`.
 4. **La lógica de la misión no se toca al cambiar la presentación.** Los modos se suman, no se reescriben. Se mantienen los ids y las funciones existentes.
-5. **`gale-earth/` es del compañero.** Solo se cambia con aviso en `docs/notas.md` y por PR.
+5. **`maps-in-mars/` es del compañero.** Solo se cambia con aviso en `docs/notas.md` y por PR.
 6. **Castellano rioplatense en la interfaz** (voseo, claro, sin jerga). Los entregables finales van en inglés.
 7. **Nada de fotos de personas reales ni material con derechos de terceros.** Las imágenes de NASA llevan su crédito.
 

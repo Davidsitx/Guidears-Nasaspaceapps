@@ -1,0 +1,55 @@
+{
+ "nota": "Textos de la Biblioteca corregidos o con fuente mejorada en la verificación del 15/11/2026 (ver docs/notas.md). armar_biblioteca.py los aplica encima de los resumen.json.",
+ "pozos": {
+  "17": {
+   "hallazgo": "La roca con más hematita de los 49 pozos (CheMin).",
+   "tecnico": "Hematita 28,3 % de la fracción cristalina.",
+   "fuente_hallazgo": "Rampe et al. 2020, JGR Planets"
+  },
+  "19": {
+   "hallazgo": "Mucho cloro: pasaron salmueras ácidas y saladas.",
+   "tecnico": "Akaganeíta 11,3 % y jarosita en la fracción cristalina; Cl 2,3 % (APXS), el más alto de la cresta.",
+   "fuente_hallazgo": "Rampe et al. 2020, JGR Planets"
+  },
+  "20": {
+   "hallazgo": "La entrada a la zona de arcilla que se veía desde órbita.",
+   "tecnico": "Lodolita rica en arcillas; sulfatos de calcio 37 % de la fracción cristalina.",
+   "fuente_hallazgo": "Thorpe et al. 2022, JGR Planets 127, doi:10.1029/2021JE007099"
+  },
+  "22": {
+   "hallazgo": "De la parte fracturada de la unidad de arcillas: el pozo con más arcilla de los 49 según la base ODR (34 %).",
+   "tecnico": "Anhidrita 34 % de la fracción cristalina; siderita 3 %.",
+   "fuente_hallazgo": "Thorpe et al. 2022, JGR Planets 127, doi:10.1029/2021JE007099; NASA/ODR, doi:10.48484/JN48-YW52"
+  },
+  "24": {
+   "hallazgo": "Justo debajo de una gran discontinuidad: el agua alteró la roca de otra manera.",
+   "tecnico": "Poca esmectita (6 %), con cristobalita y ópalo-CT, a diferencia del resto de Glen Torridon (~30 %).",
+   "fuente_hallazgo": "Rudolph et al. 2022, JGR Planets 127, doi:10.1029/2021JE007098; Bennett et al. 2023, JGR Planets 128, doi:10.1029/2022JE007185"
+  },
+  "25": {
+   "hallazgo": "Arriba del pedimento: arena del desierto que tapó el paisaje mucho después.",
+   "tecnico": "Olivino, piroxeno y magnetita, con 7 % de esmectita: distinta de las otras muestras de Stimson.",
+   "fuente_hallazgo": "Bennett et al. 2023, JGR Planets 128, doi:10.1029/2022JE007185; NASA/ODR, doi:10.48484/JN48-YW52"
+  },
+  "26": {
+   "hallazgo": "El techo de la zona de arcilla.",
+   "tecnico": "Anhidrita 18,5 %, hematita 13 % de la fracción cristalina.",
+   "fuente_hallazgo": "Thorpe et al. 2022, JGR Planets 127, doi:10.1029/2021JE007099"
+  },
+  "27": {
+   "hallazgo": "Lleva el nombre de una paleontóloga. Glen Torridon dio una gran variedad de moléculas orgánicas con azufre.",
+   "tecnico": "Carbonato de hierro 3 %, plagioclasa 70 % de la fracción cristalina.",
+   "fuente_hallazgo": "Bennett et al. 2023, JGR Planets 128, doi:10.1029/2022JE007185"
+  },
+  "28": {
+   "hallazgo": "Primer experimento TMAH de SAM en Marte: 21 moléculas con carbono, 7 nunca vistas antes en el planeta.",
+   "tecnico": "SO3 12 % (APXS); basanita y carbonato de Fe en la fracción cristalina.",
+   "fuente_hallazgo": "Williams et al. 2026, Nature Communications 17:2748, doi:10.1038/s41467-026-70656-0; NASA, 21/4/2026"
+  },
+  "36": {
+   "hallazgo": "Primera identificación exacta del sulfato de magnesio con agua que se veía desde órbita.",
+   "tecnico": "Starkeyita (MgSO4·4H2O) 6 % de la fracción cristalina; SO3 19,2 % (APXS).",
+   "fuente_hallazgo": "Chipera et al. 2023, JGR Planets 128, doi:10.1029/2023JE008041 (datos en AHED, doi:10.48667/4apc-vz90)"
+  }
+ }
+}

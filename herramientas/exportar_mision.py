@@ -1,10 +1,10 @@
-"""Exporta la misión de la escena (GALE-3D) para Gale Earth: una sola pantalla, los mismos números.
+"""Exporta la misión de la escena (GALE-3D) para Maps in Mars: una sola pantalla, los mismos números.
 
 Abre escena3d/index.html en un navegador sin ventana (Playwright + Chromium), y con las mismas funciones de la escena saca
 (y al final suma la ruta T del PMR, el rover presurizado, con herramientas/ruta_base.py):
-  - gale-earth/datos/mision.json: paradas (con su ficha y su muestra simulada), rutas A, B y C, expedición sur, Base Gale,
+  - maps-in-mars/datos/mision.json: paradas (con su ficha y su muestra simulada), rutas A, B y C, expedición sur, Base Gale,
     Curiosity hoy, fichas del GX-2, estaciones, parámetros y fuentes;
-  - gale-earth/capas/mision/*.glb: Curiosity, GX-2, PMR, astronauta y Base Gale (modelos 3D, con las piezas móviles nombradas).
+  - maps-in-mars/capas/mision/*.glb: Curiosity, GX-2, PMR, astronauta y Base Gale (modelos 3D, con las piezas móviles nombradas).
 
 Uso (desde la raíz del repo):
     python escena3d/armar.py              # primero, si cambió algo de la escena
@@ -17,8 +17,8 @@ import base64, json, os, re, sys, time
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ESCENA = os.path.join(RAIZ, "escena3d", "index.html")
-SALIDA_DATOS = os.path.join(RAIZ, "gale-earth", "datos", "mision.json")
-SALIDA_MODELOS = os.path.join(RAIZ, "gale-earth", "capas", "mision")
+SALIDA_DATOS = os.path.join(RAIZ, "maps-in-mars", "datos", "mision.json")
+SALIDA_MODELOS = os.path.join(RAIZ, "maps-in-mars", "capas", "mision")
 
 
 def main():
@@ -69,7 +69,7 @@ def main():
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import ruta_base
     ruta_base.main()
-    print(f"Listo en {time.time() - t0:.0f} s. Si cambió Gale Earth: dentro de gale-earth/, python _ensamblar.py y python armar.py.")
+    print(f"Listo en {time.time() - t0:.0f} s. Si cambió Maps in Mars: dentro de maps-in-mars/, python _ensamblar.py y python armar.py.")
 
 
 if __name__ == "__main__":

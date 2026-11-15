@@ -1,0 +1,388 @@
+"""Arma la Biblioteca de Gale Earth a partir de la carpeta de Drive de las perforaciones.
+
+Uso:  python armar_biblioteca.py ["G:\\Mi unidad\\Marte\\Perforaciones Datos Crudos"]
+
+Lee, de cada una de las 49 carpetas, lo mismo que ya está subido al Drive (no baja nada de internet):
+  Datos trabajados/resumen.json · mineralogia_chemin.csv
+  Datos Crudos/APXS/apxs_oxidos_y_trazas.csv (+ _ODR.csv) · Datos Crudos/SAM/SAM_nivel2_crudos.zip
+  Imagenes/destacadas/*.jpg · Imagenes/indice_imagenes.csv
+y de "zz Analisis y temas para futuras misiones": el documento y la tabla de indicadores.
+
+Escribe:
+  datos/biblioteca.json            (lo lee la pestaña Biblioteca al abrirse)
+  capas/pozos/<pozo>/*.jpg         (miniaturas de 640 px de las fotos destacadas)
+Si un dato no está, queda vacío y la ficha lo dice: nunca se inventa.
+"""
+import csv, io, json, os, re, sys, zipfile, html
+from PIL import Image
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+ORIGEN = sys.argv[1] if len(sys.argv) > 1 else r"G:\Mi unidad\Marte\Perforaciones Datos Crudos"
+ANALISIS = os.path.join(ORIGEN, "zz Analisis y temas para futuras misiones")
+SALIDA_JSON = os.path.join(AQUI, "datos", "biblioteca.json")
+MINI = os.path.join(AQUI, "capas", "pozos")
+OXIDOS = ["SiO2", "TiO2", "Al2O3", "FeO", "MnO", "MgO", "CaO", "Na2O", "K2O", "P2O5", "Cr2O3", "SO3", "Cl"]
+TRAZAS = ["Ni", "Zn", "Br"]
+GASES = ["H2O", "CO2", "SO2", "O2", "HCl", "H2S", "NO", "H2", "CH3Cl", "CH2Cl2", "OCS"]
+NOMBRE_MIN = {  # nombres de CheMin (inglés) en castellano
+    "plagioclase": "plagioclasa", "andesine": "andesina", "albite": "albita", "sanidine": "sanidina", "k-feldspar": "feldespato K",
+    "feldspar": "feldespato", "forsterite": "olivino (forsterita)", "olivine": "olivino", "augite": "augita", "pigeonite": "pigeonita",
+    "orthopyroxene": "ortopiroxeno", "enstatite": "enstatita", "pyroxene": "piroxeno", "magnetite": "magnetita", "hematite": "hematita",
+    "anhydrite": "anhidrita", "bassanite": "basanita", "gypsum": "yeso", "quartz": "cuarzo", "cristobalite": "cristobalita",
+    "tridymite": "tridimita", "akaganeite": "akaganeíta", "jarosite": "jarosita", "halite": "halita", "pyrite": "pirita",
+    "pyrrhotite": "pirrotina", "ilmenite": "ilmenita", "apatite": "apatita", "fluorapatite": "fluorapatita", "siderite": "siderita",
+    "goethite": "goethita", "opal-ct": "ópalo-CT", "starkeyite": "starkeyíta", "kieserite": "kieserita", "epsomite": "epsomita",
+    "calcite": "calcita", "dolomite": "dolomita", "ankerite": "ankerita", "fe-carbonate": "carbonato de hierro", "rutile": "rutilo",
+}
+
+
+def num(x):
+    try:
+        v = float(str(x).replace(",", "."))
+        return None if v != v else v
+    except (TypeError, ValueError):
+        return None
+
+
+def slug(s):
+    return re.sub(r"[^a-z0-9]+", "_", s.lower()).strip("_")
+
+
+def leer_csv(ruta):
+    if not os.path.exists(ruta):
+        return []
+    with open(ruta, encoding="utf-8-sig", newline="") as f:
+        norm = lambda k: "Sol" if (k or "").lstrip("\ufeff").strip().lower() == "sol" else (k or "").lstrip("\ufeff").strip()
+        return [{norm(k): v for k, v in r.items()} for r in csv.DictReader(f)]
+
+
+def apxs_de(carpeta, R):
+    """La química del pozo: primero la que ODR asigna a la muestra; si no, la medición del PDS sobre el pozo o su polvo."""
+    odr = leer_csv(os.path.join(carpeta, "Datos Crudos", "APXS", "apxs_oxidos_y_trazas_ODR.csv"))
+    if odr:
+        ox = {r["oxido"]: [num(r["pct_peso"]), num(r["incertidumbre"])] for r in odr}
+        return {"fuente": "ODR (muestra entregada al laboratorio del rover)", "producto": odr[0]["producto_pds"], "sol": None, "objetivo": "",
+                "ox": {k: ox[k] for k in OXIDOS if k in ox}, "tr": {k: [ox[k][0] * 1e4, ox[k][1] * 1e4] for k in TRAZAS if k in ox}}, 0, 0
+    filas = leer_csv(os.path.join(carpeta, "Datos Crudos", "APXS", "apxs_oxidos_y_trazas.csv"))
+    pozo = [r for r in filas if r.get("es_del_pozo") == "si"]
+    if not pozo:
+        return None, len(filas), 0
+    # preferencia: la que ODR asignó (cruce), luego polvo de perforación (DT / postsieve), luego la primera
+    prod = (R.get("odr") or {}).get("apxs_producto") or ""
+    m_ = re.match(r"ap[ab]_\d{9}rwp(\d{4})", prod)
+    sol_odr = int(m_.group(1)) if m_ else None
+    def prio(r):
+        prep = (r.get("Preparation_method") or "").upper()
+        return (0 if sol_odr and str(sol_odr) == r["Sol"] else 1, 0 if prep in ("DT", "POSTSIEVE", "MD") else 1, int(num(r["Sol"]) or 0))
+    r = sorted(pozo, key=prio)[0]
+    return {"fuente": "NASA PDS, tabla APXS supplement (ds01)", "producto": prod, "sol": int(num(r["Sol"]) or 0) or None, "objetivo": r["Target"],
+            "preparacion": r.get("Preparation_method", ""),
+            "ox": {k: [num(r.get(k + "_pct")), num(r.get(k + "_err"))] for k in OXIDOS if num(r.get(k + "_pct")) is not None},
+            "tr": {k: [num(r.get(k + "_ppm")), num(r.get(k + "_err"))] for k in TRAZAS if num(r.get(k + "_ppm")) is not None}}, len(filas), len(pozo)
+
+
+def sam_de(carpeta, R):
+    zp = os.path.join(carpeta, "Datos Crudos", "SAM", "SAM_nivel2_crudos.zip")
+    meta = {str(s["eid"]): s for s in R.get("sam_experimentos", [])}
+    out = {}
+    if os.path.exists(zp):
+        with zipfile.ZipFile(zp) as z:
+            for nombre in z.namelist():
+                m = re.search(r"SAM/([^/]+)/sol(\d+)_eid(\d+)_(\w+)/(.+)$", nombre)
+                if not m:
+                    continue
+                grupo, sol, eid, tipo, archivo = m.groups()
+                e = out.setdefault(eid, {"eid": eid, "sol": int(sol), "tipo": tipo, "grupo": grupo, "gases": {}, "picos": {}, "tls": {}})
+                if "egacomp" in archivo or "egaxxxx" in archivo or "tls_abundnc" in archivo:
+                    filas = list(csv.reader(io.StringIO(z.read(nombre).decode("utf-8", "replace"))))[1:]
+                    for f in filas:
+                        if len(f) < 2:
+                            continue
+                        esp, val = f[0].strip(), num(f[1])
+                        if val is None:
+                            continue
+                        if "egacomp" in archivo and esp in GASES:
+                            e["gases"][esp] = val
+                        elif "egaxxxx" in archivo and esp in GASES:
+                            e["picos"].setdefault(esp, []).append(val)
+                        elif "tls_abundnc" in archivo:
+                            e["tls"][esp.replace(" vmr", "")] = val
+    lista = []
+    for eid, e in sorted(out.items(), key=lambda kv: (kv[1]["sol"], kv[0])):
+        g = e["grupo"]
+        e["estado"] = "confirmado" if g.startswith("confirmado") else ("otra_muestra" if g.startswith("de_otra") else "sin_confirmar")
+        if e["estado"] == "otra_muestra":
+            e["otra"] = (meta.get(eid) or {}).get("odr_lo_asigna_a") or g.split("__")[-1].replace("_", " ")
+        # valores imposibles (p. ej. H2O = 7,16E+07 mol en una tabla): se marcan y no se usan
+        e["dudoso"] = dudosos(e["gases"])
+        del e["grupo"]
+        lista.append(e)
+    return lista
+
+
+# ---------- revisión de SAM: a qué muestra pertenece cada experimento ----------
+# datos/sam_revision.json sale de las notas de nivel 2 de SAM ("designated CB6", "designated VL1"…) y del nombre de cada
+# corrida en el registro de mensajes de nivel 0 (NASA PDS Geosciences). Una designación publicada confirma la muestra;
+# los blancos, calibraciones y medidas de atmósfera no son muestras y se separan.
+PORCION_MG = 45.0   # supuesto: porción típica entregada a un horno de SAM (unos 45-50 mg)
+MASA_MOLAR = {"H2O": 18.02, "CO2": 44.01, "SO2": 64.07, "O2": 32.0, "HCl": 36.46, "H2S": 34.08, "NO": 30.01, "H2": 2.02, "CH3Cl": 50.49, "CH2Cl2": 84.93}
+
+
+def _norm(t):
+    return re.sub(r"[^a-z0-9]", "", (t or "").lower())
+
+
+def dudosos(gases):
+    """Gases cuya masa liberada no es físicamente posible para una porción de ~45 mg (supuesto):
+    más del 5 % en peso (30 % para agua, CO2 y SO2, que los sulfatos y carbonatos pueden liberar en gran cantidad)."""
+    out = []
+    for k, v in gases.items():
+        mm = MASA_MOLAR.get(k)
+        if mm is None or v is None:
+            continue
+        pct = v * mm * 1000 / PORCION_MG * 100
+        if pct > (30 if k in ("H2O", "CO2", "SO2") else 5):
+            out.append(k)
+    return out
+
+
+def revisar_sam(pozos, ruta=os.path.join(AQUI, "datos", "sam_revision.json")):
+    if not os.path.exists(ruta):
+        return
+    rev = json.load(open(ruta, encoding="utf-8"))["experimentos"]
+    por_nombre = {_norm(p["nombre"]): p for p in pozos}
+    mover = []
+    for p in pozos:
+        nuevos = []
+        for s in p["sam"]:
+            s["dudoso"] = dudosos(s["gases"])
+            if s["estado"] == "confirmado":
+                s.setdefault("conf_por", "ODR")
+            r = rev.get(str(s["eid"]))
+            if not r:
+                nuevos.append(s)
+                continue
+            s["corrida"] = r.get("corrida", "")
+            if r.get("designacion"):
+                s["designacion"] = r["designacion"]
+            if r["clase"] == "sin_muestra":
+                s["estado"], s["motivo"] = "sin_muestra", r["motivo"]
+                s.pop("otra", None)
+            elif r["clase"] == "probable":
+                s["estado"], s["motivo"] = "probable", r["motivo"]
+                s.pop("otra", None)
+            else:
+                dest = _norm(r["muestra"])
+                # "Glen Etive" sin número: la nota de PDS no dice si es el pozo 1 o el 2; vale para los dos
+                es_este = dest == _norm(p["nombre"]) or (dest == "glenetive" and _norm(p["nombre"]).startswith("glenetive"))
+                if es_este:
+                    s["estado"], s["conf_por"] = "confirmado", "PDS: designación " + r["designacion"]
+                    s.pop("otra", None)
+                elif dest in por_nombre:
+                    s["estado"], s["conf_por"] = "confirmado", "PDS: designación " + r["designacion"]
+                    s.pop("otra", None)
+                    mover.append((por_nombre[dest], s))
+                    continue
+                else:
+                    s["estado"], s["otra"] = "otra_muestra", r["muestra"]
+            nuevos.append(s)
+        p["sam"] = nuevos
+    for p, s in mover:
+        if not any(str(x["eid"]) == str(s["eid"]) for x in p["sam"]):
+            p["sam"].append(s)
+            p["sam"].sort(key=lambda x: (x["sol"], str(x["eid"])))
+
+
+def aplicar_apxs_pds(pozos, ruta=os.path.join(AQUI, "datos", "apxs_pds.json")):
+    """Química APXS de los pozos nuevos (después del sol 3712) desde los productos RDR del PDS (datos/apxs_pds.json)."""
+    if not os.path.exists(ruta):
+        return
+    nuevos = json.load(open(ruta, encoding="utf-8"))["pozos"]
+    for p in pozos:
+        a = nuevos.get(str(p.get("n")))
+        if a and not p.get("apxs"):
+            p["apxs"] = a
+            p["falta"] = [f for f in p["falta"] if not f.startswith("APXS")]
+
+
+def aplicar_apxs_rdr(pozos, ruta=os.path.join(AQUI, "datos", "apxs_rdr_correcciones.json")):
+    """Reemplaza la química APXS por la del producto RDR oficial del PDS, con su objetivo real (verificado el 15/11/2026).
+    Hace falta porque la tabla de cada carpeta marcaba como 'del pozo' mediciones de rocas vecinas (Greenhorn tenía la de Big Sky)."""
+    if not os.path.exists(ruta):
+        return
+    cor = json.load(open(ruta, encoding="utf-8"))["pozos"]
+    for p in pozos:
+        a = cor.get(str(p.get("n")))
+        if a:
+            p["apxs"] = a
+    ruta2 = os.path.join(AQUI, "datos", "hallazgos_verificados.json")
+    if os.path.exists(ruta2):
+        txt = json.load(open(ruta2, encoding="utf-8"))["pozos"]
+        for p in pozos:
+            p.update(txt.get(str(p.get("n")), {}))
+
+
+def limpiar_faltas(pozos):
+    """Quita avisos viejos de 'falta' que ya se resolvieron (clima REMS y radiación RAD están en la Biblioteca)."""
+    for p in pozos:
+        p["falta"] = [f for f in p["falta"] if not f.startswith(("Radiación (RAD)", "Clima (REMS"))]
+
+
+def agregar_tmah(pozos, ruta=os.path.join(AQUI, "datos", "sam_tmah_ns2.json")):
+    """Experimento de química húmeda con TMAH sobre Nevado Sajama2 (soles 4798-4802): picos del cromatograma, sin especies identificadas en PDS."""
+    if not os.path.exists(ruta):
+        return
+    ex = json.load(open(ruta, encoding="utf-8"))
+    for p in pozos:
+        if p["nombre"] == "Nevado Sajama 2":
+            ya = {str(s["eid"]) for s in p["sam"]}
+            p["sam"] += [e for e in ex if e["eid"] not in ya]
+            p["falta"] = [f for f in p["falta"] if not f.startswith("SAM")]
+
+
+def agregar_blog(pozos, ruta=os.path.join(AQUI, "datos", "blog_pozos.json")):
+    """Lo que contó el equipo en el blog de Curiosity sobre los pozos cuyos datos todavía no están en el PDS (resumen propio)."""
+    blog = json.load(open(ruta, encoding="utf-8")) if os.path.exists(ruta) else {}
+    for p in pozos:
+        p["blog"] = blog.get(p["nombre"], [])
+        f = []
+        for x in p["falta"]:
+            if x.startswith("Bitácora"):
+                continue
+            if x.startswith("APXS: las tablas"):
+                x = "APXS: el PDS publicó la química hasta el sol 4842 (marzo de 2026); este pozo es posterior y sale en la próxima entrega."
+            if x.startswith("CheMin: no hay") and (p.get("sol") or 0) > 4748:
+                x = "CheMin: el PDS tiene los datos crudos hasta el sol 4748 y la mineralogía publicada es anterior; este pozo sale en una próxima entrega."
+            f.append(x)
+        p["falta"] = f
+
+
+def miniaturas(carpeta, s):
+    d = os.path.join(carpeta, "Imagenes", "destacadas")
+    if not os.path.isdir(d):
+        return []
+    idx = {os.path.basename(r["archivo"]): r for r in leer_csv(os.path.join(carpeta, "Imagenes", "indice_imagenes.csv"))}
+    os.makedirs(os.path.join(MINI, s), exist_ok=True)
+    fotos = []
+    for f in sorted(os.listdir(d)):
+        if not f.lower().endswith((".jpg", ".jpeg", ".png")):
+            continue
+        dst = os.path.join(MINI, s, os.path.splitext(f)[0] + ".jpg")
+        if not os.path.exists(dst):
+            im = Image.open(os.path.join(d, f)).convert("RGB")
+            im.thumbnail((640, 640))
+            im.save(dst, quality=82, optimize=True, progressive=True)
+        info = idx.get(f, {})
+        cam = info.get("instrumento", "") or ("MAHLI" if "MH" in f[8:20] else "Mastcam" if re.search(r"M[LR]\d", f) else "Hazcam" if "HAZ" in f else "")
+        fotos.append({"src": f"capas/pozos/{s}/{os.path.basename(dst)}", "archivo": f, "camara": cam,
+                      "fecha": info.get("fecha_utc", ""), "url": info.get("url_nasa", "")})
+    return fotos
+
+
+def md_a_html(md):
+    """Markdown simple (títulos, listas, tablas, negrita, código) a HTML, para el documento de análisis."""
+    out, en_lista, tabla = [], False, []
+    def linea(t):
+        t = html.escape(t)
+        t = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", t)
+        t = re.sub(r"`(.+?)`", r"<code>\1</code>", t)
+        return re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', t)
+    def cerrar():
+        nonlocal en_lista, tabla
+        if en_lista:
+            out.append("</ul>"); en_lista = False
+        if tabla:
+            filas = [r for r in tabla if not re.match(r"^\|[\s:|-]+\|$", r)]
+            celdas = [[c.strip() for c in r.strip("|").split("|")] for r in filas]
+            out.append("<table><tr>" + "".join(f"<th>{linea(c)}</th>" for c in celdas[0]) + "</tr>" +
+                       "".join("<tr>" + "".join(f"<td>{linea(c)}</td>" for c in r) + "</tr>" for r in celdas[1:]) + "</table>")
+            tabla = []
+    for r in md.splitlines():
+        if r.startswith("|"):
+            if en_lista:
+                out.append("</ul>"); en_lista = False
+            tabla.append(r.strip()); continue
+        if tabla:
+            cerrar()
+        m = re.match(r"^(#{1,4})\s+(.*)", r)
+        if m:
+            cerrar(); n = len(m.group(1)); out.append(f"<h{n + 1}>{linea(m.group(2))}</h{n + 1}>"); continue
+        m = re.match(r"^\s*[-*]\s+(.*)", r) or re.match(r"^\s*\d+\.\s+(.*)", r)
+        if m:
+            if not en_lista:
+                out.append("<ul>"); en_lista = True
+            out.append(f"<li>{linea(m.group(1))}</li>"); continue
+        if r.startswith(">"):
+            cerrar(); out.append(f'<p class="nota">{linea(r.lstrip("> "))}</p>'); continue
+        if r.strip() in ("", "---"):
+            cerrar(); continue
+        cerrar(); out.append(f"<p>{linea(r)}</p>")
+    cerrar()
+    return "\n".join(out)
+
+
+def main():
+    if not os.path.isdir(ORIGEN):
+        sys.exit(f"No encuentro la carpeta de perforaciones: {ORIGEN}")
+    pozos = []
+    for d in sorted(os.listdir(ORIGEN)):
+        carpeta = os.path.join(ORIGEN, d)
+        rj = os.path.join(carpeta, "Datos trabajados", "resumen.json")
+        if not os.path.exists(rj):
+            continue
+        R = json.load(open(rj, encoding="utf-8"))
+        s = slug(d)
+        mins = {}
+        for r in leer_csv(os.path.join(carpeta, "Datos trabajados", "mineralogia_chemin.csv")):
+            a = mins.setdefault(r["archivo_pds"], {"sol": int(num(r["sol_analisis"]) or 0), "archivo": r["archivo_pds"], "minerales": []})
+            a["minerales"].append([NOMBRE_MIN.get(r["mineral"].lower(), r["mineral"].lower()), num(r["porcentaje_peso_cristalino"]), num(r["error_2sigma"])])
+        for c in R.get("chemin_pds", []):
+            a = mins.setdefault(c["archivo"], {"sol": c.get("sol"), "archivo": c["archivo"], "minerales": []})
+            for k in ("arcillas_pct", "arcillas_err", "amorfo_pct", "amorfo_err"):
+                a[k.replace("_pct", "")] = num(c.get(k))
+        for a in mins.values():
+            a["minerales"].sort(key=lambda m: -(m[1] or 0))
+        apxs, n_apxs, n_apxs_pozo = apxs_de(carpeta, R)
+        ficha = open(os.path.join(carpeta, "Datos trabajados", "ficha.md"), encoding="utf-8").read() if os.path.exists(os.path.join(carpeta, "Datos trabajados", "ficha.md")) else ""
+        falta = re.findall(r"^- (.+)$", ficha.split("## Lo que falta")[1].split("##")[0], re.M) if "## Lo que falta" in ficha else []
+        cruce = re.findall(r"^- (.+)$", ficha.split("## Cruce con la base ODR")[1], re.M) if "## Cruce con la base ODR" in ficha else []
+        archivos = []
+        for raiz, _, fs in os.walk(carpeta):
+            for f in fs:
+                if f.lower() == "desktop.ini":
+                    continue
+                p = os.path.join(raiz, f)
+                archivos.append([os.path.relpath(p, carpeta).replace("\\", "/"), os.path.getsize(p)])
+        pozos.append({
+            "n": int(num(R.get("n")) or 0) or None, "nombre": d, "slug": s, "sol": R.get("sol"), "fecha": R.get("fecha_aprox", ""),
+            "zona": R.get("zona", ""), "formacion": R.get("formacion", ""), "roca": R.get("roca", ""), "elev": num(R.get("elevacion_m")),
+            "lat": num(R.get("lat")), "lon": num(R.get("lon")), "hallazgo": R.get("hallazgo", ""), "tecnico": R.get("tecnico", ""),
+            "fuente_hallazgo": R.get("fuente_hallazgo", ""), "agua_kg_t": num(R.get("agua_kg_t")), "co2_kg_t": num(R.get("co2_kg_t")),
+            "chemin": sorted(mins.values(), key=lambda a: a["sol"] or 0), "apxs": apxs, "apxs_mediciones": n_apxs, "apxs_del_pozo": n_apxs_pozo,
+            "sam": sam_de(carpeta, R), "fotos": miniaturas(carpeta, s), "fotos_total": R.get("imagenes", 0),
+            "odr": R.get("odr", {}), "falta": falta, "cruce": cruce, "archivos": sorted(archivos),
+        })
+    pozos.sort(key=lambda p: (p["n"] or 999, p["sol"] or 0))
+    doc = ""
+    md = os.path.join(ANALISIS, "Temas_para_futuras_misiones.md")
+    if os.path.exists(md):
+        doc = md_a_html(open(md, encoding="utf-8").read())
+    os.makedirs(os.path.dirname(SALIDA_JSON), exist_ok=True)
+    with open(SALIDA_JSON, "w", encoding="utf-8") as f:
+        revisar_sam(pozos)
+        aplicar_apxs_pds(pozos)
+        aplicar_apxs_rdr(pozos)
+        agregar_tmah(pozos)
+        agregar_blog(pozos)
+        limpiar_faltas(pozos)
+        doc = doc.replace("que abre la carpeta de Drive", "que abre la copia local de los datos de NASA")
+        json.dump({"version": 1, "origen": "NASA PDS (CheMin, APXS, SAM), base de mineralogía y geoquímica del cráter Gale (doi:10.48484/JN48-YW52), blog y fotos crudas de NASA", "pozos": pozos, "temas_html": doc},
+                  f, ensure_ascii=False, separators=(",", ":"))
+    print(f"{len(pozos)} pozos · {os.path.getsize(SALIDA_JSON) // 1024} KB · miniaturas en capas/pozos/")
+    sin = [p["nombre"] for p in pozos if not p["chemin"]]
+    if sin:
+        print("Sin CheMin todavía:", ", ".join(sin))
+
+
+if __name__ == "__main__":
+    main()

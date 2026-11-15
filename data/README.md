@@ -21,4 +21,4 @@ No versionados (descargar a `data/raw/`):
 
 ## Globo de fondo (data/terreno/globo/)
 - Se arma con `python herramientas/globo.py megt90n000eb.img`. El archivo MOLA (33 MB, no se versiona) es el MEGDR de 16 píxeles/grado del PDS; una copia pública está en https://raw.githubusercontent.com/benbrittain/Barsoom/HEAD/data/MEGDR/mgsl_300x/meg016/megt90n000eb.img
-- El color sale de `gale-earth/capas/viking_color_8k.jpg`.
+- El color sale de `maps-in-mars/capas/viking_color_8k.jpg`.

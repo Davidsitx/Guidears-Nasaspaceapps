@@ -19,7 +19,7 @@ Las capturas están en `capturas/qa/`.
 
 > **Para el equipo:** los mensajes para pegarle a Claude en cada fase, y qué revisar al terminar, están en [prompts-unificacion.md](prompts-unificacion.md).
 
-> **Para Claude:** antes de tocar `gale-earth/`, leé `gale-earth/README.md`. Esa carpeta es del compañero: el código nuevo va en archivos nuevos (`gale-earth/portada.js`, `gale-earth/mision.js`) que `_ensamblar.py` suma, y cada cambio se anota en `docs/notas.md`. No se edita `plantilla.html` ni `index.html` a mano, en ninguna de las dos carpetas.
+> **Para Claude:** antes de tocar `maps-in-mars/`, leé `maps-in-mars/README.md`. Esa carpeta es del compañero: el código nuevo va en archivos nuevos (`maps-in-mars/portada.js`, `maps-in-mars/mision.js`) que `_ensamblar.py` suma, y cada cambio se anota en `docs/notas.md`. No se edita `plantilla.html` ni `index.html` a mano, en ninguna de las dos carpetas.
 
 ---
 
@@ -29,13 +29,13 @@ La grabación es del sitio publicado (`main`). La Base Gale y el rover GX-2 toda
 
 | # | Segundo | Qué pasa | Por qué pasa (código) | Qué queremos |
 | --- | --- | --- | --- | --- |
-| H1 | 3–8 | Tocar **Mars Earth**: Marte se centra y **corta a negro**. Gale Earth arranca de cero, a 32.000 km, con otra pantalla de carga. | Son dos páginas: `irMarsEarth()` hace `location.href = '../gale-earth/index.html'` a los 1,25 s. Gale Earth carga Cesium y hace `irA('marte', 0)`. | Sin cambio de página. El Marte de la portada **es** el globo de Gale Earth y se corre al centro (T3). |
+| H1 | 3–8 | Tocar **Mars Earth**: Marte se centra y **corta a negro**. Gale Earth arranca de cero, a 32.000 km, con otra pantalla de carga. | Son dos páginas: `irMarsEarth()` hace `location.href = '../maps-in-mars/index.html'` a los 1,25 s. Gale Earth carga Cesium y hace `irA('marte', 0)`. | Sin cambio de página. El Marte de la portada **es** el globo de Gale Earth y se corre al centro (T3). |
 | H2 | 9–11 y 50 | En el vuelo del espacio al cráter, la cámara **mira al espacio vacío**: solo estrellas. | `irA('gale', 3)` es un `flyTo` de 32.000 km a 70 km con inclinación final −0,55 y sin `pitchAdjustHeight`: Cesium interpola el ángulo y Marte sale de cuadro. | Marte siempre en cuadro: vuelo en dos tramos, o `pitchAdjustHeight` (3.1). |
 | H3 | 12, 42, 52, 134 | Al llegar, el relieve se ve **borroso** unos segundos. | La vista se muestra antes de que carguen las teselas de detalle (en GALE-3D, el fondo MOLA de baja resolución). | No mostrar la llegada hasta que el terreno esté cargado, con un tope (3.1). |
 | H4 | 14–18, 56 | Los pines de pozos, zonas y sitios **no muestran que se pueden tocar**: no hay mano ni realce. | En Gale Earth, `MOUSE_MOVE` solo actualiza las coordenadas. Ningún pin cambia al pasar por arriba. | Estados de pin: hover, seleccionado y visitado (3.3). |
 | H5 | 20–26 | **Misión Curiosity · 3D**: fundido a negro y, encima de un fondo negro, aparecen los paneles y la barra de GALE-3D ("Cargando ortoimagen…", "Armando la travesía completa…"). Es otro Marte, con otra interfaz. | Es un enlace a `../escena3d/index.html#desde-gale-earth`. La escena muestra su interfaz antes de tener terreno. | "Misión Curiosity" es un **modo dentro del mismo globo**. Ningún panel aparece antes de que esté lo que muestra. |
 | H6 | 40–44 | En GALE-3D, **Marte completo** muestra el globo propio de la escena (MOLA + Viking, borroso al pasar) y no el de Gale Earth. "Datos en vivo" queda encima del espacio. | `vPlaneta`: globo propio de three.js. | Un solo Marte entero: el de Gale Earth (chip "Marte entero"). |
-| H7 | 44–48 | **Gale Earth ↗** recarga Gale Earth entera: pantalla de carga y vuelta a los 32.000 km, aunque el usuario venía de ahí. | `vMarteGE` hace `location.href = '../gale-earth/index.html#curiosity'`. | Desaparece: ya estás en Gale Earth. |
+| H7 | 44–48 | **Gale Earth ↗** recarga Gale Earth entera: pantalla de carga y vuelta a los 32.000 km, aunque el usuario venía de ahí. | `vMarteGE` hace `location.href = '../maps-in-mars/index.html#curiosity'`. | Desaparece: ya estás en Gale Earth. |
 | H8 | 60–65 | Al volver a la escena, se ven paneles vacíos ("Cargando three.js…") y después la portada en el **paso 3 (Recorrido)**. | `#desde-gale-earth` y `__portada.atras()`, que siempre abre el paso 3 (`zona(zonaAct)`). | **Volver o Atrás lleva al paso 2 (Entrada).** |
 | H9 | 72–84 | Al tocar o arrastrar sobre la portada, el título queda **seleccionado** (resaltado azul). | Falta `user-select: none` en la portada. | Textos de la portada no seleccionables; los datos y las fichas sí. |
 | H10 | 92–98 | **Misión en pareja**: la entrada (centrar Marte → bajar → vista) anda bien, pero el astronauta **arranca a caminar solo**. | `entrarPareja()` pone `fp.jugando = true`. Lo mismo `caminar()` y `seguirRover()`. | Todo modo **arranca en pausa**, con la base mandando el primer mensaje y un botón "▶ Salir" (3.4). |
@@ -191,7 +191,7 @@ En pantallas táctiles no hay hover: un toque abre la ficha directamente.
 
 ## 4. Paso a paso de la unificación
 
-> **Estado al 15/11 a la mañana:** las fases **1, 3, 5 y 6 están hechas**, y la **4 en buena parte**: "Misión Curiosity" ya vive en Gale Earth, en "Curiosity hoy" (`gale-earth/mision.js`). También quedaron hechos los ítems **0.5** (Marte en cuadro en el vuelo) y **0.6** (hover en los pines). Falta:
+> **Estado al 15/11 a la mañana:** las fases **1, 3, 5 y 6 están hechas**, y la **4 en buena parte**: "Misión Curiosity" ya vive en Gale Earth, en "Curiosity hoy" (`maps-in-mars/mision.js`). También quedaron hechos los ítems **0.5** (Marte en cuadro en el vuelo) y **0.6** (hover en los pines). Falta:
 > - la **fase 2**: la portada dentro de Gale Earth;
 > - la **fase 7**: mundo abierto;
 > - de la **fase 4**: animar en el globo el taladro y el dron del GX-2;
@@ -199,7 +199,7 @@ En pantallas táctiles no hay hover: un toque abre la ficha directamente.
 
 Cada fase tiene **qué**, **dónde**, **cómo** y **terminado cuando**. El tamaño es una estimación (S: hasta 2 h; M: 2 a 5 h; L: más de 5 h).
 
-**Quién hace qué:** `gale-earth/` es del compañero. Para no pisarse, el código nuevo va en archivos nuevos que `_ensamblar.py` suma (`portada.js`, `mision.js`). En los archivos que ya existen solo se agregan enganches cortos, y todo se anota en `docs/notas.md`.
+**Quién hace qué:** `maps-in-mars/` es del compañero. Para no pisarse, el código nuevo va en archivos nuevos que `_ensamblar.py` suma (`portada.js`, `mision.js`). En los archivos que ya existen solo se agregan enganches cortos, y todo se anota en `docs/notas.md`.
 
 ### Fase 0 · Arreglos rápidos sobre lo que ya está publicado (S–M) — para la demo
 Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
@@ -210,16 +210,16 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 | 0.2 | **Atrás e Inicio → paso 2** (H8, H13) | `__portada.atras()`: `ir(2)` en lugar de `zona(zonaAct)`. Al volver de Gale Earth no se abre la portada. | Desde cualquier modo, Inicio o Atrás muestra "¿Cómo querés prospectar Gale?". |
 | 0.3 | **Ningún panel antes de tiempo** (H5, H8) | Clase `body.cargando` que oculta `#panel`, `#ctrl`, `#derecha` y `#flot` hasta `__portada.listo`. Con `#desde-gale-earth`, la cortina `#transicion` queda hasta que haya terreno. | No se ve "Cargando three.js…" con paneles vacíos. |
 | 0.4 | Portada **no seleccionable** (H9) | CSS: `.portada { user-select: none }`, salvo `input` y `details`. | Arrastrar sobre el título no lo resalta. |
-| 0.5 | Gale Earth: **Marte en cuadro** en el vuelo (H2) | `gale-earth/_cuerpo.html`, `irA('gale')` y `irA('hoy')`: vuelo en dos tramos, o `pitchAdjustHeight`. | En ningún cuadro del vuelo se ve solo el espacio. |
+| 0.5 | Gale Earth: **Marte en cuadro** en el vuelo (H2) | `maps-in-mars/_cuerpo.html`, `irA('gale')` y `irA('hoy')`: vuelo en dos tramos, o `pitchAdjustHeight`. | En ningún cuadro del vuelo se ve solo el espacio. |
 | 0.6 | Gale Earth: **hover en los pines** (H4) | Un `MOUSE_MOVE` nuevo (3.3) en `interfaz.js`. | Mano, agrandado y etiqueta sobre pozos, sitios y zonas. |
 | 0.7 | **Transición Mars Earth** sin corte (H1) | `irMarsEarth()` pasa `#desde-portada`. Gale Earth, con ese hash, muestra la pantalla de carga con el estilo de la portada (fondo y Marte a la derecha) y arranca con el mismo encuadre. | El cambio de página se percibe como un fundido, no un corte a negro. |
 | 0.8 | **Un solo botón por cosa** (H6, H7) | En GALE-3D, "Marte completo" hace lo mismo que "Gale Earth ↗" y queda uno solo: "Mars Earth". | No hay dos Martes enteros. |
 | 0.9 | Fusionar la rama y verificar H12 en la publicación | PR de `david/union-gale-earth` (Base Gale y GX-2) a `main`. | En el sitio publicado, Caminar no muestra "Llegaste a S". |
 
 ### Fase 1 · Los datos de la misión para Gale Earth (M)
-> ✅ hecha: `herramientas/exportar_mision.py` → `gale-earth/datos/mision.json`.
+> ✅ hecha: `herramientas/exportar_mision.py` → `maps-in-mars/datos/mision.json`.
 
-- **Qué:** un archivo `gale-earth/datos/mision.json` con todo lo de la zona de hoy, en longitud y latitud:
+- **Qué:** un archivo `maps-in-mars/datos/mision.json` con todo lo de la zona de hoy, en longitud y latitud:
   - **paradas:** id, letra, color, nombre, motivo científico, quién va, suelo, CRISM y radiación;
   - **rutas A, B y C y expedición E1–E5:** línea más una muestra cada 5 m con distancia, elevación, pendiente, cielo tapado y arena;
   - **Base Gale:** en la **Zona 2** de `data/base/sitios_base.geojson` (la que tiene `elegida: true`), con su rumbo (la esclusa mira al punto más cercano del recorrido) y sus partes, con textos y fuentes;
@@ -231,12 +231,12 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 - **Cómo:** con las muestras por tramo, el visor y los avisos ya no necesitan la grilla de 2 m en el navegador.
 - **Terminado cuando:**
   - el JSON pesa menos de 2 MB;
-  - `gale-earth/armar.py` lo mete en la página y avisa si falta;
+  - `maps-in-mars/armar.py` lo mete en la página y avisa si falta;
   - la base cae en la Zona 2, a menos de 2 m de donde está en GALE-3D.
 
 ### Fase 2 · La portada dentro de Gale Earth (M)
 - **Qué:** la portada (tres pasos, cuatro entradas, modos agrupados) pasa a ser una capa `#portada` encima del globo de Cesium. El Marte de la derecha es el globo de Gale Earth, corrido con `viewer.camera.frustum.xOffset = -0.35`.
-- **Dónde:** `gale-earth/portada.js` (nuevo) más el HTML y el CSS en `cabecera.html`, copiados de la portada de `escena3d/plantilla.html` y adaptados a las variables de color de Gale Earth.
+- **Dónde:** `maps-in-mars/portada.js` (nuevo) más el HTML y el CSS en `cabecera.html`, copiados de la portada de `escena3d/plantilla.html` y adaptados a las variables de color de Gale Earth.
 - **Cómo:**
   - la pantalla de carga (`#cargando`) se funde con la portada: mismo fondo, y "Cargando Marte en 3D…" en el lugar del estado;
   - las transiciones son T1, T2, T3 y T8;
@@ -244,14 +244,14 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 - **Terminado cuando:** abrir la URL, elegir Mars Earth y volver con Atrás no cambia de página y no tiene cortes.
 
 ### Fase 3 · "Curiosity hoy" completo (M)
-> ✅ hecha: en `gale-earth/mision.js`.
+> ✅ hecha: en `maps-in-mars/mision.js`.
 
 - **Qué:** con el chip "Curiosity hoy" se ven, en Gale Earth:
   - las paradas, como pines con su letra y color;
   - las rutas A, B y C, como líneas pegadas al suelo con flechas;
   - la expedición E1–E5;
   - la Base Gale, como pin hasta la fase 4.
-- **Dónde:** `gale-earth/mision.js` (nuevo).
+- **Dónde:** `maps-in-mars/mision.js` (nuevo).
   - Rutas: `polyline` con `clampToGround: true` y `PolylineArrowMaterialProperty` o una cinta propia.
   - Pines: `billboard` con `heightReference: CLAMP` (ya definido en `_cuerpo.html`) y `properties.tipo` de `'parada'`, `'expe'` o `'basegale'`.
   - Clics: se suman al `LEFT_CLICK` existente.
@@ -263,7 +263,7 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 
 - **Qué:** Curiosity, el GX-2, el astronauta y la Base Gale como modelos `.glb` sobre el terreno de 1 m de Gale Earth.
 - **Dónde:**
-  - Exportación: una página `escena3d/exportar_modelos.html` que arma cada modelo con el mismo código de la escena (`malla`, `MAT`, `RN`, la base) y lo baja con `GLTFExporter` de three.js. Se corre una vez con Playwright y guarda `gale-earth/capas/modelos/*.glb`.
+  - Exportación: una página `escena3d/exportar_modelos.html` que arma cada modelo con el mismo código de la escena (`malla`, `MAT`, `RN`, la base) y lo baja con `GLTFExporter` de three.js. Se corre una vez con Playwright y guarda `maps-in-mars/capas/modelos/*.glb`.
   - En Cesium: `viewer.entities.add({ model: { uri, minimumPixelSize: 48, heightReference: CLAMP }, orientation })`.
 - **Animaciones** sin rehacer los modelos:
   - se nombran las piezas al exportar (`rueda_0` a `rueda_5`, `pierna_i`, `pierna_d`, `brazo_i`, `brazo_d`, `sarta`, `carro`, `ala_i`, `ala_d`, `rotor_0`, `rotor_1`, `lidar`);
@@ -277,7 +277,7 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 > ✅ hecha: rutas A, B y C, caminatas y expedición, 4 min, en pausa al entrar, con paradas y cámara de seguimiento.
 
 - **Qué:** el modo que hoy es "Recorrido guiado", "Seguir al rover", "Caminar" y "Expedición", ahora dentro de Gale Earth.
-- **Dónde:** `gale-earth/mision.js`. Se porta la lógica de `ubicarFP`, `paradasDeRuta`, `llegadaParada` y `tickExpe` de la escena.
+- **Dónde:** `maps-in-mars/mision.js`. Se porta la lógica de `ubicarFP`, `paradasDeRuta`, `llegadaParada` y `tickExpe` de la escena.
 - **Cómo:**
   - **posición:** `SampledPositionProperty` a lo largo de la ruta, con la distancia de `mision.json`;
   - **velocidad:** el reloj de Cesium (`viewer.clock.multiplier = largo de la ruta / segundos elegidos`), así 4 min son 4 min;

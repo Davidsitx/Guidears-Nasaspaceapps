@@ -2,6 +2,110 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 noche · David (con Claude) · README: INSTALACIÓN EN INGLÉS Y CASTELLANO
+- `david/union-gale-earth` avanzó hasta `companero/maps-in-mars` (sin conflictos: partía de nuestro último commit). El README describe Maps in Mars (`maps-in-mars/`).
+- **README de la raíz:**
+  - **Probar en línea:** GitHub Pages.
+  - **Instalar en la compu:** requisitos, ZIP o Git, y teselas desde el dataset público de Hugging Face. Los `.zip` están en la raíz del dataset; `snapshot_download` con `local_dir='teselas'` los deja en `maps-in-mars/teselas/`.
+  - **Uso:** arrancar con `abrir.bat` o `servir.py`, lista para comprobar, celulares en el mismo Wi-Fi, túnel de Cloudflare, actualizar.
+  - **Al final:** problemas frecuentes, otras apps del repo y notas para desarrollar.
+  - Va en inglés para el jurado y en castellano abajo. "Contents" quedó al día con las carpetas actuales.
+- **Falta:** fusionar a `main` para que el README y el ZIP de `main` muestren Maps in Mars. Comprobar el comando de Hugging Face en una PC con internet (desde acá no hay acceso a huggingface.co).
+
+## 2026-11-15 noche · compañero (con Claude) · PLANIFICADOR DE MISIÓN, WIKI TRABAJADA, DÍA Y NOCHE EN VIVO Y ARREGLOS
+- **Planificador de misión (`maps-in-mars/planificador.js`, nuevo; se abre con "Nuevo recorrido"):** barra vertical de herramientas (mano, puntos de ruta, pin con nota, medir, pincel, rectángulo, círculo, borrar, deshacer). Punto 0 = Base Gale; los demás en el orden en que se ponen; tocar una perforación (o elegirla de la lista) la toma como punto. La ruta más segura sale del A* del PMR, tramo por tramo, a pie o en PMR (10 km/h). Muestra distancia, tiempo en marcha y en paradas (paradas de 1 h por defecto, editable por punto; supuesto), velocidad media, dosis (marcha + paradas; sin blindaje del vehículo, cota superior), energía y % de batería, subida/bajada, pendiente máxima, punto más lejano y avisos. Cada punto tiene nota. Pincel cerrado, rectángulo y círculo dan área y medidas.
+- **Proyectos guardados** en el navegador (`localStorage`: siguen al actualizar la app) y exportables/importables como JSON. **Caminos candidatos:** al terminar un recorrido simulado que vuelve a la base, el camino se guarda como candidato a camino seguro, se dibuja en verde y el A* lo prefiere (−30 % de costo, cambio chico en `pmr.js`).
+- **Manejo a mano** también para el rover (Curiosity o GX-2, tiempo ×30) y el PMR, no solo el astronauta. En la barra de la misión, tocar "Curiosity" o "GX-2" lleva al rover y ofrece manejarlo o seguir la ruta A (antes solo cambiaba el modelo y parecía que no hacía nada).
+- **Wiki:** la tarjeta "Temas para futuras misiones" (documento interno, "no tratado") pasa a **"Lo que encontramos en los datos"**: análisis hechos con los datos (agua que sale bajo 300 °C en 34 de 37 pozos; margen mediano de 303 °C antes del primer gas ácido; 8 pozos con agua fácil y limpia según tres criterios; O₂+HCl; NO; metales y fósforo; correlación con la altura: SO₃ 0,48, amorfo 0,59, arcillas −0,02). Script: `maps-in-mars/herramientas/analisis_wiki.py` → `datos/analisis.json`. Nueva **"Todas las fuentes consultadas"** (84 enlaces de `docs/fuentes.md` y `docs/fuentes-enlaces.md`, por sitio, con filtro) → `datos/fuentes_consultadas.json`. Se sacó la mención a `armar_biblioteca.py` de la vista.
+- **Día y noche:** queda **en vivo** y prendido de entrada (Mars24), más suave de cerca para que el terreno se lea; se puede apagar en Capas. La capa de radiación suma "Ahora": usa día o noche según la hora real en Gale (también se puede fijar a mano).
+- **Arreglos:** la barra de la misión ya no se pisa con la línea de tiempo (abrir una cierra la otra); los nombres de naves y lugares del otro lado del planeta se ocultan (antes se veían a través de Marte); lo dibujado en el planificador no se ve desde la órbita.
+
+## 2026-11-15 tarde-noche · compañero (con Claude) · FLUIDEZ 2, CARGA CON MARTE GIRANDO, TUTORIAL, BOTONES Y PMR
+- **Carga:** Marte gira detrás del logo mientras bajan las teselas y los datos de la misión (barra de avance real). Con todo listo frena con Gale de frente, se aclara y la cámara baja al cráter desde ahí: el primer vuelo ya no arranca a medio cargar. Durante la carga no se muestran órbitas ni carteles (`introGiro` en `_cuerpo.html`).
+- **Tutorial (`maps-in-mars/tutorial.js`, nuevo):** la primera vez, al llegar a Gale, pregunta si querés ver cómo se usa. Pantalla oscura con un hueco que ilumina cada parte (13 pasos: buscador, 49 perforaciones, nuevo recorrido, nueva misión, misión hasta hoy, sitios, capas, wiki, historia, tour, ajustes). Teclas ← → Enter Esc.
+- **Ajustes (antes "Motor"):** ver el tutorial, empezar la presentación desde cero, calidad (automática / alta / fluida), idioma y, abajo, el motor del globo.
+- **Fluidez (todo en `maps.js`):** (1) calidad automática: si el 75 % de los cuadros tarda más de 28 ms, baja el antialias (4 → 2 → 1) y después la resolución al 80 %; si sobra, vuelve a subir. (2) Las líneas pegadas al suelo se dibujan simplificadas (Douglas-Peucker, 0,8 m): eran más de 15.000 vértices y es de lo que más pesa al moverse; los datos de las rutas no cambian. (3) Lo de antes (menos detalle mientras la cámara se mueve) sigue.
+- **Pines del otro lado de Marte (tour y vista desde lejos):** los pines sin prueba de profundidad se veían a través del planeta; ahora, si quedan detrás del horizonte, el globo los tapa (mismo criterio que los topónimos).
+- **Cámara en los recorridos:** rueda para alejarse hasta ~14 km y ver el recorrido entero (cuanto más lejos, más desde arriba), arrastrar para girar e inclinar, doble clic para volver. En "Ojos", la rueda pasa a "Detrás".
+- **Botones:** arriba, "Misión Curiosity" pasa a **"Nueva misión"** (rutas planificadas). Arriba a la derecha, **"Misión Curiosity · hasta hoy"**: recorrido real, 49 perforaciones y línea de tiempo. **"49 perforaciones"** ahora vuela al recorrido. En el riel, **"Base" pasa a "Sitios"** (análisis de sitios, vuela a verlos todos, con tarjeta a la Base Gale); la Base Gale en sí queda en la barra de la misión.
+- **PMR (área de David, cambios chicos en `pmr.js` y `herramientas/ruta_base.py`):** (1) el A* se pegaba al borde oeste del terreno con datos (por eso el regreso y la ruta T parecían ir "por fuera"): ahora cobra más a menos de 30 celdas (360 m) del borde. Ruta T recalculada: 13,78 km (antes 14,11). (2) El PMR estaciona a 40 m de cada parada (antes 130 m, quedaba lejos); 130 m solo en la estación magnética (magnetómetro a más de 100 m del vehículo). Supuestos, marcados como provisorios.
+
+## 2026-11-15 noche · compañero (con Claude) · CARPETA maps-in-mars/, TOUR SIN SALTOS Y REVISIÓN
+- **La carpeta `gale-earth/` pasa a llamarse `maps-in-mars/`** (pedido del equipo: lo ve el jurado). Se actualizaron las rutas en la entrada de la raíz, la escena clásica (`escena3d/plantilla.html` y `armar.py`), las herramientas (`exportar_mision.py`, `ruta_base.py`, `terreno_pmr.py`, `travesia_datos.py`, `unificar_pozos.py`, `globo.py`), `.gitignore` y los documentos vivos. `servir.py` acepta los dos prefijos (`/maps-in-mars/` y el viejo `/gale-earth/`). No cambian: el dataset de Hugging Face `gale-earth-teselas`, la marca `#desde-gale-earth` ni la caché del trabajador de servicio. **David: si tenés cambios en `gale-earth/`, git los lleva solo al fusionar (detecta el cambio de nombre); los scripts nuevos tienen que apuntar a `maps-in-mars/`.**
+- **Tour: los "saltos" sobre Gale.** Medido cuadro a cuadro: en el paso 3 la cámara frenaba en el aire entre tramo y tramo (esperaba la altura del terreno de cada punto) y cada vuelo encadenado subía y bajaba 1–2 km. Ahora todas las alturas se piden juntas al empezar, y el paso 3 y el 8 son un único vuelo continuo por una curva suave (Catmull-Rom, `tCamino` en `tour.js`), con arranque y frenado suaves. El paso 3 sigue 13 puntos del recorrido real. En el paso 8 la cámara miraba hacia atrás (rumbo invertido): corregido. Las rutas se dibujan mientras se ve la base, no al llegar.
+- **Otros arreglos:** el detalle del terreno en reposo ya no puede quedar bajo si el tour empieza con la cámara en movimiento; si se corta el tour, vuelven las órbitas y el estado de "Misión Curiosity"; "Nuevo recorrido" muestra u oculta tu recorrido al tocarlo de nuevo; la pastilla del reproductor dice "Tú/You" en vez de "U1"; título de la raíz y README con el nombre nuevo; la pendiente de la base en el tour va marcada como cálculo propio.
+- **Revisión (sin errores en consola, en inglés y castellano):** rutas A, B, pareja, caminata C, T, expedición (rover y a pie), guía del PMR, manejo libre, pestañas, nuevo recorrido con ruta más segura y astronauta a mano.
+- **Queda a decidir (área de David):** la escena clásica todavía dice "GALE-3D" en su título y portada, y la raíz enlaza a ella.
+
+## 2026-11-15 tarde (3) · compañero (con Claude) · MAPS IN MARS: BASE EN EL MAPA, NUEVO RECORRIDO, ASTRONAUTA A MANO, TOUR Y FLUIDEZ
+- **Pidió:** tomar la copia del Escritorio (`Marte/`) como punto de partida, y una tanda de mejoras. La copia del Escritorio resultó idéntica a `origin/main` (mismos md5) más los zip de teselas: no había referencias nuevas que traer.
+- **Hizo (casi todo en el archivo nuevo `gale-earth/maps.js`, que envuelve funciones de `mision.js` y `pmr.js` sin cambiarlas; `_ensamblar.py` lo suma al final):**
+  - **Nombre del producto: Maps in Mars** (antes Gale Earth) en título, carga, logo, manifiesto, tour, diccionarios, `mision.json` y su exportador, escena clásica y entrada de la raíz. La carpeta sigue llamándose `gale-earth/` para no romper rutas.
+  - **Botón "Base" del panel:** además de la tabla de sitios, vuela a la Base Gale (Zona 2) y deja su pin visible; tarjeta arriba que abre la ficha de la base.
+  - **Interruptores de arriba:** "49 perforaciones" (igual), **"Nuevo recorrido"** (nuevo) y **"Misión Curiosity"** (antes "Recorrido nuevo": prende nuestras rutas y entra a Curiosity hoy).
+  - **Nuevo recorrido:** el usuario pone pines (1 o más, hasta 20) dentro del terreno de 12 m; se unen en línea recta en su orden, desde Curiosity hoy o desde la Base Gale, a pie o en PMR, con vuelta opcional. Cada tramo se colorea (firme / difícil: arena o a menos de 5° del límite / peligroso: más de 20° / sin datos) y salen avisos con metros y pendiente máxima, más tiempo de salida y distancia al refugio (EVA 6 h, 30 min; supuestos de `parametros`). Botón **"Ruta más segura"** (A* de `pmr.js` por los mismos pines) y **"Recorrer ▶"** (lo recorre con el reproductor de la misión; cada pin es una parada).
+  - **Por qué había más de una línea al caminar:** B y las caminatas de C son ida y vuelta, y la vuelta es un tramo calculado aparte (la ruta más segura desde la última parada al PMR); medido en `mision.json`, B se separa hasta 42 m y C-cam1 hasta 72 m. Además, en la guía del PMR se veían todos los tramos juntos. Ahora: **ida llena, vuelta punteada**, leyenda en el reproductor, y en la guía solo se ve el tramo en curso.
+  - **Misión en pareja (y toda caminata):** botón **"Manejar al astronauta"** (W A S D / flechas / pad, Shift ×10). Frena en pendientes > 20°, va más lento en arena, sigue contando dosis y tiempo, avisa al pasar 30 min del PMR o el 75 % de la salida; visor y pantalla del PMR se actualizan. Al soltarlo vuelve a la ruta en el punto más cercano.
+  - **Tour (9 pasos):** paso 7 paneo de 150° alrededor de la Base Gale; paso 8 los recorridos nuevos parada por parada (S, B1, A2, A4, E2, E3, E5) con sus nombres de los datos.
+  - **Fluidez:** mientras la cámara se mueve se pide menos detalle (error de pantalla 2,6 px en vez de 1,5) y se vuelve al detalle completo 350 ms después de parar; `loadingDescendantLimit` 40 → 20; `?fps` muestra cuadros por segundo para medir.
+- **Para David:** no toqué `mision.js` ni `pmr.js` salvo el cambio de nombre en textos. Los envoltorios están en `maps.js` (miVisibles, miCapa, miModo, miSalirModo, miTick). Si cambiás esos nombres, avisame.
+- **Falta:** probar en la PC con `abrir.bat` (en el contenedor se probó sin internet, con WebGL por software); medir FPS antes/después con `?fps`.
+
+## 2026-11-15 mediodía (2) · Compañero (con Claude) · CIERRE DE LO ABIERTO
+- **Base ODR:** desde la PC del compañero no responde, ni directo ni por su DOI (10.48484/JN48-YW52 redirige al mismo sitio). Lo demás de NASA abre bien.
+  - Respaldo agregado: cada ficha de la Wiki con CheMin tiene ahora el botón **"Minerales en el PDS de NASA"**, que abre el archivo oficial de CheMin (`mslcmn_1xxx/data/rdr5/`). Se verificó que los 59 archivos existen.
+- **Nevado Sajama 2:** el PDS todavía no publicó su mineralogía; la última es la de Nevado Sajama (sol 4720). La app está al día.
+- **Jezero:** índices regenerados en la PC (`teselas/nube/manifest.json` ya incluye `terreno_jezero_n10-13.zip` y el rango de Jezero en `meta.json`). Falta que el compañero corra `subir_hf.bat`, porque pide su token.
+- **PR #10** abierto a main: `companero/verificacion-unificada`.
+
+## 2026-11-15 mediodía · Compañero (con Claude) · UNA SOLA VERDAD PARA LOS 49 POZOS + FUENTES SECUNDARIAS REEMPLAZADAS
+- **Fuente única de los pozos: la Wiki (`gale-earth/datos/biblioteca.json`).**
+  - `herramientas/unificar_pozos.py` copia el hallazgo, la fuente y la marca de verificado a:
+    - `data/curiosity/perforaciones_hallazgos.json`: la unidad y las campañas de David quedan igual;
+    - `data/curiosity/perforaciones.geojson`: la escena 3D clásica;
+    - `gale-earth/datos/entrada/perforaciones.geojson`: los pines del globo y la guía del PMR.
+  - Con `--revisar` solo compara. `gale-earth/armar.py` lo corre solo y avisa si algo dejó de coincidir.
+  - `herramientas/travesia_datos.py` ahora lee el hallazgo y la fuente de la Wiki, así que regenerar la escena no vuelve atrás.
+- **Escena 3D clásica rearmada:** 49 de 49 verificados. Ya no aparece "a verificar" en el viaje por soles, los avisos de llegada ni la perforación más cercana. La dosis de respaldo pasa de 0,67 a 0,64, como en `parametros.json`.
+- **Fuentes secundarias reemplazadas por oficiales:**
+  - récord de 31° en Greenheugh: comunicado de NASA/JPL del 20/3/2020, en lugar de Space.com;
+  - por qué se eligió Gale: Golombek et al. 2012 (doi:10.1007/s11214-012-9916-y) y NASA del 12/4/2012, en lugar de Smithsonian y Spaceflight Now;
+  - yardangs: PIA25629;
+  - polvo en los trajes: DOI 10.1073/pnas.2620747123.
+  - Queda Space.com solo como apoyo de Aeolus, que tiene también el comunicado de NASA.
+- **Rama `companero/verificacion-unificada`**: sale de main (PR #9) y suma todo lo de esta mañana.
+- **A la PC le pasé la versión unida:** `plantilla.html`, `servir.py`, `datos/mision.json`, terreno y cielo del PMR, modelos `.glb` de la misión y logos.
+- **Falta (David):**
+  - revisar que los textos de la Wiki le sirvan para la escena (son los mismos 49, ya verificados);
+  - si hace falta otra redacción, cambiarla en la Wiki y correr `unificar_pozos.py`.
+
+## 2026-11-15 mañana (12) · Compañero (con Claude) · VERIFICACIÓN DE LOS 59 HALLAZGOS DE POZOS + QUÍMICA APXS CORREGIDA + BIBLIOTECA EN INGLÉS
+- **Los 37 "a verificar" de `data/curiosity/perforaciones_hallazgos.json` (David) quedaron verificados.**
+  - Cada uno tiene ahora `verificado: true`, la fecha y su fuente concreta (artículo con DOI o página de NASA).
+  - Textos corregidos:
+    - Quela: el sitio de la medición de RAD quedó confirmado (butte M12, soles 1456-1467; el pozo es del sol 1464).
+    - Aberlady y Kilmarie: no tienen "el récord de arcillas"; el máximo de los 49 es Glen Etive 1, con 34 %.
+    - Glen Etive 1: unidad de arcillas fracturada.
+    - Mary Anning 3: se suma el resultado TMAH publicado en abril de 2026.
+    - Mineral King: es roca de capas **oscuras**, no clara.
+  - **David:** hay que volver a armar la escena para que desaparezca el cartel "a verificar":
+    1. `python herramientas/travesia_datos.py`
+    2. `python escena3d/armar.py`
+- **Los 22 hallazgos de la Biblioteca citados con artículo también están verificados.** Cambios:
+  - fuentes más precisas: Thorpe 2022, Rudolph 2022, Bennett 2023, Chipera 2023 (Canaima, en lugar de "Bristow y Chipera, AHED") y Williams 2026;
+  - Edinburgh: 7 % de esmectita, no 10 %;
+  - Rock Hall: Cl 2,3 %;
+  - Stoer: "más hematita de los 49" en lugar de "más óxido de hierro de la misión".
+- **Error de datos encontrado y corregido: química APXS cruzada en la Biblioteca.**
+  - Greenhorn mostraba la química de Big Sky; Oudam, la de Okoruso; Nevado Sajama, la de Tesoro del Pangal.
+  - Ahora los 27 pozos con diferencias toman el producto RDR oficial del PDS, y el objetivo sale del registro de actividades del PDS (`extras/msl_apxs_activities_*.csv`).
+  - Los textos ya traían los valores correctos (por ejemplo, Buckskin 73,7 % de SiO2 y Greenhorn 11,9 % de SO3).
+  - Para que no vuelva a pasar, `armar_biblioteca.py` aplica `datos/apxs_rdr_correcciones.json` y `datos/hallazgos_verificados.json`.
+- **Biblioteca en inglés:** las fichas de pozo seguían con títulos y notas en castellano.
+  - Se agregaron unas 60 entradas al diccionario.
+  - `idioma.js` ahora tiene reglas por frase para los textos que se repiten con distintos números (`datos/idioma_en_reglas.json`, que `_ensamblar.py` inyecta en la página).
+- Copiado a la PC y rearmado.
+
 ## 2026-11-15 tarde · David (con Claude) · PMR, GUÍA DE LA EXPEDICIÓN, VISOR + PANTALLA, INTERRUPTORES, WIKI Y LOGO
 - **Pidió David:** tomar como referencia la lámina y la guía de estilo (ahora en `docs/desarrollo/guia-de-estilo.md` y `docs/img/estilo/lamina_estilo.html`) para los pines; no tocar la columna izquierda ni los controles de abajo a la derecha; sí las barras de arriba y abajo.
 - **Hizo (todo en `gale-earth/mision.js` y el archivo nuevo `gale-earth/pmr.js`; `_ensamblar.py` suma los dos):**
@@ -111,7 +215,7 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
 - Arreglado: la página no terminaba de cargar porque la base usaba una variable de otro bloque (`R is not defined`). Ahora `BASE.radio`.
 - Falta: ver `docs/desarrollo/pendientes.md` (ítems 13 a 15).
 ## 2026-11-15 mañana (11) · Compañero (con Claude) · AUDITORÍA DE GALE EARTH (ERRORES, FUENTES, ACTUALIDAD)
-- Informe completo: `docs/auditoria_gale_earth_2026-11-15.pdf`.
+- Informe: reemplazado por `docs/informe_verificacion_2026-11-15.pdf` (versión final del mediodía).
 - Barrido automático por 150 pantallas: 0 errores de JavaScript.
 - Arreglado:
   - enlace THEMIS 404 → stac.astrogeology.usgs.gov/docs/data/mars/themis_controlled_mosaics/;

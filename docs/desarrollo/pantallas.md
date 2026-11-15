@@ -4,7 +4,7 @@ Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)
 
 ## 0. Gale Earth · Curiosity hoy: la pantalla única (desde el 15/11)
 
-![Curiosity hoy en Gale Earth](capturas/gale-earth/01_curiosity_hoy.jpg)
+![Curiosity hoy en Gale Earth](capturas/maps-in-mars/01_curiosity_hoy.jpg)
 
 - **Entrada:** el botón **"Misión Curiosity"** (arriba a la derecha), el chip "Curiosity hoy" o el buscador. No cambia de página: el globo vuela a la zona de hoy, abre el panel **Curiosity hoy** (cómo recorrerla, paradas, base y rover) y muestra la **barra de la misión** abajo.
 - **En el mapa:**
@@ -15,7 +15,7 @@ Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)
   - Al pasar el mouse por cualquier cartel (también los de Gale Earth) aparece la mano, se agranda y dice qué es; un toque abre la ficha en el panel.
 - **Barra:** En pareja · Rover ruta A · A pie ruta B · Tripulado GX-3 · Expedición sur · Base Gale · Curiosity / GX-2 · Todo.
 
-![Rover por la ruta A](capturas/gale-earth/03_rover_ruta_A.jpg)
+![Rover por la ruta A](capturas/maps-in-mars/03_rover_ruta_A.jpg)
 
 - **Recorridos:**
   - la cámara vuela a la salida y aparece **"Listos para salir"**; nada se mueve hasta tocar "▶ Salir";
@@ -24,17 +24,17 @@ Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)
   - vista desde atrás o con los ojos (a pie);
   - "Salir (Esc)" vuelve a Curiosity hoy.
 
-![Misión en pareja](capturas/gale-earth/04_pareja_casco.jpg)
+![Misión en pareja](capturas/maps-in-mars/04_pareja_casco.jpg)
 
 - **Misión en pareja:**
   - **cámara del casco** del Astronauta 1, con campo visual amplio, que sigue la pendiente;
   - el Astronauta 2 a 6 m;
   - **visor** a la derecha (minimapa, próxima parada, suelo, CRISM, radiación y refugio);
   - **comunicaciones** a la izquierda (Base Gale, Tierra con la demora de la luz y respuestas rápidas).
-![En el celular: misión en pareja y barra de la misión](capturas/gale-earth/10_celular.jpg)
+![En el celular: misión en pareja y barra de la misión](capturas/maps-in-mars/10_celular.jpg)
 
 - **En el celular (390 × 844):** la barra de la misión queda en dos filas (En pareja, Rover ruta A, A pie ruta B y Todo; el resto sigue en el panel Curiosity hoy); el botón "Misión Curiosity" se esconde mientras la misión está abierta; en pareja, las comunicaciones se apoyan siempre arriba del reproductor y el visor se achica para no taparlas.
-![Rover tripulado GX-3 en Gale Earth](capturas/gale-earth/11_gx3_base.jpg)
+![Rover tripulado GX-3 en Gale Earth](capturas/maps-in-mars/11_gx3_base.jpg)
 
 - **Rover tripulado GX-3:** estacionado en la Base Gale; tocarlo abre su ficha, con Alas, Modo cangrejo, Dron y Perforar 2 m animados.
   - **"Tripulado · GX-3"** de la barra pregunta desde dónde arranca la misión:
@@ -44,20 +44,20 @@ Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)
   - **Caminatas:** en A2, A3 y A4 aparece **"Salir a caminar"**. La caminata sale por los suitports y, al volver, la ruta C sigue desde esa parada.
   - **Misión en pareja y a pie:** el GX-3 queda estacionado en la salida.
 
-![Ruta T: el GX-3 sale de la base](capturas/gale-earth/12_gx3_ruta_T.jpg)
+![Ruta T: el GX-3 sale de la base](capturas/maps-in-mars/12_gx3_ruta_T.jpg)
 
-![Parada A2: salir a caminar](capturas/gale-earth/13_gx3_parada_caminata.jpg)
-![La caminata sale del GX-3](capturas/gale-earth/14_caminata_desde_gx3.jpg)
-![Vista desde la cabina](capturas/gale-earth/15_gx3_cabina.jpg)
+![Parada A2: salir a caminar](capturas/maps-in-mars/13_gx3_parada_caminata.jpg)
+![La caminata sale del GX-3](capturas/maps-in-mars/14_caminata_desde_gx3.jpg)
+![Vista desde la cabina](capturas/maps-in-mars/15_gx3_cabina.jpg)
 
 ### PMR, guía de la expedición, visor y pantalla (15/11, tarde)
 
-![Interruptores arriba y pines de la lámina](capturas/gale-earth/16_interruptores_pines.jpg)
+![Interruptores arriba y pines de la lámina](capturas/maps-in-mars/16_interruptores_pines.jpg)
 
 - **Arriba, a la derecha del buscador:** "49 perforaciones" y "Recorrido nuevo" (nuestras rutas y paradas). Los dos arrancan apagados para que, al acercarse, no aparezcan todos los pines juntos. El recorrido real de Curiosity sigue en Capas.
 - **Pines:** la forma de la lámina de estilo (`docs/img/estilo/lamina_estilo.html`): círculo con borde oscuro, aro claro, código corto y palito al suelo. Las perforaciones mantienen el color de zona o de mineral que se elija en Capas.
 
-![Guía recomendada del PMR](capturas/gale-earth/17_guia_recomendada.jpg)
+![Guía recomendada del PMR](capturas/maps-in-mars/17_guia_recomendada.jpg)
 
 - **PMR (antes GX-3):** en su ficha y en la barra ("PMR"), cuatro caminos:
   - **Guía recomendada:** seis perforaciones (John Klein, Windjana, Buckskin, Mary Anning, Tapo Caparo, Valle de la Luna), una estación magnética y una sísmica en los tramos más largos, Curiosity hoy (muestras) y vuelta a la base;
@@ -66,29 +66,29 @@ Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)
   - **Manejo libre.**
 - El panel muestra los totales (km, tiempo, dosis, batería, lo más lejos del refugio a pie) y cada tramo. "▶ Empezar" recorre tramo por tramo.
 
-![Tramo de manejo: pantalla del PMR](capturas/gale-earth/18_pmr_tramo_manejo.jpg)
-![Caminata: visor del casco y pantalla del PMR](capturas/gale-earth/19_pmr_caminata_visor.jpg)
+![Tramo de manejo: pantalla del PMR](capturas/maps-in-mars/18_pmr_tramo_manejo.jpg)
+![Caminata: visor del casco y pantalla del PMR](capturas/maps-in-mars/19_pmr_caminata_visor.jpg)
 
 - **Tramos:** el PMR maneja por la ruta más segura (pendiente ≤ 20°, esquiva arena) y estaciona a unos 130 m de la parada. Uno sale por el suitport con el **visor del casco** (arriba a la izquierda, cian); el otro queda en la cabina con la **pantalla del PMR** (derecha): minimapa con relieve (gris = pendiente, ocre = arena, rojo = el PMR no pasa), tramo, pendiente, dosis acumulada, tiempo al refugio, tiempo afuera, cielo tapado, batería, motivo científico y comunicaciones. En la parada se hace el trabajo (perforar 2 m, instalar el instrumento o tomar muestras) y se vuelve al PMR.
 
-![Misión en pareja: visor y pantalla, sin tarjetas encimadas](capturas/gale-earth/20_pareja_visor_pantalla.jpg)
+![Misión en pareja: visor y pantalla, sin tarjetas encimadas](capturas/maps-in-mars/20_pareja_visor_pantalla.jpg)
 
 - **Misión en pareja:** el mismo esquema. Ya no hay un segundo astronauta caminando: el Astronauta 2 está en el PMR. La tarjeta y el reproductor se centran en el lugar libre entre el visor y la pantalla, y la pantalla no tapa los controles de Gale Earth.
 
-![Manejo libre](capturas/gale-earth/21_pmr_manejo_libre.jpg)
+![Manejo libre](capturas/maps-in-mars/21_pmr_manejo_libre.jpg)
 
 - **Manejo libre:** W A S D o flechas (en el celular, los botones del reproductor), Shift o "×10" para ir más rápido. No pasa pendientes de más de 20° y en arena va a la mitad. La pantalla dice cuánto falta al hábitat y qué perforación hay cerca.
 
-![Armar mi guía](capturas/gale-earth/22_armar_guia.jpg)
-![Wiki](capturas/gale-earth/23_wiki.jpg)
+![Armar mi guía](capturas/maps-in-mars/22_armar_guia.jpg)
+![Wiki](capturas/maps-in-mars/23_wiki.jpg)
 
 - **Wiki (antes Biblioteca):** mismo contenido, con "Misión: nuestra propuesta" en la portada. El botón ⧉ del panel abre la ficha en otra pestaña, sin el globo ni las barras.
 - **Celular:** el visor queda arriba, compacto; la pantalla del PMR se abre con el botón "Pantalla del PMR" sobre el reproductor.
 
-![Celular: visor](capturas/gale-earth/24_celular_pareja_visor.jpg)
-![Celular: pantalla del PMR](capturas/gale-earth/25_celular_pantalla_pmr.jpg)
+![Celular: visor](capturas/maps-in-mars/24_celular_pareja_visor.jpg)
+![Celular: pantalla del PMR](capturas/maps-in-mars/25_celular_pantalla_pmr.jpg)
 
-- **Código:** `gale-earth/mision.js`. Datos y modelos con `python herramientas/exportar_mision.py` (sección "Cómo se arma" de `arquitectura.md`). Lo que sigue más abajo es la escena anterior, que queda como **versión clásica**.
+- **Código:** `maps-in-mars/mision.js`. Datos y modelos con `python herramientas/exportar_mision.py` (sección "Cómo se arma" de `arquitectura.md`). Lo que sigue más abajo es la escena anterior, que queda como **versión clásica**.
 
 ## 1. Portada (tapa la escena mientras carga)
 

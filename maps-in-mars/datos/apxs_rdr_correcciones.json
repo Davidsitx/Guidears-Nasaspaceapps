@@ -1,0 +1,2058 @@
+{
+ "fuente": "NASA PDS Geosciences, APXS RDR (msl-m-apxs-4_5-rdr-v1): el óxido de cada pozo leído del producto oficial; el objetivo, del registro de actividades del PDS (extras/msl_apxs_activities_*.csv). Corrige filas de pozos vecinos que la tabla por carpeta había tomado como propias (Greenhorn, Oudam, Nevado Sajama). Verificado el 15/11/2026.",
+ "pozos": {
+  "2": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_440781134rwp04880240366",
+   "sol": 488,
+   "objetivo": "Cumberland_dump_pile_center",
+   "preparacion": "DT",
+   "ox": {
+    "Na2O": [
+     3.01,
+     0.14
+    ],
+    "MgO": [
+     9.32,
+     0.25
+    ],
+    "Al2O3": [
+     8.63,
+     0.19
+    ],
+    "SiO2": [
+     41.13,
+     0.43
+    ],
+    "P2O5": [
+     0.86,
+     0.05
+    ],
+    "SO3": [
+     4.61,
+     0.1
+    ],
+    "Cl": [
+     1.19,
+     0.04
+    ],
+    "K2O": [
+     0.62,
+     0.02
+    ],
+    "CaO": [
+     6.66,
+     0.07
+    ],
+    "TiO2": [
+     0.99,
+     0.03
+    ],
+    "Cr2O3": [
+     0.46,
+     0.03
+    ],
+    "MnO": [
+     0.29,
+     0.04
+    ],
+    "FeO": [
+     21.95,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     932,
+     50
+    ],
+    "Zn": [
+     921,
+     30
+    ],
+    "Br": [
+     66,
+     10
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol00488/apb_440781134rwp04880240366_______p1.csv"
+  },
+  "4": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_466868264rwp07820430216",
+   "sol": 782,
+   "objetivo": "Confidence_Hills_fines_postsieve_dump",
+   "preparacion": "MD",
+   "ox": {
+    "Na2O": [
+     2.65,
+     0.14
+    ],
+    "MgO": [
+     5.55,
+     0.17
+    ],
+    "Al2O3": [
+     9.73,
+     0.29
+    ],
+    "SiO2": [
+     48.13,
+     0.54
+    ],
+    "P2O5": [
+     1.02,
+     0.07
+    ],
+    "SO3": [
+     4.86,
+     0.08
+    ],
+    "Cl": [
+     0.41,
+     0.02
+    ],
+    "K2O": [
+     0.98,
+     0.04
+    ],
+    "CaO": [
+     4.58,
+     0.06
+    ],
+    "TiO2": [
+     1.13,
+     0.05
+    ],
+    "Cr2O3": [
+     0.39,
+     0.01
+    ],
+    "MnO": [
+     0.37,
+     0.02
+    ],
+    "FeO": [
+     19.83,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     928,
+     50
+    ],
+    "Zn": [
+     2107,
+     65
+    ],
+    "Br": [
+     40,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol00782/apb_466868264rwp07820430216_______p1.csv"
+  },
+  "5": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_476905000rwp08950450000",
+   "sol": 895,
+   "objetivo": "Mojave2_postsieve_dump",
+   "preparacion": "MD",
+   "ox": {
+    "Na2O": [
+     3.01,
+     0.14
+    ],
+    "MgO": [
+     4.55,
+     0.17
+    ],
+    "Al2O3": [
+     11.43,
+     0.29
+    ],
+    "SiO2": [
+     49.48,
+     0.54
+    ],
+    "P2O5": [
+     1.29,
+     0.07
+    ],
+    "SO3": [
+     6.27,
+     0.08
+    ],
+    "Cl": [
+     0.43,
+     0.02
+    ],
+    "K2O": [
+     0.73,
+     0.02
+    ],
+    "CaO": [
+     4.33,
+     0.06
+    ],
+    "TiO2": [
+     1.19,
+     0.05
+    ],
+    "Cr2O3": [
+     0.37,
+     0.01
+    ],
+    "MnO": [
+     0.4,
+     0.02
+    ],
+    "FeO": [
+     16.11,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     1032,
+     55
+    ],
+    "Zn": [
+     2204,
+     70
+    ],
+    "Br": [
+     65,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol00895/apb_476905000rwp08950450000_______p1.csv"
+  },
+  "7": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_494397188rwp10920491876",
+   "sol": 1092,
+   "objetivo": "Buckskin_post_sieve_dump_twk_corrected",
+   "preparacion": "MD",
+   "ox": {
+    "Na2O": [
+     2.08,
+     0.07
+    ],
+    "MgO": [
+     0.82,
+     0.83
+    ],
+    "Al2O3": [
+     5.66,
+     0.19
+    ],
+    "SiO2": [
+     73.65,
+     0.75
+    ],
+    "P2O5": [
+     1.25,
+     0.07
+    ],
+    "SO3": [
+     4.8,
+     0.08
+    ],
+    "Cl": [
+     0.29,
+     0.01
+    ],
+    "K2O": [
+     0.96,
+     0.04
+    ],
+    "CaO": [
+     3.05,
+     0.04
+    ],
+    "TiO2": [
+     1.57,
+     0.05
+    ],
+    "Cr2O3": [
+     0.1,
+     0.01
+    ],
+    "MnO": [
+     0.09,
+     0.02
+    ],
+    "FeO": [
+     5.49,
+     0.07
+    ]
+   },
+   "tr": {
+    "Ni": [
+     133,
+     10
+    ],
+    "Zn": [
+     327,
+     10
+    ],
+    "Br": [
+     59,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol01092/apb_494397188rwp10920491876_______p1.csv"
+  },
+  "8": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_498036607rwp11330500676",
+   "sol": 1133,
+   "objetivo": "Big_Sky_postsieve_dump",
+   "preparacion": "MD",
+   "ox": {
+    "Na2O": [
+     3.08,
+     0.14
+    ],
+    "MgO": [
+     7.49,
+     0.17
+    ],
+    "Al2O3": [
+     11.52,
+     0.29
+    ],
+    "SiO2": [
+     42.95,
+     0.54
+    ],
+    "P2O5": [
+     0.72,
+     0.05
+    ],
+    "SO3": [
+     3.35,
+     0.05
+    ],
+    "Cl": [
+     0.73,
+     0.02
+    ],
+    "K2O": [
+     0.46,
+     0.02
+    ],
+    "CaO": [
+     6.12,
+     0.07
+    ],
+    "TiO2": [
+     1.0,
+     0.03
+    ],
+    "Cr2O3": [
+     0.51,
+     0.01
+    ],
+    "MnO": [
+     0.4,
+     0.02
+    ],
+    "FeO": [
+     21.55,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     543,
+     30
+    ],
+    "Zn": [
+     377,
+     15
+    ],
+    "Br": [
+     377,
+     15
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol01133/apb_498036607rwp11330500676_______p1.csv"
+  },
+  "9": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_504242829rwp12030520000",
+   "sol": 1203,
+   "objetivo": "Greenhorn_postsieve_dump",
+   "preparacion": "DT",
+   "ox": {
+    "Na2O": [
+     2.43,
+     0.14
+    ],
+    "MgO": [
+     1.81,
+     0.08
+    ],
+    "Al2O3": [
+     3.92,
+     0.1
+    ],
+    "SiO2": [
+     53.24,
+     0.54
+    ],
+    "P2O5": [
+     1.15,
+     0.07
+    ],
+    "SO3": [
+     11.92,
+     0.12
+    ],
+    "Cl": [
+     0.46,
+     0.01
+    ],
+    "K2O": [
+     0.3,
+     0.01
+    ],
+    "CaO": [
+     7.8,
+     0.08
+    ],
+    "TiO2": [
+     1.0,
+     0.03
+    ],
+    "Cr2O3": [
+     0.45,
+     0.01
+    ],
+    "MnO": [
+     0.14,
+     0.02
+    ],
+    "FeO": [
+     15.25,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     293,
+     15
+    ],
+    "Zn": [
+     162,
+     5
+    ],
+    "Br": [
+     228,
+     10
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol01203/apb_504242829rwp12030520000_______p1.csv"
+  },
+  "12": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_518980903rwp13690542280",
+   "sol": 1369,
+   "objetivo": "Oudam_presieve_dump",
+   "preparacion": "Postsieve",
+   "ox": {
+    "Na2O": [
+     2.59,
+     0.14
+    ],
+    "MgO": [
+     4.9,
+     0.17
+    ],
+    "Al2O3": [
+     9.4,
+     0.19
+    ],
+    "SiO2": [
+     51.82,
+     0.54
+    ],
+    "P2O5": [
+     0.52,
+     0.05
+    ],
+    "SO3": [
+     4.36,
+     0.05
+    ],
+    "Cl": [
+     0.35,
+     0.01
+    ],
+    "K2O": [
+     0.87,
+     0.04
+    ],
+    "CaO": [
+     4.55,
+     0.06
+    ],
+    "TiO2": [
+     1.05,
+     0.03
+    ],
+    "Cr2O3": [
+     0.32,
+     0.01
+    ],
+    "MnO": [
+     0.22,
+     0.01
+    ],
+    "FeO": [
+     18.74,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     773,
+     40
+    ],
+    "Zn": [
+     1081,
+     35
+    ],
+    "Br": [
+     24,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol01369/apb_518980903rwp13690542280_______p1.csv"
+  },
+  "15": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_530350626rwp14970582046",
+   "sol": 1497,
+   "objetivo": "Sebina_full_drill_tailings",
+   "preparacion": "Fines_fail",
+   "ox": {
+    "Na2O": [
+     2.01,
+     0.14
+    ],
+    "MgO": [
+     4.25,
+     0.17
+    ],
+    "Al2O3": [
+     8.68,
+     0.19
+    ],
+    "SiO2": [
+     46.17,
+     0.54
+    ],
+    "P2O5": [
+     0.61,
+     0.05
+    ],
+    "SO3": [
+     9.13,
+     0.15
+    ],
+    "Cl": [
+     1.06,
+     0.03
+    ],
+    "K2O": [
+     0.83,
+     0.04
+    ],
+    "CaO": [
+     7.13,
+     0.08
+    ],
+    "TiO2": [
+     1.1,
+     0.03
+    ],
+    "Cr2O3": [
+     0.3,
+     0.03
+    ],
+    "MnO": [
+     0.16,
+     0.01
+    ],
+    "FeO": [
+     18.3,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     1024,
+     55
+    ],
+    "Zn": [
+     814,
+     25
+    ],
+    "Br": [
+     104,
+     10
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol01497/apb_530350626rwp14970582046_______p1.csv"
+  },
+  "17": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_588763893rwp21550721316",
+   "sol": 2155,
+   "objetivo": "Stoer_dump_centre",
+   "preparacion": "DT",
+   "ox": {
+    "Na2O": [
+     2.45,
+     0.14
+    ],
+    "MgO": [
+     4.72,
+     0.17
+    ],
+    "Al2O3": [
+     8.75,
+     0.19
+    ],
+    "SiO2": [
+     44.08,
+     0.54
+    ],
+    "P2O5": [
+     0.84,
+     0.05
+    ],
+    "SO3": [
+     7.59,
+     0.1
+    ],
+    "Cl": [
+     0.89,
+     0.02
+    ],
+    "K2O": [
+     0.91,
+     0.04
+    ],
+    "CaO": [
+     6.44,
+     0.07
+    ],
+    "TiO2": [
+     1.03,
+     0.03
+    ],
+    "Cr2O3": [
+     0.34,
+     0.01
+    ],
+    "MnO": [
+     0.17,
+     0.01
+    ],
+    "FeO": [
+     21.53,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     914,
+     50
+    ],
+    "Zn": [
+     847,
+     30
+    ],
+    "Br": [
+     44,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol02155/apb_588763893rwp21550721316_______p1.csv"
+  },
+  "20": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_608734989rwp23800751386",
+   "sol": 2380,
+   "objetivo": "Aberlady_dump_corrected",
+   "preparacion": "DT",
+   "ox": {
+    "Na2O": [
+     2.21,
+     0.14
+    ],
+    "MgO": [
+     5.84,
+     0.17
+    ],
+    "Al2O3": [
+     8.24,
+     0.19
+    ],
+    "SiO2": [
+     41.55,
+     0.43
+    ],
+    "P2O5": [
+     0.81,
+     0.05
+    ],
+    "SO3": [
+     9.89,
+     0.12
+    ],
+    "Cl": [
+     0.95,
+     0.02
+    ],
+    "K2O": [
+     0.6,
+     0.02
+    ],
+    "CaO": [
+     7.03,
+     0.08
+    ],
+    "TiO2": [
+     1.08,
+     0.03
+    ],
+    "Cr2O3": [
+     0.38,
+     0.01
+    ],
+    "MnO": [
+     0.36,
+     0.01
+    ],
+    "FeO": [
+     20.59,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     818,
+     45
+    ],
+    "Zn": [
+     2494,
+     75
+    ],
+    "Br": [
+     211,
+     10
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol02380/apb_608734989rwp23800751386_______p1.csv"
+  },
+  "22": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_621513474rwp25240763002",
+   "sol": 2524,
+   "objetivo": "Glen_Etive_1_dump_centre",
+   "preparacion": "DT",
+   "ox": {
+    "Na2O": [
+     2.18,
+     0.07
+    ],
+    "MgO": [
+     5.74,
+     0.17
+    ],
+    "Al2O3": [
+     8.41,
+     0.19
+    ],
+    "SiO2": [
+     43.87,
+     0.54
+    ],
+    "P2O5": [
+     0.81,
+     0.05
+    ],
+    "SO3": [
+     6.37,
+     0.08
+    ],
+    "Cl": [
+     0.78,
+     0.02
+    ],
+    "K2O": [
+     1.07,
+     0.04
+    ],
+    "CaO": [
+     5.03,
+     0.06
+    ],
+    "TiO2": [
+     1.21,
+     0.05
+    ],
+    "Cr2O3": [
+     0.39,
+     0.01
+    ],
+    "MnO": [
+     0.27,
+     0.01
+    ],
+    "FeO": [
+     23.46,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     1042,
+     55
+    ],
+    "Zn": [
+     1834,
+     60
+    ],
+    "Br": [
+     281,
+     10
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol02524/apb_621513474rwp25240763002_______p1.csv"
+  },
+  "24": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_635812167rwp26850790000",
+   "sol": 2685,
+   "objetivo": "Hutton_dump_corrected",
+   "preparacion": "DT",
+   "ox": {
+    "Na2O": [
+     3.39,
+     0.14
+    ],
+    "MgO": [
+     6.29,
+     0.17
+    ],
+    "Al2O3": [
+     9.29,
+     0.19
+    ],
+    "SiO2": [
+     46.64,
+     0.54
+    ],
+    "P2O5": [
+     1.09,
+     0.07
+    ],
+    "SO3": [
+     3.71,
+     0.08
+    ],
+    "Cl": [
+     0.91,
+     0.02
+    ],
+    "K2O": [
+     0.89,
+     0.04
+    ],
+    "CaO": [
+     5.88,
+     0.07
+    ],
+    "TiO2": [
+     1.07,
+     0.03
+    ],
+    "Cr2O3": [
+     0.31,
+     0.01
+    ],
+    "MnO": [
+     0.27,
+     0.01
+    ],
+    "FeO": [
+     19.94,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     739,
+     40
+    ],
+    "Zn": [
+     1598,
+     50
+    ],
+    "Br": [
+     131,
+     10
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol02685/apb_635812167rwp26850790000_______p1.csv"
+  },
+  "27": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_650635720rwp28520822176",
+   "sol": 2852,
+   "objetivo": "Mary_Anning_dump_2",
+   "preparacion": "DT",
+   "ox": {
+    "Na2O": [
+     2.16,
+     0.07
+    ],
+    "MgO": [
+     6.55,
+     0.17
+    ],
+    "Al2O3": [
+     8.05,
+     0.19
+    ],
+    "SiO2": [
+     42.85,
+     0.54
+    ],
+    "P2O5": [
+     0.73,
+     0.05
+    ],
+    "SO3": [
+     9.6,
+     0.1
+    ],
+    "Cl": [
+     0.91,
+     0.02
+    ],
+    "K2O": [
+     0.88,
+     0.04
+    ],
+    "CaO": [
+     6.32,
+     0.07
+    ],
+    "TiO2": [
+     1.11,
+     0.03
+    ],
+    "Cr2O3": [
+     0.32,
+     0.01
+    ],
+    "MnO": [
+     0.37,
+     0.01
+    ],
+    "FeO": [
+     19.77,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     867,
+     45
+    ],
+    "Zn": [
+     2124,
+     65
+    ],
+    "Br": [
+     56,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol02852/apb_650635720rwp28520822176_______p1.csv"
+  },
+  "28": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_654093310rwp28910822176",
+   "sol": 2891,
+   "objetivo": "Mary_Anning_3_dump_2",
+   "preparacion": "DBA",
+   "ox": {
+    "Na2O": [
+     2.21,
+     0.07
+    ],
+    "MgO": [
+     7.59,
+     0.17
+    ],
+    "Al2O3": [
+     7.83,
+     0.19
+    ],
+    "SiO2": [
+     38.96,
+     0.43
+    ],
+    "P2O5": [
+     1.37,
+     0.07
+    ],
+    "SO3": [
+     12.06,
+     0.12
+    ],
+    "Cl": [
+     0.89,
+     0.02
+    ],
+    "K2O": [
+     0.69,
+     0.02
+    ],
+    "CaO": [
+     7.77,
+     0.08
+    ],
+    "TiO2": [
+     1.06,
+     0.03
+    ],
+    "Cr2O3": [
+     0.36,
+     0.01
+    ],
+    "MnO": [
+     0.66,
+     0.03
+    ],
+    "FeO": [
+     18.22,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     674,
+     35
+    ],
+    "Zn": [
+     1826,
+     55
+    ],
+    "Br": [
+     58,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol02891/apb_654093310rwp28910822176_______p1.csv"
+  },
+  "31": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_673452430rwp31090872578",
+   "sol": 3109,
+   "objetivo": "Bardou_tailings",
+   "preparacion": "",
+   "ox": {
+    "Na2O": [
+     2.38,
+     0.14
+    ],
+    "MgO": [
+     4.62,
+     0.17
+    ],
+    "Al2O3": [
+     8.88,
+     0.19
+    ],
+    "SiO2": [
+     48.35,
+     0.54
+    ],
+    "P2O5": [
+     0.74,
+     0.05
+    ],
+    "SO3": [
+     7.5,
+     0.1
+    ],
+    "Cl": [
+     0.88,
+     0.02
+    ],
+    "K2O": [
+     0.83,
+     0.04
+    ],
+    "CaO": [
+     4.7,
+     0.06
+    ],
+    "TiO2": [
+     1.11,
+     0.03
+    ],
+    "Cr2O3": [
+     0.31,
+     0.01
+    ],
+    "MnO": [
+     0.3,
+     0.01
+    ],
+    "FeO": [
+     19.06,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     966,
+     50
+    ],
+    "Zn": [
+     1545,
+     50
+    ],
+    "Br": [
+     39,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol03109/apb_673452430rwp31090872578_______p1.csv"
+  },
+  "32": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_679659377rwp31780891992",
+   "sol": 3178,
+   "objetivo": "Pontours_dump2",
+   "preparacion": "",
+   "ox": {
+    "Na2O": [
+     2.31,
+     0.14
+    ],
+    "MgO": [
+     5.33,
+     0.17
+    ],
+    "Al2O3": [
+     7.75,
+     0.19
+    ],
+    "SiO2": [
+     42.24,
+     0.43
+    ],
+    "P2O5": [
+     1.2,
+     0.07
+    ],
+    "SO3": [
+     9.53,
+     0.1
+    ],
+    "Cl": [
+     1.46,
+     0.03
+    ],
+    "K2O": [
+     0.79,
+     0.02
+    ],
+    "CaO": [
+     5.12,
+     0.06
+    ],
+    "TiO2": [
+     1.08,
+     0.03
+    ],
+    "Cr2O3": [
+     0.34,
+     0.01
+    ],
+    "MnO": [
+     0.28,
+     0.01
+    ],
+    "FeO": [
+     22.17,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     1090,
+     55
+    ],
+    "Zn": [
+     1664,
+     50
+    ],
+    "Br": [
+     42,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol03178/apb_679659377rwp31780891992_______p1.csv"
+  },
+  "33": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_685614408rwp32460910390",
+   "sol": 3246,
+   "objetivo": "Maria_Gordon_dump2",
+   "preparacion": "",
+   "ox": {
+    "Na2O": [
+     2.17,
+     0.07
+    ],
+    "MgO": [
+     4.45,
+     0.17
+    ],
+    "Al2O3": [
+     7.82,
+     0.19
+    ],
+    "SiO2": [
+     42.48,
+     0.43
+    ],
+    "P2O5": [
+     1.09,
+     0.07
+    ],
+    "SO3": [
+     10.47,
+     0.12
+    ],
+    "Cl": [
+     1.05,
+     0.02
+    ],
+    "K2O": [
+     0.81,
+     0.04
+    ],
+    "CaO": [
+     7.0,
+     0.07
+    ],
+    "TiO2": [
+     1.09,
+     0.03
+    ],
+    "Cr2O3": [
+     0.32,
+     0.01
+    ],
+    "MnO": [
+     0.26,
+     0.01
+    ],
+    "FeO": [
+     20.66,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     1179,
+     60
+    ],
+    "Zn": [
+     1379,
+     45
+    ],
+    "Br": [
+     36,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol03246/apb_685614408rwp32460910390_______p1.csv"
+  },
+  "36": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_719240191rwp36240971734",
+   "sol": 3624,
+   "objetivo": "Canaima_tailings",
+   "preparacion": "",
+   "ox": {
+    "Na2O": [
+     2.19,
+     0.14
+    ],
+    "MgO": [
+     10.68,
+     0.25
+    ],
+    "Al2O3": [
+     6.61,
+     0.19
+    ],
+    "SiO2": [
+     34.22,
+     0.43
+    ],
+    "P2O5": [
+     0.87,
+     0.05
+    ],
+    "SO3": [
+     19.21,
+     0.22
+    ],
+    "Cl": [
+     1.27,
+     0.03
+    ],
+    "K2O": [
+     0.68,
+     0.02
+    ],
+    "CaO": [
+     4.95,
+     0.06
+    ],
+    "TiO2": [
+     0.9,
+     0.03
+    ],
+    "Cr2O3": [
+     0.29,
+     0.01
+    ],
+    "MnO": [
+     0.21,
+     0.01
+    ],
+    "FeO": [
+     17.66,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     839,
+     45
+    ],
+    "Zn": [
+     1025,
+     35
+    ],
+    "Br": [
+     22,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol03624/apb_719240191rwp36240971734_______p1.csv"
+  },
+  "37": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_731932109rwp37671001084",
+   "sol": 3767,
+   "objetivo": "Tapo_Caparo_tailings",
+   "ox": {
+    "Na2O": [
+     1.86,
+     0.14
+    ],
+    "MgO": [
+     7.38,
+     0.17
+    ],
+    "Al2O3": [
+     6.6,
+     0.19
+    ],
+    "SiO2": [
+     37.33,
+     0.43
+    ],
+    "P2O5": [
+     0.4,
+     0.02
+    ],
+    "SO3": [
+     11.2,
+     0.15
+    ],
+    "Cl": [
+     0.52,
+     0.02
+    ],
+    "K2O": [
+     0.39,
+     0.01
+    ],
+    "CaO": [
+     6.58,
+     0.07
+    ],
+    "TiO2": [
+     0.76,
+     0.03
+    ],
+    "Cr2O3": [
+     0.68,
+     0.03
+    ],
+    "MnO": [
+     0.49,
+     0.03
+    ],
+    "FeO": [
+     25.33,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     377,
+     25
+    ],
+    "Zn": [
+     3888,
+     120
+    ],
+    "Br": [
+     37,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol03767/apb_731932109rwp37671001084_______p1.csv"
+  },
+  "38": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_737880019rwp38341010774",
+   "sol": 3834,
+   "objetivo": "Ubajara_tailings",
+   "ox": {
+    "Na2O": [
+     2.18,
+     0.14
+    ],
+    "MgO": [
+     9.5,
+     0.25
+    ],
+    "Al2O3": [
+     7.12,
+     0.19
+    ],
+    "SiO2": [
+     37.75,
+     0.43
+    ],
+    "P2O5": [
+     0.73,
+     0.05
+    ],
+    "SO3": [
+     14.23,
+     0.2
+    ],
+    "Cl": [
+     1.67,
+     0.04
+    ],
+    "K2O": [
+     0.58,
+     0.02
+    ],
+    "CaO": [
+     4.78,
+     0.06
+    ],
+    "TiO2": [
+     0.81,
+     0.03
+    ],
+    "Cr2O3": [
+     0.37,
+     0.03
+    ],
+    "MnO": [
+     0.34,
+     0.03
+    ],
+    "FeO": [
+     19.72,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     787,
+     40
+    ],
+    "Zn": [
+     839,
+     30
+    ],
+    "Br": [
+     28,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol03834/apb_737880019rwp38341010774_______p1.csv"
+  },
+  "40": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_762910996rwp41161060660",
+   "sol": 4116,
+   "objetivo": "Mineral_King_tailings1",
+   "ox": {
+    "Na2O": [
+     6.31,
+     0.2
+    ],
+    "MgO": [
+     9.09,
+     0.25
+    ],
+    "Al2O3": [
+     5.93,
+     0.19
+    ],
+    "SiO2": [
+     29.3,
+     0.32
+    ],
+    "P2O5": [
+     0.92,
+     0.07
+    ],
+    "SO3": [
+     15.59,
+     0.22
+    ],
+    "Cl": [
+     4.2,
+     0.07
+    ],
+    "K2O": [
+     0.49,
+     0.02
+    ],
+    "CaO": [
+     6.88,
+     0.07
+    ],
+    "TiO2": [
+     0.69,
+     0.05
+    ],
+    "Cr2O3": [
+     0.35,
+     0.03
+    ],
+    "MnO": [
+     0.35,
+     0.03
+    ],
+    "FeO": [
+     19.55,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     498,
+     35
+    ],
+    "Zn": [
+     960,
+     30
+    ],
+    "Br": [
+     154,
+     10
+    ]
+   },
+   "asignacion": "confirmado",
+   "url_blog": null,
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol04116/apb_762910996rwp41161060660_______p1.csv"
+  },
+  "41": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_773393209rwp42341072496",
+   "sol": 4234,
+   "objetivo": "Mammoth_Lakes_2_tailings",
+   "ox": {
+    "Na2O": [
+     2.67,
+     0.14
+    ],
+    "MgO": [
+     4.76,
+     0.17
+    ],
+    "Al2O3": [
+     7.69,
+     0.19
+    ],
+    "SiO2": [
+     40.49,
+     0.43
+    ],
+    "P2O5": [
+     0.98,
+     0.07
+    ],
+    "SO3": [
+     13.01,
+     0.15
+    ],
+    "Cl": [
+     1.1,
+     0.03
+    ],
+    "K2O": [
+     0.64,
+     0.02
+    ],
+    "CaO": [
+     5.55,
+     0.06
+    ],
+    "TiO2": [
+     0.96,
+     0.03
+    ],
+    "Cr2O3": [
+     0.37,
+     0.01
+    ],
+    "MnO": [
+     0.24,
+     0.01
+    ],
+    "FeO": [
+     21.3,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     701,
+     40
+    ],
+    "Zn": [
+     797,
+     25
+    ],
+    "Br": [
+     81,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol04234/apb_773393209rwp42341072496_______p1.csv"
+  },
+  "42": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_777479504rwp42801080792",
+   "sol": 4280,
+   "objetivo": "Kings_Canyon_tailings2",
+   "ox": {
+    "Na2O": [
+     2.25,
+     0.14
+    ],
+    "MgO": [
+     3.91,
+     0.17
+    ],
+    "Al2O3": [
+     9.55,
+     0.29
+    ],
+    "SiO2": [
+     48.86,
+     0.54
+    ],
+    "P2O5": [
+     0.88,
+     0.05
+    ],
+    "SO3": [
+     5.11,
+     0.08
+    ],
+    "Cl": [
+     0.85,
+     0.02
+    ],
+    "K2O": [
+     0.86,
+     0.04
+    ],
+    "CaO": [
+     5.15,
+     0.06
+    ],
+    "TiO2": [
+     1.11,
+     0.03
+    ],
+    "Cr2O3": [
+     0.45,
+     0.01
+    ],
+    "MnO": [
+     0.19,
+     0.01
+    ],
+    "FeO": [
+     20.54,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     1083,
+     55
+    ],
+    "Zn": [
+     915,
+     30
+    ],
+    "Br": [
+     29,
+     5
+    ]
+   },
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol04280/apb_777479504rwp42801080792_______p1.csv"
+  },
+  "43": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_803040891rwp45681161944",
+   "sol": 4568,
+   "objetivo": "Altadena_tailings",
+   "ox": {
+    "Na2O": [
+     2.38,
+     0.14
+    ],
+    "MgO": [
+     5.32,
+     0.17
+    ],
+    "Al2O3": [
+     8.25,
+     0.19
+    ],
+    "SiO2": [
+     43.17,
+     0.54
+    ],
+    "P2O5": [
+     1.01,
+     0.07
+    ],
+    "SO3": [
+     6.38,
+     0.1
+    ],
+    "Cl": [
+     0.57,
+     0.02
+    ],
+    "K2O": [
+     0.71,
+     0.02
+    ],
+    "CaO": [
+     5.87,
+     0.07
+    ],
+    "TiO2": [
+     1.08,
+     0.03
+    ],
+    "Cr2O3": [
+     0.42,
+     0.03
+    ],
+    "MnO": [
+     0.15,
+     0.01
+    ],
+    "FeO": [
+     24.41,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     923,
+     50
+    ],
+    "Zn": [
+     906,
+     30
+    ],
+    "Br": [
+     88,
+     5
+    ]
+   },
+   "asignacion": "confirmado",
+   "url_blog": null,
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol04568/apb_803040891rwp45681161944_______p1.csv"
+  },
+  "44": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_815291021rwp47061191722",
+   "sol": 4706,
+   "objetivo": "Valle_de_la_Luna_tailings",
+   "ox": {
+    "Na2O": [
+     2.12,
+     0.14
+    ],
+    "MgO": [
+     11.3,
+     0.25
+    ],
+    "Al2O3": [
+     7.08,
+     0.19
+    ],
+    "SiO2": [
+     36.37,
+     0.43
+    ],
+    "P2O5": [
+     0.79,
+     0.05
+    ],
+    "SO3": [
+     16.13,
+     0.17
+    ],
+    "Cl": [
+     0.35,
+     0.02
+    ],
+    "K2O": [
+     0.58,
+     0.02
+    ],
+    "CaO": [
+     4.87,
+     0.06
+    ],
+    "TiO2": [
+     0.84,
+     0.03
+    ],
+    "Cr2O3": [
+     0.36,
+     0.01
+    ],
+    "MnO": [
+     0.25,
+     0.01
+    ],
+    "FeO": [
+     18.66,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     686,
+     35
+    ],
+    "Zn": [
+     968,
+     30
+    ],
+    "Br": [
+     255,
+     10
+    ]
+   },
+   "asignacion": "confirmado",
+   "url_blog": null,
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol04706/apb_815291021rwp47061191722_______p1.csv"
+  },
+  "45": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_818133183rwp47381200082",
+   "sol": 4738,
+   "objetivo": "Nevado_Sajama_tailings",
+   "ox": {
+    "Na2O": [
+     2.16,
+     0.14
+    ],
+    "MgO": [
+     8.68,
+     0.25
+    ],
+    "Al2O3": [
+     7.18,
+     0.19
+    ],
+    "SiO2": [
+     37.74,
+     0.43
+    ],
+    "P2O5": [
+     0.88,
+     0.05
+    ],
+    "SO3": [
+     11.44,
+     0.15
+    ],
+    "Cl": [
+     0.9,
+     0.03
+    ],
+    "K2O": [
+     0.58,
+     0.02
+    ],
+    "CaO": [
+     5.48,
+     0.06
+    ],
+    "TiO2": [
+     0.97,
+     0.03
+    ],
+    "Cr2O3": [
+     0.42,
+     0.03
+    ],
+    "MnO": [
+     0.22,
+     0.01
+    ],
+    "FeO": [
+     23.12,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     846,
+     45
+    ],
+    "Zn": [
+     647,
+     20
+    ],
+    "Br": [
+     197,
+     10
+    ]
+   },
+   "asignacion": "confirmado",
+   "url_blog": "https://science.nasa.gov/solar-system/curiosity-blog-sols-4716-4722-drilling-success-at-nevado-sajama",
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol04738/apb_818133183rwp47381200082_______p1.csv"
+  },
+  "46": {
+   "fuente": "NASA PDS, APXS RDR (msl-m-apxs-4_5-rdr-v1)",
+   "producto": "apb_823903257rwp48031200574",
+   "sol": 4803,
+   "objetivo": "Nevado_Sajama2_tailings",
+   "ox": {
+    "Na2O": [
+     2.55,
+     0.14
+    ],
+    "MgO": [
+     6.32,
+     0.17
+    ],
+    "Al2O3": [
+     7.52,
+     0.19
+    ],
+    "SiO2": [
+     39.76,
+     0.43
+    ],
+    "P2O5": [
+     0.9,
+     0.05
+    ],
+    "SO3": [
+     9.29,
+     0.12
+    ],
+    "Cl": [
+     0.75,
+     0.03
+    ],
+    "K2O": [
+     0.63,
+     0.02
+    ],
+    "CaO": [
+     6.51,
+     0.07
+    ],
+    "TiO2": [
+     0.93,
+     0.05
+    ],
+    "Cr2O3": [
+     0.41,
+     0.03
+    ],
+    "MnO": [
+     0.17,
+     0.03
+    ],
+    "FeO": [
+     23.89,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     882,
+     45
+    ],
+    "Zn": [
+     606,
+     20
+    ],
+    "Br": [
+     129,
+     10
+    ]
+   },
+   "asignacion": "confirmado",
+   "url_blog": "https://science.nasa.gov/blog/curiosity-blog-sols-4798-4803-back-for-more-science/",
+   "url_pds": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/data/sol04803/apb_823903257rwp48031200574_______p1.csv"
+  }
+ }
+}

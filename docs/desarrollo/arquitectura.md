@@ -9,7 +9,7 @@ GALE-3D es **una sola página HTML** que funciona sin internet y sin servidor:
 
 ```
 data/… (terreno, rutas, Curiosity, mineralogía, globo, parametros.json)
-gale-earth/datos/biblioteca.json (fichas de los 49 pozos, del compañero)
+maps-in-mars/datos/biblioteca.json (fichas de los 49 pozos, del compañero)
         │  python escena3d/armar.py
         ▼
 escena3d/index.html  =  plantilla.html  +  const D = {…datos…}  +  three.js embebido (vendor/)
@@ -123,7 +123,7 @@ Modos que hay hoy:
   2. `_planeta()` pone la cámara en "Marte completo".
   3. La portada se funde.
   4. `_bajar(clave, fn)` vuela del planeta a la travesía y a la zona, y recién entonces corre `fn` (el modo).
-- **Mars Earth** abre `../gale-earth/index.html` cuando la escena está al lado de `gale-earth/`, es decir, cuando corre desde el repo, con `servir.py` o en GitHub Pages. Gale Earth, sin hash, arranca en el espacio y vuela al cráter (`irA('gale')`). Si no está, usa `marte` (Marte completo en la escena).
+- **Mars Earth** abre `../maps-in-mars/index.html` cuando la escena está al lado de `maps-in-mars/`, es decir, cuando corre desde el repo, con `servir.py` o en GitHub Pages. Gale Earth, sin hash, arranca en el espacio y vuela al cráter (`irA('gale')`). Si no está, usa `marte` (Marte completo en la escena).
 
 ## 7. Datos con fuente
 
@@ -216,24 +216,24 @@ grep -o "\$('[a-zA-Z0-9-]*')" escena3d/plantilla.html | sort -u | sed "s/\$('//;
   2. Publicar `index.html`, `globo.json` y `fotos_pozos.json`; cada archivo tiene que pesar menos de 16 MB.
 - **Repo:** rama `david/union-gale-earth` → PR a `main`. Con GitHub Pages, la raíz entra por Gale Earth (`index.html` de la raíz).
 - **Unión con Gale Earth:**
-  - `servir.py` sirve `/gale-earth/` y `/escena3d/`;
+  - `servir.py` sirve `/maps-in-mars/` y `/escena3d/`;
   - Gale Earth entra a la escena con `#desde-gale-earth`;
-  - la escena vuelve con `../gale-earth/index.html#curiosity`, o sin hash para la vista espacial.
+  - la escena vuelve con `../maps-in-mars/index.html#curiosity`, o sin hash para la vista espacial.
 
 ## Misión en Gale Earth (pantalla única, desde el 15/11)
 
 - **De dónde salen los datos:** `herramientas/exportar_mision.py` abre `escena3d/index.html` sin ventana (Playwright) y llama a dos funciones de la escena, `window.__exportarMision()` y `window.__exportarModelos(GLTFExporter)`:
-  - la primera escribe `gale-earth/datos/mision.json`: paradas con su ficha y su muestra simulada en HTML, rutas con un punto cada 2 m (lon, lat, distancia, elevación, pendiente de marcha y del suelo, cielo tapado, horas, µSv, terreno, CRISM), expedición, Base Gale, GX-2, estaciones, parámetros y `FUENTES_URL`;
-  - la segunda escribe `gale-earth/capas/mision/*.glb`. Los modelos salen en reposo, girados para que el este de la escena sea el "adelante" de glTF, y con las piezas móviles nombradas: `rueda_0` a `rueda_5`, `muslo_i`, `rodilla_i`, `tobillo_i`, `hombro_i`, `codo_i`, `cadera`, `torso`, `casco`, `lidar` y `rotor_i`.
+  - la primera escribe `maps-in-mars/datos/mision.json`: paradas con su ficha y su muestra simulada en HTML, rutas con un punto cada 2 m (lon, lat, distancia, elevación, pendiente de marcha y del suelo, cielo tapado, horas, µSv, terreno, CRISM), expedición, Base Gale, GX-2, estaciones, parámetros y `FUENTES_URL`;
+  - la segunda escribe `maps-in-mars/capas/mision/*.glb`. Los modelos salen en reposo, girados para que el este de la escena sea el "adelante" de glTF, y con las piezas móviles nombradas: `rueda_0` a `rueda_5`, `muslo_i`, `rodilla_i`, `tobillo_i`, `hombro_i`, `codo_i`, `cadera`, `torso`, `casco`, `lidar` y `rotor_i`.
 - **PMR (rover presurizado, antes GX-3):** el modelo sale de la escena (`RT`, estacionado al lado del garaje de la base) como `capas/mision/pmr.glb`, con `pata_0`…`pata_5`, `rueda_0`…`rueda_11`, `ala_0`, `ala_1`, `dron`, `rotor_0`, `rotor_1`, `lidar`, `carro`, `sarta`, `mecha`, `barra_0`…`barra_2` y `traje_0`, `traje_1`. Gale Earth anima esas piezas con `node.matrix` (la `sarta` del taladro se estira con una escala sobre la original de 0,4 m) y esconde los trajes que salieron a caminar.
 - **Ruta T (base → zona de hoy):** al final de `exportar_mision.py` corre `herramientas/ruta_base.py`. Hace A* sobre `data/terreno/travesia_sur` (pendiente ≤ 20°, arena probable penalizada), suaviza el camino y lo remuestrea cada 5 m. Agrega la energía acumulada de la batería como campo 11 de cada punto y la escribe en `mision.json` y en `data/rutas/ruta_base_pmr.geojson`. Para la ruta C, `mision.js` calcula ese campo al cargar, con los mismos parámetros (`data/parametros.json` → `vehiculo_tripulado`).
-- **Cuándo correrlo:** si cambia algo de la misión en la escena (paradas, rutas, textos, modelos). Primero `python escena3d/armar.py`, después `python herramientas/exportar_mision.py`, y en `gale-earth/`: `python _ensamblar.py` y `python armar.py`.
-- **`gale-earth/mision.js`:**
+- **Cuándo correrlo:** si cambia algo de la misión en la escena (paradas, rutas, textos, modelos). Primero `python escena3d/armar.py`, después `python herramientas/exportar_mision.py`, y en `maps-in-mars/`: `python _ensamblar.py` y `python armar.py`.
+- **`maps-in-mars/mision.js`:**
   - carteles y rutas en un `CustomDataSource('mision')`;
   - modelos como `Cesium.Model` (se apoyan en el terreno con cuatro muestras de altura, como la suspensión, y se animan con `node.matrix`);
   - un solo bucle en `scene.preRender`;
   - envuelve `irA` y el clic del globo, sin tocar el código del compañero.
-- **`gale-earth/pmr.js` (después de `mision.js`):** guía de la expedición y manejo libre del PMR.
+- **`maps-in-mars/pmr.js` (después de `mision.js`):** guía de la expedición y manejo libre del PMR.
   - **Terreno:** `datos/terreno_pmr.png` (R·256+G = elevación, B = pendiente·2 + 128 si es arena probable), `cielo_pmr.png` y `terreno_pmr.json`, de `python herramientas/terreno_pmr.py`. Se leen con `createImageBitmap(..., { colorSpaceConversion: 'none' })` para que el navegador no cambie los valores. La grilla es equirectangular sin coseno: 12 m en latitud y en longitud·R.
   - **Rutas:** `pmrAstar` (8 vecinos, montículo binario con arreglos tipados, ventana de 3 km alrededor). Vehículo: pendiente ≤ 20°, costo 1 + (p/10)² y +6 en arena. A pie: ≤ 20°, +0,5 en arena y −0,5 × cielo tapado. Si no hay paso, prueba con +5° y +15° y lo marca. `pmrSuavizar` toma atajos rectos que no suman pendiente ni arena; `pmrLinea` remuestrea cada 5 m (3 m a pie) y arma los mismos campos que las rutas de `mision.json` (campo 9 = −2 arena, −3 suelo firme; campo 11 = kWh).
   - **Guía:** `pmrConstruir(paradas, { volver })` arma tramos `manejo` / `caminata` / `regreso` (`MI.lineas.G0`, `G1`…) con sus acumulados (`t0`, `dosis0`, `kwh0`); `pmrTramo(i)` los recorre con `miModo(id, 'guia')`. `pmrLlegada` y `pmrFinTramo` ponen las tarjetas de cada parada. Paradas recomendadas en `PMR_RECO`.

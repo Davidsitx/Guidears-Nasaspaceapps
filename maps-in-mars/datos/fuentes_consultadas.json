@@ -1,0 +1,508 @@
+{
+"fuentes": [
+{
+"url": "https://an.rsl.wustl.edu/",
+"dominio": "an.rsl.wustl.edu",
+"que": "PDS Analyst's Notebook: datos de Curiosity por sol, lugar e instrumento",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://arxiv.org/abs/2309.07378v1",
+"dominio": "arxiv.org",
+"que": "Lemmon et al. (MSL): registro de opacidad; el hielo de agua aporta ~25% en Ls 90–135",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars/MSL/MSL_Gale_HiRISE-LRGB_78quads_sharp_cog.tif`",
+"dominio": "asc-pds-services.s3.us-west-2.amazonaws.com",
+"que": "Terreno y color de toda la travesía (4 m y 3 m)",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars/THEMIS_controlled_mosaics/AA_mosaics/",
+"dominio": "asc-pds-services.s3.us-west-2.amazonaws.com",
+"que": "Gale Earth: infrarrojo nocturno de todo Marte",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars/THEMIS_controlled_mosaics/Aeolis_NightIR_31Jan2014/",
+"dominio": "asc-pds-services.s3.us-west-2.amazonaws.com",
+"que": "Expedición (paquete para-companero, hoy no visible en Gale Earth): indicio de arena (frío de noche)",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m",
+"dominio": "astrogeology.usgs.gov",
+"que": "Gale Earth: colores de altitud de todo Marte",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://astrogeology.usgs.gov/search/map/mars_msl_gale_merged_orthophoto_mosaic_25cm",
+"dominio": "astrogeology.usgs.gov",
+"que": "USGS: mosaico HiRISE de Gale (Calef y Parker 2016)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.astronomy.com/?p=37721",
+"dominio": "astronomy.com",
+"que": "Astronomy: REMS midió de +15,9 °C en una tarde de verano a −100 °C en una noche de invierno; cielo limpio en invierno, polvo en primavera y verano, viento en otoño",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://cab.inta-csic.es/rems/weather-report-mars-year-33-month-11",
+"dominio": "cab.inta-csic.es",
+"que": "Centro de Astrobiología (REMS): informe del mes 11 del año marciano 33 (Ls 300–330) y comienzo de la temporada de polvo en Ls 180",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://claude.ai/artifact/7MNM1VZHLvCrNUuGUpNyxj",
+"dominio": "claude.ai",
+"que": "El registro completo (con \"para qué nos sirve\" y \"cómo lo aplicamos\") está en el documento compartido del equipo: \"Space Apps 2026 · Registro de fuentes y referencias\" (",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://crism.jhuapl.edu/msl_landing_sites/",
+"dominio": "crism.jhuapl.edu",
+"que": "Gale Earth: minerales desde órbita",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://deepblue.lib.umich.edu/items/ab6672eb-7dfe-470e-9cf3-30ea425c573e",
+"dominio": "deepblue.lib.umich.edu",
+"que": "Dust lifting over six Mars years at Gale (REMS): remolinos de polvo con máximo cerca de Ls 300",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.1002/2013JE004525",
+"dominio": "doi.org",
+"que": "Gale Earth: variación día/noche de la radiación",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://doi.org/10.1002/2014GL060310",
+"dominio": "doi.org",
+"que": "Seelos et al. 2014 (GRL): mineralogía de Gale con CRISM",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.1007/s11214-012-9916-y",
+"dominio": "doi.org",
+"que": "Golombek et al. 2012, Space Science Reviews 170:641 (selección del sitio): Gale por la diversidad de sus capas con minerales vistos desde órbita",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.1029/2020JE006372",
+"dominio": "doi.org",
+"que": "Sheppard et al. 2021 (JGR Planets): en el Monte Sharp, arcillas abajo y sulfatos encima, vistos con CRISM",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.1029/2021GL093912",
+"dominio": "doi.org",
+"que": "Guo et al. 2021 (GRL): descenso de (5 ± 1)% y radiación reflejada por el suelo ≈ 19% de la dosis",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.1029/2021JE006851",
+"dominio": "doi.org",
+"que": "Ehresmann et al. 2021 (JGR Planets): en Murray Buttes, 19% de cielo tapado baja la dosis 4% y los neutrones 7,5%",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.1126/science.1243480",
+"dominio": "doi.org",
+"que": "Vaniman et al. 2014 (Science): mineralogía de la lutita de Yellowknife Bay (pozos John Klein y Cumberland)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.1126/science.ado9966",
+"dominio": "doi.org",
+"que": "Tutolo et al. 2025 (Science): siderita en la unidad de sulfatos",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://doi.org/10.48484/JN48-YW52",
+"dominio": "doi.org",
+"que": "NASA/ODR: Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://elib.dlr.de/224554/1/ME-SBA-2026-Guo...Matth%C3%A4_Berger_Reitz%20Influence%20of%20Mars%20Topography%20on%20Radiation%20Dose%20Detected%20by%20the%20Mars%20Science%20Laboratory_JGR%20Planets.pdf",
+"dominio": "elib.dlr.de",
+"que": "Guo et al. 2026 (JGR Planets, DLR): en otros terrenos de Gale el descenso llega a 19%",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://emmrem.unh.edu/papers/general/WRMISS12_MK.pdf",
+"dominio": "emmrem.unh.edu",
+"que": "Kim et al. (NASA), WRMISS 2012: cabina de un rover para salidas con paredes de 1 g/cm²",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://eos.org/articles/more-than-marsquakes-insight-yielded-magnetism-weather-discoveries",
+"dominio": "eos.org",
+"que": "Eos (2022), con Johnson et al. 2020 (Nature Geoscience): el magnetómetro de InSight midió en la superficie un campo de unos 2.000 nT, diez veces más fuerte que lo previsto",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Exploration/ExoMars/First_deep_drilling_success_for_ExoMars",
+"dominio": "esa.int",
+"que": "ESA (2021): prueba en la Tierra a 1,7 m; el taladro avanza entre 0,3 y 30 mm por minuto según el suelo y trabaja con menos de 100 W",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://explorationscience.esa.int/?p=2323",
+"dominio": "explorationscience.esa.int",
+"que": "ESA Exploration Science: el taladro de Rosalind Franklin llega a 2 m con la mecha y tres barras de extensión de unos 50 cm, y toma muestras cada 50 cm",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://galecrater.samples.odr.io/",
+"dominio": "galecrater.samples.odr.io",
+"que": "Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.giss.nasa.gov/tools/mars24/",
+"dominio": "giss.nasa.gov",
+"que": "Gale Earth: día y noche en Marte",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://github.com/Davidsitx/Guidears-Nasaspaceapps/blob/main/data/base/sitios_base.geojson",
+"dominio": "github.com",
+"que": "Análisis de sitios del equipo (15/11): tres centros para una base con zona de aterrizaje en la llanura del aterrizaje, con el DEM USGS de 1 m, HiRISE y el recorrido de Curiosity (data/base/sitios_base.geojson)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://github.com/benbrittain/Barsoom/tree/HEAD/data/MEGDR",
+"dominio": "github.com",
+"que": "MOLA MEGDR 16 píxeles/grado (MGS, Smith et al. 2003, NASA PDS): relieve de todo Marte. Copia pública usada para la escena",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.jpl.nasa.gov/news/nasa-retires-insight-mars-lander-mission-after-years-of-science",
+"dominio": "jpl.nasa.gov",
+"que": "NASA JPL (2022): el sismómetro de InSight detectó 1.319 sismos en Marte",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.jpl.nasa.gov/news/nasas-curiosity-mars-rover-takes-a-new-selfie-before-record-climb/",
+"dominio": "jpl.nasa.gov",
+"que": "NASA/JPL (20/3/2020): Curiosity se inclinó 31° subiendo al pedimento Greenheugh, su récord",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-detects-largest-organic-molecules-found-on-mars/",
+"dominio": "jpl.nasa.gov",
+"que": "NASA/JPL (24/3/2025): las moléculas orgánicas más grandes halladas en Marte, en el pozo Cumberland",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.livescience.com/23646-mars-weather-curiosity-rover-discovery.html",
+"dominio": "livescience.com",
+"que": "Live Science (2012): REMS mide entre ~685 y ~780 Pa en el día, cerca del mínimo anual",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "http://mars.jpl.nasa.gov/msl/mission/technology/planetarymobility",
+"dominio": "mars.jpl.nasa.gov",
+"que": "Límites de inclinación del rover: aguanta 45° sin volcar, la protección de fallas lo frena antes de 30°",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_traverse.json`",
+"dominio": "mars.nasa.gov",
+"que": "Recorrido completo y 49 perforaciones (posición, sol, altura)",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://mars.nasa.gov/msl/multimedia/raw-images/",
+"dominio": "mars.nasa.gov",
+"que": "NASA: imágenes crudas de Curiosity (MAHLI), NASA/JPL-Caltech/MSSS",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://nasa.gov/news-release/nasa-announces-public-private-partnership-to-advance-mars-science",
+"dominio": "nasa.gov",
+"que": "NASA (17/6/2026): alianza con Relativity Space para Aeolus, orbitador del clima marciano, lanzamiento previsto en 2028",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.nasa.gov/centers-and-facilities/glenn/nasas-fission-surface-power-project-energizes-lunar-exploration",
+"dominio": "nasa.gov",
+"que": "NASA Glenn: Fission Surface Power, reactor de al menos 40 kW por 10 años y menos de 6 t, para la Luna y adaptable a Marte",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.nasa.gov/history/alsj/WOTM/WOTM-Drilling.html",
+"dominio": "nasa.gov",
+"que": "NASA ALSJ, Working on the Moon: el taladro de Apolo 15, 16 y 17 lo manejaba un astronauta; hizo pozos de hasta 3 m y testigos de 2 a 3 m",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.nasa.gov/humans-in-space/humans-to-mars",
+"dominio": "nasa.gov",
+"que": "NASA: humanos a Marte \"ya en la década de 2030\"",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.nasa.gov/moontomarsarchitecture-components/",
+"dominio": "nasa.gov",
+"que": "NASA: arquitectura Luna a Marte, segmento \"Humans to Mars\"",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.nasa.gov/pdf/373665main_NASA-SP-2009-566.pdf",
+"dominio": "nasa.gov",
+"que": "Expedición (paquete para-companero, hoy no visible en Gale Earth): velocidad y autonomía del rover presurizado en Marte",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://www.nasa.gov/wp-content/uploads/2015/08/464826main_sev_factsheet_508.pdf",
+"dominio": "nasa.gov",
+"que": "NASA, hoja técnica del Space Exploration Vehicle (SEV): cabina presurizada para 2 (4 en emergencia), hasta 14 días, ~10 km/h, 12 ruedas que giran 360°, suitports (salida en menos de 10 min), esclusa con 2,5 cm de agua congelada, protege hasta 72 h; 4,5 m de largo, 3 m de alto, 3.000 kg",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf",
+"dominio": "nasa.gov",
+"que": "NASA OCHMO: protección radiológica, límite de carrera de 600 mSv (NASA-STD-3001)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/api/citations/20190001691/downloads/20190001691.pdf",
+"dominio": "ntrs.nasa.gov",
+"que": "Guzewich et al. 2019: tormenta global de 2018 en Gale, opacidad 8,5 y ~97% del UV bloqueado",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/api/citations/20200001071/downloads/20200001071.pdf",
+"dominio": "ntrs.nasa.gov",
+"que": "NASA EVA-EXP-0075: concepto de operaciones de salidas en superficie (pendientes de hasta 20°; Apolo 15 sobre ~17°)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/api/citations/20210014156/downloads/Parker%20el%20al.%20Helio%202050%20workshop%20poster_final.pdf",
+"dominio": "ntrs.nasa.gov",
+"que": "Parker et al. (NASA): aviso de tormentas solares, del orden de 30 min",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/citations/20120018014",
+"dominio": "ntrs.nasa.gov",
+"que": "NASA JSC (2012): suitports, el traje queda acoplado afuera; la preparación de una salida pasa de horas a menos de 30 minutos y el polvo no entra",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/citations/20170006519",
+"dominio": "ntrs.nasa.gov",
+"que": "NASA, Human Mars Surface Mission Nuclear Power Considerations (IEEE Aerospace 2018): un rover presurizado consume cerca de 2 kW quieto y manejar suma unos 5 kW",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/citations/20180007641",
+"dominio": "ntrs.nasa.gov",
+"que": "Hassler et al. 2014 (Science): RAD mide 0,64 mSv/día en la superficie de Gale",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/citations/20210009760",
+"dominio": "ntrs.nasa.gov",
+"que": "Clowdsley (NASA), radiación lunar: apuntar a unos 20 g/cm² de blindaje en un refugio de tormenta solar",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/citations/20210022250",
+"dominio": "ntrs.nasa.gov",
+"que": "NASA Mars Architecture Team, Chappell et al. (IEEE Aerospace 2022): rover presurizado para 2 en Marte, 5.193 kg con 60 kWh (200 kWh en la opción elegida), 8 km/h, 1,85 kW de consumo de la cabina, carga a 3 kW con el reactor de fisión, panel solar de 3,5 kW",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/citations/20210026296",
+"dominio": "ntrs.nasa.gov",
+"que": "NASA (2021): salidas de Artemis III, regreso caminando de 1,38 km",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ntrs.nasa.gov/citations/20250011301",
+"dominio": "ntrs.nasa.gov",
+"que": "Expedición (paquete para-companero, hoy no visible en Gale Earth): pendiente de referencia de un rover tripulado",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems.html",
+"dominio": "pds-atmospheres.nmsu.edu",
+"que": "PDS Atmospheres Node: datos de REMS (presión, temperatura, viento, humedad, UV)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://pds-geosciences.wustl.edu/missions/msl/",
+"dominio": "pds-geosciences.wustl.edu",
+"que": "PDS Geosciences Node: archivo de la misión MSL",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://pds-geosciences.wustl.edu/missions/msl/apxs.htm",
+"dominio": "pds-geosciences.wustl.edu",
+"que": "NASA PDS Geosciences: APXS de MSL (óxidos y trazas)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://pds-geosciences.wustl.edu/missions/msl/index.htm",
+"dominio": "pds-geosciences.wustl.edu",
+"que": "Gale Earth: fuentes oficiales de cada pozo",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://pds-geosciences.wustl.edu/msl/msl-m-apxs-4_5-rdr-v1/mslapx_1xxx/",
+"dominio": "pds-geosciences.wustl.edu",
+"que": "Química APXS de cada pozo (corregida)",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://photojournal.jpl.nasa.gov/catalog/PIA26403",
+"dominio": "photojournal.jpl.nasa.gov",
+"que": "NASA/JPL: cómo perfora Curiosity y qué hacen CheMin y SAM con el polvo (PIA26403)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://phys.org/news/2016-12-nasa-ice-house-mars.html",
+"dominio": "phys.org",
+"que": "NASA Langley (2016): Mars Ice Home, hábitat inflable con una cáscara de agua congelada como blindaje contra los rayos cósmicos, que deja pasar luz",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://phys.org/news/2023-09-nasa-oxygen-generating-moxie-mars-mission.html",
+"dominio": "phys.org",
+"que": "NASA (2023): MOXIE, en Perseverance, produjo 122 g de oxígeno del CO₂ de Marte en 16 corridas, hasta 12 g por hora",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://planetarynames.wr.usgs.gov/",
+"dominio": "planetarynames.wr.usgs.gov",
+"que": "Gale Earth: topónimos",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit",
+"dominio": "science.nasa.gov",
+"que": "Blog de Curiosity, sols 4709–4715: perforar arriba y abajo en el boxwork",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/blog/curiosity-blog-sols-4804-4811-kicking-off-the-final-phase-of-boxwork-exploration",
+"dominio": "science.nasa.gov",
+"que": "Blog de Curiosity, sols 4804–4811: Nevado Sajama 2 y la fase final del boxwork",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/blog/curiosity-blog-sols-4845-4851-bye-bye-boxwork-bye-bye/",
+"dominio": "science.nasa.gov",
+"que": "Blog de Curiosity, sols 4845–4851: deja el boxwork y entra en la unidad de sulfatos",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/blog/curiosity-blog-sols-4893-4899-drilling-at-campo-marte-and-a-visit-from-the-psyche-spacecraft/",
+"dominio": "science.nasa.gov",
+"que": "Blog de Curiosity, sols 4893–4899: perforación en Campo Marte",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/",
+"dominio": "science.nasa.gov",
+"que": "NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/",
+"dominio": "science.nasa.gov",
+"que": "NASA: Ingenuity hizo 72 vuelos, unos 128,8 minutos en el aire y 17 km recorridos",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/photojournal/curiositys-42-drill-holes/",
+"dominio": "science.nasa.gov",
+"que": "Gale Earth: fuentes oficiales de cada pozo",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://science.nasa.gov/photojournal/nasas-curiosity-captures-dawn-breaking-on-wind-carved-cliffs/",
+"dominio": "science.nasa.gov",
+"que": "Capa de yardangs (panorámica del sol 4982, teoría de ceniza volcánica)",
+"registro": "docs/fuentes.md"
+},
+{
+"url": "https://science.nasa.gov/photojournal/seasonal-cycles-in-curiositys-first-two-martian-years/",
+"dominio": "science.nasa.gov",
+"que": "NASA: ciclos estacionales de los dos primeros años marcianos de Curiosity (temperatura, vapor y presión)",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/resource/curiosity-rover-hits-paydirt/",
+"dominio": "science.nasa.gov",
+"que": "NASA/JPL (2013): la primera muestra perforada muestra que Marte antiguo pudo sostener microbios",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/resource/curiositys-first-sample-drilling",
+"dominio": "science.nasa.gov",
+"que": "NASA: primera perforación de Curiosity (John Klein, sol 182), agujero de 1,6 cm de ancho y 6,4 cm de profundidad",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/resource/gale-crater-exploring-the-mars-science-laboratory-landing-site/",
+"dominio": "science.nasa.gov",
+"que": "NASA (12/4/2012): Gale se eligió sobre Eberswalde por su mayor diversidad y potencial habitable; arcillas y sulfatos al pie del Monte Sharp",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf",
+"dominio": "science.nasa.gov",
+"que": "NASA: el MMRTG da unos 110 W eléctricos al empezar la misión",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://scienceandtechnology.jpl.nasa.gov/sites/default/files/posters/2023/R22016.pdf",
+"dominio": "scienceandtechnology.jpl.nasa.gov",
+"que": "JPL (2023): los rovers de balancín quedan limitados a menos de 15° en suelo suelto",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www.space.com/space-exploration/missions/a-private-company-will-build-and-launch-nasas-next-mars-orbiter-in-2028-and-its-not-spacex",
+"dominio": "space.com",
+"que": "Space.com: Aeolus dará la primera medición diaria del ambiente global de Marte; operación de al menos un año marciano",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://ssd.jpl.nasa.gov/planets/approx_pos.html",
+"dominio": "ssd.jpl.nasa.gov",
+"que": "NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://trek.nasa.gov/mars/",
+"dominio": "trek.nasa.gov",
+"que": "Viking MDIM 2.1 en color (NASA/USGS), servido por Mars Trek: color de todo Marte a ~2,6 km/píxel",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://webarchive.library.unt.edu/eot2008/20090512223236/http://mars.jpl.nasa.gov/msl/mission/technology/planetarymobility",
+"dominio": "webarchive.library.unt.edu",
+"que": "JPL: movilidad de Curiosity. Aguanta 45° sin volcar; la protección de fallas lo frena antes de 30°",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://www-robotics.jpl.nasa.gov/media/documents/2020-mobility-trending.pdf",
+"dominio": "www-robotics.jpl.nasa.gov",
+"que": "JPL (2020): tendencias de movilidad de Curiosity, inclinación máxima de 25,3° en 7 años",
+"registro": "docs/fuentes-enlaces.md"
+},
+{
+"url": "https://zendy.io/title/10.1002/2017gl072589",
+"dominio": "zendy.io",
+"que": "Vicente-Retortillo et al. 2017 (GRL): temporada de baja opacidad Ls 60–140 y de alta opacidad Ls 180–360 en Gale",
+"registro": "docs/fuentes-enlaces.md"
+}
+]
+}

@@ -4,7 +4,7 @@ Para que otro proyecto de mapa de Marte se pueda unir al nuestro **sin un salto 
 
 **Fuente de verdad:** si esta guía y el código no coinciden, manda el código.
 - GALE-3D (escena 3D de superficie): `escena3d/plantilla.html`, bloque `<style>` (variables en `:root`, líneas 8–11; portada en las clases `.po-*`).
-- Gale Earth (globo de Marte): `gale-earth/cabecera.html`, bloque `<style>` (variables en `:root`, líneas 21–27).
+- Gale Earth (globo de Marte): `maps-in-mars/cabecera.html`, bloque `<style>` (variables en `:root`, líneas 21–27).
 
 Imágenes de esta guía: `docs/img/estilo/` (capturas reales a 1440 × 900 y una lámina de componentes armada con los valores exactos del código).
 

@@ -34,11 +34,11 @@ SIN_DATOS = -9999.0
 
 
 def sumar_biblioteca(lista):
-    """Suma a cada perforación lo de la Biblioteca de Gale Earth (gale-earth/datos/biblioteca.json, del compañero):
+    """Suma a cada perforación lo de la Biblioteca de Gale Earth (maps-in-mars/datos/biblioteca.json, del compañero):
     hallazgo con su fuente, minerales de CheMin, química de APXS, cantidad de experimentos SAM, agua en minerales
     (cálculo del equipo), novedades del blog, lo que falta publicar y una foto chica del sol de la perforación."""
     import io, unicodedata
-    ruta = os.path.join(RAIZ, "gale-earth", "datos", "biblioteca.json")
+    ruta = os.path.join(RAIZ, "maps-in-mars", "datos", "biblioteca.json")
     if not os.path.exists(ruta):
         return
     nrm = lambda t: unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode().lower().replace(" ", "")
@@ -66,7 +66,7 @@ def sumar_biblioteca(lista):
         f0 = (x.get("fotos") or [None])[0]
         if f0:
             b["foto_url"], b["foto_cam"] = f0.get("url"), f0.get("camara")
-            img = os.path.join(RAIZ, "gale-earth", f0.get("src", ""))
+            img = os.path.join(RAIZ, "maps-in-mars", f0.get("src", ""))
             if Image and os.path.exists(img):
                 im = Image.open(img).convert("RGB"); im.thumbnail((440, 440)); buf = io.BytesIO(); im.save(buf, "JPEG", quality=70, optimize=True)
                 b["foto"] = b64(buf.getvalue()); fotos += 1

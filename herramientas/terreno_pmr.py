@@ -2,10 +2,10 @@
 
 Lee el terreno de contexto de la travesía (data/terreno/travesia_sur, celdas de 12 m: elevación, pendiente y cielo tapado)
 y el color a 3 m (para marcar arena probable, como herramientas/expedicion.py y ruta_base.py), y escribe:
-  gale-earth/datos/terreno_pmr.png   RGB, 550 × 1450: R·256+G = elevación (zmin + valor · escala), B = pendiente·2 (pasos de 0,5°,
+  maps-in-mars/datos/terreno_pmr.png   RGB, 550 × 1450: R·256+G = elevación (zmin + valor · escala), B = pendiente·2 (pasos de 0,5°,
                                      hasta 63,5°) + 128 si es arena probable. Sin canal alfa (el navegador no lo altera).
-  gale-earth/datos/cielo_pmr.png     gris: fracción de cielo tapado (byte/255), la misma de la escena.
-  gale-earth/datos/terreno_pmr.json  límites, tamaño de celda y codificación.
+  maps-in-mars/datos/cielo_pmr.png     gris: fracción de cielo tapado (byte/255), la misma de la escena.
+  maps-in-mars/datos/terreno_pmr.json  límites, tamaño de celda y codificación.
 Todo es dato con fuente (DEM del equipo, igual al USGS de Gale) más la marca de arena, que es cálculo propio (indicio).
 
 Uso: /usr/bin/python3.12 herramientas/terreno_pmr.py
@@ -16,7 +16,7 @@ from PIL import Image
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CTX = os.path.join(RAIZ, 'data/terreno/travesia_sur')
-SAL = os.path.join(RAIZ, 'gale-earth/datos')
+SAL = os.path.join(RAIZ, 'maps-in-mars/datos')
 
 
 def main():

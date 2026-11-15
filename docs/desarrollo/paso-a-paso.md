@@ -40,9 +40,9 @@ Si ya lo tenían clonado: `git checkout main` y `git pull`.
 
 **Para verlo:**
 - La escena sola: doble clic en `escena3d/index.html` (ya viene armada).
-- Todo junto, con todas las capas: `python gale-earth/servir.py` y abrir http://localhost:8765/gale-earth/
+- Todo junto, con todas las capas: `python maps-in-mars/servir.py` y abrir http://localhost:8765/maps-in-mars/
 - Si se cambió `escena3d/plantilla.html`, hay que rearmar: `python escena3d/armar.py`.
-- Si se cambió algo de Gale Earth: dentro de `gale-earth/`, correr `python _ensamblar.py` y después `python armar.py`.
+- Si se cambió algo de Gale Earth: dentro de `maps-in-mars/`, correr `python _ensamblar.py` y después `python armar.py`.
 
 ## 4. Seguir desarrollando con Claude
 
@@ -66,7 +66,7 @@ Si ya lo tenían clonado: `git checkout main` y `git pull`.
 4. Revisar el PR (que lo mire el otro, o su Claude) y fusionarlo.
 5. Si GitHub dice que el PR tiene conflictos, pedirle a Claude:
 
-> Fusioná `main` en esta rama y resolvé los conflictos: en `docs/notas.md` quedan las dos notas, y `gale-earth/index.html` se rearma con `_ensamblar.py` y `armar.py`.
+> Fusioná `main` en esta rama y resolvé los conflictos: en `docs/notas.md` quedan las dos notas, y `maps-in-mars/index.html` se rearma con `_ensamblar.py` y `armar.py`.
 
 ## 5. Qué falta (sugerencia de reparto)
 
@@ -92,7 +92,7 @@ El detalle de cada punto, con su criterio de aceptación, está en `docs/desarro
 
 - Todo dato con fuente. Lo medido, lo calculado y lo supuesto se separan, y lo supuesto se marca.
 - Cada uno en su rama, con PR a `main` y una nota en `docs/notas.md`.
-- `gale-earth/` es del compañero y `escena3d/` de David. Si se toca la carpeta del otro, se avisa en la nota.
+- `maps-in-mars/` es del compañero y `escena3d/` de David. Si se toca la carpeta del otro, se avisa en la nota.
 - La interfaz va en castellano rioplatense; los entregables, en inglés.
 - Nada de fotos de personas reales. Las imágenes de NASA llevan su crédito.
 
@@ -101,4 +101,4 @@ El detalle de cada punto, con su criterio de aceptación, está en `docs/desarro
 - **Pages muestra 404:** esperar unos minutos más y revisar que esté en `main` y `/ (root)`.
 - **La escena se queda en "Cargando":** abrir la consola (F12) y pasarle el error a Claude. Lo más común es un `$('id')` que no existe; `arquitectura.md` tiene el control.
 - **`python` no se reconoce:** probar con `py`, o instalarlo con `winget install Python.Python.3.12` y abrir una terminal nueva.
-- **El ZIP no corre:** fijarse de estar en la carpeta que tiene `escena3d`, `gale-earth` y `herramientas` adentro.
+- **El ZIP no corre:** fijarse de estar en la carpeta que tiene `escena3d`, `maps-in-mars` y `herramientas` adentro.

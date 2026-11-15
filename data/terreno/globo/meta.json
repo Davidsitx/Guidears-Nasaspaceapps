@@ -39,7 +39,7 @@
  },
  "fuentes": [
   "MOLA MEGDR 16 ppd, megt90n000eb.img (Smith et al. 2003; NASA PDS Geosciences Node). Copia: github.com/benbrittain/Barsoom",
-  "Viking MDIM 2.1 color (NASA/USGS, Mars Trek), gale-earth/capas/viking_color_8k.jpg"
+  "Viking MDIM 2.1 color (NASA/USGS, Mars Trek), maps-in-mars/capas/viking_color_8k.jpg"
  ],
  "nota": "Fondo visual de la escena: ~3,7 km por vértice cerca de Gale y 1° en el resto del planeta. La ganancia de color iguala el tono del Viking al mosaico de la travesía."
 }

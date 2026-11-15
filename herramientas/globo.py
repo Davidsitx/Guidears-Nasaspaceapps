@@ -11,7 +11,7 @@ Fuentes:
 - MOLA MEGDR 16 ppd (megt90n000eb.img; Smith et al. 2003, MGS MOLA, NASA PDS Geosciences Node). Copia usada: repositorio público
   benbrittain/Barsoom (GitHub), mismo archivo del PDS. Alturas en metros sobre el areoide, enteros de 16 bits big-endian, 5760 × 2880,
   desde 90° N y 0° E.
-- Viking MDIM 2.1 en color (NASA/USGS, vía Mars Trek), gale-earth/capas/viking_color_8k.jpg: 8192 × 4096, de -180° a 180° y de 90° N a 90° S.
+- Viking MDIM 2.1 en color (NASA/USGS, vía Mars Trek), maps-in-mars/capas/viking_color_8k.jpg: 8192 × 4096, de -180° a 180° y de 90° N a 90° S.
 
 Uso: python herramientas/globo.py /ruta/megt90n000eb.img
 """
@@ -23,7 +23,7 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SAL = os.path.join(RAIZ, 'data', 'terreno', 'globo')
 os.makedirs(SAL, exist_ok=True)
 mola = np.fromfile(sys.argv[1], '>i2').reshape(2880, 5760).astype(np.float32)
-vik = np.asarray(Image.open(os.path.join(RAIZ, 'gale-earth', 'capas', 'viking_color_8k.jpg')).convert('RGB')).astype(np.float32)
+vik = np.asarray(Image.open(os.path.join(RAIZ, 'maps-in-mars', 'capas', 'viking_color_8k.jpg')).convert('RGB')).astype(np.float32)
 VH, VW = vik.shape[:2]
 
 def mola_bilineal(lat, lon):
@@ -103,7 +103,7 @@ meta = dict(region=dict(R, ancho=len(lons), alto=len(lats)), global_=dict(paso=1
             codificacion='altura_m = R*256 + G - 10000 (sobre el areoide MOLA)', ganancia_color=gan,
             control_mola_menos_dem_travesia_m=dict(media=round(float(dif.mean()), 1), desvio=round(float(dif.std()), 1)),
             fuentes=['MOLA MEGDR 16 ppd, megt90n000eb.img (Smith et al. 2003; NASA PDS Geosciences Node). Copia: github.com/benbrittain/Barsoom',
-                     'Viking MDIM 2.1 color (NASA/USGS, Mars Trek), gale-earth/capas/viking_color_8k.jpg'],
+                     'Viking MDIM 2.1 color (NASA/USGS, Mars Trek), maps-in-mars/capas/viking_color_8k.jpg'],
             nota='Fondo visual de la escena: ~3,7 km por vértice cerca de Gale y 1° en el resto del planeta. La ganancia de color iguala el tono del Viking al mosaico de la travesía.')
 json.dump(meta, open(os.path.join(SAL, 'meta.json'), 'w'), ensure_ascii=False, indent=1)
 print('region', hr.shape, 'global', hg.shape, 'ganancia', gan, 'MOLA - DEM travesía:', meta['control_mola_menos_dem_travesia_m'])
