@@ -397,6 +397,10 @@
   button.zona.rec, button.modo.rec { border-color: rgba(217, 115, 63, .75); background: rgba(204, 98, 51, .13); }
   .rec-et { display: inline-block; margin-left: 0; padding: 0 7px; border-radius: 999px; background: var(--acento); color: #1b1210; font-size: 10.5px; font-weight: 700; vertical-align: 2px; }
   .po-modos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+  .po-grupo { grid-column: 1 / -1; margin: 8px 0 -2px; font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--acento); font-weight: 600; }
+  .po-grupo:first-child { margin-top: 0; }
+  .po-modos button.modo { padding: 11px 12px; } .po-modos button.modo svg { width: 34px; height: 34px; } .po-modos button.modo { grid-template-columns: 34px minmax(0, 1fr); }
+  .po-grupo span { color: var(--tenue); text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 6px; }
   .portada.esperando button.modo.elegido span::after, .portada.esperando button.zona.elegido span::after { content: ' Preparando el terreno…'; color: var(--acento); }
   .po-tips { margin: 18px 0 0; max-width: 600px; border-color: rgba(233, 226, 214, .16); }
   .po-tips ul { margin: 0 0 10px; padding-left: 18px; color: var(--tenue); font-size: 12.5px; }
@@ -455,6 +459,67 @@
   #ll-sub ul.avisos li.precaucion { background: rgba(255, 214, 60, .12); border-color: rgba(255, 214, 60, .5); }
   #ll-sub ul.avisos li.ok { background: rgba(110, 200, 120, .1); border-color: rgba(110, 200, 120, .4); }
   #ll-sub .dest-filas { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin-top: 4px; font-size: 12.5px; }
+  /* ===== misión en pareja: cámara del Astronauta 1, visor del Astronauta 2 y comunicaciones con las bases ===== */
+  #visor .solo-pareja { display: none; }
+  body.pareja #visor { inset: auto; top: 60px; right: 12px; width: 300px; max-height: calc(100% - 196px); overflow-y: auto; pointer-events: auto; display: flex; flex-direction: column; gap: 7px;
+    padding: 10px; border-radius: 12px; background: rgba(4, 18, 24, .86); border: 1px solid rgba(127, 220, 255, .38); box-shadow: 0 6px 24px rgba(0,0,0,.5); scrollbar-width: thin; }
+  body.pareja #visor .solo-pareja { display: block; }
+  body.pareja #visor .marco, body.pareja #visor #v-mira { display: none; }
+  body.pareja #visor .vb { position: static; transform: none; min-width: 0; max-width: none; width: auto; text-align: left; backdrop-filter: none; }
+  body.pareja #v-aviso { display: none; }
+  #pa-cab-visor { color: #7fdcff; font-size: 11px; letter-spacing: .16em; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+  #pa-cab-visor span { color: #b8ecff; letter-spacing: 0; font-weight: 400; }
+  #pa-mapa { width: 100%; height: 130px; display: block; border-radius: 8px; background: rgba(0, 25, 35, .5); border: 1px solid rgba(150, 230, 255, .25); }
+  #pa-cam { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 4; display: flex; gap: 12px; align-items: center; padding: 6px 14px; border-radius: 999px;
+    background: rgba(12, 9, 8, .78); border: 1px solid rgba(255, 255, 255, .14); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  #pa-cam .rec { color: #ff6b6b; font-weight: 700; letter-spacing: .08em; animation: late-po 1.6s ease-in-out infinite; }
+  #pa-comms { position: fixed; left: 12px; bottom: 12px; width: min(430px, calc(100% - 24px)); max-height: 46%; display: flex; flex-direction: column; z-index: 4; padding: 10px 12px; }
+  #pa-comms .pa-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  #pa-msgs { list-style: none; margin: 0; padding: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; scrollbar-width: thin; }
+  #pa-msgs li { font-size: 12.5px; line-height: 1.4; padding: 6px 8px; border-radius: 8px; background: rgba(255, 255, 255, .04); border-left: 3px solid var(--tenue); animation: aparecer .35s ease both; }
+  #pa-msgs li b { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 1px; }
+  #pa-msgs li i { font-style: normal; color: var(--tenue); font-size: 11px; margin-left: 6px; letter-spacing: 0; text-transform: none; font-weight: 400; }
+  #pa-msgs li.base { border-left-color: var(--acento); } #pa-msgs li.base b { color: var(--acento); }
+  #pa-msgs li.tierra { border-left-color: #7fdcff; } #pa-msgs li.tierra b { color: #7fdcff; }
+  #pa-msgs li.a1, #pa-msgs li.a2 { border-left-color: #9fe0a8; } #pa-msgs li.a1 b, #pa-msgs li.a2 b { color: #9fe0a8; }
+  #pa-msgs li.alerta { border-left-color: #ff6b6b; background: rgba(220, 30, 40, .14); }
+  #pa-resp { margin-top: 8px; }
+  body.pareja #fp { left: 454px; right: 324px; transform: none; width: auto; }
+  body.pareja #derecha, body.pareja #ver-hud { display: none !important; }
+  @media (max-width: 1200px) and (min-width: 901px) {
+    body.pareja #fp { left: 12px; right: 12px; }
+    body.pareja #visor { max-height: calc(100% - 300px); } #pa-comms { bottom: 236px; max-height: calc(100% - 300px); }
+  }
+  body.pareja #f-vista, body.pareja #f-visor { display: none; }
+  @media (max-width: 900px) {
+    body.pareja #visor { top: auto; bottom: 150px; right: 8px; width: 46%; max-height: 40%; font-size: 10.5px; }
+    #pa-comms { bottom: 150px; width: calc(52% - 16px); max-height: 40%; }
+    body.pareja #fp { left: 8px; right: 8px; width: auto; }
+    #pa-cam { font-size: 11px; top: 56px; }
+  }
+  /* ===== wiki: toda la información en una página ===== */
+  .wiki { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; background: radial-gradient(120% 90% at 85% 10%, #2a1810 0%, #120c0b 55%, #0b0809 100%); color: var(--texto); }
+  .wiki.oculto { display: none; }
+  .wiki-cab { display: flex; gap: 14px; align-items: center; padding: 14px clamp(16px, 3vw, 36px); border-bottom: 1px solid var(--borde); }
+  .wiki-cab input { flex: 1; max-width: 420px; font: inherit; color: var(--texto); background: rgba(255,255,255,.05); border: 1px solid var(--borde); border-radius: 10px; padding: 8px 12px; }
+  .wiki-cab .x { margin-left: auto; }
+  .wiki-cuerpo { flex: 1; display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 0; }
+  #wiki-nav { overflow-y: auto; padding: 14px 10px 14px clamp(16px, 3vw, 36px); border-right: 1px solid var(--borde); display: flex; flex-direction: column; gap: 4px; scrollbar-width: thin; }
+  #wiki-nav button { justify-content: flex-start; text-align: left; background: none; border-color: transparent; box-shadow: none; font-weight: 500; }
+  #wiki-nav button[aria-current=true] { background: rgba(255, 207, 122, .1); border-color: rgba(255, 207, 122, .45); color: #fff; }
+  #wiki-nav button span { margin-left: auto; color: var(--tenue); font-size: 11.5px; }
+  #wiki-art { overflow-y: auto; padding: 18px clamp(16px, 4vw, 56px) 40px; scrollbar-width: thin; }
+  #wiki-art > * { max-width: 780px; }
+  #wiki-art h2 { font-size: 26px; text-transform: none; letter-spacing: -.01em; color: var(--texto); margin: 4px 0 6px; }
+  #wiki-art h3 { font-size: 15px; margin: 18px 0 6px; }
+  #wiki-art p, #wiki-art li { font-size: 14px; line-height: 1.6; }
+  #wiki-art details { margin: 6px 0; }
+  .wiki-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; max-width: 780px; }
+  .wiki-lista button { justify-content: flex-start; text-align: left; flex-direction: column; align-items: flex-start; gap: 2px; padding: 9px 11px; }
+  .wiki-lista button span { color: var(--tenue); font-size: 11.5px; }
+  .wiki-volver { margin-bottom: 10px; }
+  mark { background: rgba(255, 207, 122, .35); color: inherit; border-radius: 3px; }
+  @media (max-width: 760px) { .wiki-cuerpo { grid-template-columns: 1fr; } #wiki-nav { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--borde); padding: 8px 12px; } #wiki-nav button { white-space: nowrap; } .wiki-cab input { max-width: none; } }
   /* fichas de perforaciones con la Biblioteca */
   .pozo-foto { margin: 8px 0 4px; } .pozo-foto img { width: 100%; border-radius: 8px; display: block; border: 1px solid var(--borde); }
   .pozo-foto .sub { display: block; margin-top: 3px; }
@@ -605,15 +670,17 @@
 <div id="ctrl" class="caja">
   <div class="grupo">
     <button class="dk" id="bTour" aria-pressed="false" title="Visita las paradas una por una con su ficha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg><span>Recorrido guiado</span></button>
-    <button class="dk" id="bCaminar" aria-pressed="false" title="Ruta B a pie, con el visor del casco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10.5 21l2-6 2.5 2v4M8 12l2.5-4.5h3.5l2 3.5 2.5 1M12.5 15l1-4"/></svg><span>Caminar como astronauta</span></button>
+    <button class="dk" id="bCaminar" aria-pressed="false" title="Ruta B a pie, con el visor del casco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10.5 21l2-6 2.5 2v4M8 12l2.5-4.5h3.5l2 3.5 2.5 1M12.5 15l1-4"/></svg><span>Caminar</span></button>
     <button class="dk" id="bSeguir" aria-pressed="false" title="Ruta A del robot, con la cámara detrás"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="13" height="5" rx="1"/><path d="M14 9V5h4"/><circle cx="5.5" cy="18" r="2"/><circle cx="11" cy="18" r="2"/><circle cx="16.5" cy="18" r="2"/></svg><span>Seguir al rover</span></button>
+    <button class="dk" id="bPareja" aria-pressed="false" title="Misión en pareja: cámara del Astronauta 1, visor del Astronauta 2 y avisos de las bases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="2"/><circle cx="16.5" cy="6" r="2"/><path d="M5.5 21l1.5-6 2 1.5V21M5 12l1.8-3.5h3l1.6 3M14 21l1.4-5.5 2 1.4V21M13.6 12.6l1.6-3.1h2.8l1.6 3"/></svg><span>En pareja</span></button>
     <button class="dk oculto" id="bViaje" aria-pressed="false" title="Del aterrizaje (2012) a hoy, con las 49 perforaciones"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 19h7a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h7"/></svg><span>Viaje 2012 → hoy</span></button>
-    <button class="dk oculto" id="bExpe" aria-pressed="false" title="Cinco puntos nuevos al sur de A4: el rover o el astronauta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg><span>Expedición sur</span></button>
+    <button class="dk oculto" id="bExpe" aria-pressed="false" title="Cinco puntos nuevos al sur de A4: el rover o el astronauta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg><span>Expedición</span></button>
   </div>
   <div class="grupo">
     <button class="dk" id="mRutas" aria-expanded="false" aria-controls="popRutas" title="Poner un destino y calcular cómo llegar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c3 0 3-4 7-4s4 4 7 4" stroke-dasharray="2 2.6"/><path d="M12 13s-4-3.6-4-6.5a4 4 0 0 1 8 0C16 9.4 12 13 12 13z"/><circle cx="12" cy="6.5" r="1.3"/></svg><span>Rutas</span></button>
     <button class="dk" id="mEscena" aria-expanded="false" aria-controls="popEscena" title="Cámara, hora del día, estación y velocidad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>Escena</span></button>
-    <button class="dk" id="bAyuda" title="Volver a la portada: elegir zona y recorrido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v10h4.5v-5.5h3V20H18V10"/></svg><span>Inicio</span></button>
+    <button class="dk" id="bWiki" title="Toda la información que juntamos, con sus fuentes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M8 7.5h8M8 11h6"/></svg><span>Info</span></button>
+    <button class="dk" id="bAyuda" title="Volver a la portada: elegir cómo prospectar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v10h4.5v-5.5h3V20H18V10"/></svg><span>Inicio</span></button>
   </div>
   <div class="seg oculto" id="segManejo"><button id="cRover" aria-pressed="true" title="WASD o joystick mueven al rover">Rover</button><button id="cAstro" aria-pressed="false" title="WASD o joystick mueven al astronauta">Astronauta</button></div>
 </div>
@@ -648,7 +715,7 @@
   <div class="po-fondo"></div>
   <header class="po-cab">
     <span class="po-marca">GALE-3D</span>
-    <ol class="po-pasos"><li data-p="1">Inicio</li><li data-p="2">Zona</li><li data-p="3">Recorrido</li></ol>
+    <ol class="po-pasos"><li data-p="1">Inicio</li><li data-p="2">Entrada</li><li data-p="3">Recorrido</li></ol>
     <button class="po-x oculto" id="po-cerrar" title="Volver a la escena (Esc)">Volver a la escena ×</button>
   </header>
   <div class="po-cuerpo">
@@ -667,20 +734,19 @@
       </section>
       <section class="po-paso" data-p="2">
         <button class="po-atras" data-ir="1">← Inicio</button>
-        <h2>¿Qué zona querés prospectar?</h2>
-        <p class="po-lead">Podés cambiar de zona cuando quieras con los botones de arriba de la escena.</p>
+        <h2>¿Cómo querés prospectar Gale?</h2>
+        <p class="po-lead">Cuatro entradas: el planeta desde el espacio, el recorrido sobre el terreno real, un mundo abierto para ir a donde quieras y toda la información que juntamos.</p>
         <div class="po-zonas">
-          <button class="zona rec" data-zona="hoy"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg><b>Zona de hoy · sol 5070<span class="rec-et">Recomendado</span></b><span>Donde está Curiosity: rutas del rover y del astronauta, paradas con su ciencia, pendiente y radiación.</span><em id="po-hoy-dim">terreno 1:1, celdas de 2 m</em></button>
-          <button class="zona" id="ay-viaje" data-zona="travesia"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M6.5 15.5c2-1 2.5-3.5 4.5-3.5s2 2.5 4 2 2-3.5 3-4.5"/><circle cx="6.5" cy="15.5" r="1.3" fill="#ffcf7a"/><circle cx="18" cy="9.5" r="1.3" fill="#ffcf7a"/></svg><b>Cráter Gale · travesía 2012 → hoy</b><span>El recorrido real de Curiosity y sus perforaciones: qué encontró en cada lugar.</span><em id="po-trav-dim">37 km · 49 perforaciones</em></button>
-          <button class="zona" id="ay-expe" data-zona="expe"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m15.8 8.2-2.4 5.2-5.2 2.4 2.4-5.2z"/></svg><b>Expedición sur · E1 a E5</b><span>Cinco puntos nuevos más allá de hoy, propuestos por el equipo. Va el rover o va el astronauta.</span><em>propuesta propia</em></button>
-          <button class="zona" id="po-marte" data-zona="marte"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M4 9.5c5 1.5 11 1.5 16 0M3.5 14.5c5.5 1.6 11.5 1.6 17 0" opacity=".65"/><circle cx="15" cy="13" r="1.4" fill="#ffcf7a"/></svg><b>Marte completo</b><span>Todo el planeta con relieve MOLA y color Viking, con Gale en el centro. Desde ahí bajás a la zona.</span><em>vista orbital</em></button>
-          <button class="zona oculto" id="po-ge" data-zona="ge"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(-20 12 12)"/></svg><b>Gale Earth ↗</b><span>Marte estilo Google Earth: órbitas, base y biblioteca. Se abre aparte y vuelve acá.</span><em>proyecto del equipo</em></button>
+          <button class="zona" id="po-me" data-zona="me"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(-20 12 12)"/><circle cx="14.2" cy="13.4" r="1.3"/></svg><b>Mars Earth</b><span>Marte desde el espacio, con el cráter Gale en foco: órbitas, base y biblioteca.</span><em>vista espacial</em></button>
+          <button class="zona rec" data-zona="recorrido"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 19h7a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h7"/></svg><b>Recorrido en Marte<span class="rec-et">Para empezar</span></b><span>Misión en pareja o rover y astronauta por las paradas de hoy, la expedición sur o el viaje 2012 → hoy.</span><em id="po-hoy-dim">sobre el terreno real</em></button>
+          <button class="zona" data-zona="abierto"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m15.8 8.2-2.4 5.2-5.2 2.4 2.4-5.2z"/></svg><b>Mundo abierto</b><span>Manejá el rover o el astronauta por donde quieras, poné destinos con pin y recibí avisos de peligro.</span><em>sin ruta fija</em></button>
+          <button class="zona" data-zona="wiki"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M8 7.5h8M8 11h6"/></svg><b>Información / wiki</b><span>Todo lo que juntamos: por qué Gale, paradas, 49 perforaciones, clima, radiación, rover, traje, comunicaciones y fuentes.</span><em>cada dato con su fuente</em></button>
         </div>
       </section>
       <section class="po-paso" data-p="3">
-        <button class="po-atras" data-ir="2">← Zonas</button>
+        <button class="po-atras" data-ir="2">← Entradas</button>
         <span class="po-ceja" id="po-zona-nom"></span>
-        <h2>¿Cómo la querés recorrer?</h2>
+        <h2 id="po-modos-tit">¿Cómo querés recorrerlo?</h2>
         <div class="po-modos" id="po-modos"></div>
       </section>
       <details class="po-tips" id="po-como"><summary>Cómo se usa</summary><ul>
@@ -702,7 +768,6 @@
   if (/desde-gale-earth/.test(location.hash)) po.classList.add('oculto');
   // Gale Earth solo cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages)
   const alLado = location.protocol === 'file:' ? /\/escena3d\/[^/]*$/.test(location.pathname) : /\/escena3d\//.test(location.pathname);
-  if (alLado) $p('po-ge').classList.remove('oculto');
   const ic = {
     flag: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/></svg>',
     walk: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10.5 21l2-6 2.5 2v4M8 12l2.5-4.5h3.5l2 3.5 2.5 1M12.5 15l1-4"/></svg>',
@@ -710,22 +775,30 @@
     joy: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2"/></svg>',
     eye: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
     ruta: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 19h7a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h7"/></svg>',
+    duo: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="2"/><circle cx="16.5" cy="6" r="2"/><path d="M5.5 21l1.5-6 2 1.5V21M5 12l1.8-3.5h3l1.6 3M14 21l1.4-5.5 2 1.4V21M13.6 12.6l1.6-3.1h2.8l1.6 3"/></svg>',
+    brujula: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m15.8 8.2-2.4 5.2-5.2 2.4 2.4-5.2z"/></svg>',
   };
+  // entradas con un segundo paso: grupos de modos (cada modo es una función que la escena entrega en __portada.listo)
   const MODOS = {
-    hoy: { nom: 'Zona de hoy · sol 5070', modos: [
-      ['tour', 'flag', 'Recorrido guiado', 'Las paradas una por una: qué hay y por qué ir.', true],
-      ['caminar', 'walk', 'Caminar como astronauta', 'Ruta B a pie, en primera persona, con el visor del casco.'],
-      ['seguir', 'rover', 'Seguir al rover', 'Ruta A del robot, desde atrás, con sus huellas.'],
-      ['manejar', 'joy', 'Manejar al astronauta', 'Bajás del rover y caminás con W A S D o el joystick.'],
-      ['libre', 'eye', 'Explorar libre', 'Mover la cámara y tocar los carteles.']] },
-    travesia: { nom: 'Cráter Gale · travesía 2012 → hoy', modos: [
-      ['viaje', 'ruta', 'Viajar del aterrizaje a hoy', 'Sol por sol sobre el terreno real; se detiene en cada perforación.', true],
-      ['travLibre', 'eye', 'Explorar la travesía', 'Todo el recorrido a la vista; tocá los carteles numerados.']] },
-    expe: { nom: 'Expedición sur · E1 a E5', modos: [
-      ['expeRover', 'rover', 'Con el rover', 'Curiosity sigue hacia el sur: soles de manejo y pendiente.', true],
-      ['expeAstro', 'walk', 'A pie, con el astronauta', 'Una salida: tiempo de marcha, dosis y refugios.']] },
+    recorrido: { nom: 'Recorrido en Marte', tit: '¿Cómo querés recorrerlo?', grupos: [
+      ['Dos astronautas', 'misión en pareja', [
+        ['pareja', 'duo', 'Misión en pareja', 'Uno muestra lo que ve; el otro lleva los datos en el visor. La base les manda avisos.', true]]],
+      ['Rover y astronauta', 'zona de hoy · sol 5070', [
+        ['tour', 'flag', 'Recorrido guiado', 'Las paradas una por una: qué hay y por qué ir.'],
+        ['caminar', 'walk', 'Caminar como astronauta', 'Ruta B a pie, con el visor del casco.'],
+        ['seguir', 'rover', 'Seguir al rover', 'Ruta A del robot, desde atrás, con sus huellas.']]],
+      ['Más allá de hoy', 'expedición y travesía', [
+        ['expeRover', 'rover', 'Expedición sur con el rover', 'Cinco puntos nuevos al sur de A4: soles de manejo y pendiente.'],
+        ['expeAstro', 'walk', 'Expedición sur a pie', 'Una salida: tiempo de marcha, dosis y refugios.'],
+        ['viaje', 'ruta', 'Viaje 2012 → hoy', 'Sol por sol sobre el terreno real; se detiene en cada perforación.'],
+        ['travLibre', 'eye', 'Explorar la travesía', 'Todo el recorrido a la vista; tocá los carteles numerados.']]]] },
+    abierto: { nom: 'Mundo abierto', tit: '¿Con qué querés moverte?', grupos: [
+      ['Sin ruta fija', 'W A S D, joystick o destino con pin', [
+        ['abiertoAstro', 'walk', 'Con el astronauta', 'Bajás del rover y caminás a donde quieras. Te avisa pendiente, arena y cuándo volver.', true],
+        ['abiertoRover', 'rover', 'Con el rover', 'Manejás a Curiosity: la inclinación y la arena te frenan con avisos.'],
+        ['abiertoLibre', 'brujula', 'Cámara libre y destinos', 'Recorré el cráter y poné un destino con pin: calcula cómo llegar y qué peligro hay.']]]] },
   };
-  let acc = null, pend = null, reabierta = false, zonaAct = 'hoy';
+  let acc = null, pend = null, reabierta = false, zonaAct = 'recorrido';
   const ir = p => {
     if (p === 'como') { $p('po-como').open = true; $p('po-como').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
     po.dataset.paso = p; po.querySelector('.po-cuerpo').scrollTop = 0;
@@ -734,20 +807,27 @@
   function elegir(k, boton) {
     po.querySelectorAll('.elegido').forEach(b => b.classList.remove('elegido')); boton?.classList.add('elegido');
     if (k === 'ge') { location.href = '../gale-earth/index.html#curiosity'; return; }
+    if (k === 'me') { if (alLado) return irMarsEarth(); k = 'marte'; }   // sin Gale Earth al lado: Marte completo dentro de la escena
     if (!acc) { pend = [k, boton]; po.classList.add('esperando'); return; }
     if (!acc[k]) { $p('po-estado').textContent = 'Esa zona no está en esta versión de la escena.'; return; }
     entrar(k);
   }
-  // entrada: Marte se corre al centro con Gale en el medio, la portada se funde con el planeta 3D y la cámara baja hasta la zona
-  function entrar(k) {
-    const fn = acc[k];
-    if (!acc._planeta || matchMedia('(prefers-reduced-motion: reduce)').matches || !acc._planeta()) { cerrar(); fn(); return; }
+  // Mars Earth: Marte se centra en Gale y se abre Gale Earth, que arranca en el espacio y se acerca al cráter
+  function centrarGlobo() {
     const g = po.querySelector('.po-globo'), r = g.getBoundingClientRect(), m = $p('po-gale');
     const fx = (parseFloat(m.style.left) || 50) / 100, fy = (parseFloat(m.style.top) || 50) / 100;
     const gx = r.left + r.width * fx, gy = r.top + r.height * fy, esc = Math.min(innerHeight * 0.7, innerWidth * 0.9) / Math.max(1, r.width);
     g.style.transformOrigin = `${fx * 100}% ${fy * 100}%`;
     g.style.setProperty('--mover', `translate(${innerWidth / 2 - gx}px, ${innerHeight / 2 - gy}px) scale(${esc})`);
     po.classList.add('entrando');
+    return g;
+  }
+  function irMarsEarth() { centrarGlobo(); setTimeout(() => { location.href = '../gale-earth/index.html'; }, 1250); }
+  // entrada: Marte se corre al centro con Gale en el medio, la portada se funde con el planeta 3D y la cámara baja hasta la zona
+  function entrar(k) {
+    const fn = acc[k];
+    if (k === 'wiki' || !acc._planeta || matchMedia('(prefers-reduced-motion: reduce)').matches || !acc._planeta()) { cerrar(); fn(); return; }
+    const g = centrarGlobo();
     setTimeout(() => po.classList.add('fundido'), 1150);
     setTimeout(() => {
       po.classList.add('oculto'); po.classList.remove('entrando', 'fundido');
@@ -758,8 +838,12 @@
   function zona(z, boton) {
     if (!MODOS[z]) return elegir(z, boton);
     zonaAct = z;
-    $p('po-zona-nom').textContent = MODOS[z].nom;
-    $p('po-modos').innerHTML = MODOS[z].modos.map(([k, i, t, d, rec]) => `<button class="modo${rec ? ' rec' : ''}" data-modo="${k}">${ic[i]}<b>${t}${rec ? '<span class="rec-et">Para empezar</span>' : ''}</b><span>${d}</span></button>`).join('');
+    $p('po-zona-nom').textContent = MODOS[z].nom; $p('po-modos-tit').textContent = MODOS[z].tit;
+    const btn = ([k, i, t, d, rec]) => `<button class="modo${rec ? ' rec' : ''}" data-modo="${k}">${ic[i]}<b>${t}${rec ? '<span class="rec-et">Para empezar</span>' : ''}</b><span>${d}</span></button>`;
+    $p('po-modos').innerHTML = MODOS[z].grupos.map(([t, sub, L]) => {
+      const vis = L.filter(m => !acc || acc[m[0]]);         // lo que esta versión de la escena no tiene, no se ofrece
+      return vis.length ? `<div class="po-grupo">${t}<span>${sub}</span></div>` + vis.map(btn).join('') : '';
+    }).join('');
     ir(3);
   }
   po.addEventListener('click', e => {
@@ -801,18 +885,32 @@
     listo(a, datos = {}) {
       acc = a; po.classList.remove('esperando'); po.classList.add('listo');
       $p('po-estado').textContent = 'Listo: elegí una zona.';
-      for (const [id, ok] of [['ay-viaje', a.viaje], ['ay-expe', a.expeRover], ['po-marte', a.marte]]) $p(id).classList.toggle('oculto', !ok);
+      if (!alLado && !a.marte) $p('po-me').classList.add('oculto');   // ni Gale Earth al lado ni globo propio
+      if (po.dataset.paso === '3') zona(zonaAct);            // si se eligió la entrada mientras cargaba, se rearma con lo disponible
       for (const [id, t] of Object.entries(datos)) if (t && $p(id)) $p(id).textContent = t;
       if (pend) { const [k, b] = pend; pend = null; elegir(k, b); }
     },
     abrir(p = 2) { reabierta = true; $p('po-cerrar').classList.remove('oculto'); po.classList.remove('oculto', 'sale'); ir(p); },
     // Atrás: vuelve a "¿Cómo la querés recorrer?" de la zona donde se estaba
     atras(z) { reabierta = true; $p('po-cerrar').classList.remove('oculto'); po.classList.remove('oculto', 'sale'); if (MODOS[z || zonaAct]) zona(z || zonaAct); else ir(2); },
+    zonaAct: () => zonaAct,
   };
 })();
 </script>
 
 <div id="alertas" aria-live="polite"></div>
+<div id="pareja" class="oculto">
+  <div id="pa-cam"><span class="rec">● EN VIVO</span><b>Cámara del casco · Astronauta 1</b><span id="pa-reloj">T+00:00</span></div>
+  <div id="pa-comms" class="caja" aria-live="polite">
+    <div class="pa-cab"><span class="etq">Comunicaciones con las bases</span><span class="sub" id="pa-demora"></span></div>
+    <ol id="pa-msgs"></ol>
+    <div class="botones" id="pa-resp"><button data-resp="llegamos">Llegamos</button><button data-resp="pronostico">Pedir pronóstico</button><button data-resp="ayuda">Necesitamos ayuda</button></div>
+  </div>
+</div>
+<div id="wiki" class="wiki oculto" role="dialog" aria-label="Información de GALE-3D">
+  <header class="wiki-cab"><span class="po-marca">GALE-3D · Información</span><input type="search" id="wiki-buscar" placeholder="Buscar: sulfatos, radiación, Aeolus, pendiente…" aria-label="Buscar en la información"><button class="x" id="wiki-cerrar" title="Volver (Esc)">Volver ×</button></header>
+  <div class="wiki-cuerpo"><nav id="wiki-nav" aria-label="Secciones"></nav><article id="wiki-art"></article></div>
+</div>
 <div id="transicion" aria-hidden="true"><span>Volviendo a Marte completo…</span></div>
 <div id="llegada" class="oculto" role="status"><span class="etq" id="ll-etq">Llegada</span><b id="ll-tit"></b><span class="sub" id="ll-sub"></span><div id="ll-prog" class="oculto"><i></i></div><div class="botones" id="ll-bot"></div></div>
 <div id="fuente-pop" class="oculto" role="dialog" aria-label="Fuente"><span class="etq">Fuente del dato</span><button id="fp-cerrar" style="float:right;min-height:0;padding:0 7px" aria-label="Cerrar">×</button><b id="fp-tit"></b><span class="url" id="fp-url"></span><a class="abrir" id="fp-abrir" target="_blank" rel="noopener">Abrir la fuente ↗</a></div>
@@ -843,6 +941,8 @@
 </div>
 <div id="visor" class="oculto">
   <div class="marco"></div><div id="v-mira"></div>
+  <div class="solo-pareja" id="pa-cab-visor">VISOR · ASTRONAUTA 2 <span id="pa-comp">compañero a 6 m</span></div>
+  <canvas class="solo-pareja" id="pa-mapa" width="560" height="260" aria-label="Mapa de la salida: los dos astronautas, la base y las paradas"></canvas>
   <div class="vb" id="v-prox"><h3>PRÓXIMA PARADA</h3><div><span class="flecha" id="v-flecha">↑</span> <b id="v-pnom">—</b></div><div id="v-pdist" class="sub" style="color:inherit"></div></div>
   <div class="vb" id="v-suelo"><h3>SUELO</h3>
     <div class="fila"><span>Pendiente</span><b id="v-pend">—</b></div>
@@ -957,6 +1057,7 @@ const OJOS = { vehiculo: 2.1, astronauta: 1.7, tripulado: 2.5 };
 const $ = id => document.getElementById(id);
 // ---------- fuentes con enlace: el círculo "?" lleva directo a la fuente ----------
 const FUENTES_URL = {
+  jplApprox: ['NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte', 'https://ssd.jpl.nasa.gov/planets/approx_pos.html'],
   odometria: ['NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos', 'https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/'],
   biblioteca: ['Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR', 'https://galecrater.samples.odr.io/'],
   odr: ['NASA/ODR: Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52', 'https://doi.org/10.48484/JN48-YW52'],
@@ -2673,6 +2774,7 @@ function aplicarVista() {
 }
 function salirFP(volver = true) {
   if (!fp) return;
+  if (pareja.activo) salirPareja();
   cerrarLlegada();
   const g = fp.est; fp = null;
   est.x = g.x; est.z = g.z; est.yaw = g.yaw; ubicarRover();
@@ -3569,7 +3671,7 @@ $('vZona').onclick = () => { if (viaje.activo) salirViaje(); vistaGeneral(true);
 $('bCalidad').textContent = LIVIANO ? 'Pasar a alta' : 'Pasar a liviana';
 $('bCalidad').onclick = () => { try { localStorage.setItem('gale3d-calidad', LIVIANO ? 'alta' : 'liviana'); location.reload(); } catch (e) { decir('No se pudo guardar la preferencia en este navegador.'); } };
 if (TR) {
-  for (const id of ['sec-travesia', 'bViaje', 'ay-viaje', 'vistas']) $(id).classList.remove('oculto');
+  for (const id of ['sec-travesia', 'bViaje', 'vistas']) $(id).classList.remove('oculto');
   const P = TR.props, ult = TR.P[TR.P.length - 1];
   $('trav-resumen').innerHTML = `Curiosity lleva <b>más de 38 km</b> recorridos (NASA: 38,07 km al 12/10/2026) ${fq('odometria')}. La línea del mapa mide ${num(TR.largo / 1000, 1)} km porque une posiciones informadas; en ${Math.round(ult.sol)} soles, ${POZOS.length} perforaciones y ${num(P.desnivel_m)} m de subida neta. A pie serían unas ${num(P.horas_a_pie)} h de marcha (cálculo propio). En amarillo sobre el terreno; los carteles numerados son las perforaciones.`;
   listarPozos();
@@ -3735,7 +3837,7 @@ if (EXP) {
   $('expe-resumen').innerHTML = `Cinco puntos nuevos al sur de A4, elegidos con datos orbitales (sulfatos, arcilla, refugio, mirador y el frente sur). ${R ? `Rover: ${fmtM(R.largo_m)}, ${R.soles_manejo[0]}–${R.soles_manejo[1]} soles de manejo.` : ''} ${A ? `A pie: ${fmtM(A.largo_m)}, ${fmtH(A.tiempo_min / 60)} de marcha solo de ida.` : ''} <span class="prov">propuesta propia</span>`;
   $('expe-lista').innerHTML = EXP.paradas.map(e => `<details><summary><span class="chip" style="background:#e0703a">${e.id}</span>${e.parada.split(' · ')[1]}</summary>${fichaExpe(e, true)}</details>`).join('');
   conectarBotones($('expe-lista'));
-  for (const id of ['sec-expe', 'bExpe', 'ay-expe']) $(id).classList.remove('oculto');
+  for (const id of ['sec-expe', 'bExpe']) $(id).classList.remove('oculto');
 }
 function fichaExpe(e, corta = false) {
   const tr = e.tramo_rover, ta = e.tramo_astronauta, cp = e.crism_percentil || {};
@@ -4156,6 +4258,7 @@ renderer.setAnimationLoop(ahora => {
       else if (fp.d >= fp.r.largo) { fp.jugando = false; fPlay.textContent = '▶ Recorrer'; }
     }
     ubicarFP();
+    if (pareja.activo) tickPareja();
   } else {
     if (expe.activo) tickExpe(dtReal); else {
     // manejo manual: el rover o el astronauta, según "Manejar". Nada se bloquea por pendiente: se avisa.
@@ -4274,11 +4377,12 @@ renderer.setAnimationLoop(ahora => {
     if (afuera !== afueraAntes) { $('hg-astro').open = afuera; $('hg-rover').open = !afuera; afueraAntes = afuera; }   // uno abierto por vez: entra en pantallas bajas
     // qué modo está activo: se marca en la barra de abajo
     if (enTour && $('ficha').classList.contains('oculto')) enTour = false;
-    const modo = viaje.activo ? 'bViaje' : expe.activo ? 'bExpe' : fp ? (fp.r.tipo === 'vehiculo' ? 'bSeguir' : 'bCaminar') : enTour ? 'bTour' : '';
-    for (const id of ['bTour', 'bCaminar', 'bSeguir', 'bViaje', 'bExpe']) $(id).setAttribute('aria-pressed', id === modo);
+    const modo = viaje.activo ? 'bViaje' : expe.activo ? 'bExpe' : pareja.activo ? 'bPareja' : fp ? (fp.r.tipo === 'vehiculo' ? 'bSeguir' : 'bCaminar') : enTour ? 'bTour' : '';
+    for (const id of ['bTour', 'bCaminar', 'bSeguir', 'bPareja', 'bViaje', 'bExpe']) $(id).setAttribute('aria-pressed', id === modo);
+    $('bWiki').setAttribute('aria-pressed', !$('wiki').classList.contains('oculto'));
     $('mRutas').setAttribute('aria-pressed', marcando || destinoModo);
   };
-  setInterval(resumen, 300); resumen();
+  setInterval(resumen, 300); setTimeout(resumen, 0);   // después de que se declare todo lo que mira (pareja, wiki)
 }
 
 // ---------- panel por apartados: un valor corto en cada encabezado ----------
@@ -4321,11 +4425,199 @@ renderer.setAnimationLoop(ahora => {
   datosEscena();
 }
 
+// ---------- misión en pareja: el Astronauta 1 muestra lo que ve (cámara del casco) y el Astronauta 2 lleva los datos en el
+// visor; la base (el rover) y el control en la Tierra les mandan avisos armados con los datos de la escena ----------
+// demora de la luz Tierra–Marte: posiciones aproximadas de los planetas (JPL, elementos de Standish, válidos 1800–2050)
+function demoraLuz(fecha) {
+  const T = (fecha.getTime() / 86400000 + 2440587.5 - 2451545.0) / 36525, r = Math.PI / 180;
+  const pos = ([a, e, I, L, w, O], [da, de, dI, dL, dw, dO]) => {
+    a += da * T; e += de * T; I = (I + dI * T) * r; L += dL * T; w += dw * T; O += dO * T;
+    const M = (((L - w) % 360 + 540) % 360 - 180) * r, om = (w - O) * r, Or = O * r;
+    let E = M + e * Math.sin(M); for (let k = 0; k < 8; k++) E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+    const xp = a * (Math.cos(E) - e), yp = a * Math.sqrt(1 - e * e) * Math.sin(E);
+    const co = Math.cos(om), so = Math.sin(om), cO = Math.cos(Or), sO = Math.sin(Or), cI = Math.cos(I), sI = Math.sin(I);
+    return [(co * cO - so * sO * cI) * xp + (-so * cO - co * sO * cI) * yp, (co * sO + so * cO * cI) * xp + (-so * sO + co * cO * cI) * yp, so * sI * xp + co * sI * yp];
+  };
+  const t = pos([1.00000261, 0.01671123, -0.00001531, 100.46457166, 102.93768193, 0], [0.00000562, -0.00004392, -0.01294668, 35999.37244981, 0.32327364, 0]);
+  const m = pos([1.52371034, 0.09339410, 1.84969142, -4.55343205, -23.94362959, 49.55953891], [0.00001847, 0.00007882, -0.00813131, 19140.30268499, 0.44441088, -0.29257343]);
+  const ua = Math.hypot(m[0] - t[0], m[1] - t[1], m[2] - t[2]);
+  return { ua, min: ua * 149597870.7 / 299792.458 / 60 };
+}
+const pareja = { activo: false, adelante: 6, lado: 1.1, mov: 0, vistos: new Set(), dosisAviso: 0, ultMapa: 0, demora: 0, ls: 0 };
+const fmtT = h => { const m = Math.round(h * 60); return `T+${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+function msgPareja(de, txt, extra = '') {
+  const DE = { base: 'Base · rover', tierra: 'Control en la Tierra', a1: 'Astronauta 1', a2: 'Astronauta 2' };
+  const q = fp ? puntoEn(fp.r, fp.d) : { t: 0 }, li = document.createElement('li');
+  li.className = de + (extra ? ' ' + extra : '');
+  li.innerHTML = `<b>${DE[de]}<i>${fmtT(q.t)}${de === 'tierra' ? ` · enviado hace ${num(pareja.demora, 0)} min` : ''}</i></b>${txt}`;
+  const L = $('pa-msgs'); L.appendChild(li); while (L.children.length > 30) L.firstChild.remove(); L.scrollTop = L.scrollHeight;
+}
+function estacionDe(ls) { return ESTACIONES.find(e => ls >= e.de && ls < e.a) || ESTACIONES[0]; }
+function entrarPareja() {
+  const r = rutaDe('astronauta'); if (!r) return decir('No hay ruta del astronauta.');
+  $('ficha').classList.add('oculto'); visorOn = false;
+  entrarFP(r, 'ojos'); fp.jugando = true; fPlay.textContent = '❚❚ Pausa';
+  Object.assign(pareja, { activo: true, mov: 0, vistos: new Set(), dosisAviso: 0, ultMapa: 0 });
+  const fecha = $('cFecha').value ? new Date($('cFecha').value + 'T12:00:00Z') : new Date();
+  pareja.demora = demoraLuz(fecha).min; pareja.ls = +$('iLs').value;
+  document.body.classList.add('pareja'); $('pareja').classList.remove('oculto'); $('visor').classList.remove('oculto'); mostrarPaneles(false);
+  $('pa-msgs').innerHTML = '';
+  $('pa-demora').innerHTML = `Tierra ↔ Marte: ${num(pareja.demora, 0)} min por tramo ${fq('jplApprox')}`;
+  const nP = (r.paradasRuta || []).length;
+  msgPareja('base', `Salida autorizada. Ruta B, ${fmtM(r.largo3d)} ida y vuelta, ${nP} parada${nP === 1 ? '' : 's'}. Salida nominal de ${EVA.nom} h (máximo ${EVA.max} h, traje xEMU). Vayan siempre a la vista uno del otro.`);
+  msgPareja('a2', 'Visor en línea. Te sigo a 6 m, a tu izquierda.');
+  const est0 = estacionDe(pareja.ls);
+  setTimeout(() => { if (pareja.activo) msgPareja('tierra', `Pronóstico de la temporada (Ls ${pareja.ls}°, ${est0.nombre}): ${est0.lineas[0][0]} ${fq(est0.lineas[0][1])}`); }, 2500);
+  decir('Misión en pareja: ves lo que ve el Astronauta 1; a la derecha, el visor del Astronauta 2; abajo, los mensajes de las bases.');
+}
+function salirPareja() {
+  pareja.activo = false; document.body.classList.remove('pareja'); $('pareja').classList.add('oculto');
+}
+function tickPareja() {
+  const r = fp.r, d2 = Math.min(r.largo, fp.d + pareja.adelante), q2 = puntoEn(r, d2), qa = puntoEn(r, Math.max(0, d2 - 1.5)), qb = puntoEn(r, Math.min(r.largo, d2 + 1.5));
+  const yaw = Math.atan2(-(qb.z - qa.z), qb.x - qa.x), x2 = q2.x + Math.sin(yaw) * pareja.lado, z2 = q2.z + Math.cos(yaw) * pareja.lado;
+  // el Astronauta 2 camina adelante y a la izquierda, a la vista de la cámara del Astronauta 1
+  astro.visible = true; astro.position.set(x2, alturaMalla(x2, z2), z2); astro.rotation.y = yaw;
+  pareja.mov += ((fp.jugando && d2 < r.largo ? 1 : 0) - pareja.mov) * Math.min(1, dtFrame * 6);
+  poseAstro(d2 / ZANCADA * Math.PI * 2, pareja.mov, Math.atan2(qb.y - qa.y, 3), relojEscena);
+  actualizarVisor(q2);
+  const q1 = puntoEn(r, fp.d);
+  $('pa-reloj').textContent = fmtT(q1.t); $('pa-comp').textContent = `compañero a ${num(Math.hypot(x2 - q1.x, z2 - q1.z), 0)} m`;
+  avisosPareja(r, q1);
+  if (performance.now() - pareja.ultMapa > 250) { pareja.ultMapa = performance.now(); mapaPareja(r, q1, x2, z2); }
+}
+// reglas de los avisos: cada uno sale una sola vez por lugar
+function avisosPareja(r, q) {
+  const una = (clave, f) => { if (!pareja.vistos.has(clave)) { pareja.vistos.add(clave); f(); } };
+  for (const o of r.paradasRuta || []) {
+    if (o.d < 15 || /^S$/i.test(String(o.pa.props.parada))) continue;          // la salida no es una parada
+    const nom = `${o.pa.props.parada} · ${nombreSinId(o.pa.props)}`;
+    if (fp.d >= o.d - 45 && fp.d < o.d - 6) una('cerca' + o.pa.props.parada, () => msgPareja('base', `A 45 m de ${nom}. ${corto(o.pa.props.motivo_cientifico, 140) || 'Fotografíen la capa y tomen muestra.'}`));
+    if (Math.abs(fp.d - o.d) <= 6) una('llega' + o.pa.props.parada, () => {
+      msgPareja('a1', `Llegamos a ${nom}.`);
+      setTimeout(() => { if (pareja.activo) msgPareja('base', 'Recibido. Fotografíen la capa y tomen la muestra; el Astronauta 2 vigila el tiempo.'); }, 1200);
+    });
+  }
+  // pendiente sobre el límite en los próximos 30 m de la ruta
+  for (let s = 8; s <= 30; s += 2) {
+    const qq = puntoEn(r, Math.min(r.largo, fp.d + s));
+    if ((qq.marcha || 0) > PR.pMax) { una('pend' + Math.round((fp.d + s) / 25), () => msgPareja('base', `Pendiente de ${num(qq.marcha, 0)}° a ${s} m sobre la ruta (límite del traje ${PR.pMax}°). Pasen de a uno, despacio.`, 'alerta')); break; }
+  }
+  // dosis: cada 10 µSv
+  if (q.dosis >= pareja.dosisAviso + 10) { pareja.dosisAviso = Math.floor(q.dosis / 10) * 10; msgPareja('base', `Dosis de la salida: ${num(q.dosis, 1)} µSv (${num(q.dosis / (PR.dosis * 10), 1)} % de lo que se recibe en un día en la superficie) ${fq('hassler')}.`); }
+  // reparo del relieve
+  if (q.cielo > 0.2) una('reparo' + Math.round(fp.d / 120), () => msgPareja('a2', `Buen reparo acá: el relieve tapa el ${num(q.cielo * 100)} % del cielo. Lugar para una pausa.`));
+  // tiempo afuera: mitad y tres cuartos de la salida nominal
+  const fr = q.t / EVA.nom;
+  if (fr >= 0.5) una('mitad', () => msgPareja('base', `Van ${fmtH(q.t)} afuera: la mitad de la salida nominal. Revisen el margen para volver.`));
+  if (fr >= 0.75) una('tresc', () => msgPareja('base', `Van ${fmtH(q.t)} afuera. Empiecen a volver: el regreso más la reserva de ${EVA.reserva} min tiene que entrar en ${EVA.nom} h.`, 'alerta'));
+  if (fp.d >= r.largo - 2) una('fin', () => { msgPareja('a1', 'De vuelta en la base.'); msgPareja('base', `Salida cerrada: ${fmtH(q.t)}, ${num(q.dosis, 1)} µSv por persona.`); });
+}
+// mini mapa del visor: la ruta, la base, las paradas y los dos astronautas
+function mapaPareja(r, q1, x2, z2) {
+  const cv = $('pa-mapa'), g = cv.getContext('2d'), Wc = cv.width, Hc = cv.height;
+  if (!r._caja) { let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity; for (const p of r.pts) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); } r._caja = [x0, x1, z0, z1]; }
+  const [x0, x1, z0, z1] = r._caja, e = Math.min((Wc - 30) / Math.max(1, x1 - x0), (Hc - 30) / Math.max(1, z1 - z0));
+  const X = x => 15 + (x - x0) * e + ((Wc - 30) - (x1 - x0) * e) / 2, Z = z => 15 + (z - z0) * e + ((Hc - 30) - (z1 - z0) * e) / 2;
+  g.clearRect(0, 0, Wc, Hc);
+  g.strokeStyle = 'rgba(127,220,255,.35)'; g.lineWidth = 3; g.beginPath(); r.pts.forEach((p, i) => i ? g.lineTo(X(p.x), Z(p.z)) : g.moveTo(X(p.x), Z(p.z))); g.stroke();
+  g.strokeStyle = '#7fdcff'; g.lineWidth = 4; g.beginPath(); for (const p of r.pts) { if (p.d > fp.d) break; p.d ? g.lineTo(X(p.x), Z(p.z)) : g.moveTo(X(p.x), Z(p.z)); } g.stroke();
+  g.font = '600 18px ui-monospace, Menlo, monospace'; g.textAlign = 'center';
+  for (const o of r.paradasRuta || []) { g.fillStyle = 'rgba(255,207,122,.9)'; g.beginPath(); g.arc(X(o.pa.x), Z(o.pa.z), 6, 0, 7); g.fill(); g.fillText(String(o.pa.props.parada), X(o.pa.x), Z(o.pa.z) - 12); }
+  const b = r.pts[0]; g.fillStyle = '#ffcf7a'; g.fillRect(X(b.x) - 8, Z(b.z) - 8, 16, 16); g.fillStyle = '#1b1210'; g.fillText('B', X(b.x), Z(b.z) + 6);
+  for (const [x, z, c, t] of [[q1.x, q1.z, '#9fe0a8', '1'], [x2, z2, '#7fdcff', '2']]) { g.fillStyle = c; g.beginPath(); g.arc(X(x), Z(z), 9, 0, 7); g.fill(); g.fillStyle = '#0b1a20'; g.fillText(t, X(x), Z(z) + 6); }
+}
+$('pa-resp').addEventListener('click', e => {
+  const b = e.target.closest('[data-resp]'); if (!b || !fp) return;
+  const r = fp.r, q = puntoEn(r, fp.d), b0 = r.pts[0], dB = Math.hypot(q.x - b0.x, q.z - b0.z);
+  if (b.dataset.resp === 'llegamos') { msgPareja('a1', 'Llegamos al punto. Empezamos la tarea.'); setTimeout(() => msgPareja('base', `Recibido. Están a ${fmtM(dB)} de la base en línea recta.`), 900); }
+  if (b.dataset.resp === 'pronostico') {
+    msgPareja('a2', 'Pedimos el pronóstico a la Tierra.');
+    const est0 = estacionDe(pareja.ls), l = est0.lineas[1] || est0.lineas[0];
+    setTimeout(() => msgPareja('tierra', `${l[0]} ${fq(l[1])} En la realidad esta respuesta tarda ${num(pareja.demora * 2, 0)} min (ida y vuelta). Con Aeolus (2028) habría pronóstico del día ${fq('aeolus')}.`), 2200);
+  }
+  if (b.dataset.resp === 'ayuda') {
+    msgPareja('a2', 'Necesitamos ayuda.', 'alerta');
+    setTimeout(() => msgPareja('base', `Rover en camino: ${fmtM(dB)} a ${num(PR.vTrip / 1000, 0)} km/h, unos ${num(Math.max(1, dB / PR.vTrip * 60), 0)} min (rover presurizado: supuesto). Busquen reparo del relieve mientras tanto.`, 'alerta'), 1100);
+  }
+});
+$('bPareja').onclick = entrarPareja;
+
+// ---------- información / wiki: todo lo que juntamos, en una página con buscador ----------
+const WIKI = [
+  ['porque', 'Por qué Gale', () => `<h2>Por qué Gale</h2>${$('porque').innerHTML}`],
+  ['paradas', 'Paradas de hoy', () => `<h2>Paradas de la zona de hoy</h2><p class="sub">Sol 5070, donde está Curiosity. Cada parada tiene su motivo científico, el suelo, la radiación y lo que se ve desde órbita.</p>${$('paradas').innerHTML}`],
+  ['pozos', `Perforaciones`, () => `<h2>Las ${POZOS.length} perforaciones de Curiosity</h2><p class="sub">Del aterrizaje (2012) a hoy, con lo que se encontró en cada una ${fq('biblioteca')}.</p>` +
+    CAMPANAS.map(c => `<h3>${c.nombre}</h3><p class="sub">${c.idea}</p><div class="wiki-lista">${c.pozos.map(p => `<button data-wpozo="${POZOS.indexOf(p)}"><b>${p.pozo} · ${p.nombre}</b><span>sol ${p.sol}${p.bib?.roca ? ' · ' + p.bib.roca : ''}</span></button>`).join('')}</div>`).join('')],
+  ['expe', 'Expedición sur', () => EXP ? `<h2>Expedición sur · E1 a E5</h2><p class="sub">${$('expe-resumen').innerHTML}</p>` + EXP.paradas.map(e => `<h3>${e.parada}</h3>${fichaExpe(e, true)}`).join('') : '<h2>Expedición sur</h2><p>No está en esta versión.</p>'],
+  ['clima', 'Clima y estaciones', () => `<h2>Clima en Gale</h2>` + ESTACIONES.map(e => `<h3>Ls ${e.de}°–${e.a}° · ${e.nombre}</h3><ul>${e.lineas.map(([t, f]) => `<li>${t} ${fq(f)}</li>`).join('')}</ul>`).join('') + `<h3>Lo que viene</h3><div>${$('clima').innerHTML}</div>`],
+  ['seguridad', 'Rover y astronauta', () => `<h2>Límites del rover y del astronauta</h2>
+    <table class="tabla"><tr><td>Pendiente máxima del traje</td><td>${PR.pMax}° ${fq('evaConops')}</td></tr><tr><td>Pendiente máxima del rover</td><td>${PR.rMax}° <span class="prov">supuesto</span></td></tr>
+    <tr><td>Velocidad a pie en llano</td><td>${num(PR.vCam * 3.6, 1)} km/h, corregida por pendiente (Tobler) <span class="prov">supuesto</span></td></tr>
+    <tr><td>Avance de Curiosity</td><td>${PR.porSol[0]}–${PR.porSol[1]} m por sol de manejo</td></tr>
+    <tr><td>Radiación en superficie</td><td>${PR.dosis} mSv/día; el relieve la baja con el cielo tapado ${fq('hassler')}</td></tr>
+    <tr><td>Salida a pie</td><td>${EVA.nom} h nominales, ${EVA.max} h como máximo; a menos de ${EVA.refugio} min de un refugio y ${EVA.reserva} min de reserva <span class="prov">supuesto</span></td></tr></table>
+    <p class="sub">Los valores marcados como supuesto son del equipo y se pueden cambiar en data/parametros.json.</p>`],
+  ['comunicaciones', 'Comunicaciones', () => { const d = demoraLuz(new Date()); return `<h2>Comunicaciones Tierra–Marte</h2>
+    <p>Hoy la luz tarda <b>${num(d.min, 1)} min</b> en ir de la Tierra a Marte (${num(d.ua, 2)} UA). Una pregunta y su respuesta tardan el doble: por eso, en la misión en pareja, lo urgente lo resuelve la base que está en Marte (el rover) y la Tierra manda pronósticos y planes ${fq('jplApprox')}.</p>
+    <p>La demora va de unos 3 min (Marte más cerca) a unos 22 min (del otro lado del Sol). Cálculo propio con las posiciones aproximadas de los planetas de JPL.</p>`; }],
+  ['fuentes', 'Fuentes', () => `<h2>Fuentes</h2><p class="sub">Cada "?" de la escena lleva a una de estas.</p><ul>${Object.entries(FUENTES_URL).map(([k, [t, u]]) => `<li>${t} · <a href="${u}" target="_blank" rel="noopener" style="color:var(--acento)">abrir ↗</a></li>`).join('')}</ul>`],
+];
+let wikiTexto = null;
+function abrirWiki(sec = 'porque') {
+  $('wiki').classList.remove('oculto');
+  if (!wikiTexto) wikiTexto = Object.fromEntries(WIKI.map(([k, , f]) => { const d = document.createElement('div'); d.innerHTML = f(); return [k, d.textContent.toLowerCase()]; }));
+  pintarNavWiki(); verWiki(sec);
+}
+function pintarNavWiki() {
+  const q = $('wiki-buscar').value.trim().toLowerCase();
+  $('wiki-nav').innerHTML = WIKI.filter(([k]) => !q || wikiTexto[k].includes(q)).map(([k, t]) => {
+    const n = q ? wikiTexto[k].split(q).length - 1 : 0;
+    return `<button data-wsec="${k}">${t}${n ? `<span>${n}</span>` : ''}</button>`;
+  }).join('') || '<p class="sub">Nada coincide.</p>';
+}
+function verWiki(k) {
+  const s = WIKI.find(w => w[0] === k) || WIKI[0], art = $('wiki-art');
+  art.innerHTML = s[2](); art.scrollTop = 0; art.dataset.sec = s[0];
+  $('wiki-nav').querySelectorAll('[data-wsec]').forEach(b => b.setAttribute('aria-current', b.dataset.wsec === s[0]));
+  conectarBotones(art); marcarBusqueda();
+}
+function marcarBusqueda() {
+  const q = $('wiki-buscar').value.trim(); if (q.length < 3) return;
+  const art = $('wiki-art'), w = document.createTreeWalker(art, NodeFilter.SHOW_TEXT), L = [], rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  while (w.nextNode()) if (rx.test(w.currentNode.nodeValue)) L.push(w.currentNode);
+  L.forEach(n => { const s = document.createElement('span'); s.innerHTML = n.nodeValue.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])).replace(rx, m => `<mark>${m}</mark>`); n.replaceWith(s); });
+  L.length && art.querySelector('mark')?.closest('details')?.setAttribute('open', '');
+  art.querySelector('mark')?.scrollIntoView({ block: 'center' });
+}
+const cerrarWiki = () => $('wiki').classList.add('oculto');
+$('wiki-nav').addEventListener('click', e => { const b = e.target.closest('[data-wsec]'); if (b) verWiki(b.dataset.wsec); });
+$('wiki-buscar').addEventListener('input', () => { pintarNavWiki(); const prim = $('wiki-nav').querySelector('[data-wsec]'); if (prim) verWiki(prim.dataset.wsec); });
+$('wiki-art').addEventListener('click', e => {
+  const p = e.target.closest('[data-wpozo]');
+  if (p) { const art = $('wiki-art'); art.innerHTML = `<button class="wiki-volver" data-wsec-volver>← Todas las perforaciones</button>${fichaPozo(POZOS[+p.dataset.wpozo])}`; art.scrollTop = 0; conectarBotones(art); return; }
+  if (e.target.closest('[data-wsec-volver]')) { verWiki('pozos'); return; }
+  // los botones que llevan a la escena (ver en 3D, caminar hasta acá, viajar…) cierran la información
+  if (e.target.closest('[data-ir],[data-fp],[data-tour],[data-pozo],[data-pozo-ir],[data-expe-ir],[data-expe-hasta],[data-perforar-parada],[data-perforar-expe],[data-pozo-viaje]')) setTimeout(cerrarWiki, 0);
+});
+$('wiki-cerrar').onclick = cerrarWiki;
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('wiki').classList.contains('oculto')) cerrarWiki(); });
+$('bWiki').onclick = () => abrirWiki();
+
+// ---------- mundo abierto: sin ruta fija, con el astronauta, el rover o la cámara ----------
+function mundoAbierto(con) {
+  if (con === 'astro') { setControl('astro'); if (!tactil) mostrarGuiaTeclas(); }
+  else if (con === 'rover') { setControl('rover'); setCam('rover'); }
+  else vistaGeneral(true);
+  setTimeout(() => decir(con === 'libre' ? 'Mundo abierto: mové la cámara y tocá "Rutas → Poner destino" para ir a un punto. Te aviso si hay peligro.'
+    : `Mundo abierto ${con === 'astro' ? 'con el astronauta' : 'con el rover'}: W A S D o el joystick. Te aviso pendiente, arena y cuándo volver. "Rutas → Poner destino" calcula cómo llegar.`), 400);
+}
+
 // ---------- portada: la escena ya está lista; lo que se eligió mientras cargaba arranca ahora ----------
 function salirDeModos() {
   if (fp) salirFP(false); if (viaje.activo) salirViaje(); if (expe.activo) salirExpe();
   if (yo.activo) terminarSalida('Salida terminada'); setAuto(false);
-  cerrarLlegada(); $('ficha').classList.add('oculto'); enTour = false;
+  cerrarLlegada(); $('ficha').classList.add('oculto'); enTour = false; cerrarWiki();
 }
 // la portada deja la cámara en "Marte completo" (Gale al centro) y, al fundirse, baja hasta lo elegido
 function prepararEntrada() {
@@ -4337,13 +4629,10 @@ function bajarDesdePlaneta(k, fn) {
   const fin = () => { document.body.classList.remove('bajando'); document.body.classList.add('llegando'); setTimeout(() => document.body.classList.remove('llegando'), 700); fn(); };
   if (k === 'marte' || !CTX) { fin(); return; }
   vistaTravesia(3);                                        // de Marte entero a todo el cráter
-  const aZona = !['viaje', 'travLibre', 'expeRover', 'expeAstro'].includes(k);
+  const aZona = !['viaje', 'travLibre', 'expeRover', 'expeAstro', 'wiki'].includes(k);
   setTimeout(() => { if (aZona) { vistaGeneral(true); setTimeout(fin, 1500); } else fin(); }, 3100);
 }
-document.querySelectorAll('[data-atras]').forEach(b => b.onclick = () => {
-  const z = expe.activo ? 'expe' : viaje.activo ? 'travesia' : undefined;
-  salirDeModos(); window.__portada?.atras(z);
-});
+document.querySelectorAll('[data-atras]').forEach(b => b.onclick = () => { salirDeModos(); window.__portada?.atras(); });
 window.__portada?.listo({
   _planeta: GLOBO && CTX ? prepararEntrada : null,
   _bajar: bajarDesdePlaneta,
@@ -4357,8 +4646,13 @@ window.__portada?.listo({
   expeRover: EXP ? () => entrarExpe('vehiculo') : null,
   expeAstro: EXP ? () => entrarExpe('astronauta') : null,
   marte: GLOBO ? () => $('vPlaneta').click() : null,
+  pareja: () => entrarPareja(),
+  abiertoAstro: () => mundoAbierto('astro'),
+  abiertoRover: () => mundoAbierto('rover'),
+  abiertoLibre: () => mundoAbierto('libre'),
+  wiki: () => abrirWiki(),
 }, {
-  'po-hoy-dim': `${fmtM(W * CS * COS)} × ${fmtM(H * CS)} · celdas de ${CS} m`,
+  'po-hoy-dim': `terreno real, celdas de ${CS} m`,
   'po-km': '+38 km',
   'po-pozos': TR ? String(POZOS.length) : null,
   'po-trav-dim': TR ? `+38 km · ${POZOS.length} perforaciones · ${Math.round(TR.P[TR.P.length - 1].sol)} soles` : null,

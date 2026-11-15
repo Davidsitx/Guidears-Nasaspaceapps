@@ -41,6 +41,9 @@ Es la fusión de dos trabajos del equipo:
   ficha, con Anterior / Siguiente), **Caminar como astronauta** (ruta B), **Seguir al rover** (ruta A), viaje y expedición;
   **Rutas** y **Escena** abren una ventanita con sus controles. Panel izquierdo en apartados plegables; a la derecha, "Datos
   en vivo" en tres grupos plegables (rover, astronauta, entorno).
+- **Cuatro entradas en la portada:** Mars Earth, Recorrido en Marte, Mundo abierto e Información / wiki. **Misión en pareja:**
+  cámara del Astronauta 1, visor del Astronauta 2 y comunicaciones con la base y con la Tierra (demora real de la luz).
+  Guía completa para seguir desarrollando: `docs/desarrollo/`.
 - **Entrada animada:** al elegir en la portada, Marte se corre al centro con Gale en el medio y la cámara baja desde el planeta
   (vuelo en escala logarítmica) hasta la travesía y la zona. **← Atrás** (arriba a la izquierda y en la expedición) vuelve a
   "¿Cómo la querés recorrer?". Lo seleccionado (modo activo, Visor, Ojos, Autonomía, vistas) queda marcado.

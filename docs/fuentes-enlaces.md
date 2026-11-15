@@ -4,6 +4,7 @@ Generado con `python herramientas/listar_fuentes.py` a partir de `FUENTES_URL` e
 
 | Clave | Qué respalda | Enlace |
 | --- | --- | --- |
+| `jplApprox` | NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte | https://ssd.jpl.nasa.gov/planets/approx_pos.html |
 | `odometria` | NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos | https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/ |
 | `biblioteca` | Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR | https://galecrater.samples.odr.io/ |
 | `odr` | NASA/ODR: Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 | https://doi.org/10.48484/JN48-YW52 |

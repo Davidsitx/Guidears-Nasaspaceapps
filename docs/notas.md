@@ -2,6 +2,27 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada (2) · David (con Claude) · NUEVA MIRADA: CUATRO ENTRADAS, MISIÓN EN PAREJA, WIKI Y GUÍA DE DESARROLLO (rama `david/union-gale-earth`)
+- **Portada en tres pasos.**
+  - Inicio → **Entrada** → Recorrido.
+  - Entradas: **Mars Earth**, **Recorrido en Marte**, **Mundo abierto** e **Información / wiki**.
+  - Mars Earth abre Gale Earth sin hash: arranca en el espacio y vuela al cráter Gale. Si Gale Earth no está al lado, va a "Marte completo" de la escena.
+- **Misión en pareja (visualización principal 1).**
+  - La pantalla grande es la cámara del casco del Astronauta 1. El Astronauta 2 camina 6 m adelante, a la vista.
+  - A la derecha, el **visor del Astronauta 2**: minimapa, próxima parada, suelo, radiación y refugio.
+  - Abajo, **comunicaciones con las bases**:
+    - base · rover (al instante): paradas, pendiente adelante, dosis, tiempo afuera y cierre;
+    - control en la Tierra: con "enviado hace N min" según la **demora real de la luz** (`demoraLuz`, elementos de JPL; da 10,9 min el 15/11/2026);
+    - respuestas rápidas: Llegamos, Pedir pronóstico, Necesitamos ayuda.
+  - Botón "En pareja" en la barra.
+- **Mundo abierto:** con el astronauta, con el rover o con cámara libre y destinos con pin.
+- **Wiki:** pantalla completa con buscador.
+  - Secciones: por qué Gale, paradas, 49 perforaciones (ficha completa dentro de la wiki), expedición, clima, límites del rover y del astronauta, comunicaciones y fuentes.
+  - Se abre desde la portada o con "Info" en la barra.
+- **Guía de desarrollo en `docs/desarrollo/`:** README (producto, mapa, comandos, reglas), estilo visual, arquitectura (código, recetas, pruebas), pantallas con capturas y pendientes con criterio de aceptación. `CLAUDE.md` apunta ahí.
+- **Arreglado:** quedaban referencias a tarjetas viejas de la portada (`ay-viaje`, `ay-expe`) que cortaban la carga. La guía tiene un control para que no vuelva a pasar.
+
+
 ## 2026-11-15 madrugada · David (con Claude) · UNIÓN CON GALE EARTH Y AJUSTES DE USO (rama `david/union-gale-earth`)
 - **Fusión:** la rama tiene todo `companero/gale-earth-rutas` (expedición de 20 km, Hugging Face, REMS, SAM revisado, pozos nuevos). Solo hubo conflicto en `docs/notas.md` (quedaron las dos) y en `gale-earth/index.html`, que se rearmó con `_ensamblar.py` y `armar.py`. El botón "Misión Curiosity · 3D" sigue.
 - **Entrada desde la portada:** al elegir, Marte se corre al centro con Gale en el medio, la portada se funde con el planeta 3D y la cámara baja en escala logarítmica hasta la travesía y después a la zona. La interfaz aparece al llegar.
