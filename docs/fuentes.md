@@ -22,8 +22,8 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Radiación junto a relieve | Ehresmann et al. 2021 (doi:10.1029/2021JE006851); Guo et al. 2021 (doi:10.1029/2021GL093912) |
 | Rover presurizado (10 km/h; con dos o más vehículos, más de 125 millas ≈ 200 km en cualquier dirección; antes figuraba 125 km por error de unidades) | NASA Space Exploration Vehicle, ficha FS-2011-08-045-JSC |
 | Agua en el subsuelo (DAN, 0 a 6,1%) | Mitrofanov et al. 2022 (PMC9788246) |
-| Capa de yardangs (panorámica del sol 4982, teoría de ceniza volcánica) | NASA/JPL-Caltech/MSSS, imagen del día (enlace pendiente) |
-| Polvo fino y ultrafino en materiales de trajes | Perseverance PIXL/SHERLOC, PNAS, 27 de octubre de 2026 (VanBommel et al.; DOI pendiente) |
+| Capa de yardangs (panorámica del sol 4982, teoría de ceniza volcánica) | NASA/JPL-Caltech/MSSS, PIA25629 (sol 4982, 11/8/2026): https://science.nasa.gov/photojournal/nasas-curiosity-captures-dawn-breaking-on-wind-carved-cliffs/ ; NASA, "Curiosity Rover Catches Stunning Martian Dawn" (ceniza volcánica como hipótesis) |
+| Polvo fino y ultrafino en materiales de trajes | Perseverance PIXL/SHERLOC, PNAS, 27 de octubre de 2026 (VanBommel et al., PNAS, doi:10.1073/pnas.2620747123; NASA, "NASA's Perseverance Offers Clues to Protect Crews From Mars Dust") |
 | Contexto regional THEMIS (falso color, 100 m/píxel) | NASA/JPL/ASU, PIA06814 (2004) |
 | Mineralogía orbital del Monte Sharp (CRISM) | Sheppard et al. 2021, JGR Planets, doi:10.1029/2020JE006372; Rice et al. 2015, AGU P43D-2144 |
 | Mosaicos CRISM de Gale para el aterrizaje (VNA, TRU, FM2, MAF, IRA, FAL, HYD, ALT; 19,3 m/píxel, equirectangular R=3396190) | Seelos, Seelos, Viviano y Murchie (JHU/APL), CRISM GMWG, 24/7/2012: crism.jhuapl.edu/msl_landing_sites/2012July_Mosaics/CRISM_GMWG_7-24-12_v2.pdf. Cubre la zona sol 5070 (verificado). Recortes y valores por parada en data/mineralogia/crism_sol5070/ |
@@ -40,7 +40,7 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Campaña del boxwork y pozos 43 a 48 | Blog de Curiosity: sols 4695-4701, 4709-4715, 4716-4722, 4798-4803, 4804-4811, 4879-4885, 4893-4899, 4900-4907, 5016-5021 |
 | Hallazgos de los otros 37 pozos | Citas de memoria en `data/curiosity/perforaciones_hallazgos.json`, marcadas "a verificar" |
 | Límites de inclinación del rover: aguanta 45° sin volcar, la protección de fallas lo frena antes de 30° | JPL, MSL "Planetary mobility" (copia de archivo): webarchive.library.unt.edu/eot2008/20090512223236/http://mars.jpl.nasa.gov/msl/mission/technology/planetarymobility |
-| Récord de pendiente de Curiosity: 31° (Greenheugh, marzo de 2020) | Space.com, space.com/mars-rover-curiosity-steepest-hill-selfie-photo.html |
+| Récord de pendiente de Curiosity: 31° (Greenheugh, marzo de 2020) | NASA/JPL, 20/3/2020, "NASA's Curiosity Mars Rover Takes a New Selfie Before Record Climb": https://www.jpl.nasa.gov/news/nasas-curiosity-mars-rover-takes-a-new-selfie-before-record-climb/ |
 | Inclinación máxima de 25,3° en los primeros 7 años | JPL Robotics 2020, www-robotics.jpl.nasa.gov/media/documents/2020-mobility-trending.pdf |
 | Rocker-bogie limitado a menos de 15° en suelo suelto (regla de la arena) | JPL 2023, póster R22016 (scienceandtechnology.jpl.nasa.gov) |
 | Traje: pendientes de hasta 20°; Apolo 15 sobre ~17° | NASA EVA-EXP-0075, NTRS 20200001071 |
@@ -90,7 +90,7 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Gale Earth: infrarrojo nocturno de todo Marte | USGS Astrogeology, THEMIS Night IR Controlled Mosaics 100 m v2 (2018), vista previa a 2 km: https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars/THEMIS_controlled_mosaics/AA_mosaics/ |
 | Gale Earth: topónimos | IAU/USGS, Gazetteer of Planetary Nomenclature, https://planetarynames.wr.usgs.gov/ (exportación MARS_nomenclature.csv, copia en github.com/planetserver/ps2-www-client). |
 | Gale Earth: día y noche en Marte | Allison y McEwen 2000 (Mars24, NASA GISS), https://www.giss.nasa.gov/tools/mars24/ |
-| Por qué se eligió Gale (minerales vistos desde órbita en las capas del Monte Sharp, 5,5 km) | Smithsonian NASM 2022 (airandspace.si.edu/stories/editorial/10-years-curiosity-mars); Spaceflight Now 2011 |
+| Por qué se eligió Gale (diversidad de capas con minerales vistos desde órbita al pie del Monte Sharp) | Golombek et al. 2012, Space Science Reviews 170:641-737, doi:10.1007/s11214-012-9916-y; NASA, 12/4/2012, "Gale Crater: Exploring the Mars Science Laboratory Landing Site" |
 | Primer pozo: Gale tuvo un lago de agua dulce habitable | NASA/JPL 2013, "Curiosity Rover Hits Paydirt" (science.nasa.gov/resource/curiosity-rover-hits-paydirt); Vaniman et al. 2014, doi:10.1126/science.1243480 |
 | Moléculas orgánicas más grandes de Marte (Cumberland, 2025) | NASA/JPL, 24/3/2025 |
 | Pozos 43 a 47 y entrada a la unidad de sulfatos | Blog de Curiosity, sols 4709-4715, 4804-4811, 4893-4899 y 4845-4851 (science.nasa.gov/blog) |

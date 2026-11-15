@@ -2,6 +2,27 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mediodía · Compañero (con Claude) · UNA SOLA VERDAD PARA LOS 49 POZOS + FUENTES SECUNDARIAS REEMPLAZADAS
+- **Fuente única de los pozos: la Wiki (`gale-earth/datos/biblioteca.json`).**
+  - `herramientas/unificar_pozos.py` copia el hallazgo, la fuente y la marca de verificado a:
+    - `data/curiosity/perforaciones_hallazgos.json`: la unidad y las campañas de David quedan igual;
+    - `data/curiosity/perforaciones.geojson`: la escena 3D clásica;
+    - `gale-earth/datos/entrada/perforaciones.geojson`: los pines del globo y la guía del PMR.
+  - Con `--revisar` solo compara. `gale-earth/armar.py` lo corre solo y avisa si algo dejó de coincidir.
+  - `herramientas/travesia_datos.py` ahora lee el hallazgo y la fuente de la Wiki, así que regenerar la escena no vuelve atrás.
+- **Escena 3D clásica rearmada:** 49 de 49 verificados. Ya no aparece "a verificar" en el viaje por soles, los avisos de llegada ni la perforación más cercana. La dosis de respaldo pasa de 0,67 a 0,64, como en `parametros.json`.
+- **Fuentes secundarias reemplazadas por oficiales:**
+  - récord de 31° en Greenheugh: comunicado de NASA/JPL del 20/3/2020, en lugar de Space.com;
+  - por qué se eligió Gale: Golombek et al. 2012 (doi:10.1007/s11214-012-9916-y) y NASA del 12/4/2012, en lugar de Smithsonian y Spaceflight Now;
+  - yardangs: PIA25629;
+  - polvo en los trajes: DOI 10.1073/pnas.2620747123.
+  - Queda Space.com solo como apoyo de Aeolus, que tiene también el comunicado de NASA.
+- **Rama `companero/verificacion-unificada`**: sale de main (PR #9) y suma todo lo de esta mañana.
+- **A la PC le pasé la versión unida:** `plantilla.html`, `servir.py`, `datos/mision.json`, terreno y cielo del PMR, modelos `.glb` de la misión y logos.
+- **Falta (David):**
+  - revisar que los textos de la Wiki le sirvan para la escena (son los mismos 49, ya verificados);
+  - si hace falta otra redacción, cambiarla en la Wiki y correr `unificar_pozos.py`.
+
 ## 2026-11-15 mañana (12) · Compañero (con Claude) · VERIFICACIÓN DE LOS 59 HALLAZGOS DE POZOS + QUÍMICA APXS CORREGIDA + BIBLIOTECA EN INGLÉS
 - **Los 37 "a verificar" de `data/curiosity/perforaciones_hallazgos.json` (David) quedaron verificados.**
   - Cada uno tiene ahora `verificado: true`, la fecha y su fuente concreta (artículo con DOI o página de NASA).

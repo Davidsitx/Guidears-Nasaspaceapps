@@ -68,6 +68,14 @@ def revisar(d):
             print("  -", x)
     else:
         print("Datos revisados: 49 pozos, zonas, recorrido y orbitadores OK")
+    # los 49 pozos tienen que decir lo mismo en la Wiki, la escena 3D y el globo (herramientas/unificar_pozos.py)
+    uni = os.path.join(REPO, "herramientas", "unificar_pozos.py")
+    if os.path.exists(uni):
+        import subprocess, sys
+        r = subprocess.run([sys.executable, uni, "--revisar"], capture_output=True, text=True)
+        print((r.stdout or r.stderr).strip().splitlines()[0] if (r.stdout or r.stderr) else "")
+        if r.returncode:
+            print("  → corré: python herramientas/unificar_pozos.py")
     if not os.path.exists(os.path.join(AQUI, "datos", "biblioteca.json")):
         print("Falta datos/biblioteca.json: la pestaña Biblioteca no va a cargar. Generalo con: python armar_biblioteca.py")
     lt = os.path.join(AQUI, "datos", "linea_tiempo.json")

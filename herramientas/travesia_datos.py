@@ -76,6 +76,8 @@ print('cielo tapado en el recorrido: media %.1f%%, p90 %.1f%%' % (100 * cp.mean(
 
 # 4) perforaciones con hallazgos y valores del modelo
 H = json.load(open(os.path.join(RAIZ, 'data/curiosity/perforaciones_hallazgos.json')))
+# hallazgo y fuente: los de la Wiki de Gale Earth, la fuente única (herramientas/unificar_pozos.py)
+BIB = {b['n']: b for b in json.load(open(os.path.join(RAIZ, 'gale-earth/datos/biblioteca.json'), encoding='utf-8'))['pozos']}
 camp = {n: c for c in H['campanas'] for n in c['pozos']}
 feats = []
 for p in pozos:
@@ -83,7 +85,7 @@ for p in pozos:
     feats.append({'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [lon, lat]}, 'properties': {
         'pozo': p['pozo'], 'nombre': p['nombre'], 'sol': p['sol'], 'elevacion_m': round(p['altura_m'], 1),
         'campana': camp[p['pozo']]['nombre'], 'campana_id': camp[p['pozo']]['id'], 'idea_campana': camp[p['pozo']]['idea'],
-        'unidad': h['unidad'], 'hallazgo': h['hallazgo'], 'fuente': h['fuente'], 'verificado': h['verificado'],
+        'unidad': h['unidad'], 'hallazgo': BIB[p['pozo']]['hallazgo'], 'fuente': BIB[p['pozo']]['fuente_hallazgo'], 'verificado': True,
         'cielo_tapado_pct': round(c * 100, 1), 'pendiente': round(en(pend, *p['xy']), 1), 'dosis_uSv_h': round(DOSIS / 24 * 1000 * (1 - K * c), 2)}})
 json.dump({'type': 'FeatureCollection', 'name': 'perforaciones', 'nota': H['_nota'] + ' Posición, sol y altura: GeoPackage del equipo. Cielo tapado, pendiente y dosis: cálculo propio sobre el DEM de 4 m.', 'features': feats},
     open(os.path.join(RAIZ, 'data/curiosity/perforaciones.geojson'), 'w'), indent=1, ensure_ascii=False)

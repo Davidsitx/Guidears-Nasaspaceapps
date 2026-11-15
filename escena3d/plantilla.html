@@ -1048,7 +1048,7 @@ const PR = {
   vRover: P.vehiculo?.velocidad_m_h ?? 100,                         // m/h para métricas
   vTrip: (P.vehiculo_tripulado?.velocidad_km_h ?? 10) * 1000,       // m/h
   porSol: P.vehiculo?.avance_por_sol_m ?? [30, 60],
-  dosis: P.radiacion?.dosis_superficie_mSv_dia ?? 0.67,
+  dosis: P.radiacion?.dosis_superficie_mSv_dia ?? 0.64,
   k: P.radiacion?.factor_blindaje_relieve ?? 0.25,
   refMax: (P.astronauta?.radio_max_desde_refugio_km ?? 1.38) * 1000,
   pesoSombra: 3,                                                    // preferencia del A* del astronauta por la sombra
@@ -1085,7 +1085,7 @@ const FUENTES_URL = {
   pdsApxs: ['NASA PDS Geosciences: APXS de MSL (óxidos y trazas)', 'https://pds-geosciences.wustl.edu/missions/msl/apxs.htm'],
   mahli: ['NASA: imágenes crudas de Curiosity (MAHLI), NASA/JPL-Caltech/MSSS', 'https://mars.nasa.gov/msl/multimedia/raw-images/'],
   jplMov: ['JPL: movilidad de Curiosity. Aguanta 45° sin volcar; la protección de fallas lo frena antes de 30°', 'https://webarchive.library.unt.edu/eot2008/20090512223236/http://mars.jpl.nasa.gov/msl/mission/technology/planetarymobility'],
-  rec31: ['Space.com: Curiosity sube su pendiente récord, 31° (Greenheugh, marzo de 2020)', 'https://www.space.com/mars-rover-curiosity-steepest-hill-selfie-photo.html'],
+  rec31: ['NASA/JPL (20/3/2020): Curiosity se inclinó 31° subiendo al pedimento Greenheugh, su récord', 'https://www.jpl.nasa.gov/news/nasas-curiosity-mars-rover-takes-a-new-selfie-before-record-climb/'],
   jpl2020: ['JPL (2020): tendencias de movilidad de Curiosity, inclinación máxima de 25,3° en 7 años', 'https://www-robotics.jpl.nasa.gov/media/documents/2020-mobility-trending.pdf'],
   jpl2023: ['JPL (2023): los rovers de balancín quedan limitados a menos de 15° en suelo suelto', 'https://scienceandtechnology.jpl.nasa.gov/sites/default/files/posters/2023/R22016.pdf'],
   evaConops: ['NASA EVA-EXP-0075: concepto de operaciones de salidas en superficie (pendientes de hasta 20°; Apolo 15 sobre ~17°)', 'https://ntrs.nasa.gov/api/citations/20200001071/downloads/20200001071.pdf'],
@@ -1121,8 +1121,8 @@ const FUENTES_URL = {
   tutolo: ['Tutolo et al. 2025 (Science): siderita en la unidad de sulfatos', 'https://doi.org/10.1126/science.ado9966'],
   paydirt: ['NASA/JPL (2013): la primera muestra perforada muestra que Marte antiguo pudo sostener microbios', 'https://science.nasa.gov/resource/curiosity-rover-hits-paydirt/'],
   organicos: ['NASA/JPL (24/3/2025): las moléculas orgánicas más grandes halladas en Marte, en el pozo Cumberland', 'https://www.jpl.nasa.gov/news/nasas-curiosity-rover-detects-largest-organic-molecules-found-on-mars/'],
-  galeSi: ['Smithsonian (2022): por qué se eligió Gale, minerales vistos desde órbita en las capas del Monte Sharp', 'https://www.airandspace.si.edu/stories/editorial/10-years-curiosity-mars'],
-  galeEleccion: ['Spaceflight Now (2011): Gale, arcillas y sulfatos al pie de una montaña; la ventana más amplia a la historia de Marte', 'https://www.spaceflightnow.com/atlas/av028/111121gale/index.html'],
+  galeSi: ['Golombek et al. 2012, Space Science Reviews 170:641 (selección del sitio): Gale por la diversidad de sus capas con minerales vistos desde órbita', 'https://doi.org/10.1007/s11214-012-9916-y'],
+  galeEleccion: ['NASA (12/4/2012): Gale se eligió sobre Eberswalde por su mayor diversidad y potencial habitable; arcillas y sulfatos al pie del Monte Sharp', 'https://science.nasa.gov/resource/gale-crater-exploring-the-mars-science-laboratory-landing-site/'],
   blog4709: ['Blog de Curiosity, sols 4709–4715: perforar arriba y abajo en el boxwork', 'https://science.nasa.gov/blog/curiosity-blog-sols-4709-4715-drilling-high-and-low-in-the-boxwork-unit'],
   blog4804: ['Blog de Curiosity, sols 4804–4811: Nevado Sajama 2 y la fase final del boxwork', 'https://science.nasa.gov/blog/curiosity-blog-sols-4804-4811-kicking-off-the-final-phase-of-boxwork-exploration'],
   blog4893: ['Blog de Curiosity, sols 4893–4899: perforación en Campo Marte', 'https://science.nasa.gov/blog/curiosity-blog-sols-4893-4899-drilling-at-campo-marte-and-a-visit-from-the-psyche-spacecraft/'],
