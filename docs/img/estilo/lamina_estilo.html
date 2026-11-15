@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Lámina de estilo</title>
+<style>
+  :root { --fondo:#1b1210; --panel:rgba(22,17,15,.9); --borde:rgba(233,226,214,.18); --texto:#ece4da; --tenue:#a99d90;
+          --vehiculo:#3fb6ff; --astronauta:#ff8a3d; --acento:#ffcf7a; --peligro:#ff6b6b; --ok:#7bd88f; }
+  * { box-sizing:border-box; }
+  body { margin:0; width:1440px; height:900px; overflow:hidden; background:#0d0a0b; color:var(--texto); font:13px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:20px; }
+  .col { display:flex; flex-direction:column; gap:14px; }
+  .caja { background:var(--panel); border:1px solid var(--borde); border-radius:8px; padding:10px 12px; }
+  h1 { font-size:17px; margin:0 0 2px; } h2 { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--tenue); margin:0 0 8px; font-weight:600; }
+  .sub { color:var(--tenue); font-size:12px; }
+  .fila { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .sw { width:92px; } .sw i { display:block; height:34px; border-radius:6px; border:1px solid rgba(255,255,255,.12); } .sw b { display:block; font-size:11.5px; margin-top:3px; } .sw span { font-size:10.5px; color:var(--tenue); font-family:ui-monospace,Consolas,monospace; }
+  button { font:inherit; font-weight:500; color:var(--texto); background:linear-gradient(#3a2d25,#2a201b); border:1px solid rgba(233,226,214,.22); border-radius:8px; padding:6px 11px; display:inline-flex; align-items:center; gap:6px; min-height:32px; box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 1px 2px rgba(0,0,0,.35); }
+  button.on { border-color:var(--acento); background:linear-gradient(#5a4130,#46321f); color:#fff; }
+  button.pri { background:linear-gradient(#cc6233,#a8482a); border-color:#d9733f; color:#fff; }
+  button.verde { background:linear-gradient(#2f8a55,#23683f); border-color:#4fbf7d; color:#fff; font-weight:600; border-radius:23px; }
+  .seg { display:inline-flex; border-radius:8px; overflow:hidden; border:1px solid rgba(233,226,214,.22); } .seg button { border:0; border-radius:0; box-shadow:none; } .seg button+button { border-left:1px solid rgba(233,226,214,.18); }
+  .prov { color:var(--acento); font-size:10.5px; border:1px solid var(--acento); border-radius:4px; padding:0 4px; }
+  .verif { font-size:10.5px; border-radius:4px; padding:0 5px; border:1px solid currentColor; } .verif.si { color:#7bd88f; } .verif.no { color:#ffcf7a; }
+  .sim { font-size:10.5px; letter-spacing:.1em; font-weight:700; color:#1b1210; background:var(--acento); border-radius:4px; padding:1px 6px; }
+  a.q { display:inline-grid; place-items:center; width:17px; height:17px; border-radius:50%; border:1px solid rgba(255,207,122,.55); color:var(--acento); font:600 10.5px/1 system-ui; text-decoration:none; }
+  a.q.h { background:var(--acento); color:#1b1210; }
+  .pop { width:300px; padding:10px 12px; background:rgba(22,17,15,.97); border:1px solid rgba(255,207,122,.45); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.55); font-size:12.5px; }
+  .pop b { display:block; margin:2px 0 6px; } .pop .url { color:var(--tenue); font-size:11px; display:block; margin-bottom:8px; }
+  .pop a { display:inline-flex; padding:6px 11px; border-radius:8px; background:linear-gradient(#cc6233,#a8482a); color:#fff; text-decoration:none; font-weight:600; }
+  .alerta { display:flex; gap:10px; align-items:center; padding:7px 12px; border-radius:10px; font-weight:600; background:rgba(25,18,15,.93); border:1px solid; box-shadow:0 4px 14px rgba(0,0,0,.45); }
+  .alerta small { display:block; font-weight:400; color:var(--tenue); font-size:11.5px; }
+  .alerta b.ic { width:24px; height:24px; border-radius:50%; display:grid; place-items:center; color:#1b1210; flex:none; }
+  .chipn { display:inline-grid; place-items:center; min-width:34px; height:34px; border-radius:50%; font-weight:700; color:#1b1210; border:3px solid #1b1210; box-shadow:0 0 0 1px rgba(255,255,255,.35); font-size:13px; }
+  .linea { height:6px; width:90px; border-radius:3px; display:inline-block; vertical-align:middle; margin-right:6px; }
+  .barra { height:5px; width:220px; background:rgba(255,255,255,.08); border-radius:3px; position:relative; } .barra i { position:absolute; left:0; top:0; bottom:0; width:60%; border-radius:3px; background:var(--ok); } .barra u { position:absolute; top:-2px; bottom:-2px; left:85%; width:1px; background:var(--peligro); }
+  .visor { font:12.5px/1.35 ui-monospace,Consolas,monospace; color:#bff6ff; text-shadow:0 0 6px rgba(0,200,255,.55),0 1px 1px #000; background:rgba(0,25,35,.6); border:1px solid rgba(150,230,255,.35); border-radius:8px; padding:7px 10px; width:230px; }
+  .visor h3 { margin:0 0 3px; font-size:10.5px; letter-spacing:.14em; color:#7fdcff; } .visor .al { color:#ff8f8f; }
+  /* Gale Earth */
+  .ge { font:14px/1.45 "Google Sans",Roboto,system-ui,sans-serif; background:#202124; border-radius:16px; border:1px solid #ffffff10; box-shadow:0 1px 3px rgba(0,0,0,.45),0 4px 12px rgba(0,0,0,.35); padding:12px 14px; color:#e8eaed; }
+  .ge h3 { margin:0 0 4px; font-size:17px; font-weight:500; } .ge .sub { color:#9aa0a6; }
+  .chipb { display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 13px; border-radius:16px; border:1px solid #ffffff1a; background:rgba(32,33,36,.94); color:#e8eaed; }
+  .chipb i { width:9px; height:9px; border-radius:50%; }
+  .tarj { background:#2b2c30; border-radius:12px; padding:9px 12px; margin-top:8px; border:1px solid transparent; } .tarj.on { border-color:#f28c38; }
+  .rb { display:inline-flex; flex-direction:column; align-items:center; gap:3px; font-size:10.5px; color:#9aa0a6; width:64px; } .rb i { width:46px; height:28px; border-radius:12px; display:block; } .rb.on { color:#ffb070; } .rb.on i { background:#f28c3826; }
+  .astro { background:#1b2a21; border-radius:12px; padding:8px 12px; margin-top:8px; font-size:13px; }
+  .btnge { background:#2b2c30; color:#e8eaed; border:0; border-radius:18px; padding:7px 14px; font-size:12.5px; min-height:0; box-shadow:none; }
+  .btnge.ac { background:#f28c38; color:#111; }
+</style></head><body>
+<div class="col">
+  <div class="caja"><h2>GALE-3D · paleta base (escena 3D)</h2>
+    <div class="fila">
+      <div class="sw"><i style="background:#1b1210"></i><b>--fondo</b><span>#1b1210</span></div>
+      <div class="sw"><i style="background:rgba(22,17,15,.9)"></i><b>--panel</b><span>rgba(22,17,15,.9)</span></div>
+      <div class="sw"><i style="background:#ece4da"></i><b>--texto</b><span>#ece4da</span></div>
+      <div class="sw"><i style="background:#a99d90"></i><b>--tenue</b><span>#a99d90</span></div>
+      <div class="sw"><i style="background:#ffcf7a"></i><b>--acento</b><span>#ffcf7a</span></div>
+      <div class="sw"><i style="background:linear-gradient(#cc6233,#a8482a)"></i><b>primario</b><span>#cc6233→#a8482a</span></div>
+    </div>
+    <h2 style="margin-top:10px">Colores con significado (iguales en todo el proyecto)</h2>
+    <div class="fila">
+      <div class="sw"><i style="background:#3fb6ff"></i><b>Vehículo</b><span>#3fb6ff</span></div>
+      <div class="sw"><i style="background:#ff8a3d"></i><b>Astronauta</b><span>#ff8a3d</span></div>
+      <div class="sw"><i style="background:#b06bff"></i><b>Tripulado</b><span>#b06bff</span></div>
+      <div class="sw"><i style="background:#4fbf7d"></i><b>Regreso/base</b><span>#4fbf7d</span></div>
+      <div class="sw"><i style="background:#7bd88f"></i><b>OK</b><span>#7bd88f</span></div>
+      <div class="sw"><i style="background:#ff6b6b"></i><b>Peligro</b><span>#ff6b6b</span></div>
+    </div>
+  </div>
+  <div class="caja"><h2>Botones y controles</h2>
+    <div class="fila"><button>Rutas</button><button class="on">Zona de hoy (activo)</button><button class="pri">Elegir la zona →</button><button class="verde">Volver a la base</button></div>
+    <div class="fila" style="margin-top:8px"><div class="seg"><button>Marte completo</button><button>Travesía completa</button><button class="on">Zona de hoy</button></div></div>
+  </div>
+  <div class="caja"><h2>Marcas de veracidad (regla: medido · cálculo · supuesto)</h2>
+    <div class="fila">Pendiente máx. astronauta 20° <span class="prov">provisorio</span> &nbsp; Ficha <span class="verif si">verificado</span> <span class="verif no">a verificar</span> &nbsp; <span class="sim">SIMULACIÓN</span></div>
+    <div class="fila" style="margin-top:8px; align-items:flex-start">Dosis en superficie 0,64 mSv/día <a class="q">?</a> <a class="q h">?</a>
+      <div class="pop"><span class="sub">Fuente</span><b>Hassler et al. 2014 (Science): RAD mide 0,64 mSv/día en Gale</b><span class="url">ntrs.nasa.gov/citations/20180007641</span><a>Abrir fuente ↗</a></div></div>
+  </div>
+  <div class="caja"><h2>Alertas (avisan, no frenan) · 4 niveles</h2>
+    <div class="fila">
+      <div class="alerta" style="border-color:#6bb7ff"><b class="ic" style="background:#6bb7ff">i</b><div>Info<small>#6bb7ff</small></div></div>
+      <div class="alerta" style="border-color:#ffcf5a"><b class="ic" style="background:#ffcf5a">!</b><div>Precaución<small>#ffcf5a</small></div></div>
+      <div class="alerta" style="border-color:#ff8a3d"><b class="ic" style="background:#ff8a3d">!</b><div>Peligro<small>#ff8a3d</small></div></div>
+      <div class="alerta" style="border-color:#ff4d4d"><b class="ic" style="background:#ff4d4d;color:#fff">!!</b><div>Crítico<small>#ff4d4d, late</small></div></div>
+    </div>
+  </div>
+</div>
+<div class="col">
+  <div class="caja"><h2>Marcadores de paradas y tramos de ruta</h2>
+    <div class="fila">
+      <span class="chipn" style="background:#3fb6ff">A2</span><span class="chipn" style="background:#ffcf7a">B1</span><span class="chipn" style="background:#2a9d8f;color:#fff">R1</span><span class="chipn" style="background:#c04fb5;color:#fff">Q1</span><span class="chipn" style="background:#e0703a;color:#fff">E1</span><span class="chipn" style="background:#c0392b;color:#fff">49</span>
+      <span class="sub">refugio #2a9d8f · muestra #c04fb5 · expedición #e0703a · Curiosity #c0392b · borde #1b1210</span>
+    </div>
+    <div style="margin-top:8px" class="sub"><span class="linea" style="background:#3fb6ff"></span>ruta del rover &nbsp; <span class="linea" style="background:#ff8a3d"></span>ruta a pie &nbsp; <span class="linea" style="background:#ffd63c"></span>tramo &gt; 15° &nbsp; <span class="linea" style="background:#ff5a4f"></span>tramo sobre el límite</div>
+    <div style="margin-top:8px" class="fila"><span class="sub">Barra de margen:</span><div class="barra"><i></i><u></u></div><span class="sub">relleno = valor (verde) · raya roja = límite</span></div>
+  </div>
+  <div class="caja"><h2>Visor del casco (HUD): monoespaciada, cian</h2>
+    <div class="fila"><div class="visor"><h3>RADIACIÓN</h3>Dosis salida 0,21 mSv<br>Cielo tapado 14 %<br><span class="al">Regreso &gt; 30 min</span></div>
+      <span class="sub" style="max-width:280px">ui-monospace / Consolas 12.5 px · texto #bff6ff con brillo cian · títulos #7fdcff con letter-spacing .14em · alerta #ff8f8f</span></div>
+  </div>
+  <div class="caja"><h2>Gale Earth · globo (estilo tipo Google Earth)</h2>
+    <div class="fila">
+      <div class="sw"><i style="background:#202124"></i><b>cajón</b><span>#202124</span></div>
+      <div class="sw"><i style="background:#2b2c30"></i><b>--sup2</b><span>#2b2c30</span></div>
+      <div class="sw"><i style="background:#e8eaed"></i><b>--texto</b><span>#e8eaed</span></div>
+      <div class="sw"><i style="background:#9aa0a6"></i><b>--suave</b><span>#9aa0a6</span></div>
+      <div class="sw"><i style="background:#f28c38"></i><b>--acento</b><span>#f28c38</span></div>
+      <div class="sw"><i style="background:#4fa3d9"></i><b>--agua</b><span>#4fa3d9</span></div>
+    </div>
+    <div class="fila" style="margin-top:10px; align-items:flex-start">
+      <div class="ge" style="width:330px"><h3>Punto de interés: cráter Gale</h3><span class="sub">Centro 5,4° S · 137,8° E</span>
+        <div class="tarj on">Tarjeta seleccionada (borde #f28c38)</div>
+        <div class="astro"><b>Por qué para una base</b> · fondo #1b2a21</div>
+        <div class="fila" style="margin-top:8px"><button class="btnge">Botón</button><button class="btnge ac">Activo</button></div></div>
+      <div style="display:flex; flex-direction:column; gap:8px">
+        <span class="chipb"><i style="background:#ff9f43"></i>Cráter Gale</span><span class="chipb"><i style="background:#4fa3d9"></i>Recorrido de Curiosity</span><span class="chipb"><i style="background:#e5534b"></i>Curiosity hoy</span>
+        <div class="fila"><span class="rb on"><i></i>Explorar</span><span class="rb"><i style="background:#ffffff08"></i>Capas</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

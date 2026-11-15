@@ -13,7 +13,7 @@ async function cargarLinea() {
 function fechaLinda(e) {
   if (e.f.startsWith('-')) return e.etq;
   const M = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'], p = e.f.split('-');
-  return p.length === 3 ? `${+p[2]} ${M[+p[1] - 1]} ${p[0]}` : p[0];
+  return p.length === 3 ? `${+p[2]} ${M[+p[1] - 1]} ${p[0]}` : p.length === 2 ? `${M[+p[1] - 1]} ${p[0]}` : p[0];
 }
 function claseEv(e) { return e.tipo === 'geologia' ? 'geo' : e.gale ? 'gale' : (e.res === 'fallo' || e.res === 'fallo_fin') ? 'mal' : (e.res === 'futuro' || e.res === 'en_camino') ? 'fut' : e.res === 'parcial' ? 'med' : 'bien'; }
 

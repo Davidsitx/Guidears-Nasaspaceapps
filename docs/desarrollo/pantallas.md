@@ -11,7 +11,7 @@ Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)
   - carteles de las paradas, con su color, y rutas pegadas al terreno (A azul, B naranja, caminatas de C);
   - expedición E1–E5 y la **Base Gale** en la Zona 2;
   - Curiosity (o el GX-2) y el astronauta en la salida;
-  - el rover tripulado **GX-3** estacionado en la base.
+  - el **PMR** (rover presurizado, antes GX-3) estacionado en la base.
   - Al pasar el mouse por cualquier cartel (también los de Gale Earth) aparece la mano, se agranda y dice qué es; un toque abre la ficha en el panel.
 - **Barra:** En pareja · Rover ruta A · A pie ruta B · Tripulado GX-3 · Expedición sur · Base Gale · Curiosity / GX-2 · Todo.
 
@@ -49,6 +49,44 @@ Qué hace cada pantalla y cada botón, con su captura (en [capturas/](capturas/)
 ![Parada A2: salir a caminar](capturas/gale-earth/13_gx3_parada_caminata.jpg)
 ![La caminata sale del GX-3](capturas/gale-earth/14_caminata_desde_gx3.jpg)
 ![Vista desde la cabina](capturas/gale-earth/15_gx3_cabina.jpg)
+
+### PMR, guía de la expedición, visor y pantalla (15/11, tarde)
+
+![Interruptores arriba y pines de la lámina](capturas/gale-earth/16_interruptores_pines.jpg)
+
+- **Arriba, a la derecha del buscador:** "49 perforaciones" y "Recorrido nuevo" (nuestras rutas y paradas). Los dos arrancan apagados para que, al acercarse, no aparezcan todos los pines juntos. El recorrido real de Curiosity sigue en Capas.
+- **Pines:** la forma de la lámina de estilo (`docs/img/estilo/lamina_estilo.html`): círculo con borde oscuro, aro claro, código corto y palito al suelo. Las perforaciones mantienen el color de zona o de mineral que se elija en Capas.
+
+![Guía recomendada del PMR](capturas/gale-earth/17_guia_recomendada.jpg)
+
+- **PMR (antes GX-3):** en su ficha y en la barra ("PMR"), cuatro caminos:
+  - **Guía recomendada:** seis perforaciones (John Klein, Windjana, Buckskin, Mary Anning, Tapo Caparo, Valle de la Luna), una estación magnética y una sísmica en los tramos más largos, Curiosity hoy (muestras) y vuelta a la base;
+  - **Armar mi guía:** perforaciones de una lista con buscador y puntos tocados en el mapa (con perforar 2 m, sismómetro o magnetómetro); siempre termina en Curiosity hoy y la vuelta es opcional;
+  - **Ir a una perforación:** cualquiera de las 49;
+  - **Manejo libre.**
+- El panel muestra los totales (km, tiempo, dosis, batería, lo más lejos del refugio a pie) y cada tramo. "▶ Empezar" recorre tramo por tramo.
+
+![Tramo de manejo: pantalla del PMR](capturas/gale-earth/18_pmr_tramo_manejo.jpg)
+![Caminata: visor del casco y pantalla del PMR](capturas/gale-earth/19_pmr_caminata_visor.jpg)
+
+- **Tramos:** el PMR maneja por la ruta más segura (pendiente ≤ 20°, esquiva arena) y estaciona a unos 130 m de la parada. Uno sale por el suitport con el **visor del casco** (arriba a la izquierda, cian); el otro queda en la cabina con la **pantalla del PMR** (derecha): minimapa con relieve (gris = pendiente, ocre = arena, rojo = el PMR no pasa), tramo, pendiente, dosis acumulada, tiempo al refugio, tiempo afuera, cielo tapado, batería, motivo científico y comunicaciones. En la parada se hace el trabajo (perforar 2 m, instalar el instrumento o tomar muestras) y se vuelve al PMR.
+
+![Misión en pareja: visor y pantalla, sin tarjetas encimadas](capturas/gale-earth/20_pareja_visor_pantalla.jpg)
+
+- **Misión en pareja:** el mismo esquema. Ya no hay un segundo astronauta caminando: el Astronauta 2 está en el PMR. La tarjeta y el reproductor se centran en el lugar libre entre el visor y la pantalla, y la pantalla no tapa los controles de Gale Earth.
+
+![Manejo libre](capturas/gale-earth/21_pmr_manejo_libre.jpg)
+
+- **Manejo libre:** W A S D o flechas (en el celular, los botones del reproductor), Shift o "×10" para ir más rápido. No pasa pendientes de más de 20° y en arena va a la mitad. La pantalla dice cuánto falta al hábitat y qué perforación hay cerca.
+
+![Armar mi guía](capturas/gale-earth/22_armar_guia.jpg)
+![Wiki](capturas/gale-earth/23_wiki.jpg)
+
+- **Wiki (antes Biblioteca):** mismo contenido, con "Misión: nuestra propuesta" en la portada. El botón ⧉ del panel abre la ficha en otra pestaña, sin el globo ni las barras.
+- **Celular:** el visor queda arriba, compacto; la pantalla del PMR se abre con el botón "Pantalla del PMR" sobre el reproductor.
+
+![Celular: visor](capturas/gale-earth/24_celular_pareja_visor.jpg)
+![Celular: pantalla del PMR](capturas/gale-earth/25_celular_pantalla_pmr.jpg)
 
 - **Código:** `gale-earth/mision.js`. Datos y modelos con `python herramientas/exportar_mision.py` (sección "Cómo se arma" de `arquitectura.md`). Lo que sigue más abajo es la escena anterior, que queda como **versión clásica**.
 

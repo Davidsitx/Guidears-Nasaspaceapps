@@ -1,15 +1,15 @@
-"""Ruta T: el rover tripulado GX-3 sale del garaje de la Base Gale (Zona 2) y va hasta la zona de hoy (salida S, donde está Curiosity).
+"""Ruta T: el PMR (rover presurizado) sale del lado del garaje de la Base Gale (Zona 2) y va hasta la zona de hoy (salida S, donde está Curiosity).
 
 Qué hace (cálculo propio sobre datos con fuente):
 1. Lee el terreno de contexto (data/terreno/travesia_sur: elevación, pendiente y cielo tapado a 12 m) y el color a 3 m.
 2. Marca arena probable (tono azulado, como en capas_peligro.py y expedicion.py) y terreno prohibido (pendiente > límite del rover).
 3. Busca el camino con A* (8 vecinos). Costo por metro: 1 + (pendiente / 10)² y +6 en arena probable.
 4. Lo suaviza tirando rectas largas que no pasen por celdas prohibidas ni por arena, y lo remuestrea cada 5 m.
-5. Para cada punto calcula elevación, pendiente de marcha, cielo tapado, tiempo a la velocidad del GX-3 y energía de la batería:
+5. Para cada punto calcula elevación, pendiente de marcha, cielo tapado, tiempo a la velocidad del PMR y energía de la batería:
    (manejo + cabina) / velocidad · distancia  +  masa · g · subida / eficiencia   (parámetros en data/parametros.json, vehiculo_tripulado).
 
 Uso:  /usr/bin/python3.12 herramientas/ruta_base.py            (lee y actualiza gale-earth/datos/mision.json)
-Salida: data/rutas/ruta_base_gx3.geojson y la ruta "T" dentro de gale-earth/datos/mision.json.
+Salida: data/rutas/ruta_base_pmr.geojson y la ruta "T" dentro de gale-earth/datos/mision.json.
 exportar_mision.py lo llama solo al final, así que normalmente no hace falta correrlo aparte.
 """
 import json, math, os, heapq
@@ -21,7 +21,7 @@ G_MARTE = 3.711
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CTXD = os.path.join(RAIZ, 'data/terreno/travesia_sur')
 MISION = os.path.join(RAIZ, 'gale-earth/datos/mision.json')
-SALIDA = os.path.join(RAIZ, 'data/rutas/ruta_base_gx3.geojson')
+SALIDA = os.path.join(RAIZ, 'data/rutas/ruta_base_pmr.geojson')
 
 
 def cargar_terreno():
@@ -121,7 +121,7 @@ def calcular(T, ini_ll, fin_ll, par):
         out.append([round(lon, 7), round(lat, 7), round(d[i], 1), round(float(elev[i]), 1), round(abs(marcha), 1), round(terr, 1), round(ce, 2),
                     round(d[i] / v, 4), 0, 0, -1, round(kwh, 2)])
     largo = d[-1]; largo3d = sum(math.hypot(d[i] - d[i - 1], elev[i] - elev[i - 1]) for i in range(1, len(d)))
-    return dict(id='T', nombre='T · GX-3 de la Base Gale a la zona de hoy', tipo='tripulado', color='#b06bff',
+    return dict(id='T', nombre='T · PMR de la Base Gale a la zona de hoy', tipo='tripulado', color='#b06bff',
                 largo=round(largo, 1), largo3d=round(largo3d, 1), horas=round(largo / v, 3), dosis=0, sube=round(sube, 1), baja=round(baja, 1),
                 maxMarcha=round(pmax, 1), lim=lim, idaVuelta=False, cieloMedio=round(float(np.mean(cielos)), 2), paradas=[], pts=out,
                 kwh=round(kwh, 1), celdasArena=arena, desdeBase=True,
@@ -132,7 +132,7 @@ def main():
     P = json.load(open(os.path.join(RAIZ, 'data/parametros.json'), encoding='utf-8'))
     par = P['vehiculo_tripulado']
     D = json.load(open(MISION, encoding='utf-8'))
-    gx = D.get('gx3') or {}
+    gx = D.get('pmr') or {}
     ini = (gx['lon'], gx['lat']) if 'lon' in gx else (D['base']['lon'], D['base']['lat'])
     fin = (D['curiosity']['lon'], D['curiosity']['lat'])
     T = cargar_terreno()
@@ -140,7 +140,7 @@ def main():
     D['rutas'] = [x for x in D['rutas'] if x['id'] != 'T'] + [r]
     json.dump(D, open(MISION, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     props = {k: v for k, v in r.items() if k != 'pts'}
-    props['fuente'] = 'Terreno: data/terreno/travesia_sur (equipo, 14/11; coincide con el DEM USGS de Gale). Parámetros del GX-3: data/parametros.json (vehiculo_tripulado), supuestos con fuente (SEV de NASA y rover presurizado del Mars Architecture Team).'
+    props['fuente'] = 'Terreno: data/terreno/travesia_sur (equipo, 14/11; coincide con el DEM USGS de Gale). Parámetros del PMR: data/parametros.json (vehiculo_tripulado), supuestos con fuente (SEV de NASA y rover presurizado del Mars Architecture Team).'
     gj = dict(type='FeatureCollection', features=[dict(type='Feature', properties=props,
               geometry=dict(type='LineString', coordinates=[[p[0], p[1], p[3]] for p in r['pts']]))])
     json.dump(gj, open(SALIDA, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

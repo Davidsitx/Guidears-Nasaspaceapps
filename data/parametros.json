@@ -31,7 +31,7 @@
   "estado": "provisorio",
   "notas": "Reemplazar cada valor por uno con fuente (ver docs/fuentes.md y CLAUDE.md).",
   "vehiculo_tripulado": {
-    "perfil": "rover presurizado tripulado GX-3 (diseño del equipo): SUPUESTOS con fuente (rutas C y T)",
+    "perfil": "rover presurizado tripulado PMR (diseño del equipo): SUPUESTOS con fuente (rutas C y T)",
     "velocidad_km_h": 10,
     "alcance_km": 200,
     "nota_alcance": "SEV: con dos o más vehículos, más de 125 millas (~200 km) en cualquier dirección. Antes decía 125 km por error de unidades.",
