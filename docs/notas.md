@@ -2,6 +2,13 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-14 noche · David (con Claude) · REDISEÑO DE LA INTERFAZ (rama `david/union-gale-earth`)
+- **Portada nueva:** lo primero que se ve tapa la escena (que carga detrás). Tres pasos: inicio con Marte girado hacia Gale (proyección del mosaico Viking), "¿Qué zona querés prospectar?" (zona de hoy, travesía 2012 → hoy, expedición sur, Marte completo, Gale Earth) y "¿Cómo la querés recorrer?" según la zona. El botón "Inicio" de la barra vuelve a abrirla. Desde Gale Earth (`#desde-gale-earth`) no aparece.
+- **Panel izquierdo en apartados plegables**, todos cerrados al abrir y con un valor corto en el encabezado: capa sobre el terreno · travesía 2012 → hoy (con "Viajar del aterrizaje a hoy") · por qué explorar Gale y perforaciones · expedición sur · clima según la fecha (salida, Aeolus 2028, personas en Marte y datos de Curiosity, cada uno plegable) · **Paradas** (botón naranja) · rutas · perfil de elevación · calidad · fuentes.
+- **Barra de abajo:** una sola fila centrada con los modos (recorrido guiado, caminar, seguir al rover, viaje, expedición) y tres botones que abren una ventanita: Rutas (marcar, calcular, borrar), Escena (cámara, hora, estación, velocidad, teclas) e Inicio. Los avisos salen arriba, al centro.
+- **Derecha:** "Datos en vivo" en tres grupos plegables (rover, astronauta, entorno) con un resumen cuando están cerrados; el del astronauta se abre solo cuando baja del rover. Debajo, brújula y centrar juntos, y los botones de manejo en una columna del mismo ancho.
+- Solo cambia la presentación: los modos, rutas, cálculos y fuentes son los mismos (mismos ids y funciones).
+
 ## 2026-11-14 tarde (5) · David (con Claude) · IMAGEN DE MARTE MÁS NÍTIDA (rama `david/union-gale-earth`)
 - El globo pasó de colores por vértice (1° ≈ 59 km) a **texturas de imagen**: Viking en todo Marte (~2,6 km/píxel) y en la región de Gale.
 - **CTX alrededor de Gale** (el mismo servicio de Gale Earth): ~40 m/píxel cerca de la travesía y ~330 m en la región, coloreado con Viking. Dos maneras: en vivo si hay internet, o dentro del archivo corriendo `python herramientas/bajar_ctx.py` y `python escena3d/armar.py` en una PC con internet (desde acá no se puede bajar: el servicio está bloqueado en este entorno). Probado con teselas de prueba: se cargan, se colorean y se ubican bien.

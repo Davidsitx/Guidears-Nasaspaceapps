@@ -36,8 +36,11 @@ Es la fusión de dos trabajos del equipo:
   salida, aviso de sombra), **refugio** (distancia contra 1,38 km, tiempo afuera, hora) y **próxima parada** con
   flecha de rumbo. Al llegar a una parada aparece un aviso que abre su ficha.
 - **Capa de mineralogía CRISM** (ALT, HYD, FM2, MAF), si existe `data/mineralogia/crism_<zona>/`.
-- **Inicio "Cómo usar"** (botón ?) y barra con las acciones principales: **Recorrido guiado** (vuela a cada parada y
-  abre su ficha, con Anterior / Siguiente), **Caminar como astronauta** (ruta B) y **Seguir al rover** (ruta A).
+- **Portada** (tapa la escena mientras carga): inicio, "¿Qué zona querés prospectar?" y "¿Cómo la querés recorrer?". El botón
+  **Inicio** de la barra la vuelve a abrir. Barra de abajo en una fila: **Recorrido guiado** (vuela a cada parada y abre su
+  ficha, con Anterior / Siguiente), **Caminar como astronauta** (ruta B), **Seguir al rover** (ruta A), viaje y expedición;
+  **Rutas** y **Escena** abren una ventanita con sus controles. Panel izquierdo en apartados plegables; a la derecha, "Datos
+  en vivo" en tres grupos plegables (rover, astronauta, entorno).
 - **Primera persona con dos vistas** (botón "Vista" o tecla B): *ojos* (casco, balanceo de la cabeza al caminar,
   partículas de polvo en el aire) y *detrás* (cámara que sigue al astronauta o al rover). Arrastrar o flechas: mirar
   alrededor; doble toque: centrar. Transición suave al entrar.
@@ -52,7 +55,7 @@ Es la fusión de dos trabajos del equipo:
   la travesía. **Peligro** con pendiente media en 6 m y arena por color. **Alertas sin ruido:** un cartel a la vez, con
   espera, pastillas para lo menor y × para silenciar.
 - **Calidad liviana** (panel, abajo; automática en pantallas táctiles): terreno lejano con la mitad de detalle.
-- **Mover al astronauta** como al rover: "Manejar: Rover / Astronauta" en la barra, teclas WASD o joystick táctil. Baja al
+- **Mover al astronauta** como al rover: botón "Manejar astronauta" a la derecha, teclas WASD o joystick táctil. Baja al
   lado del rover (la base) y nada lo bloquea: las **alertas** avisan en pantalla y en el visor (pendiente sobre 20°, más de
   30°, posible arena, lo que viene en 16 m, minutos hasta la base contra 30 min, margen de la salida contra 6 y 8 h).
   **Volver a la base** traza el camino más rápido y lo camina solo (también desde la primera persona).

@@ -20,6 +20,7 @@
   .sub { color: var(--tenue); font-size: 12px; }
   .prov { color: var(--acento); font-size: 10.5px; border: 1px solid var(--acento); border-radius: 4px; padding: 0 4px; margin-left: 4px; white-space: nowrap; }
   label { display: flex; align-items: center; gap: 6px; cursor: pointer; margin: 2px 0; }
+  #l-crism { flex-wrap: wrap; } #l-crism select { flex-basis: calc(100% - 60px); margin: 4px 0 2px 22px; }
   button, select { font: inherit; font-weight: 500; color: var(--texto); background: linear-gradient(#3a2d25, #2a201b); border: 1px solid rgba(233, 226, 214, .22);
     border-radius: 8px; padding: 6px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 32px;
     box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 1px 2px rgba(0,0,0,.35); transition: background-color .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease, translate .08s ease; }
@@ -37,7 +38,7 @@
   input[type=number] { width: 54px; font: inherit; background: #2a211c; color: var(--texto); border: 1px solid var(--borde); border-radius: 4px; padding: 3px 4px; }
 
   /* panel izquierdo: capas, rutas, perfil, fuentes */
-  #panel { top: 12px; left: 12px; width: 330px; max-height: calc(100% - 96px); overflow-y: auto; }
+  #panel { top: 12px; left: 12px; width: 340px; max-height: calc(100% - 96px); overflow-y: auto; padding: 0; }
   .leyenda { display: flex; flex-wrap: wrap; gap: 3px 10px; font-size: 11.5px; color: var(--tenue); margin-top: 4px; }
   .leyenda i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin-right: 4px; }
   .ruta { border: 1px solid var(--borde); border-radius: 8px; padding: 7px 8px; margin: 6px 0; }
@@ -54,6 +55,18 @@
   /* panel derecho: estado del rover, del astronauta y del entorno (de GALE-3D) */
   #hud { top: 12px; right: 12px; width: 280px; max-height: calc(100% - 96px); overflow-y: auto; }
   #hud h2:first-child { margin-top: 0; }
+  #hud { padding: 0; }
+  .hud-cab { display: flex; align-items: center; padding: 8px 8px 6px 12px; border-bottom: 1px solid var(--borde); }
+  .hud-cab .x { margin-left: auto; padding: 0 9px; }
+  details.hgr { border: 0; border-bottom: 1px solid var(--borde); border-radius: 0; margin: 0; padding: 0 12px; }
+  details.hgr:last-child { border-bottom: 0; }
+  details.hgr > summary { display: flex; align-items: center; gap: 8px; padding: 9px 0; font-size: 11.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--tenue); font-weight: 600; }
+  details.hgr > summary::before { content: none; }
+  details.hgr > summary::after { content: ''; flex: none; width: 6px; height: 6px; margin-left: 2px; border-right: 1.5px solid var(--tenue); border-bottom: 1.5px solid var(--tenue); transform: rotate(-45deg); transition: transform .18s ease; }
+  details.hgr[open] > summary::after { transform: rotate(45deg); }
+  details.hgr > summary .hv { margin-left: auto; text-transform: none; letter-spacing: 0; color: var(--texto); font-weight: 600; font-size: 12px; font-variant-numeric: tabular-nums; }
+  details.hgr[open] > summary .hv { display: none; }
+  details.hgr[open] { padding-bottom: 8px; }
   .fila { display: flex; justify-content: space-between; gap: 8px; }
   .fila b { font-weight: 600; font-variant-numeric: tabular-nums; }
   .barra { height: 5px; background: rgba(255,255,255,.08); border-radius: 3px; position: relative; margin: 3px 0 5px; }
@@ -61,13 +74,19 @@
   .barra u { position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--peligro); }
 
   /* barra inferior de controles */
-  #ctrl { bottom: 12px; left: 12px; right: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 8px 10px; }
+  #ctrl { bottom: 12px; left: 0; right: 0; margin: 0 auto; width: max-content; max-width: calc(100% - 24px); display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center;
+    padding: 6px; border-radius: 14px; background: rgba(22, 17, 15, .95); box-shadow: 0 6px 22px rgba(0,0,0,.45); }
   /* botones flotantes (como en un mapa): brújula, ubicarme, volver a la base */
-  #flot { position: fixed; right: 16px; bottom: 120px; display: flex; flex-direction: column; gap: 10px; z-index: 4; }
-  #flot button { width: 46px; height: 46px; padding: 0; justify-content: center; border-radius: 50%; background: rgba(28, 21, 18, .92); box-shadow: 0 2px 8px rgba(0,0,0,.45); }
-  #flot button svg { width: 22px; height: 22px; }
-  #flot #bVolver { width: auto; border-radius: 23px; padding: 0 14px; background: linear-gradient(#2f8a55, #23683f); border-color: #4fbf7d; color: #fff; font-weight: 600; }
-  #flot #bUbicar[aria-pressed=true] { background: #1d4f7a; border-color: #6bb7ff; }
+  #flot { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  #flot .mapa-ctl { display: flex; flex-direction: column; border-radius: 23px; overflow: hidden; border: 1px solid rgba(233, 226, 214, .22); box-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  #flot .mapa-ctl button { width: 44px; height: 44px; padding: 0; justify-content: center; border: 0; border-radius: 0; background: rgba(28, 21, 18, .94); box-shadow: none; }
+  #flot .mapa-ctl button + button { border-top: 1px solid rgba(233, 226, 214, .16); }
+  #flot .mapa-ctl button svg { width: 22px; height: 22px; }
+  #flot .manejo { display: flex; flex-direction: column; align-items: stretch; gap: 8px; width: 236px; }
+  #flot .manejo > button { min-height: 44px; border-radius: 12px; background: rgba(28, 21, 18, .95); box-shadow: 0 2px 8px rgba(0,0,0,.45); justify-content: flex-start; padding: 6px 12px; font-weight: 600; }
+  #flot .manejo > button svg { width: 20px; height: 20px; }
+  #flot #bVolver { justify-content: center; background: linear-gradient(#2f8a55, #23683f); border-color: #4fbf7d; color: #fff; }
+  #flot #bUbicar[aria-pressed=true] { background: #1d4f7a; }
   #bNorte svg { transition: transform .1s linear; }
   /* joystick táctil */
   #joy { position: fixed; left: 22px; bottom: 120px; width: 124px; height: 124px; border-radius: 50%; z-index: 4; touch-action: none;
@@ -101,9 +120,6 @@
   #pcDato { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-top: 6px; text-align: center; font-size: 11px; color: var(--tenue); }
   #pcDato b { display: block; font-size: 15px; color: var(--texto); font-variant-numeric: tabular-nums; }
   @media (max-width: 600px) { #pcDato { grid-template-columns: repeat(3, minmax(0, 1fr)); } #pcLienzo { height: 140px; } }
-  #ctrl label { color: var(--tenue); margin: 0; }
-  #ctrl input[type=range] { width: 110px; }
-  #msg { color: var(--tenue); margin-left: auto; font-size: 12px; }
 
   /* primera persona */
   #fp { left: 50%; bottom: 12px; transform: translateX(-50%); width: min(640px, calc(100% - 24px)); }
@@ -169,16 +185,6 @@
   #v-min { margin-top: 3px; } #v-min div { white-space: normal; }
   #visor.tercera .marco, #visor.tercera #v-mira { display: none; }
 
-  /* inicio: cómo usar */
-  #ayuda { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(20, 12, 8, .55); z-index: 8; padding: 16px; }
-  #ayuda .tarjeta { background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 18px 20px; width: min(560px, 100%); max-height: 100%; overflow-y: auto; }
-  #ayuda h1 { font-size: 20px; margin-bottom: 4px; }
-  #ayuda .opciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0 10px; }
-  #ayuda .opciones button { text-align: left; padding: 11px 12px; border-radius: 9px; line-height: 1.3; }
-  #ayuda .opciones button b { display: block; font-size: 14px; margin-bottom: 2px; }
-  #ayuda .opciones button span { color: var(--tenue); font-size: 12px; }
-  #ayuda ul { margin: 6px 0 0; padding-left: 18px; color: var(--tenue); font-size: 12.5px; }
-  @media (max-width: 520px) { #ayuda .opciones { grid-template-columns: 1fr; } }
   #ctrl .grupo { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding-right: 8px; border-right: 1px solid var(--borde); }
   .nav-tour { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 2px 40px 8px 0; }
   .nav-tour span { color: var(--tenue); font-size: 12px; }
@@ -208,18 +214,14 @@
   @media (max-width: 760px) {
     #vistas .largo { display: none; } #vistas .corto { display: inline; } #vistas button { padding: 6px 10px; font-size: 12.5px; }
     #vistas { top: 58px; }
-    #ctrl { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 6px 8px; gap: 6px; -webkit-overflow-scrolling: touch; }
+    #ctrl { left: 12px; right: 12px; width: auto; margin: 0; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 5px; gap: 6px; -webkit-overflow-scrolling: touch; }
     #ctrl::-webkit-scrollbar { display: none; }
     #ctrl > *, #ctrl .grupo { flex: none; } #ctrl .grupo { flex-wrap: nowrap; }
-    #msg { position: fixed; left: 12px; right: 12px; bottom: 70px; width: auto !important; margin: 0; text-align: center; pointer-events: none; z-index: 5;
-      padding: 6px 10px; border-radius: 8px; background: rgba(22, 17, 15, .9); border: 1px solid var(--borde); opacity: 0; transition: opacity .3s; }
-    #msg.ver { opacity: 1; }
   }
   /* unión con Gale Earth: fundido al cambiar de vista */
   #transicion { position: fixed; inset: 0; z-index: 60; background: #0b0d12; opacity: 0; pointer-events: none; transition: opacity .6s ease; display: grid; place-items: center; color: var(--tenue); font-size: 14px; }
   #transicion.on { opacity: 1; pointer-events: auto; }
   #transicion.sale { opacity: 1; transition: none; }
-  @media (max-height: 1000px) { #hud { max-height: calc(100% - 400px); } }
   body:has(#ficha:not(.oculto)) #hud, body:has(#llegada:not(.oculto)) #hud { visibility: hidden; }
   /* ficha y llegada arriba a la derecha: el punto queda a la vista */
   #ficha { top: 12px !important; right: 12px; left: auto !important; transform: none !important; width: min(420px, calc(100% - 24px)) !important; z-index: 6 !important; max-height: calc(100% - 150px) !important; }
@@ -233,13 +235,13 @@
   /* nombre del cartel bajo el puntero */
   #tip-marcador { position: fixed; z-index: 9; pointer-events: none; padding: 4px 9px; border-radius: 7px; background: rgba(22, 17, 15, .94); border: 1px solid var(--borde); font-size: 12px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
   #tip-marcador small { color: var(--tenue); margin-left: 6px; }
-  #manejo-extra { align-self: flex-end; box-shadow: 0 2px 8px rgba(0,0,0,.45); }
-  #manejo-extra button { min-height: 38px; background: rgba(28, 21, 18, .95); }
+  #manejo-extra { display: flex; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  #manejo-extra button { flex: 1; justify-content: center; min-height: 40px; background: rgba(28, 21, 18, .95); }
   .info-capa { margin-top: 6px; font-size: 11.5px; color: var(--tenue); border-top: 1px solid var(--borde); padding-top: 5px; }
   .info-capa p { margin: 3px 0; display: flex; gap: 4px; align-items: flex-start; justify-content: space-between; }
   .info-capa b { color: var(--texto); font-weight: 600; }
   /* botón para manejar al astronauta: siempre a la vista */
-  #bManejar { width: auto !important; height: auto !important; min-height: 46px; border-radius: 23px !important; padding: 6px 14px 6px 10px !important; gap: 8px;
+  #bManejar { width: auto !important; height: auto !important; min-height: 46px; border-radius: 12px !important; padding: 6px 14px 6px 10px !important; gap: 8px;
     background: linear-gradient(#3a2b22, #2a1f19) !important; border-color: rgba(255, 207, 122, .55) !important; font-weight: 600; justify-content: flex-start !important; }
   #bManejar svg { width: 24px !important; height: 24px !important; }
   #bManejar[aria-pressed=true] { background: linear-gradient(#5a4130, #46321f) !important; border-color: var(--acento) !important; }
@@ -277,83 +279,259 @@
   #cargando { position: fixed; inset: 0; display: grid; place-items: center; color: var(--tenue); }
   @media (max-width: 760px) {
     #panel { width: auto; right: 12px; max-height: 55%; }
-    #hud { width: auto; left: 12px; top: auto; bottom: 120px; max-height: 40%; }
     #fp .datos b { font-size: 15px; }
-    #ctrl { gap: 6px; } #msg { width: 100%; margin: 0; }
   }
+
+  /* ===== rediseño de la interfaz (14/11): portada, panel en apartados, barra de abajo y columna derecha ===== */
+  /* aviso breve (antes vivía en la barra de abajo) */
+  #msg { position: fixed; top: 62px; left: 50%; transform: translateX(-50%); z-index: 6; max-width: min(560px, calc(100% - 24px)); padding: 7px 14px; border-radius: 10px;
+    background: rgba(22, 17, 15, .95); border: 1px solid var(--borde); box-shadow: 0 4px 14px rgba(0,0,0,.4); font-size: 12.5px; text-align: center;
+    pointer-events: none; opacity: 0; transition: opacity .3s; }
+  #msg.ver { opacity: 1; }
+  #msg:empty { display: none; }
+  #panel, #hud, .po-cuerpo, #paradas, .pop { scrollbar-width: thin; scrollbar-color: rgba(233, 226, 214, .28) transparent; }
+
+  /* panel izquierdo: encabezado fijo y apartados desplegables */
+  .panel-cab { position: sticky; top: 0; z-index: 2; display: flex; gap: 10px; align-items: flex-start; padding: 12px 12px 10px; background: rgba(24, 18, 16, .98); border-bottom: 1px solid var(--borde); border-radius: 8px 8px 0 0; }
+  .panel-cab h1 { font-size: 16px; } .panel-cab .sub { font-size: 11.5px; }
+  .panel-cab .x { margin-left: auto; padding: 0 9px; flex: none; }
+  details.sec { border: 0; border-bottom: 1px solid var(--borde); border-radius: 0; margin: 0; padding: 0; }
+  details.sec > summary { padding: 11px 12px; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: background-color .15s; }
+  details.sec > summary::before { content: none; }
+  details.sec > summary::after { content: ''; flex: none; width: 7px; height: 7px; margin: 0 3px 0 2px; border-right: 1.6px solid var(--tenue); border-bottom: 1.6px solid var(--tenue);
+    transform: rotate(-45deg); transition: transform .18s ease; }
+  details.sec[open] > summary::after { transform: rotate(45deg); }
+  details.sec > summary:hover { background: rgba(255, 255, 255, .035); }
+  .sec-t { flex: 1; min-width: 0; }
+  .sec-v { color: var(--tenue); font-weight: 500; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46%; }
+  .sec-c { padding: 0 12px 12px; }
+  .sec-c > h2:first-child { margin-top: 0; }
+  details.sec.destacada { border-bottom: 1px solid var(--borde); padding: 8px 10px; }
+  details.sec.destacada > summary { border-radius: 10px; background: linear-gradient(#cc6233, #a8482a); color: #fff; border: 1px solid #d9733f; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+  details.sec.destacada > summary:hover { background: linear-gradient(#d86b39, #b24f2e); }
+  details.sec.destacada > summary .sec-v { color: #ffe1cc; }
+  details.sec.destacada > summary::after { border-color: #fff; }
+  details.sec.destacada > .sec-c { padding: 8px 2px 4px; }
+  .clima details.mas { margin: 6px 0; } .clima details.mas > summary { font-weight: 600; font-size: 12.5px; }
+  .clima details.mas p { margin: 2px 0 8px; }
+
+  /* barra de abajo: qué hacer (modos) + herramientas */
+  #ctrl .grupo { gap: 4px; padding-right: 6px; flex-wrap: nowrap; }
+  #ctrl .grupo:last-child { border-right: 0; padding-right: 0; }
+  button.dk { min-height: 42px; padding: 6px 12px; gap: 8px; border-radius: 10px; font-weight: 600; background: transparent; border-color: transparent; box-shadow: none; white-space: nowrap; }
+  button.dk:hover { background: rgba(255, 255, 255, .06); border-color: rgba(233, 226, 214, .18); }
+  button.dk.pri { background: linear-gradient(#cc6233, #a8482a); border-color: #d9733f; }
+  button.dk[aria-expanded=true] { background: rgba(255, 207, 122, .12); border-color: var(--acento); }
+  button.dk svg { width: 18px; height: 18px; }
+  body:has(#bMarcar[aria-pressed=true]) #mRutas { border-color: var(--acento); }
+  body:has(#bMarcar[aria-pressed=true]) #mRutas > span::after { content: ' · marcando'; color: var(--acento); font-weight: 500; }
+  /* ventanitas que abren Rutas y Escena */
+  .pop { position: fixed; z-index: 7; width: 300px; padding: 12px; border-radius: 12px; background: rgba(22, 17, 15, .97); border: 1px solid var(--borde); box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+  .pop .etq { display: block; margin-bottom: 4px; }
+  .pop ol { margin: 4px 0 10px; padding-left: 18px; }
+  .pop label.campo { display: flex; flex-direction: column; align-items: stretch; gap: 4px; margin: 0 0 10px; color: var(--tenue); cursor: default; }
+  .pop label.campo > span { display: flex; justify-content: space-between; } .pop label.campo b { color: var(--texto); font-variant-numeric: tabular-nums; }
+  .pop input[type=range] { width: 100%; } .pop select { width: 100%; justify-content: space-between; }
+  .pop input[type=number] { width: 100%; padding: 6px 8px; border-radius: 8px; }
+  .pop .teclas { border-top: 1px solid var(--borde); padding-top: 8px; font-size: 11.5px; }
+
+  /* columna derecha: datos arriba, controles del mapa y de manejo abajo; nunca se pisan */
+  #derecha { position: fixed; top: 12px; right: 12px; bottom: 84px; width: 280px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; z-index: 4; pointer-events: none; }
+  #derecha > * { pointer-events: auto; }
+  #derecha > #hud { position: static; width: 100%; max-height: none; min-height: 0; flex: 0 1 auto; overflow-y: auto; }
+  #derecha > #flot { margin-top: auto; flex: none; }
+  #ver-hud { box-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  body:has(#ctrl.oculto) #bAuto { display: none; }
+  #bAuto[aria-pressed=true] { background: linear-gradient(#5a4130, #46321f) !important; border-color: var(--acento) !important; }
+  @media (max-width: 760px) {
+    #derecha { left: 12px; width: auto; top: 104px; bottom: 74px; }
+    #derecha > #hud { max-height: 42%; }
+    #flot .manejo { width: 200px; }
+    #msg { top: auto; bottom: 74px; }
+    .pop { left: 12px !important; right: 12px !important; width: auto; }
+  }
+
+  /* ===== portada: lo primero que se ve; la escena carga detrás ===== */
+  .portada { position: fixed; inset: 0; z-index: 50; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: #0d0a0b; color: var(--texto); overflow: hidden; transition: opacity .35s ease; }
+  .portada.sale { opacity: 0; pointer-events: none; }
+  .po-fondo { position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 70% at 74% 52%, rgba(190, 88, 42, .20), transparent 70%),
+      radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.7) 50%, transparent 51%), radial-gradient(1px 1px at 27% 74%, rgba(255,255,255,.5) 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 41% 9%, rgba(255,255,255,.6) 50%, transparent 51%), radial-gradient(1px 1px at 56% 88%, rgba(255,255,255,.45) 50%, transparent 51%),
+      radial-gradient(1px 1px at 63% 14%, rgba(255,255,255,.55) 50%, transparent 51%), radial-gradient(1.3px 1.3px at 88% 22%, rgba(255,255,255,.6) 50%, transparent 51%),
+      radial-gradient(1px 1px at 93% 81%, rgba(255,255,255,.5) 50%, transparent 51%), radial-gradient(1px 1px at 7% 92%, rgba(255,255,255,.45) 50%, transparent 51%),
+      radial-gradient(1px 1px at 34% 42%, rgba(255,255,255,.3) 50%, transparent 51%), radial-gradient(1px 1px at 79% 6%, rgba(255,255,255,.5) 50%, transparent 51%),
+      linear-gradient(180deg, #0b090b, #140d0b); }
+  .po-cab { position: relative; display: flex; align-items: center; gap: 18px; padding: 18px clamp(18px, 4vw, 44px); }
+  .po-marca { font-weight: 800; letter-spacing: .08em; font-size: 14px; }
+  .po-pasos { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; font-size: 12px; color: var(--tenue); counter-reset: paso; }
+  .po-pasos li { padding: 3px 10px 3px 8px; border-radius: 999px; border: 1px solid transparent; counter-increment: paso; transition: color .2s, border-color .2s; }
+  .po-pasos li::before { content: counter(paso) '  '; color: var(--acento); font-weight: 700; }
+  .portada[data-paso="1"] .po-pasos li[data-p="1"], .portada[data-paso="2"] .po-pasos li[data-p="2"], .portada[data-paso="3"] .po-pasos li[data-p="3"] { color: var(--texto); border-color: rgba(255, 207, 122, .5); }
+  .po-cab .po-x { margin-left: auto; }
+  .po-cuerpo { position: relative; display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); align-items: center;
+    padding: 0 clamp(18px, 4vw, 44px) 0 clamp(18px, 7vw, 110px); overflow-y: auto; }
+  .po-texto { padding: 12px 0 24px; }
+  .po-paso { display: none; animation: aparece .3s cubic-bezier(.2, .8, .2, 1); }
+  .portada[data-paso="1"] .po-paso[data-p="1"], .portada[data-paso="2"] .po-paso[data-p="2"], .portada[data-paso="3"] .po-paso[data-p="3"] { display: block; }
+  .po-ceja { display: block; color: var(--acento); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; }
+  .po-paso h1 { font-size: clamp(30px, 4.4vw, 54px); line-height: 1.04; letter-spacing: -.015em; margin: 12px 0 16px; }
+  .po-paso h2 { font-size: clamp(24px, 3vw, 38px); line-height: 1.1; margin: 10px 0 8px; text-transform: none; letter-spacing: -.01em; color: var(--texto); font-weight: 700; }
+  .po-lead { color: #d3c7ba; font-size: 15.5px; line-height: 1.55; max-width: 580px; margin: 0; }
+  .po-datos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; list-style: none; padding: 0; margin: 26px 0 30px; max-width: 600px; }
+  .po-datos li { border-left: 2px solid rgba(255, 207, 122, .55); padding-left: 10px; }
+  .po-datos b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; } .po-datos span { color: var(--tenue); font-size: 12px; line-height: 1.35; display: block; }
+  .po-acc { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  button.grande { min-height: 50px; padding: 10px 22px; font-size: 15.5px; border-radius: 12px; }
+  button.link { background: none; border: 0; box-shadow: none; color: var(--acento); text-decoration: underline; text-underline-offset: 3px; padding: 6px 4px; }
+  button.po-atras { background: none; border: 0; box-shadow: none; color: var(--tenue); padding: 4px 0; min-height: 0; margin-bottom: 8px; }
+  button.po-atras:hover { color: var(--texto); }
+  .po-zonas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  button.zona, button.modo { display: grid; grid-template-columns: 42px minmax(0, 1fr); column-gap: 12px; row-gap: 3px; align-items: start; text-align: left; padding: 14px; border-radius: 14px;
+    background: rgba(255, 255, 255, .035); border: 1px solid rgba(233, 226, 214, .16); box-shadow: none; font-weight: 400; line-height: 1.35; }
+  button.zona svg, button.modo svg { grid-row: 1 / span 3; width: 42px; height: 42px; }
+  button.zona b, button.modo b { font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; } button.zona span, button.modo span { color: var(--tenue); font-size: 12.5px; }
+  button.zona em { font-style: normal; color: var(--acento); font-size: 11.5px; }
+  button.zona:hover, button.modo:hover { border-color: var(--acento); background: rgba(255, 207, 122, .06); }
+  button.zona.rec, button.modo.rec { border-color: rgba(217, 115, 63, .75); background: rgba(204, 98, 51, .13); }
+  .rec-et { display: inline-block; margin-left: 0; padding: 0 7px; border-radius: 999px; background: var(--acento); color: #1b1210; font-size: 10.5px; font-weight: 700; vertical-align: 2px; }
+  .po-modos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+  .portada.esperando button.modo.elegido span::after, .portada.esperando button.zona.elegido span::after { content: ' Preparando el terreno…'; color: var(--acento); }
+  .po-tips { margin: 18px 0 0; max-width: 600px; border-color: rgba(233, 226, 214, .16); }
+  .po-tips ul { margin: 0 0 10px; padding-left: 18px; color: var(--tenue); font-size: 12.5px; }
+  .po-globo { position: relative; justify-self: center; width: min(66vh, 44vw, 620px); aspect-ratio: 1; animation: flota 9s ease-in-out infinite; }
+  @keyframes flota { 50% { translate: 0 -8px; } }
+  #po-planeta { display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 34% 32%, #c97a4c, #8d4325 50%, #3c1b10 78%, #1d0d08);
+    box-shadow: 0 0 80px rgba(214, 110, 60, .22), 0 0 0 1px rgba(255, 180, 140, .06); }
+  .po-gale { position: absolute; width: 0; height: 0; }
+  .po-gale i { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--acento); box-shadow: 0 0 0 4px rgba(255, 207, 122, .18); }
+  .po-gale span { position: absolute; left: 16px; top: -11px; white-space: nowrap; font-size: 12.5px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: rgba(13, 10, 11, .78); border: 1px solid rgba(255, 207, 122, .45); }
+  .po-gale.oculto { display: none; }
+  .po-pie { position: relative; display: flex; justify-content: space-between; gap: 16px; padding: 12px clamp(18px, 4vw, 44px) 16px; color: var(--tenue); font-size: 11.5px; flex-wrap: wrap; }
+  #po-estado::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--acento); margin-right: 8px; vertical-align: 0; animation: late-po 1.2s ease-in-out infinite; }
+  .portada.listo #po-estado::before { background: var(--ok); animation: none; }
+  @keyframes late-po { 50% { opacity: .25; } }
+  @media (max-width: 900px) {
+    .po-cuerpo { grid-template-columns: 1fr; padding: 0 18px; align-items: start; }
+    .po-globo { position: absolute; right: -24vw; top: -4vh; width: 74vw; opacity: .32; z-index: 0; pointer-events: none; }
+    .po-gale { display: none; }
+    .po-texto { position: relative; z-index: 1; }
+    .po-datos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .po-zonas, .po-modos { grid-template-columns: 1fr; }
+    .po-cab { padding: 14px 18px; } .po-pasos li { padding: 2px 7px; }
+  }
+  @media (max-width: 520px) { .po-pasos { display: none; } .po-pie span + span { display: none; } }
 </style>
 </head>
 <body>
 <canvas id="lienzo"></canvas>
 <div id="cargando">Cargando…</div>
 
-<div id="abrir"><button id="ver-panel" class="oculto">Panel</button><button id="ver-hud" class="oculto">Datos</button></div>
+<div id="abrir"><button id="ver-panel" class="oculto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Panel</button></div>
 
 <div id="panel" class="caja">
-  <button id="cerrar-panel" style="float:right;padding:0 8px" title="Ocultar">×</button>
-  <h1>GALE-3D · sol 5070</h1>
-  <div class="sub" id="subtitulo"></div>
+  <div class="panel-cab">
+    <div><h1>GALE-3D · sol 5070</h1><div class="sub" id="subtitulo"></div></div>
+    <button id="cerrar-panel" class="x" title="Ocultar el panel" aria-label="Ocultar el panel">×</button>
+  </div>
 
-  <h2>Capa sobre el terreno</h2>
-  <label><input type="radio" name="capa" value="ninguna" checked> Ortoimagen HiRISE</label>
-  <label><input type="radio" name="capa" value="pendiente"> Pendiente vs. límites <span class="prov">provisorio</span></label>
-  <label><input type="radio" name="capa" value="prohibidas"> Zonas prohibidas <span class="prov">provisorio</span></label>
-  <label><input type="radio" name="capa" value="cielo"> Radiación: sombra del relieve</label>
-  <label id="l-peligro"><input type="radio" name="capa" value="peligro"> Zonas de peligro (pendiente y arena)</label>
-  <label><input type="radio" name="capa" value="alcance"> Alcance a pie: minutos hasta la base</label>
-  <label id="l-crism"><input type="radio" name="capa" value="crism"> Mineralogía desde órbita (CRISM)
-    <select id="sCrism" aria-label="Producto CRISM"><option value="INT">Interpretado: qué hay</option><option value="ALT">ALT alteración</option><option value="HYD">HYD sulfatos</option><option value="FM2">FM2 hierro</option><option value="MAF">MAF máficos</option></select></label>
-  <div class="leyenda" id="leyenda"></div>
+  <details class="sec">
+    <summary><span class="sec-t">Capa sobre el terreno</span><span class="sec-v" id="sv-capa"></span></summary>
+    <div class="sec-c">
+      <label><input type="radio" name="capa" value="ninguna" checked> Ortoimagen HiRISE</label>
+      <label><input type="radio" name="capa" value="pendiente"> Pendiente vs. límites <span class="prov">provisorio</span></label>
+      <label><input type="radio" name="capa" value="prohibidas"> Zonas prohibidas <span class="prov">provisorio</span></label>
+      <label><input type="radio" name="capa" value="cielo"> Radiación: sombra del relieve</label>
+      <label id="l-peligro"><input type="radio" name="capa" value="peligro"> Zonas de peligro (pendiente y arena)</label>
+      <label><input type="radio" name="capa" value="alcance"> Alcance a pie: minutos hasta la base</label>
+      <label id="l-crism"><input type="radio" name="capa" value="crism"> Mineralogía desde órbita (CRISM)
+        <select id="sCrism" aria-label="Producto CRISM"><option value="INT">Interpretado: qué hay</option><option value="ALT">ALT alteración</option><option value="HYD">HYD sulfatos</option><option value="FM2">FM2 hierro</option><option value="MAF">MAF máficos</option></select></label>
+      <div class="leyenda" id="leyenda"></div>
+    </div>
+  </details>
 
   <div id="sec-travesia" class="oculto">
-    <h2>Travesía de Curiosity · 2012 a hoy</h2>
-    <div class="sub" id="trav-resumen"></div>
-    <div class="botones"><button class="pri" id="bViaje2">Viajar del aterrizaje a hoy</button></div>
-    <details id="det-porque"><summary>¿Por qué perforar en Gale?</summary><div id="porque"></div></details>
-    <details id="det-pozos"><summary>Perforaciones: qué se encontró en cada una</summary><div id="pozos"></div></details>
+    <details class="sec">
+      <summary><span class="sec-t">Travesía de Curiosity · 2012 a hoy</span><span class="sec-v" id="sv-trav"></span></summary>
+      <div class="sec-c">
+        <div class="sub" id="trav-resumen"></div>
+        <div class="botones"><button class="pri" id="bViaje2">Viajar del aterrizaje a hoy</button></div>
+      </div>
+    </details>
+    <details class="sec">
+      <summary><span class="sec-t">Por qué explorar Gale · perforaciones</span><span class="sec-v" id="sv-pozos"></span></summary>
+      <div class="sec-c">
+        <div id="porque"></div>
+        <details id="det-pozos"><summary>Perforaciones: qué se encontró en cada una</summary><div id="pozos"></div></details>
+      </div>
+    </details>
   </div>
 
-  <div id="sec-expe" class="oculto">
-    <h2>Expedición sur · estirar el recorrido</h2>
-    <div class="sub" id="expe-resumen"></div>
-    <div class="botones"><button class="pri" data-expe="vehiculo">Hacerla con el rover</button><button data-expe="astronauta">Hacerla a pie</button></div>
-    <div class="sub">Los puntos E1 a E5 están en "Paradas", abajo, y en el recorrido guiado.</div>
-    <div id="expe-lista" class="oculto"></div>
-  </div>
+  <details id="sec-expe" class="sec oculto">
+    <summary><span class="sec-t">Expedición sur · estirar el recorrido</span><span class="sec-v">E1 a E5</span></summary>
+    <div class="sec-c">
+      <div class="sub" id="expe-resumen"></div>
+      <div class="botones"><button class="pri" data-expe="vehiculo">Hacerla con el rover</button><button data-expe="astronauta">Hacerla a pie</button></div>
+      <div class="sub">Los puntos E1 a E5 están en "Paradas", abajo, y en el recorrido guiado.</div>
+      <div id="expe-lista" class="oculto"></div>
+    </div>
+  </details>
 
-  <h2>Clima en Gale según la fecha</h2>
-  <div class="botones" style="align-items:center"><input type="date" id="cFecha" aria-label="Fecha en la Tierra" style="font:inherit;background:#2a211c;color:var(--texto);border:1px solid var(--borde);border-radius:6px;padding:4px 6px"><button id="cHoy">Hoy</button></div>
-  <div id="ls-tira" title="El año marciano en 12 tramos de 30° de Ls: más claro = cielo más limpio. Tocá para elegir la época."></div>
-  <div id="clima" class="clima"></div>
+  <details class="sec">
+    <summary><span class="sec-t">Clima en Gale según la fecha</span><span class="sec-v" id="sv-clima"></span></summary>
+    <div class="sec-c">
+      <div class="botones" style="align-items:center"><input type="date" id="cFecha" aria-label="Fecha en la Tierra" style="font:inherit;background:#2a211c;color:var(--texto);border:1px solid var(--borde);border-radius:6px;padding:4px 6px"><button id="cHoy">Hoy</button></div>
+      <div id="ls-tira" title="El año marciano en 12 tramos de 30° de Ls: más claro = cielo más limpio. Tocá para elegir la época."></div>
+      <div id="clima" class="clima"></div>
+    </div>
+  </details>
 
-  <h2>Paradas · qué hay en cada una</h2>
-  <div class="sub">Tocá una parada para desplegarla (también desde los carteles en 3D).</div>
-  <div id="paradas"></div>
+  <details class="sec destacada" id="sec-paradas">
+    <summary><span class="sec-t">Paradas · qué hay en cada una</span><span class="sec-v" id="sv-paradas"></span></summary>
+    <div class="sec-c">
+      <div class="sub">Tocá una parada para desplegarla (también desde los carteles en 3D).</div>
+      <div id="paradas"></div>
+    </div>
+  </details>
 
-  <h2>Rutas</h2>
-  <div class="sub">Marcá paradas sobre el terreno y calculá rutas (barra de abajo). Las rutas trazadas a ojo se ven semitransparentes.</div>
-  <div id="rutas"></div>
+  <details class="sec">
+    <summary><span class="sec-t">Rutas</span><span class="sec-v" id="sv-rutas"></span></summary>
+    <div class="sec-c">
+      <div class="sub">Marcá paradas sobre el terreno y calculá rutas (botón "Rutas", abajo). Las rutas trazadas a ojo se ven semitransparentes.</div>
+      <div id="rutas"></div>
+    </div>
+  </details>
 
-  <h2>Perfil de elevación</h2>
-  <canvas id="perfil"></canvas>
-  <div class="sub" id="perfil-nota"></div>
+  <details class="sec" id="sec-perfil">
+    <summary><span class="sec-t">Perfil de elevación</span><span class="sec-v" id="sv-perfil"></span></summary>
+    <div class="sec-c"><canvas id="perfil"></canvas><div class="sub" id="perfil-nota"></div></div>
+  </details>
 
-  <h2>Calidad</h2>
-  <div class="sub">Liviana: menos detalle en el terreno lejano, para tablets. <button id="bCalidad" style="margin-left:6px"></button></div>
-  <h2>Fuentes</h2>
-  <div id="fuentes"></div>
+  <details class="sec">
+    <summary><span class="sec-t">Calidad</span><span class="sec-v" id="sv-calidad"></span></summary>
+    <div class="sec-c"><div class="sub">Liviana: menos detalle en el terreno lejano, para tablets. <button id="bCalidad" style="margin-left:6px"></button></div></div>
+  </details>
+
+  <details class="sec">
+    <summary><span class="sec-t">Fuentes</span><span class="sec-v" id="sv-fuentes"></span></summary>
+    <div class="sec-c"><div id="fuentes"></div></div>
+  </details>
 </div>
 
+<div id="derecha">
+<button id="ver-hud" class="oculto" title="Datos del rover, del astronauta y del entorno">Datos en vivo</button>
 <div id="hud" class="caja">
-  <button id="cerrar-hud" style="float:right;padding:0 8px" title="Ocultar">×</button>
-  <h2>Curiosity · vehículo</h2>
+  <div class="hud-cab"><span class="etq">Datos en vivo</span><button id="cerrar-hud" class="x" title="Ocultar los datos" aria-label="Ocultar los datos">×</button></div>
+  <details class="hgr" id="hg-rover" open><summary><span>Curiosity · vehículo</span><span class="hv" id="hv-rover"></span></summary>
   <div class="fila"><span>Modo</span><b id="hModo">detenido</b></div>
   <div class="fila"><span>Recorrido</span><b id="hDist">0 m</b></div>
   <div class="fila"><span>Soles de manejo</span><b id="hSoles">—</b></div>
   <div class="fila"><span>Inclinación del rover</span><b id="hIncl">0,0°</b></div>
   <div class="barra"><i id="bIncl"></i><u id="uIncl"></u></div>
   <div class="fila"><span>Cabeceo / alabeo</span><b id="hCA">0° / 0°</b></div>
-  <h2>Astronauta · a pie</h2>
+  </details>
+  <details class="hgr" id="hg-astro"><summary><span>Astronauta · a pie</span><span class="hv" id="hv-astro"></span></summary>
   <div class="fila"><span>Recorrido</span><b id="aDist">0 m</b></div>
   <div class="fila"><span>Distancia al rover</span><b id="aRef">—</b></div>
   <div class="barra"><i id="bRef"></i><u style="left:100%"></u></div>
@@ -362,65 +540,213 @@
   <div class="fila"><span>Cielo tapado aquí</span><b id="aCielo">—</b></div>
   <div class="fila"><span>Regreso a la base</span><b id="aRegreso">—</b></div>
   <div class="fila"><span>Margen de la salida</span><b id="aMargen">—</b></div>
-  <h2>Entorno</h2>
+  </details>
+  <details class="hgr" id="hg-ent"><summary><span>Entorno</span><span class="hv" id="hv-ent"></span></summary>
   <div class="fila"><span>Hora solar local</span><b id="eHora">12:00</b></div>
   <div class="fila"><span>Elevación del Sol</span><b id="eSol">—</b></div>
   <div class="fila"><span>Estación</span><b id="eLs">—</b></div>
   <div class="fila"><span>Cursor</span><b id="eCur">—</b></div>
+  </details>
+</div>
+<div id="flot">
+  <div class="mapa-ctl">
+    <button id="bNorte" title="Brújula: tocá para orientar el mapa al norte" aria-label="Orientar al norte"><svg viewBox="0 0 24 24"><path d="M12 2 16 12 12 10.5 8 12z" fill="#ff6b5a"/><path d="M12 22 8 12 12 13.5 16 12z" fill="#ece4da"/></svg></button>
+    <button id="bUbicar" aria-pressed="false" title="Centrar en mi ubicación (tocá dos veces para seguir)" aria-label="Centrar en mi ubicación"><svg viewBox="0 0 24 24" fill="none" stroke="#9fd2ff" stroke-width="2"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="#9fd2ff"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg></button>
+  </div>
+  <div class="manejo">
+    <button id="bManejar" aria-pressed="false" title="Bajar al astronauta y manejarlo con W A S D o el joystick"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10.5 21l2-6 2.5 2v4M8 12l2.5-4.5h3.5l2 3.5 2.5 1M12.5 15l1-4"/></svg><span><span id="bManejarTxt">Manejar astronauta</span><small id="bManejarSub">W A S D · joystick</small></span></button>
+    <div id="manejo-extra" class="seg oculto"><button id="bVisorM" aria-pressed="false" title="Datos del casco sobre la vista (V)">Visor</button><button id="bOjosM" aria-pressed="false" title="Ver con los ojos del astronauta (B)">Ojos</button></div>
+    <button id="bAuto" aria-pressed="false" title="El rover y el astronauta recorren sus rutas solos (G)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></svg>Autonomía <kbd style="margin-left:auto">G</kbd></button>
+    <button id="bVolver" class="oculto" title="Calcular el camino de regreso más corto y caminarlo">Volver a la base</button>
+  </div>
+</div>
 </div>
 
 <div id="ctrl" class="caja">
   <div class="grupo">
-    <button class="pri" id="bTour" title="Visita las paradas una por una con su ficha">Recorrido guiado</button>
-    <button id="bCaminar" title="Ruta B a pie, con el visor del casco">Caminar como astronauta</button>
-    <button id="bSeguir" title="Ruta A del robot, con la cámara detrás">Seguir al rover</button>
-    <button id="bViaje" class="oculto" title="Del aterrizaje (2012) a hoy, con las 49 perforaciones">Viaje de Curiosity</button>
-    <button id="bExpe" class="oculto" title="Cinco puntos nuevos al sur de A4: el rover o el astronauta">Expedición sur</button>
-    <button id="bAyuda" title="Cómo usar" aria-label="Cómo usar">?</button>
+    <button class="pri dk" id="bTour" title="Visita las paradas una por una con su ficha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg><span>Recorrido guiado</span></button>
+    <button class="dk" id="bCaminar" title="Ruta B a pie, con el visor del casco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10.5 21l2-6 2.5 2v4M8 12l2.5-4.5h3.5l2 3.5 2.5 1M12.5 15l1-4"/></svg><span>Caminar como astronauta</span></button>
+    <button class="dk" id="bSeguir" title="Ruta A del robot, con la cámara detrás"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="13" height="5" rx="1"/><path d="M14 9V5h4"/><circle cx="5.5" cy="18" r="2"/><circle cx="11" cy="18" r="2"/><circle cx="16.5" cy="18" r="2"/></svg><span>Seguir al rover</span></button>
+    <button class="dk oculto" id="bViaje" title="Del aterrizaje (2012) a hoy, con las 49 perforaciones"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 19h7a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h7"/></svg><span>Viaje 2012 → hoy</span></button>
+    <button class="dk oculto" id="bExpe" title="Cinco puntos nuevos al sur de A4: el rover o el astronauta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8z"/></svg><span>Expedición sur</span></button>
   </div>
   <div class="grupo">
-    <span class="etq">Manejar</span>
-    <div class="seg"><button id="cRover" aria-pressed="true" title="WASD o joystick mueven al rover">Rover</button><button id="cAstro" aria-pressed="false" title="WASD o joystick mueven al astronauta">Astronauta</button></div>
-    <button id="bAuto" aria-pressed="false" title="El rover y el astronauta recorren sus rutas solos (G)">Autonomía</button>
+    <button class="dk" id="mRutas" aria-expanded="false" aria-controls="popRutas" title="Marcar paradas propias y calcular rutas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c3 0 3-4 7-4s4 4 7 4" stroke-dasharray="2 2.6"/><path d="M12 13s-4-3.6-4-6.5a4 4 0 0 1 8 0C16 9.4 12 13 12 13z"/><circle cx="12" cy="6.5" r="1.3"/></svg><span>Rutas</span></button>
+    <button class="dk" id="mEscena" aria-expanded="false" aria-controls="popEscena" title="Cámara, hora del día, estación y velocidad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>Escena</span></button>
+    <button class="dk" id="bAyuda" title="Volver a la portada: elegir zona y recorrido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v10h4.5v-5.5h3V20H18V10"/></svg><span>Inicio</span></button>
   </div>
-  <div class="grupo">
-    <button id="bMarcar" aria-pressed="false">Marcar paradas</button>
-    <button id="bCalcular">Calcular rutas</button>
-    <button id="bBorrar">Borrar</button>
-  </div>
-  <select id="sCam" aria-label="Cámara">
-    <option value="libre">Cámara: libre</option>
-    <option value="rover">Cámara: seguir rover</option>
-    <option value="astro">Cámara: seguir astronauta</option>
-    <option value="cenital">Cámara: cenital</option>
-  </select>
-  <label>Hora <input type="range" id="iHora" min="5.5" max="18.5" step="0.25" value="12"></label>
-  <label>Ls <input type="number" id="iLs" min="0" max="359" value="21"></label>
-  <label>Velocidad × <select id="sVel"><option>1</option><option>10</option><option selected>60</option><option>300</option></select></label>
-  <span id="msg">Teclas: G autonomía · WASD manejar · Espacio parar · 1–4 cámaras · C capa · en primera persona: B vista, V visor, flechas mirar</span>
+  <div class="seg oculto" id="segManejo"><button id="cRover" aria-pressed="true" title="WASD o joystick mueven al rover">Rover</button><button id="cAstro" aria-pressed="false" title="WASD o joystick mueven al astronauta">Astronauta</button></div>
+</div>
+<div id="msg" role="status" aria-live="polite"></div>
+
+<div id="popRutas" class="pop oculto" role="dialog" aria-label="Rutas propias">
+  <span class="etq">Planificá una ruta propia</span>
+  <ol class="sub"><li>"Marcar paradas" y tocá el terreno, una vez por parada. Arranca en el rover.</li><li>"Calcular rutas" traza la del rover y la del astronauta (A* sobre el terreno real).</li></ol>
+  <div class="botones"><button id="bMarcar" aria-pressed="false">Marcar paradas</button><button id="bCalcular" class="pri">Calcular rutas</button><button id="bBorrar">Borrar</button></div>
+</div>
+<div id="popEscena" class="pop oculto" role="dialog" aria-label="Escena">
+  <span class="etq">Escena</span>
+  <label class="campo"><span>Cámara</span><select id="sCam" aria-label="Cámara">
+    <option value="libre">Libre</option>
+    <option value="rover">Seguir al rover</option>
+    <option value="astro">Seguir al astronauta</option>
+    <option value="cenital">Cenital (desde arriba)</option>
+  </select></label>
+  <label class="campo"><span>Hora solar local <b id="popHora">12:00</b></span><input type="range" id="iHora" min="5.5" max="18.5" step="0.25" value="12"></label>
+  <label class="campo"><span>Estación (Ls, 0 a 359) <b id="popLs"></b></span><input type="number" id="iLs" min="0" max="359" value="21"></label>
+  <label class="campo"><span>Velocidad del tiempo</span><select id="sVel"><option value="1">× 1</option><option value="10">× 10</option><option value="60" selected>× 60</option><option value="300">× 300</option></select></label>
+  <div class="sub teclas">Teclas: G autonomía · WASD manejar · Espacio parar · 1–4 cámaras · C capa · en primera persona: B vista, V visor, flechas mirar. Para elegir la estación por fecha: "Clima" en el panel.</div>
 </div>
 
 <div id="ficha" class="caja oculto"><button class="cerrar" id="ficha-cerrar">×</button><div id="ficha-texto"></div></div>
 
-<div id="ayuda" class="oculto"><div class="tarjeta">
-  <h1>GALE-3D · donde está Curiosity hoy</h1>
-  <div class="sub">Terreno real de Marte (sol 5070), a escala 1:1. Comparamos al robot con un astronauta sobre las mismas paradas, con datos de pendiente, radiación y minerales.</div>
-  <div class="opciones">
-    <button class="pri" data-ay="tour"><b>Recorrido guiado</b><span>Las paradas una por una: qué hay y por qué ir.</span></button>
-    <button data-ay="caminar"><b>Caminar como astronauta</b><span>Ruta B a pie, con el visor del casco.</span></button>
-    <button data-ay="seguir"><b>Seguir al rover</b><span>Ruta A del robot, desde atrás, con sus huellas.</span></button>
-    <button data-ay="libre"><b>Explorar libre</b><span>Mover la cámara y tocar los carteles.</span></button>
-    <button data-ay="expe" id="ay-expe" class="oculto"><b>Expedición sur</b><span>Cinco puntos nuevos más allá de hoy. Elegís si va el rover o el astronauta.</span></button>
-    <button data-ay="manejar"><b>Manejar al astronauta</b><span>Bajás del rover y caminás con W A S D o el joystick.</span></button>
-    <button data-ay="viaje" id="ay-viaje" class="oculto" style="grid-column: 1 / -1"><b>Viaje de Curiosity: del aterrizaje a hoy</b><span>37 km y 49 perforaciones en 14 años, sobre el terreno real. Qué se encontró en cada lugar.</span></button>
+<div id="ayuda" class="portada" data-paso="1" role="dialog" aria-label="GALE-3D: inicio">
+  <div class="po-fondo"></div>
+  <header class="po-cab">
+    <span class="po-marca">GALE-3D</span>
+    <ol class="po-pasos"><li data-p="1">Inicio</li><li data-p="2">Zona</li><li data-p="3">Recorrido</li></ol>
+    <button class="po-x oculto" id="po-cerrar" title="Volver a la escena (Esc)">Volver a la escena ×</button>
+  </header>
+  <div class="po-cuerpo">
+    <div class="po-texto">
+      <section class="po-paso" data-p="1">
+        <span class="po-ceja">NASA Space Apps 2026 · Interplanetary Survival Guide: Martian Map</span>
+        <h1>Una guía de superficie para recorrer Marte</h1>
+        <p class="po-lead">Ponemos al robot y a una persona sobre el terreno real del cráter Gale, a escala 1:1. En cada parada comparás pendiente, radiación, minerales y clima, y cada dato tiene su fuente a un toque.</p>
+        <ul class="po-datos">
+          <li><b>1:1</b><span>terreno real de la zona de hoy, celdas de 2 m</span></li>
+          <li><b id="po-km">37 km</b><span>recorridos por Curiosity, 2012 → hoy</span></li>
+          <li><b id="po-pozos">49</b><span>perforaciones, cada una con su ficha</span></li>
+          <li><b>2</b><span>formas de ir: rover y astronauta</span></li>
+        </ul>
+        <div class="po-acc"><button class="pri grande" data-ir="2">Elegir la zona a prospectar →</button></div>
+      </section>
+      <section class="po-paso" data-p="2">
+        <button class="po-atras" data-ir="1">← Inicio</button>
+        <h2>¿Qué zona querés prospectar?</h2>
+        <p class="po-lead">Podés cambiar de zona cuando quieras con los botones de arriba de la escena.</p>
+        <div class="po-zonas">
+          <button class="zona rec" data-zona="hoy"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg><b>Zona de hoy · sol 5070<span class="rec-et">Recomendado</span></b><span>Donde está Curiosity: rutas del rover y del astronauta, paradas con su ciencia, pendiente y radiación.</span><em id="po-hoy-dim">terreno 1:1, celdas de 2 m</em></button>
+          <button class="zona" id="ay-viaje" data-zona="travesia"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M6.5 15.5c2-1 2.5-3.5 4.5-3.5s2 2.5 4 2 2-3.5 3-4.5"/><circle cx="6.5" cy="15.5" r="1.3" fill="#ffcf7a"/><circle cx="18" cy="9.5" r="1.3" fill="#ffcf7a"/></svg><b>Cráter Gale · travesía 2012 → hoy</b><span>El recorrido real de Curiosity y sus perforaciones: qué encontró en cada lugar.</span><em id="po-trav-dim">37 km · 49 perforaciones</em></button>
+          <button class="zona" id="ay-expe" data-zona="expe"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m15.8 8.2-2.4 5.2-5.2 2.4 2.4-5.2z"/></svg><b>Expedición sur · E1 a E5</b><span>Cinco puntos nuevos más allá de hoy, propuestos por el equipo. Va el rover o va el astronauta.</span><em>propuesta propia</em></button>
+          <button class="zona" id="po-marte" data-zona="marte"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M4 9.5c5 1.5 11 1.5 16 0M3.5 14.5c5.5 1.6 11.5 1.6 17 0" opacity=".65"/><circle cx="15" cy="13" r="1.4" fill="#ffcf7a"/></svg><b>Marte completo</b><span>Todo el planeta con relieve MOLA y color Viking, con Gale en el centro. Desde ahí bajás a la zona.</span><em>vista orbital</em></button>
+          <button class="zona oculto" id="po-ge" data-zona="ge"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(-20 12 12)"/></svg><b>Gale Earth ↗</b><span>Marte estilo Google Earth: órbitas, base y biblioteca. Se abre aparte y vuelve acá.</span><em>proyecto del equipo</em></button>
+        </div>
+      </section>
+      <section class="po-paso" data-p="3">
+        <button class="po-atras" data-ir="2">← Zonas</button>
+        <span class="po-ceja" id="po-zona-nom"></span>
+        <h2>¿Cómo la querés recorrer?</h2>
+        <div class="po-modos" id="po-modos"></div>
+      </section>
+      <details class="po-tips" id="po-como"><summary>Cómo se usa</summary><ul>
+        <li>Arrastrar: girar la vista. Rueda o pellizco: acercar. Tocar un cartel: ficha de la parada.</li>
+        <li>En primera persona: arrastrar para mirar alrededor, doble toque para centrar, B cambia la vista y V el visor.</li>
+        <li>Manejar: el botón "Manejar astronauta" (a la derecha), con W A S D o el joystick. Nada se bloquea: las alertas avisan pendiente, arena y cuándo volver. El botón de la mira centra en tu ubicación.</li>
+        <li>El panel de la izquierda se despliega por apartados: capas, travesía, clima, paradas, rutas y fuentes.</li>
+        <li>Los datos marcados como <span class="prov">provisorio</span> son supuestos del equipo; el resto tiene fuente (el círculo "?").</li>
+      </ul></details>
+    </div>
+    <div class="po-globo"><canvas id="po-planeta" width="640" height="640" aria-label="Marte, con el cráter Gale marcado"></canvas><div class="po-gale oculto" id="po-gale"><i></i><span>Gale · Curiosity</span></div></div>
   </div>
-  <ul>
-    <li>Arrastrar: girar la vista. Rueda o pellizco: acercar. Tocar un cartel: ficha de la parada.</li>
-    <li>En primera persona: arrastrar para mirar alrededor, doble toque para centrar, B cambia la vista y V el visor.</li>
-    <li>Manejar: el botón "Manejar astronauta" (a la derecha) o Rover / Astronauta abajo, con WASD o el joystick. Nada se bloquea: las alertas avisan pendiente, arena y cuándo volver. El botón de la mira centra en tu ubicación.</li>
-    <li>Los datos marcados como <span class="prov">provisorio</span> son supuestos del equipo; el resto tiene fuente (panel, abajo).</li>
-  </ul>
-</div></div>
+  <footer class="po-pie"><span id="po-estado">Cargando el terreno…</span><span>Terreno: USGS y HiRISE · Globo: MOLA y Viking (NASA) · Los supuestos se marcan como provisorio</span></footer>
+</div>
+<script>
+// Portada: corre apenas se lee la página, mientras la escena 3D carga detrás. La escena avisa cuando está lista (window.__portada.listo).
+(() => {
+  const po = document.getElementById('ayuda'), $p = id => document.getElementById(id);
+  if (/desde-gale-earth/.test(location.hash)) po.classList.add('oculto');
+  // Gale Earth solo cuando la escena está al lado de gale-earth/ (repo, servir.py o GitHub Pages)
+  const alLado = location.protocol === 'file:' ? /\/escena3d\/[^/]*$/.test(location.pathname) : /\/escena3d\//.test(location.pathname);
+  if (alLado) $p('po-ge').classList.remove('oculto');
+  const ic = {
+    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4h11l-2 4 2 4H6"/></svg>',
+    walk: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10.5 21l2-6 2.5 2v4M8 12l2.5-4.5h3.5l2 3.5 2.5 1M12.5 15l1-4"/></svg>',
+    rover: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="13" height="5" rx="1"/><path d="M14 9V5h4"/><circle cx="5.5" cy="18" r="2"/><circle cx="11" cy="18" r="2"/><circle cx="16.5" cy="18" r="2"/></svg>',
+    joy: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    ruta: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 19h7a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h7"/></svg>',
+  };
+  const MODOS = {
+    hoy: { nom: 'Zona de hoy · sol 5070', modos: [
+      ['tour', 'flag', 'Recorrido guiado', 'Las paradas una por una: qué hay y por qué ir.', true],
+      ['caminar', 'walk', 'Caminar como astronauta', 'Ruta B a pie, en primera persona, con el visor del casco.'],
+      ['seguir', 'rover', 'Seguir al rover', 'Ruta A del robot, desde atrás, con sus huellas.'],
+      ['manejar', 'joy', 'Manejar al astronauta', 'Bajás del rover y caminás con W A S D o el joystick.'],
+      ['libre', 'eye', 'Explorar libre', 'Mover la cámara y tocar los carteles.']] },
+    travesia: { nom: 'Cráter Gale · travesía 2012 → hoy', modos: [
+      ['viaje', 'ruta', 'Viajar del aterrizaje a hoy', 'Sol por sol sobre el terreno real; se detiene en cada perforación.', true],
+      ['travLibre', 'eye', 'Explorar la travesía', 'Todo el recorrido a la vista; tocá los carteles numerados.']] },
+    expe: { nom: 'Expedición sur · E1 a E5', modos: [
+      ['expeRover', 'rover', 'Con el rover', 'Curiosity sigue hacia el sur: soles de manejo y pendiente.', true],
+      ['expeAstro', 'walk', 'A pie, con el astronauta', 'Una salida: tiempo de marcha, dosis y refugios.']] },
+  };
+  let acc = null, pend = null, reabierta = false;
+  const ir = p => {
+    if (p === 'como') { $p('po-como').open = true; $p('po-como').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+    po.dataset.paso = p; po.querySelector('.po-cuerpo').scrollTop = 0;
+  };
+  function cerrar() { po.classList.add('sale'); setTimeout(() => { po.classList.add('oculto'); po.classList.remove('sale'); }, 350); }
+  function elegir(k, boton) {
+    po.querySelectorAll('.elegido').forEach(b => b.classList.remove('elegido')); boton?.classList.add('elegido');
+    if (k === 'ge') { location.href = '../gale-earth/index.html#curiosity'; return; }
+    if (!acc) { pend = [k, boton]; po.classList.add('esperando'); return; }
+    if (!acc[k]) { $p('po-estado').textContent = 'Esa zona no está en esta versión de la escena.'; return; }
+    cerrar(); acc[k]();
+  }
+  function zona(z, boton) {
+    if (!MODOS[z]) return elegir(z, boton);
+    $p('po-zona-nom').textContent = MODOS[z].nom;
+    $p('po-modos').innerHTML = MODOS[z].modos.map(([k, i, t, d, rec]) => `<button class="modo${rec ? ' rec' : ''}" data-modo="${k}">${ic[i]}<b>${t}${rec ? '<span class="rec-et">Para empezar</span>' : ''}</b><span>${d}</span></button>`).join('');
+    ir(3);
+  }
+  po.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.ir) ir(b.dataset.ir === 'como' ? 'como' : +b.dataset.ir);
+    else if (b.dataset.zona) zona(b.dataset.zona, b);
+    else if (b.dataset.modo) elegir(b.dataset.modo, b);
+    else if (b.id === 'po-cerrar') cerrar();
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && reabierta && !po.classList.contains('oculto')) cerrar(); });
+  // Marte en la portada: proyección ortográfica del mosaico Viking (equirectangular, −180..180), con luz de costado
+  const LON0 = 118 * Math.PI / 180, LAT0 = 8 * Math.PI / 180, GALE = [137.4 * Math.PI / 180, -5.4 * Math.PI / 180];
+  function planeta(src) {
+    const cv = $p('po-planeta'); if (!cv || cv.dataset.listo) return; cv.dataset.listo = '1';
+    const im = new Image();
+    im.onload = () => {
+      const TW = 1024, TH = 512, t = document.createElement('canvas'); t.width = TW; t.height = TH;
+      const tc = t.getContext('2d', { willReadFrequently: true }); tc.drawImage(im, 0, 0, TW, TH); const tex = tc.getImageData(0, 0, TW, TH).data;
+      const N = cv.width, x2 = cv.getContext('2d'), out = x2.createImageData(N, N), o = out.data;
+      const L = [-0.55, 0.5, 0.67], nl = Math.hypot(...L), sl = Math.sin(LAT0), cl = Math.cos(LAT0);
+      for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+        const x = (i + 0.5) / N * 2 - 1, y = 1 - (j + 0.5) / N * 2, r2 = x * x + y * y; if (r2 > 1) continue;
+        const z = Math.sqrt(1 - r2), lat = Math.asin(z * sl + y * cl), lon = LON0 + Math.atan2(x, z * cl - y * sl);
+        const u = Math.floor(((lon / (2 * Math.PI) + 0.5) % 1 + 1) % 1 * TW) % TW, v = Math.min(TH - 1, Math.floor((0.5 - lat / Math.PI) * TH));
+        const k = (v * TW + u) * 4, luz = 0.1 + 1.05 * Math.max(0, (x * L[0] + y * L[1] + z * L[2]) / nl) ** 0.75, borde = 0.75 + 0.25 * z, q = (j * N + i) * 4;
+        for (let c = 0; c < 3; c++) { const g = (tex[k] + tex[k + 1] + tex[k + 2]) / 3, s = g + (tex[k + c] - g) * 1.35; o[q + c] = Math.max(0, Math.min(255, (128 + (s - 128) * 1.15) * luz * borde)); }
+        o[q + 3] = r2 > 0.994 ? Math.round((1 - r2) / 0.006 * 255) : 255;
+      }
+      x2.putImageData(out, 0, 0); cv.style.background = 'transparent';
+      const [lg, la] = GALE, gx = Math.cos(la) * Math.sin(lg - LON0), gy = cl * Math.sin(la) - sl * Math.cos(la) * Math.cos(lg - LON0);
+      const m = $p('po-gale'); m.style.left = `${(gx + 1) / 2 * 100}%`; m.style.top = `${(1 - gy) / 2 * 100}%`; m.classList.remove('oculto');
+    };
+    im.onerror = () => { delete cv.dataset.listo; };
+    im.src = src;
+  }
+  window.__portada = {
+    estado(t) { const e = $p('po-estado'); if (e && !po.classList.contains('listo')) e.textContent = t; },
+    planeta,
+    listo(a, datos = {}) {
+      acc = a; po.classList.remove('esperando'); po.classList.add('listo');
+      $p('po-estado').textContent = 'Listo: elegí una zona.';
+      for (const [id, ok] of [['ay-viaje', a.viaje], ['ay-expe', a.expeRover], ['po-marte', a.marte]]) $p(id).classList.toggle('oculto', !ok);
+      for (const [id, t] of Object.entries(datos)) if (t && $p(id)) $p(id).textContent = t;
+      if (pend) { const [k, b] = pend; pend = null; elegir(k, b); }
+    },
+    abrir(p = 2) { reabierta = true; $p('po-cerrar').classList.remove('oculto'); po.classList.remove('oculto', 'sale'); ir(p); },
+  };
+})();
+</script>
 
 <div id="alertas" aria-live="polite"></div>
 <div id="transicion" aria-hidden="true"><span>Volviendo a Marte completo…</span></div>
@@ -441,13 +767,6 @@
   <div class="fila2"><button class="pri" id="ex-play">▶ Iniciar</button><button id="ex-perforar" title="Perforación ficticia donde está ahora">Perforación simulada</button>
     <label class="sub">Duración <select id="ex-vel"><option value="45">45 s</option><option value="90" selected>90 s</option><option value="240">4 min</option></select></label>
     <span class="sub" id="ex-nota" style="flex:1;min-width:200px"></span></div>
-</div>
-<div id="flot">
-  <button id="bManejar" aria-pressed="false" title="Bajar al astronauta y manejarlo con W A S D o el joystick"><svg viewBox="0 0 24 24" fill="none" stroke="#ffcf7a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10.5 21l2-6 2.5 2v4M8 12l2.5-4.5h3.5l2 3.5 2.5 1M12.5 15l1-4"/></svg><span><span id="bManejarTxt">Manejar astronauta</span><small id="bManejarSub">W A S D · joystick</small></span></button>
-  <div id="manejo-extra" class="seg oculto"><button id="bVisorM" aria-pressed="false" title="Datos del casco sobre la vista (V)">Visor</button><button id="bOjosM" aria-pressed="false" title="Ver con los ojos del astronauta (B)">Ojos</button></div>
-  <button id="bNorte" title="Brújula: tocá para orientar el mapa al norte" aria-label="Orientar al norte"><svg viewBox="0 0 24 24"><path d="M12 2 16 12 12 10.5 8 12z" fill="#ff6b5a"/><path d="M12 22 8 12 12 13.5 16 12z" fill="#ece4da"/></svg></button>
-  <button id="bUbicar" aria-pressed="false" title="Centrar en mi ubicación (tocá dos veces para seguir)" aria-label="Centrar en mi ubicación"><svg viewBox="0 0 24 24" fill="none" stroke="#9fd2ff" stroke-width="2"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="#9fd2ff"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg></button>
-  <button id="bVolver" class="oculto" title="Calcular el camino de regreso más corto y caminarlo">Volver a la base</button>
 </div>
 <div id="joy" class="oculto" aria-label="Joystick para mover"><i></i><span id="joyEt">Rover</span></div>
 <div id="perfilCard" class="caja oculto">
@@ -530,7 +849,7 @@
 // Código propio del equipo. three.js r170 (MIT) embebido.
 
 // ---------- carga de three.js embebido ----------
-const etapa = t => { window.__etapa = t; const c = document.getElementById('cargando'); if (c) c.textContent = t; };
+const etapa = t => { window.__etapa = t; const c = document.getElementById('cargando'); if (c) c.textContent = t; window.__portada?.estado(t); };
 addEventListener('error', e => etapa('Error: ' + e.message));
 addEventListener('unhandledrejection', e => etapa('Error: ' + (e.reason?.message || e.reason)));
 etapa('Cargando three.js…');
@@ -551,6 +870,7 @@ try {
 // ---------- datos ----------
 etapa('Leyendo datos…');
 const D = JSON.parse(document.getElementById('datos').textContent);
+if (D.globo?.viking_global) window.__portada?.planeta('data:image/jpeg;base64,' + D.globo.viking_global);   // Marte de la portada
 const M = D.meta, W = M.ancho, H = M.alto, CS = M.tam_celda_m, COS = D.cos_lat;
 const P = D.parametros;
 const PR = {
@@ -1249,6 +1569,7 @@ pintarContexto('ninguna');
 // y el resto del planeta cada 1°. Entre el borde del terreno de la travesía y la grilla cercana hay un "delantal" que une las dos
 // alturas. Todo va sobre la esfera de Marte (R = 3.396.190 m), con la curvatura real. Es fondo: no entra en ningún cálculo.
 if (typeof D.globo === 'string') D.globo = await fetch(D.globo).then(r => r.ok ? r.json() : null).catch(() => null);   // versión publicada: el globo viene aparte
+if (D.globo?.viking_global) window.__portada?.planeta('data:image/jpeg;base64,' + D.globo.viking_global);
 const GLOBO = D.globo && CTX ? await (async () => {
   const leer = async b => { const im = new Image(); await new Promise((ok, mal) => { im.onload = ok; im.onerror = mal; im.src = 'data:image/png;base64,' + b; });
     const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);
@@ -2590,15 +2911,8 @@ function seguirRover() { const r = rutaDe('vehiculo'); if (!r) return decir('No 
 $('bTour').onclick = () => tourIr(0);
 $('bCaminar').onclick = () => { visorOn = true; caminar(); };
 $('bSeguir').onclick = seguirRover;
-$('bAyuda').onclick = () => $('ayuda').classList.remove('oculto');
-$('ayuda').onclick = e => { if (e.target.id === 'ayuda') $('ayuda').classList.add('oculto'); };
-$('ayuda').querySelectorAll('[data-ay]').forEach(b => b.onclick = () => {
-  $('ayuda').classList.add('oculto');
-  try { localStorage.setItem('gale3d-ayuda', 'vista'); } catch (e) {}
-  ({ tour: () => tourIr(0), caminar: () => { visorOn = true; caminar(); }, seguir: seguirRover, libre: () => {}, viaje: () => entrarViaje(0), expe: () => entrarExpe('vehiculo'), manejar: () => $('bManejar').click() })[b.dataset.ay]();
-});
+$('bAyuda').onclick = () => window.__portada?.abrir(2);
 const DESDE_GE = /desde-gale-earth/.test(location.hash);
-try { if (!localStorage.getItem('gale3d-ayuda') && !DESDE_GE) $('ayuda').classList.remove('oculto'); } catch (e) { if (!DESDE_GE) $('ayuda').classList.remove('oculto'); }
 
 // ---------- presupuesto de la salida a pie (data/parametros.json → eva) ----------
 const EVA = { nom: P.eva?.duracion_nominal_h ?? 6, max: P.eva?.duracion_max_h ?? 8, refugio: P.eva?.tiempo_max_a_refugio_min ?? 30, reserva: P.eva?.reserva_regreso_min ?? 30 };
@@ -2716,7 +3030,7 @@ function actualizarFlot() {
   aplicarVM();
   $('bManejar').setAttribute('aria-pressed', control === 'astro');
   $('bManejarTxt').textContent = control === 'astro' ? 'Volver a manejar el rover' : 'Manejar astronauta'; $('bManejarSub').textContent = control === 'astro' ? 'el astronauta queda donde está' : 'W A S D · joystick';
-  $('joy').style.left = !$('panel').classList.contains('oculto') && innerWidth > 760 ? '362px' : '22px';    // al lado del panel, no debajo
+  $('joy').style.left = !$('panel').classList.contains('oculto') && innerWidth > 760 ? '374px' : '22px';    // al lado del panel, no debajo
 }
 
 // ---------- volver a la base: camino más rápido desde donde está el astronauta ----------
@@ -3408,16 +3722,19 @@ const ESTACIONES = [
 function pintarClima(ls, fecha = null) {
   const e = ESTACIONES.find(s => ls >= s.de && ls < s.a) || ESTACIONES[0], polvo = ls >= 180;
   const my = fecha ? anioMarte(fecha, ls) : null;
+  const abiertos = [...$('clima').querySelectorAll('details')].map(d => d.open);      // al cambiar la fecha, lo desplegado sigue desplegado
   $('clima').innerHTML = `<p class="clima-cab">Ls ${Math.round(ls)}° · ${e.nombre}${my ? ` · año marciano ${my}` : ''}${fecha ? ` · ${fecha.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}` : ''}</p>
     ${e.lineas.map(([t, id]) => `<p class="info-capa" style="border:0;padding:0;margin:3px 0;display:flex;justify-content:space-between;gap:4px"><span>${t}</span>${fq(id)}</p>`).join('')}
     <p class="info-capa" style="border:0;padding:0;margin:3px 0;display:flex;justify-content:space-between;gap:4px"><span>A lo largo del año: más de 55 °C entre la tarde y la madrugada; humedad casi nula de día.</span>${fq('remsCiclos')}</p>
-    <div class="caja-nota"><b>Para la salida (lectura del equipo):</b> ${polvo
-      ? 'temporada de polvo: menos energía solar, menos visibilidad y riesgo de tormenta regional. Salidas cortas, con margen y cerca del rover.'
-      : 'temporada clara: la mejor época para salidas largas y para fotografiar capas a distancia.'} <span class="sub">El polvo casi no cambia la dosis de rayos cósmicos; la sombra del relieve sí ayuda.</span></div>
-    <div class="caja-nota"><b>Desde 2028: Aeolus.</b> NASA y Relativity Space prevén lanzar un orbitador con cuatro instrumentos que medirán viento, temperatura, polvo y nubes: la primera vista diaria del clima de todo Marte, durante al menos un año marciano. ${fq('aeolus')}${fq('aeolusSpace')}<br><span class="sub">Con eso esta guía pasaría de clima típico por estación a un pronóstico del día (idea del equipo).</span></div>
-    <div class="caja-nota"><b>Las personas en Marte.</b> NASA trabaja para llevar astronautas "ya en la década de 2030" ${fq('humanos')}; su arquitectura Luna a Marte tiene un segmento "Humans to Mars" ${fq('m2m')}.<br>
-      <span class="sub">Cómo juntamos los datos de Curiosity: clima de REMS en el PDS ${fq('remsPds')}, datos por sol, lugar e instrumento en el Analyst's Notebook ${fq('an')} y el archivo de la misión ${fq('pdsGeo')}.</span></div>
+    <details class="mas"><summary>Para la salida (lectura del equipo)</summary><p>${polvo
+      ? 'Temporada de polvo: menos energía solar, menos visibilidad y riesgo de tormenta regional. Salidas cortas, con margen y cerca del rover.'
+      : 'Temporada clara: la mejor época para salidas largas y para fotografiar capas a distancia.'} <span class="sub">El polvo casi no cambia la dosis de rayos cósmicos; la sombra del relieve sí ayuda.</span></p></details>
+    <details class="mas"><summary>Desde 2028: el orbitador Aeolus</summary><p>NASA y Relativity Space prevén lanzar un orbitador con cuatro instrumentos que medirán viento, temperatura, polvo y nubes: la primera vista diaria del clima de todo Marte, durante al menos un año marciano. ${fq('aeolus')}${fq('aeolusSpace')}<br><span class="sub">Con eso esta guía pasaría de clima típico por estación a un pronóstico del día (idea del equipo).</span></p></details>
+    <details class="mas"><summary>Las personas en Marte</summary><p>NASA trabaja para llevar astronautas "ya en la década de 2030" ${fq('humanos')}; su arquitectura Luna a Marte tiene un segmento "Humans to Mars" ${fq('m2m')}.</p></details>
+    <details class="mas"><summary>Cómo juntamos los datos de Curiosity</summary><p>Clima de REMS en el PDS ${fq('remsPds')}, datos por sol, lugar e instrumento en el Analyst's Notebook ${fq('an')} y el archivo de la misión ${fq('pdsGeo')}.</p></details>
     <p class="sub">Valores típicos de varios años medidos por REMS; cambian de un año a otro. El color del cielo en 3D cambia con el polvo de la época (visual, no medido).</p>`;
+  $('clima').querySelectorAll('details').forEach((d, i) => { if (abiertos[i]) d.open = true; });
+  $('sv-clima').textContent = `Ls ${Math.round(ls)}° · ${e.nombre.replace(' austral', '')}`;
   $('ls-tira').querySelector('u').style.left = `calc(${ls / 360 * 100}% - 1px)`;
 }
 {
@@ -3695,6 +4012,76 @@ renderer.setAnimationLoop(ahora => {
   if (ahora - ultAlertas > 350) { ultAlertas = ahora; evaluarAlertas(); limpiarAlertas(); actualizarFlot(); if (pcRuta && fp && fp.r === pcRuta) dibujarPC(); }   // en tiempo real, aunque haya pocos cuadros por segundo
   actualizarCursor();
   renderer.render(escena, camara);
+});
+// ---------- datos en vivo (derecha): plegado, cada grupo muestra un resumen; el del astronauta se abre solo cuando sale del rover ----------
+{
+  let afueraAntes = false;
+  const resumen = () => {
+    $('hv-rover').textContent = `${$('hModo').textContent} · ${$('hIncl').textContent}`;
+    const afuera = !!yo.activo;
+    $('hv-astro').textContent = afuera ? `${$('aRef').textContent} del rover` : 'en el rover';
+    $('hv-ent').textContent = `${$('eHora').textContent} · ${$('eLs').textContent.replace(/^Ls \d+° · /, '').replace(/ austral$/, '')}`;
+    if (afuera !== afueraAntes) { $('hg-astro').open = afuera; $('hg-rover').open = !afuera; afueraAntes = afuera; }   // uno abierto por vez: entra en pantallas bajas
+  };
+  setInterval(resumen, 600); resumen();
+}
+
+// ---------- panel por apartados: un valor corto en cada encabezado ----------
+{
+  const contar = () => {
+    const el = document.querySelector('input[name=capa]:checked');
+    $('sv-capa').textContent = el ? el.nextSibling.textContent.trim().replace(/\s*\(.*$/, '') : '';
+    const np = $('paradas').querySelectorAll(':scope > details').length; $('sv-paradas').textContent = np ? `${np} paradas` : '';
+    const nr = $('rutas').querySelectorAll('.ruta').length; $('sv-rutas').textContent = nr ? `${nr} rutas` : '';
+    const nota = $('perfil-nota').textContent; $('sv-perfil').textContent = nota ? nota.split(':')[0] : '';
+  };
+  const obs = new MutationObserver(contar);
+  for (const id of ['leyenda', 'paradas', 'rutas', 'perfil-nota']) obs.observe($(id), { childList: true, characterData: true, subtree: id === 'perfil-nota' });
+  document.querySelectorAll('input[name=capa]').forEach(el => el.addEventListener('change', contar));
+  contar();
+  $('sv-calidad').textContent = LIVIANO ? 'Liviana' : 'Alta';
+  $('sv-fuentes').textContent = `${Object.keys(FUENTES_URL).length} con enlace`;
+  if (TR) { $('sv-trav').textContent = `${num(TR.largo / 1000, 1)} km`; $('sv-pozos').textContent = `${POZOS.length} pozos`; }
+  $('sec-perfil').addEventListener('toggle', () => { if ($('sec-perfil').open) dibujarPerfil(fp ? fp.d : null); });   // el lienzo mide 0 mientras está cerrado
+}
+
+// ---------- barra de abajo: Rutas y Escena abren una ventanita encima del botón ----------
+{
+  const POPS = [['mRutas', 'popRutas'], ['mEscena', 'popEscena']];
+  const cerrarPops = () => POPS.forEach(([b, p]) => { $(p).classList.add('oculto'); $(b).setAttribute('aria-expanded', 'false'); });
+  for (const [b, p] of POPS) $(b).onclick = () => {
+    const abrir = $(p).classList.contains('oculto'); cerrarPops(); if (!abrir) return;
+    const el = $(p), r = $(b).getBoundingClientRect();
+    el.classList.remove('oculto'); $(b).setAttribute('aria-expanded', 'true');
+    el.style.bottom = `${innerHeight - r.top + 8}px`;
+    if (innerWidth > 760) el.style.left = `${Math.max(12, Math.min(innerWidth - el.offsetWidth - 12, r.left + r.width / 2 - el.offsetWidth / 2))}px`;
+  };
+  document.addEventListener('pointerdown', e => { if (!e.target.closest('.pop, #mRutas, #mEscena')) cerrarPops(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') cerrarPops(); });
+  $('bMarcar').addEventListener('click', () => { if ($('bMarcar').getAttribute('aria-pressed') === 'true') cerrarPops(); });   // marcar: el terreno queda libre
+  new MutationObserver(() => { if ($('ctrl').classList.contains('oculto')) cerrarPops(); }).observe($('ctrl'), { attributes: true, attributeFilter: ['class'] });
+  const datosEscena = () => { $('popHora').textContent = $('eHora').textContent; $('popLs').textContent = $('eLs').textContent.replace(/^Ls \d+° · /, ''); };
+  $('iHora').addEventListener('input', datosEscena); $('iLs').addEventListener('input', datosEscena); $('cFecha').addEventListener('change', datosEscena); $('cHoy').addEventListener('click', datosEscena); $('ls-tira').addEventListener('click', datosEscena);
+  datosEscena();
+}
+
+// ---------- portada: la escena ya está lista; lo que se eligió mientras cargaba arranca ahora ----------
+window.__portada?.listo({
+  tour: () => tourIr(0),
+  caminar: () => { visorOn = true; caminar(); },
+  seguir: seguirRover,
+  manejar: () => $('bManejar').click(),
+  libre: () => vistaGeneral(true),
+  viaje: TR ? () => entrarViaje(0) : null,
+  travLibre: TR ? () => vistaTravesia() : null,
+  expeRover: EXP ? () => entrarExpe('vehiculo') : null,
+  expeAstro: EXP ? () => entrarExpe('astronauta') : null,
+  marte: GLOBO ? () => $('vPlaneta').click() : null,
+}, {
+  'po-hoy-dim': `${fmtM(W * CS * COS)} × ${fmtM(H * CS)} · celdas de ${CS} m`,
+  'po-km': TR ? `${num(TR.largo / 1000)} km` : null,
+  'po-pozos': TR ? String(POZOS.length) : null,
+  'po-trav-dim': TR ? `${num(TR.largo / 1000)} km · ${POZOS.length} perforaciones · ${Math.round(TR.P[TR.P.length - 1].sol)} soles` : null,
 });
 document.getElementById('cargando').remove();
 // ---------- unión con Gale Earth (../gale-earth/index.html): ida y vuelta entre Marte completo y la misión ----------
