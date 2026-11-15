@@ -198,26 +198,6 @@
     f.classList.remove('oculto');
   };
 
-  // Abrir en el celular: el servidor de la PC informa su dirección en la red local (red.json) y se muestra un QR.
-  $('rCel').onclick = async () => {
-    $('celular').classList.remove('oculto');
-    const info = $('celInfo');
-    const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-    let urls = [];
-    if (!local && location.protocol.startsWith('http')) urls = [location.href.split('#')[0]];
-    else { try { const r = await fetch('red.json', { cache: 'no-store' }); if (r.ok) urls = (await r.json()).urls || []; } catch {} }
-    if (!urls.length) { info.innerHTML = location.protocol === 'file:'
-      ? 'Abriste el archivo directamente. Para verlo en el celular abrí Gale Earth con <b>abrir.bat</b>: el servidor muestra la dirección y el QR.'
-      : 'No encontré la dirección de la PC en la red. Usá el <b>servir.py</b> nuevo (lo trae esta versión) y volvé a abrir con abrir.bat.'; return; }
-    info.innerHTML = `<p>Con el celular conectado al <b>mismo Wi-Fi</b> que esta computadora, escaneá el código o escribí la dirección:</p>
-      <div id="qr"></div><div class="url">${urls[0]}</div>${urls.length > 1 ? `<p class="sub">Otras direcciones: ${urls.slice(1).join(' · ')}</p>` : ''}
-      <p class="sub">La primera vez Windows puede preguntar si Python puede usar la red: elegí <b>Redes privadas</b>. La PC tiene que quedar prendida con el servidor abierto.</p>`;
-    try {
-      if (!window.qrcode) await new Promise((ok, mal) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = ok; s.onerror = mal; document.head.appendChild(s); });
-      const qr = qrcode(0, 'M'); qr.addData(urls[0]); qr.make(); $('qr').innerHTML = qr.createImgTag(6, 8, 'Código QR de Gale Earth');
-    } catch { $('qr').remove(); }
-  };
-
   // Cesium Mars (Cesium ion) pide mostrar su logo: en ese modo se ve abajo a la izquierda.
   setTimeout(() => { if (MODO === 'cesium') { const b = document.querySelector('.cesium-viewer-bottom'); if (b) { b.style.cssText = 'display:block!important;left:calc(var(--riel) + 10px);right:auto;bottom:32px'; } } }, 4000);
 

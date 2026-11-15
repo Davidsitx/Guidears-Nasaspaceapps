@@ -1,0 +1,50 @@
+{
+ "capas": [
+  {
+   "id": "arcillas",
+   "nombre": "Arcillas de Fe/Mg (D2300)",
+   "indicador": "ALT.D2300",
+   "color": "#40c4ff"
+  },
+  {
+   "id": "sulfatos",
+   "nombre": "Sulfatos hidratados (SINDEX2)",
+   "indicador": "HYD.SINDEX2",
+   "color": "#ffd640"
+  },
+  {
+   "id": "agua",
+   "nombre": "Agua en minerales (BD1900)",
+   "indicador": "HYD.BD1900_2",
+   "color": "#78ffc8"
+  },
+  {
+   "id": "hematita",
+   "nombre": "Óxidos férricos / hematita (BD920)",
+   "indicador": "FM2.BD920",
+   "color": "#ff503c"
+  },
+  {
+   "id": "olivino",
+   "nombre": "Olivino (OLINDEX3)",
+   "indicador": "MAF.OLINDEX3",
+   "color": "#96ff5a"
+  },
+  {
+   "id": "piroxeno",
+   "nombre": "Piroxeno alto en Ca (HCPINDEX2)",
+   "indicador": "MAF.HCPINDEX2",
+   "color": "#c878ff"
+  }
+ ],
+ "rect_geodetico": [
+  137.3452812104018,
+  -4.933227150303686,
+  137.45662720246534,
+  -4.636240461641584
+ ],
+ "m_por_px": 24,
+ "fuente": "CRISM (Mars Reconnaissance Orbiter, NASA/JHU-APL): mosaicos GMWG del cráter Gale, versión 2012 (Seelos, Seelos, Viviano y Murchie). Recorte y percentiles: data/mineralogia/crism_contexto (equipo).",
+ "enlace": "https://crism.jhuapl.edu/msl_landing_sites/",
+ "como": "Percentil de cada indicador dentro del área de la travesía (24 m por píxel). Transparente bajo el percentil 50; más opaco = señal más fuerte. Es una señal relativa, no una abundancia: puede haber costuras, polvo o bruma."
+}

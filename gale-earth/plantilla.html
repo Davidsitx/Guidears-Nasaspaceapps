@@ -81,6 +81,7 @@ body.cajonAbierto #busca{display:none}
 #reloj{margin:0 14px 6px;background:var(--sup2);border-radius:12px;padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 #reloj .seg button{background:none;border:1px solid var(--linea);color:var(--suave);border-radius:8px;padding:3px 8px;cursor:pointer;font-size:11px}
 #reloj .seg button.on{background:var(--acento);color:#111;border-color:var(--acento)}
+#ahora{font-weight:700;letter-spacing:.04em}#ahora.vivo{color:#ff5d5d;border-color:#ff5d5d55}
 #contenido{overflow:auto;padding:4px 18px 18px;flex:1;-webkit-overflow-scrolling:touch}
 
 /* ── fichas (contenido del cajón) ── */
@@ -190,15 +191,13 @@ table.comp tr[data-p]:hover td{background-color:#ffffff0d}
 #fuentesBox .cesium-credit-lightbox-overlay{display:none}
 #fuentesBox img{max-height:18px;vertical-align:middle}
 
-/* ── ventanas (ayuda, celular) ── */
+/* ── ventanas (ayuda) ── */
 .modal{position:absolute;inset:0;z-index:20;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}
 .modal .caja{background:var(--sup);border-radius:20px;box-shadow:var(--sombra);padding:20px 22px;max-width:440px;width:100%;max-height:90vh;overflow:auto;border:1px solid #ffffff10}
 .modal h3{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
 .modal kbd{background:var(--sup3);border-radius:5px;padding:1px 6px;font:600 11px system-ui;margin-right:3px;border-bottom:2px solid #0006}
 .modal .lin{padding:5px 0;border-bottom:1px solid #ffffff0d;display:flex;gap:10px;align-items:baseline}
 .modal .lin span:first-child{min-width:150px}
-#qr{display:flex;justify-content:center;margin:12px 0}
-#qr svg,#qr img{width:200px;height:200px;background:#fff;border-radius:12px;padding:8px}
 .url{font:600 15px ui-monospace,monospace;background:var(--sup2);border-radius:10px;padding:8px 10px;text-align:center;word-break:break-all;user-select:all}
 
 #aviso{position:absolute;left:50%;transform:translateX(-50%);bottom:46px;z-index:15;background:#3c4043;color:#e8eaed;padding:11px 16px;border-radius:10px;font-size:13px;max-width:min(560px,calc(100vw - 32px));box-shadow:var(--sombra)}
@@ -297,12 +296,7 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
   #fuentesBox{bottom:calc(88px + var(--inf-seg))}
   #aviso{bottom:calc(92px + var(--inf-seg))}
 }
-#expHud{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(44px + var(--inf-seg));z-index:7;width:min(640px,calc(100vw - var(--riel) - 24px));background:var(--sup);border:1px solid #ffffff14;border-radius:16px;box-shadow:var(--sombra);padding:10px 14px}
-body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) - 428px)/2)}
-#expHud .hT{display:flex;align-items:center;gap:8px;flex-wrap:wrap}#expHud .hT b{font-size:15px}#expHud .hT span{color:var(--suave);font-size:12px;flex:1}#expHud .hT #hInfo b{color:var(--texto)}
-#expHud .hT select{background:var(--sup2);color:var(--texto);border:1px solid var(--linea);border-radius:8px;padding:3px}
-#expHud .hG{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px 12px;margin-top:6px}#expHud .hG small{display:block;color:var(--suave);font-size:11px}#expHud .hG b{font-size:14px}
-@media (max-width:760px){body.cajonAbierto #expHud{display:none}#expHud{left:calc(var(--riel)/2 + 50%)}}
+body.cajonAbierto @media (max-width:760px){body.cajonAbierto .fuentesOf{margin:10px 0 4px;padding:9px 11px;border:1px solid var(--linea);border-radius:10px;font-size:12px;color:var(--suave)}.fuentesOf b{color:var(--texto);font-size:12.5px}.fuentesOf ul{margin:5px 0 0;padding-left:16px}.fuentesOf li{margin:3px 0}.fuentesOf a{color:var(--acento);word-break:break-all}
 </style>
 </head>
 <body>
@@ -318,10 +312,8 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
   <button class="rb" data-t="orbita" title="Orbitadores"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-25 12 12)"/><circle cx="20.2" cy="8.2" r="1.6"/></svg>Órbitas</button>
   <button class="rb" data-t="biblioteca" title="Biblioteca: toda la información guardada"><svg class="i" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>Biblioteca</button>
   <button class="rb" id="rHistoria" title="Línea de tiempo: de la formación de Gale a hoy"><svg class="i" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9.1.1L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"/></svg>Historia</button>
-  <button class="rb" data-t="expedicion" title="Expedición: rutas seguras para astronauta y rover"><svg class="i" viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/></svg>Expedición</button>
   <button class="rb" data-t="capas" title="Capas y estilo del mapa"><svg class="i" viewBox="0 0 24 24"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg>Capas</button>
   <div class="esp"></div>
-  <button class="rb solopc" id="rCel" title="Abrir en el celular"><svg class="i" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>Celular</button>
   <button class="rb solopc" id="vAyuda" title="Controles y ayuda"><svg class="i" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>Ayuda</button>
   <button class="rb solopc" id="rPantalla" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>Pantalla</button>
 </nav>
@@ -350,7 +342,7 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
   <div id="asa" title="Agrandar o achicar"></div>
   <div id="cajonCab"><h2 id="cajonTitulo">Explorar</h2>
     <button id="cerrarCajon" title="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
-  <div id="reloj" class="oculto"><span id="hora">—</span><span class="seg" id="vel"><button data-x="1" class="on">×1</button><button data-x="60">×60</button><button data-x="600">×600</button></span><button class="btn" id="ahora">Ahora</button></div>
+  <div id="reloj" class="oculto"><span id="hora">—</span><span class="seg" id="vel"><button data-x="1" class="on">×1</button><button data-x="60">×60</button><button data-x="600">×600</button></span><button class="btn" id="ahora" title="Volver a la hora actual (UTC, tiempo universal)">● EN VIVO</button></div>
   <div id="contenido"></div>
 </aside>
 
@@ -360,7 +352,6 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
     <div id="lPista"></div>
     <button id="lCerrar" title="Cerrar la línea de tiempo"><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
 </div>
-<div id="expHud" class="oculto" role="status" aria-live="polite"></div>
 <div id="controles">
   <button class="cb" id="brujula" title="Norte arriba (clic) · girar: Shift + arrastrar"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#ffffff22" stroke-width="1.5"/><path d="M20 5l5 15h-10z" fill="#e5534b"/><path d="M20 35l-5-15h10z" fill="#e8eaed"/></svg></button>
   <button class="cb" id="b3d" title="Vista 2D / 3D">3D</button>
@@ -397,11 +388,6 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
     <div class="lin"><span><kbd>/</kbd></span><span>buscar</span></div>
   </div>
   <p class="sub">La brújula vuelve el norte arriba. El botón 3D alterna entre vista desde arriba e inclinada.</p>
-</div></div>
-
-<div id="celular" class="modal oculto"><div class="caja">
-  <h3>Abrir en el celular <button class="btn" data-cerrar>Cerrar</button></h3>
-  <div id="celInfo" class="sub">Buscando la dirección de esta computadora en la red…</div>
 </div></div>
 
 <div id="aviso" class="oculto"></div>
@@ -697,7 +683,7 @@ async function prepararNube() {
   try { if (location.protocol.startsWith('http')) t = await (await fetch('teselas.json')).json(); } catch {}
   let pref = null; try { pref = localStorage.getItem('galeEarthMotor'); } catch {}
   MODO = t && t.terreno && pref !== 'cesium' ? 'globo' : 'cesium';
-  if (t && !t.terreno) setTimeout(() => avisar('El servidor no encontró las teselas de Marte completo (carpeta Google Mars\\teselas o Google Drive). Se muestra Cesium Mars, que solo tiene alta resolución en un sector de Gale.', 20000), 3000);
+  if (t && !t.terreno) setTimeout(() => avisar('El servidor no encontró las teselas de Marte completo (carpeta teselas). Se muestra Cesium Mars, que solo tiene alta resolución en un sector de Gale.', 20000), 3000);
   if (MODO === 'globo') {
     try {
       TERRENO = await crearTerreno();
@@ -770,7 +756,20 @@ const ESCALAS = {
   co2: { campo: 'co2_kg_t', max: 100, c: ['#2a2420', '#d9a441', '#fff1b8'], u: 'kg/t', n: 'CO₂ en carbonatos' },
   fe: { campo: 'oxidos_fe_pct', max: 30, c: ['#2a1d1d', '#c0392b', '#ffb199'], u: '%', n: 'óxidos de hierro' },
   cl: { campo: 'cloro_pct', max: 2.1, c: ['#1d2a1f', '#4caf7d', '#d6ffd0'], u: '%', n: 'cloro' },
+  arcillas: { campo: 'ch_arcillas', max: 30, c: ['#14243a', '#40c4ff', '#d8f5ff'], u: '% de la roca', n: 'arcillas (CheMin)' },
+  sulfatos: { campo: 'ch_sulfatos', max: 60, c: ['#2a2410', '#ffd640', '#fff6c8'], u: '% cristalino', n: 'sulfatos (CheMin)' },
+  hematita: { campo: 'ch_hematita', max: 20, c: ['#2a1414', '#ff503c', '#ffd0c8'], u: '% cristalino', n: 'hematita (CheMin)' },
+  amorfo: { campo: 'ch_amorfo', max: 75, c: ['#1e1e28', '#9c8cff', '#e8e2ff'], u: '% de la roca', n: 'material amorfo (CheMin)' },
 };
+// Resumen de CheMin por pozo (capas/minerales/pozos_chemin.json, de herramientas/capas_minerales_radiacion.py).
+let CHEMIN_POZOS = null;
+async function cargarCheminPozos() {
+  if (CHEMIN_POZOS) return CHEMIN_POZOS;
+  try { CHEMIN_POZOS = await (await fetch('capas/minerales/pozos_chemin.json')).json();
+    for (const p of POZOS) { const q = CHEMIN_POZOS.pozos[p.nombre]; if (q) { p.ch_arcillas = q.arcillas; p.ch_sulfatos = q.sulfatos; p.ch_hematita = q.hematita; p.ch_amorfo = q.amorfo; } } }
+  catch { avisar('Para pintar los pozos por mineral abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
+  return CHEMIN_POZOS;
+}
 let colorPor = 'zona';
 const mezcla = (cs, t) => { t = Math.max(0, Math.min(1, t)); const k = t < .5 ? 0 : 1, u = t < .5 ? t * 2 : (t - .5) * 2;
   const a = cs[k].match(/\w\w/g).map(h => parseInt(h, 16)), b = cs[k + 1].match(/\w\w/g).map(h => parseInt(h, 16));
@@ -886,10 +885,30 @@ $('vAyuda').onclick = () => $('ayuda').classList.remove('oculto');
     if ($('exag')) $('exag').value = String(NIV[k]); }; }
 $('vMarte').onclick = () => irA('marte'); $('vGale').onclick = () => { abrir('explorar'); fichaGale(); }; $('vRec').onclick = () => irA('rec'); $('vHoy').onclick = () => irA('hoy');
 
+// ---------- fecha marciana: longitud solar (Ls) y año marciano ----------
+// Ls: algoritmo Mars24 de NASA GISS (Allison y McEwen 2000, Planet. Space Sci. 48:215). Año marciano: el año 1 empezó
+// el 11/4/1955 en Ls 0 (Clancy et al. 2000, JGR 105:9553). Comprobado: aterrizaje de Curiosity Ls 150,7 del año 31.
+function lsMarte(fecha) {
+  const jdUT = fecha.getTime() / 86400000 + 2440587.5, d = jdUT + 69.184 / 86400 - 2451545.0;
+  const M = (19.3871 + 0.52402073 * d) * Math.PI / 180, aFMS = 270.3871 + 0.524038496 * d;
+  const T = [[0.0071, 2.2353, 49.409], [0.0057, 2.7543, 168.173], [0.0039, 1.1177, 191.837], [0.0037, 15.7866, 21.736], [0.0021, 2.1354, 15.704], [0.0020, 2.4694, 95.528], [0.0018, 32.8493, 49.095]];
+  const pbs = T.reduce((s, [A, tau, phi]) => s + A * Math.cos((0.985626 * d / tau + phi) * Math.PI / 180), 0);
+  const ec = (10.691 + 3e-7 * d) * Math.sin(M) + 0.623 * Math.sin(2 * M) + 0.050 * Math.sin(3 * M) + 0.005 * Math.sin(4 * M) + 0.0005 * Math.sin(5 * M) + pbs;
+  const ls = ((aFMS + ec) % 360 + 360) % 360;
+  return { ls, my: 1 + Math.round((jdUT - 2435208.5) / 686.9725 - ls / 360) };
+}
+const estacionSur = ls => ['otoño', 'invierno', 'primavera', 'verano'][Math.floor(ls / 90) % 4];   // Gale está en el hemisferio sur
+
 // ---------- reloj de los orbitadores ----------
 document.querySelectorAll('#vel button').forEach(b => b.onclick = () => { viewer.clock.multiplier = +b.dataset.x; document.querySelectorAll('#vel button').forEach(x => x.classList.toggle('on', x === b)); });
-$('ahora').onclick = () => { viewer.clock.currentTime = C.JulianDate.now(); };
-viewer.clock.onTick.addEventListener(c => { $('hora').textContent = C.JulianDate.toDate(c.currentTime).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'; });
+$('ahora').onclick = () => { viewer.clock.currentTime = C.JulianDate.now(); viewer.clock.multiplier = 1; document.querySelectorAll('#vel button').forEach(x => x.classList.toggle('on', x.dataset.x === '1')); };
+let relojAnt = '';
+viewer.clock.onTick.addEventListener(c => {
+  const f = C.JulianDate.toDate(c.currentTime), m = lsMarte(f), vivo = Math.abs(f - Date.now()) < 60000;
+  const t = `${f.toISOString().slice(0, 16).replace('T', ' ')} UTC · año marciano ${m.my} · Ls ${Math.round(m.ls)}° · ${estacionSur(m.ls)} en Gale`;
+  if (t !== relojAnt) { $('hora').textContent = t; relojAnt = t; }
+  $('ahora').classList.toggle('vivo', vivo);
+});
 
 // ---------- borde del cráter Gale (punto de interés) ----------
 // Trazado con nuestro DEM: línea de cresta en 360 perfiles radiales (ver datos/borde_gale.json).
@@ -948,8 +967,20 @@ capas.borde.push(viewer.entities.add({ position: pos(nBorde[0], nBorde[1]),
 
 // ---------- selección con clic ----------
 viewer.screenSpaceEventHandler.setInputAction(m => {
-  const o = viewer.scene.pick(m.position); if (!o || !o.id || !o.id.properties) return;
-  const pr = o.id.properties, tipo = pr.tipo.getValue();
+  // Se mira todo lo que hay bajo el dedo (no solo lo de arriba): los círculos de los sitios de base tapaban a los pozos.
+  const ORDEN = ['pozo', 'sitio', 'orbitador', 'luna', 'zona', 'gale'];
+  const bajo = viewer.scene.drillPick(m.position, 12).map(o => o && o.id && o.id.properties && o.id.properties.tipo ? o.id : null).filter(Boolean);
+  let e = bajo.sort((x, y) => ORDEN.indexOf(x.properties.tipo.getValue()) - ORDEN.indexOf(y.properties.tipo.getValue()))[0];
+  if (!e || e.properties.tipo.getValue() !== 'pozo') {        // toque apenas al lado de un pin de pozo: se toma el más cercano (hasta 22 px)
+    let best = null, bd = 22;
+    for (const x of viewer.entities.values) { const q = x.properties; if (!q || !q.tipo || q.tipo.getValue() !== 'pozo' || !x.isShowing) continue;
+      const c = C.Cartographic.fromCartesian(x.position.getValue(viewer.clock.currentTime), MARS), h = MODO === 'globo' ? viewer.scene.globe.getHeight(c) : null;
+      const w = C.SceneTransforms.worldToWindowCoordinates(viewer.scene, C.Cartesian3.fromRadians(c.longitude, c.latitude, h ?? c.height, MARS)); if (!w) continue;
+      const d = Math.hypot(w.x - m.position.x, w.y - m.position.y); if (d < bd) { bd = d; best = x; } }
+    if (best) e = best;
+  }
+  if (!e) return;
+  const pr = e.properties, tipo = pr.tipo.getValue();
   if (tipo === 'pozo') { abrir('explorar'); fichaPozo(POZOS.find(p => p.nombre === pr.nombre.getValue()), true); }
   if (tipo === 'zona') { abrir('explorar'); fichaZona(pr.id.getValue()); }
   if (tipo === 'sitio') { abrir('base'); fichaSitio(pr.id.getValue()); }
@@ -962,13 +993,12 @@ viewer.screenSpaceEventHandler.setInputAction(m => {
 let pestaña = 'explorar';
 function abrir(t, mostrar = true) {
   pestaña = t; document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.toggle('on', mostrar && b.dataset.t === t));
-  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca', expedicion: 'Expedición: rutas seguras' })[t];
+  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca' })[t];
   $('cajon').classList.remove('ancho');
   $('reloj').classList.toggle('oculto', t !== 'orbita');
-  if (t !== 'expedicion') try { EXP.modo = null; expMostrarZona(false); } catch {}
   if (mostrar && window.abrirCajon) abrirCajon();
   $('contenido').scrollTop = 0;
-  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca, expedicion: vistaExpedicion })[t](); }
+  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca })[t](); }
 const cont = () => $('contenido');
 
 function vistaExplorar() {
@@ -1027,6 +1057,17 @@ function fichaZona(id) {
   cont().querySelectorAll('.pz').forEach(el => el.onclick = () => fichaPozo(NUM[+el.dataset.n - 1], true));
 }
 const COL_MIN = { plagioclasa: '#8d99ae', andesina: '#8d99ae', piroxeno: '#5c677d', augita: '#5c677d', pigeonita: '#5c677d', ortopiroxeno: '#5c677d', hematita: '#c0392b', magnetita: '#555', goethita: '#d35400', anhidrita: '#f1e3c6', basanita: '#e8d8b0', yeso: '#ffffff', siderita: '#d9a441', starkeyita: '#4fa3d9', kieserita: '#79c0f0', 'sulfato de mg·4h2o': '#4fa3d9', halita: '#e0f7ff', jarosita: '#e6c229', natrojarosita: '#e6c229', akaganeíta: '#a0522d', tridimita: '#ff79c6', cristobalita: '#f5a3d0', cuarzo: '#d0d0d0', sanidina: '#b0a8d9' };
+// Fuentes oficiales de cada pozo, con el enlace a la vista (NASA y archivos oficiales).
+const url = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t || u.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>`;
+function fuentesPozo(p, extra = []) {
+  const ls = [
+    ['Base de mineralogía y geoquímica del cráter Gale (NASA, equipo CheMin): ficha de este pozo', p.enlace_datos || (p.odr && p.odr.url)],
+    ['La misma base, publicación con DOI (Bristow y Lafuente)', 'https://doi.org/10.48484/JN48-YW52'],
+    ['Datos de laboratorio de Curiosity (CheMin, APXS, SAM) en el Planetary Data System de NASA', 'https://pds-geosciences.wustl.edu/missions/msl/index.htm'],
+    ['Fotos de los pozos de Curiosity (NASA/JPL-Caltech/MSSS)', 'https://science.nasa.gov/photojournal/curiositys-42-drill-holes/'],
+    ...extra];
+  return `<div class="fuentesOf"><b>Fuentes oficiales</b><ul>${ls.filter(x => x[1]).map(([t, u]) => `<li>${t}: ${url(u)}</li>`).join('')}</ul></div>`;
+}
 function fichaPozo(p, volar) {
   if (!p) return; sel = p; repintar(); if (volar) volarA(p.lon, p.lat, 700);
   const z = ZID[p.zona], tot = p.minerales.reduce((a, m) => a + m[1], 0) || 1, i = NUM.indexOf(p);
@@ -1049,7 +1090,8 @@ function fichaPozo(p, volar) {
     <div class="btns"><a class="btn" href="${p.enlace_datos}" target="_blank" rel="noopener">Datos en NASA</a>
       <a class="btn" href="../Guidears-Nasaspaceapps-main/prototipo/mapa-perforaciones/index.html#pozo-${p.n ?? 'atacama'}">Mapa 2D</a>
       <button class="btn prim" id="aBib">Ficha completa en la Biblioteca</button></div>
-    <p class="fuente">Hallazgo: ${p.fuente_hallazgo}. Posición: ${p.fuente_posicion}.</p>`;
+    <p class="fuente">Hallazgo: ${p.fuente_hallazgo}. Posición: ${p.fuente_posicion}.</p>
+    ${fuentesPozo(p, [['Posición: localizaciones de Curiosity (PLACES) en el PDS de NASA', 'https://pds-imaging.jpl.nasa.gov/volumes/msl.html']])}`;
   $('volver').onclick = () => { sel = null; repintar(); vistaExplorar(); };
   $('ant').onclick = () => fichaPozo(NUM[i - 1], true); $('sig').onclick = () => fichaPozo(NUM[i + 1], true);
   $('aBib').onclick = () => { BIB.vista = 'pozo'; BIB.pozoMapa = p; abrir('biblioteca'); };
@@ -1145,15 +1187,16 @@ const ANALISIS = [
   ['relieve_color', 'Relieve en color (llanuras → montañas)', 'Falso color por altura con sombreado: azul = llanuras bajas, verde-amarillo = laderas, rojo-blanco = Monte Sharp.', 0.75],
   ['orto_color', 'Foto HiRISE coloreada por altura', 'Brillo de la foto HiRISE (25 cm, reducida) con el color de la altura. Donde no hay foto se usa el sombreado.', 0.85],
   ['zonas_prohibidas', 'Zonas prohibidas por pendiente', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite).', 0.9],
-  ['dosis_color', 'Radiación en superficie (estimada)', 'Rojo = dosis máxima a cielo abierto (RAD). Azul = sitios donde el relieve tapa parte del cielo y baja la dosis. Cálculo propio, provisorio.', 0.6],
+  ['dosis', 'Radiación en superficie (día / noche)', 'Dosis de rayos cósmicos medida por RAD, corregida por el cielo que tapa el relieve. Rojo = más dosis, azul = menos. De noche la presión del aire sube y la dosis baja cerca de un 5 % (RAD).', 0.5],
 ];
 const CAPA_A = {};
+let HORARIO_RAD = 'dia';
 async function capaAnalisis(id, on, alfa) {
   if (!D.capas5m || !capasImagen()) return avisar('Las capas de análisis necesitan el terreno 3D cargado.');
   if (on && !CAPA_A[id]) {
     try {
       const r = D.capas5m.rect_geodetico;
-      const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
+      const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id === 'dosis' ? 'dosis_' + HORARIO_RAD : id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
       CAPA_A[id] = capasImagen().addImageryProvider(prov);
     } catch (e) {
       return avisar(location.protocol === 'file:' ? 'Para ver esta capa abrí Gale Earth con abrir.bat (Windows) o abrir.sh: el navegador no permite usar imágenes locales en 3D desde file://.' : 'No se pudo cargar la capa ' + id + ': ' + (e.message || e), 14000);
@@ -1161,13 +1204,40 @@ async function capaAnalisis(id, on, alfa) {
   }
   if (CAPA_A[id]) { CAPA_A[id].show = on; CAPA_A[id].alpha = alfa; }
 }
+async function cambiarHorarioRad(h) {
+  HORARIO_RAD = h; const L = CAPA_A.dosis;
+  if (L) { const on = L.show, a = L.alpha; capasImagen().remove(L, true); delete CAPA_A.dosis; if (on) await capaAnalisis('dosis', true, a); }
+}
+function leyendaRad() {
+  const r = D.capas5m && D.capas5m.radiacion; if (!r) return '';
+  return `<div class="fila"><span>Horario</span><span class="seg" id="radHora"><button data-h="dia" class="${HORARIO_RAD === 'dia' ? 'on' : ''}">☀ Día</button><button data-h="noche" class="${HORARIO_RAD === 'noche' ? 'on' : ''}">☾ Noche</button></span></div>
+    <div class="sub" style="display:flex;align-items:center;gap:8px"><span>${fmt(r.min, 2)}</span><span style="flex:1;height:10px;border-radius:5px;background:linear-gradient(90deg,#285ac8,#50aae6,#fadc5a,#f07832,#c81e28)"></span><span>${fmt(r.max, 2)} mSv/día</span></div>
+    <div class="sub">Promedio en la zona: de día ${fmt(r.dia_media, 3)} y de noche ${fmt(r.noche_media, 3)} mSv/día. Fórmula: ${r.formula}. <span class="tag">medido + cálculo</span></div>
+    <p class="fuente">RAD: Hassler et al. 2014, Science (<a href="https://doi.org/10.1126/science.1244797" target="_blank" rel="noopener">doi.org/10.1126/science.1244797</a>). Día y noche: Rafkin et al. 2014, JGR Planets (<a href="https://doi.org/10.1002/2013JE004525" target="_blank" rel="noopener">doi.org/10.1002/2013JE004525</a>). Datos de RAD: <a href="https://pds-ppi.igpp.ucla.edu/" target="_blank" rel="noopener">pds-ppi.igpp.ucla.edu</a> (NASA PDS).</p>`;
+}
+let MINS = null; const CAPA_M = {};
+async function capaMineral(id, on) {
+  if (!MINS) try { MINS = await (await fetch('capas/minerales/minerales.json')).json(); } catch { return avisar('Para ver los minerales abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
+  if (on && !CAPA_M[id]) {
+    const r = MINS.rect_geodetico; if (!capasImagen()) return;
+    CAPA_M[id] = capasImagen().addImageryProvider(await C.SingleTileImageryProvider.fromUrl(`capas/minerales/${id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) }));
+  }
+  if (CAPA_M[id]) CAPA_M[id].show = on;
+}
+const MIN_LISTA = [['arcillas', 'Arcillas de Fe/Mg', '#40c4ff'], ['sulfatos', 'Sulfatos hidratados', '#ffd640'], ['agua', 'Agua en minerales', '#78ffc8'], ['hematita', 'Óxidos férricos / hematita', '#ff503c'], ['olivino', 'Olivino', '#96ff5a'], ['piroxeno', 'Piroxeno alto en calcio', '#c878ff']];
 function vistaCapas() {
   cont().innerHTML = `<h2>Capas</h2>
     ${[['recorrido', 'Recorrido de Curiosity por zonas'], ['pozos', 'Las 49 perforaciones'], ['etiquetas', 'Nombres de zonas'], ['base', 'Sitios candidatos para la base'], ['orbitas', 'Orbitadores y órbitas']].map(([k, t]) => `<label class="fila"><span>${t}</span><input type="checkbox" data-c="${k}" ${VIS[k] ? 'checked' : ''}></label>`).join('')}
-    <div class="fila"><span>Color de los pozos</span><select id="colorPor"><option value="zona">zona</option><option value="agua">agua en minerales</option><option value="co2">carbonatos (CO₂)</option><option value="fe">óxidos de hierro</option><option value="cl">cloro</option></select></div>
+    <div class="fila"><span>Color de los pozos</span><select id="colorPor"><option value="zona">zona</option><option value="agua">agua en minerales</option><option value="co2">carbonatos (CO₂)</option><option value="fe">óxidos de hierro</option><option value="cl">cloro</option><option value="arcillas">arcillas (CheMin)</option><option value="sulfatos">sulfatos (CheMin)</option><option value="hematita">hematita (CheMin)</option><option value="amorfo">material amorfo (CheMin)</option></select></div>
+    <p class="sub" id="leyColor"></p>
     <div class="fila"><span>Exagerar el relieve</span><select id="exag"><option value="1">×1 (real)</option><option value="1.5">×1,5</option><option value="2">×2</option><option value="3">×3</option></select></div>
     ${D.capas5m ? `<h2>Análisis del terreno (5 m)</h2><p class="sub">Todo el área de Curiosity en Gale (${Math.round(D.capas5m.caja_planetocentrica.ancho * 5 / 1000)} × ${Math.round(D.capas5m.caja_planetocentrica.alto * 5 / 1000)} km). Elevación ${Math.round(D.capas5m.elev_min)} a ${Math.round(D.capas5m.elev_max)} m. Límite de pendiente: astronauta ${D.capas5m.parametros.pendiente_astronauta}°, rover ${D.capas5m.parametros.pendiente_rover}°.</p>
     ${ANALISIS.map(([k, t, d, a]) => `<label class="fila"><span title="${d}">${t}</span><input type="checkbox" data-a="${k}" ${CAPA_A[k] && CAPA_A[k].show ? 'checked' : ''}></label><div class="fila"><span class="sub">${d}</span><input type="range" min="0.1" max="1" step="0.05" data-o="${k}" value="${CAPA_A[k] ? CAPA_A[k].alpha : a}" style="width:90px"></div>`).join('')}` : ''}
+    ${D.capas5m ? leyendaRad() : ''}
+    <h2>Minerales vistos desde órbita (CRISM)</h2>
+    <p class="sub">Espectrómetro CRISM de la sonda Mars Reconnaissance Orbiter (NASA), sobre la franja que recorrió Curiosity. Más color = señal más fuerte dentro de la zona (es relativa, no una cantidad). Lo medido en cada pozo se ve con "Color de los pozos" → CheMin.</p>
+    ${MIN_LISTA.map(([k, t, c]) => `<label class="fila"><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${c};margin-right:6px"></i>${t}</span><input type="checkbox" data-m="${k}" ${CAPA_M[k] && CAPA_M[k].show ? 'checked' : ''}></label>`).join('')}
+    <p class="fuente">CRISM: mosaicos del cráter Gale de NASA/JHU-APL (Seelos et al. 2012), <a href="https://crism.jhuapl.edu/msl_landing_sites/" target="_blank" rel="noopener">crism.jhuapl.edu/msl_landing_sites</a>. CheMin en los pozos: <a href="https://pds-geosciences.wustl.edu/missions/msl/chemin.htm" target="_blank" rel="noopener">pds-geosciences.wustl.edu/missions/msl/chemin.htm</a> (NASA PDS).</p>
     <h2>Motor 3D</h2>
     <div class="fila"><span>Globo</span><select id="motor"><option value="globo">Marte completo (CTX 5 m + HiRISE 25 cm)</option><option value="cesium">Cesium Mars (3D Tiles)</option></select></div>
     ${MODO === 'globo' ? `<p class="sub">Todo Marte con el mosaico CTX de 5 m por píxel. Relieve: HRSC/MOLA (200 m) en el planeta y modelo de 1 m (a 5 m) en la zona de Curiosity. Fotos HiRISE de 25 cm en Gale.</p>
@@ -1186,7 +1256,11 @@ function vistaCapas() {
   $('motor').value = MODO; $('motor').onchange = e => { try { localStorage.setItem('galeEarthMotor', e.target.value); } catch {} location.reload(); };
   cont().querySelectorAll('[data-b]').forEach(el => el.onchange = () => { CAPAS_BASE[el.dataset.b].show = el.checked; });
   if ($('colorCTX')) { $('colorCTX').value = MODO_COLOR; $('colorCTX').onchange = e => { MODO_COLOR = e.target.value; try { localStorage.setItem('galeEarthColor', MODO_COLOR); } catch {} capaCTX(); }; }
-  $('colorPor').value = colorPor; $('colorPor').onchange = e => { colorPor = e.target.value; repintar(); };
+  const ley = () => { const e = ESCALAS[colorPor]; $('leyColor').innerHTML = e ? `${e.n}: de 0 (oscuro) a ${fmt(e.max)} ${e.u} (claro). Gris = sin dato.` : ''; };
+  $('colorPor').value = colorPor; ley();
+  $('colorPor').onchange = async e => { colorPor = e.target.value; if (ESCALAS[colorPor] && ESCALAS[colorPor].campo.startsWith('ch_')) await cargarCheminPozos(); repintar(); ley(); };
+  cont().querySelectorAll('[data-m]').forEach(el => el.onchange = () => capaMineral(el.dataset.m, el.checked));
+  cont().querySelectorAll('#radHora button').forEach(b => b.onclick = async () => { cont().querySelectorAll('#radHora button').forEach(x => x.classList.toggle('on', x === b)); await cambiarHorarioRad(b.dataset.h); });
   $('exag').value = String(viewer.scene.verticalExaggeration || 1); $('exag').onchange = e => { const v = +e.target.value; viewer.scene.verticalExaggeration = v; $('relBadge').textContent = '×' + String(v).replace('.', ','); $('relBadge').classList.toggle('oculto', v === 1); };
   $('guardarTok').onclick = () => { const v = $('tok').value.trim(); if (v && !v.startsWith('••')) { try { localStorage.setItem('galeEarthToken', v); } catch {} location.reload(); } };
   $('borrarTok').onclick = () => { try { localStorage.removeItem('galeEarthToken'); } catch {} location.reload(); };
@@ -1399,26 +1473,6 @@ viewer.scene.preRender.addEventListener(() => {
     f.classList.remove('oculto');
   };
 
-  // Abrir en el celular: el servidor de la PC informa su dirección en la red local (red.json) y se muestra un QR.
-  $('rCel').onclick = async () => {
-    $('celular').classList.remove('oculto');
-    const info = $('celInfo');
-    const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-    let urls = [];
-    if (!local && location.protocol.startsWith('http')) urls = [location.href.split('#')[0]];
-    else { try { const r = await fetch('red.json', { cache: 'no-store' }); if (r.ok) urls = (await r.json()).urls || []; } catch {} }
-    if (!urls.length) { info.innerHTML = location.protocol === 'file:'
-      ? 'Abriste el archivo directamente. Para verlo en el celular abrí Gale Earth con <b>abrir.bat</b>: el servidor muestra la dirección y el QR.'
-      : 'No encontré la dirección de la PC en la red. Usá el <b>servir.py</b> nuevo (lo trae esta versión) y volvé a abrir con abrir.bat.'; return; }
-    info.innerHTML = `<p>Con el celular conectado al <b>mismo Wi-Fi</b> que esta computadora, escaneá el código o escribí la dirección:</p>
-      <div id="qr"></div><div class="url">${urls[0]}</div>${urls.length > 1 ? `<p class="sub">Otras direcciones: ${urls.slice(1).join(' · ')}</p>` : ''}
-      <p class="sub">La primera vez Windows puede preguntar si Python puede usar la red: elegí <b>Redes privadas</b>. La PC tiene que quedar prendida con el servidor abierto.</p>`;
-    try {
-      if (!window.qrcode) await new Promise((ok, mal) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = ok; s.onerror = mal; document.head.appendChild(s); });
-      const qr = qrcode(0, 'M'); qr.addData(urls[0]); qr.make(); $('qr').innerHTML = qr.createImgTag(6, 8, 'Código QR de Gale Earth');
-    } catch { $('qr').remove(); }
-  };
-
   // Cesium Mars (Cesium ion) pide mostrar su logo: en ese modo se ve abajo a la izquierda.
   setTimeout(() => { if (MODO === 'cesium') { const b = document.querySelector('.cesium-viewer-bottom'); if (b) { b.style.cssText = 'display:block!important;left:calc(var(--riel) + 10px);right:auto;bottom:32px'; } } }, 4000);
 
@@ -1435,7 +1489,7 @@ function entrarMision() {
 }
 $('bMision').onclick = e => { e.preventDefault(); entrarMision(); };   // sin Cesium (sin internet) el enlace funciona igual
 // ==================== Biblioteca ====================
-// Toda la información guardada en el Drive (Marte/Perforaciones Datos Crudos), ordenada para consultar:
+// Toda la información de los pozos (NASA PDS, base de mineralogía de Gale, blog y fotos de NASA), ordenada para consultar:
 // perforaciones (ficha completa), comparar pozos, temas para futuras misiones, fuentes. Lee datos/biblioteca.json,
 // que arma armar_biblioteca.py. Si un dato no existe, la ficha lo dice: no se completa con estimaciones.
 const BIB = { datos: null, cargando: null, vista: 'inicio', pozo: null, orden: 'n', filtro: '', soloCon: '', drive: null, ordenTabla: ['n', 1] };
@@ -1500,7 +1554,7 @@ function bibInicio() {
     <h2>Referencia</h2>
     ${tarjeta('fuentes', 'Fuentes y calidad de los datos', 'De dónde sale cada dato, qué falta y qué valores hay que tomar con cuidado.', `<span class="bibic" style="background:#7E57C2">ⓘ</span>`)}
     <div class="tarjeta bibt" id="bibAyuda"><span class="bibic" style="background:#3c4043">?</span><b>Controles y ayuda</b><div class="sub">Cómo moverse por el mapa con mouse, teclado o dedos.</div></div>
-    <p class="fuente">Datos: carpeta del Drive Marte/Perforaciones Datos Crudos, armada con NASA PDS, base ODR del cráter Gale y fotos crudas de NASA/JPL-Caltech/MSSS.</p>`;
+    <p class="fuente">Datos: Planetary Data System de NASA (${url('https://pds-geosciences.wustl.edu/missions/msl/index.htm')}), base de mineralogía y geoquímica del cráter Gale del equipo CheMin (${url('https://doi.org/10.48484/JN48-YW52')}), blog de Curiosity (${url('https://science.nasa.gov/mission/msl-curiosity/')}) y fotos crudas de NASA/JPL-Caltech/MSSS (${url('https://mars.nasa.gov/msl/multimedia/raw-images/')}).</p>`;
   engancharBib(); $('bibAyuda').onclick = () => $('ayuda').classList.remove('oculto');
 }
 
@@ -1578,7 +1632,7 @@ function bibPozo() {
   const fot = p.fotos.length ? `<div class="fotos">${p.fotos.map(f => `<a href="${f.url || f.src}" target="_blank" rel="noopener" title="${escB(f.archivo)}"><img loading="lazy" src="${f.src}" alt="${escB(f.camara)}"><span>${escB(f.camara || '')}</span></a>`).join('')}</div>
       <p class="fuente">${p.fotos.length} destacadas de ${p.fotos_total} fotos crudas del sol de la perforación (todas en <code>Imagenes/todas_las_imagenes.zip</code>). Fotos: NASA/JPL-Caltech/MSSS. Tocá una para abrir el original en NASA.</p>` : '<p class="sub">Sin fotos destacadas.</p>';
   const base = `G:\\Mi unidad\\Marte\\Perforaciones Datos Crudos\\${p.nombre}`;
-  const arch = `<p class="sub">${BIB.drive ? 'Tocá un archivo para abrirlo o bajarlo (lo sirve la PC desde el Drive).' : `Están en <code>${escB(base)}</code>.`}</p>
+  const arch = `<p class="sub">${BIB.drive ? 'Tocá un archivo para abrirlo o bajarlo (copia local de los archivos públicos de NASA).' : `Están en <code>${escB(base)}</code>.`}</p>
     <table>${p.archivos.map(([r, b]) => `<tr><td>${BIB.drive ? `<a href="perforaciones/${encodeURIComponent(p.nombre)}/${r.split('/').map(encodeURIComponent).join('/')}" target="_blank" rel="noopener">${escB(r)}</a>` : escB(r)}</td><td style="white-space:nowrap">${kB(b)}</td></tr>`).join('')}</table>`;
   cont().innerHTML = `<div style="display:flex;justify-content:space-between;gap:6px">${volverBib('lista')}
       <span><button class="btn" id="bAnt" ${i <= 0 ? 'disabled' : ''}>←</button> <button class="btn" id="bSig" ${i >= P.length - 1 ? 'disabled' : ''}>→</button></span></div>
@@ -1587,7 +1641,7 @@ function bibPozo() {
     <h3>${p.n ? p.n + '. ' : ''}${escB(p.nombre)}</h3>
     <div class="sub">Sol ${p.sol ?? '—'} · ${escB(p.fecha)} (aprox.) · ${escB(p.roca || '—')} · ${p.elev != null ? fmt(p.elev) + ' m' : ''}</div>
     ${p.hallazgo ? `<p>${escB(p.hallazgo)}</p>` : ''}${p.tecnico ? `<p class="sub">${escB(p.tecnico)}</p>` : ''}
-    <div class="btns"><button class="btn prim" id="bMapa">Ver en el mapa</button>${p.odr && p.odr.url ? `<a class="btn" href="${p.odr.url}" target="_blank" rel="noopener">Ficha en la base ODR</a>` : ''}</div>
+    <div class="btns"><button class="btn prim" id="bMapa">Ver en el mapa</button>${p.odr && p.odr.url ? `<a class="btn" href="${p.odr.url}" target="_blank" rel="noopener">Ficha en la base de mineralogía de Gale (NASA)</a>` : ''}</div>
     <div class="ind">
       <div><small>Agua en minerales <span class="tag">calculado</span></small><b style="color:var(--agua)">${p.agua_kg_t != null ? fmt(p.agua_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
       <div><small>CO₂ en carbonatos <span class="tag">calculado</span></small><b style="color:#d9a441">${p.co2_kg_t != null ? fmt(p.co2_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
@@ -1601,8 +1655,9 @@ function bibPozo() {
     ${p.blog && p.blog.length ? sec('Lo que contó el equipo', 'blog de Curiosity · resumen propio', p.blog.map(x => `<div class="tarjeta" style="cursor:default"><div class="sub">${escB(x.fecha)}</div>${escB(x.texto)} <a href="${x.url}" target="_blank" rel="noopener">Leer</a></div>`).join('') + '<p class="fuente">Los números de laboratorio de este pozo todavía no están en el PDS: el blog dice qué se hizo, no los resultados.</p>', true) : ''}
     ${sec('Qué falta', '', p.falta.length ? '<ul>' + p.falta.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>' : '<p class="sub">Nada pendiente registrado.</p>', false)}
     ${p.cruce.length ? sec('Cruce con la base ODR', '', '<ul>' + p.cruce.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>', false) : ''}
-    ${sec(`Archivos crudos (${p.archivos.length})`, 'Drive', arch, false)}
-    <p class="fuente">${escB(p.fuente_hallazgo || '')}</p>`;
+    ${sec(`Archivos crudos (${p.archivos.length})`, 'copia local de NASA PDS', arch, false)}
+    <p class="fuente">${escB(p.fuente_hallazgo || '')}</p>
+    ${fuentesPozo(p, [...(p.fotos && p.fotos[0] && p.fotos[0].url ? [['Foto cruda de ese sol en el servidor de NASA', p.fotos[0].url]] : []), ...(p.blog || []).slice(0, 3).map(x => ['Blog de Curiosity (NASA), ' + x.fecha, x.url])])}`;
   engancharBib();
   $('bAnt').onclick = () => irBib('pozo', P[i - 1].nombre); $('bSig').onclick = () => irBib('pozo', P[i + 1].nombre);
   $('bMapa').onclick = () => {
@@ -1636,7 +1691,7 @@ function bibComparar() {
 
 function bibTemas() {
   cont().innerHTML = `${volverBib('inicio')}<div class="doc">${BIB.datos.temas_html}</div>
-    <p class="fuente">Documento del equipo: Drive, carpeta "zz Analisis y temas para futuras misiones". "No tratados" quiere decir que nuestro proyecto todavía no los trabajó.</p>`;
+    <p class="fuente">Documento del equipo. "No tratados" quiere decir que nuestro proyecto todavía no los trabajó.</p>`;
   engancharBib();
 }
 
@@ -1660,7 +1715,7 @@ function bibFuentes() {
       <li>Valores de SAM imposibles para una porción de ~45 mg (supuesto) se marcan con ⚠ y no se usan: HCl, NO y H₂S en Mojave 2 y Telegraph Peak, HCl en un experimento de Cumberland y el H₂O de 7×10⁷ mol de Glen Etive (error de la tabla de PDS).</li>
       <li>Pozos nuevos: Nevado Sajama 2 ya tiene química (APXS) y el experimento de orgánicos con TMAH; Campo Marte, Basque Lakes y Nazca solo tienen lo que contó el equipo en el blog: sus números salen en la próxima entrega del PDS (los datos actuales llegan hasta marzo de 2026).</li>
       <li>Clima: el resumen diario de REMS es de divulgación (CAB); lo verificamos contra los datos calibrados del PDS. El viento y la humedad salen de nuestra lectura de los archivos calibrados de REMS en el PDS (muestreo propio); hay datos de viento hasta alrededor del sol 1482 (2016).</li></ul>
-    <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> desde el Drive (${escB(BIB.datos.origen)}).</p>`;
+    <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> a partir de datos públicos de NASA (PDS, blog y fotos crudas) y de la base de mineralogía de Gale.</p>`;
   engancharBib();
 }
 
@@ -1698,9 +1753,13 @@ function bibClima() {
       <div><small>Récord de calor</small><b>${fm(c.records.calor.valor)} <small>°C</small></b><small>${c.records.calor.fecha}</small></div></div>
     <h2>El último año marciano</h2>${grafClima(c.diario)}
     <h2>Las cuatro estaciones <span class="tag">medido · promedio de ${c.anios.length} años marcianos</span></h2>
+    ${(() => { const h = lsMarte(new Date()); return `<div class="tarjeta" style="cursor:default"><b>Hoy en Gale: año marciano ${h.my}, L<sub>s</sub> ${fmt(h.ls, 0)}°, ${estacionSur(h.ls)}</b><div class="sub">Calculado con el algoritmo Mars24 de NASA (Allison y McEwen 2000). Los años marcianos se cuentan desde el 11 de abril de 1955 (Clancy et al. 2000); Curiosity llegó en el año 31.</div></div>`; })()}
     <p class="sub">En Marte la época del año se mide con la longitud solar (L<sub>s</sub>): el ángulo de Marte en su órbita, de 0° a 360°. NASA y el equipo de REMS la usan para comparar años. Gale está en el hemisferio sur, así que L<sub>s</sub> 0–90° es otoño, 90–180° invierno, 180–270° primavera y 270–360° verano. Cada estación dura entre 142 y 194 soles porque la órbita de Marte es elíptica.</p>
     <div class="tablaw"><table class="comp"><tr><th>Estación</th><th>L<sub>s</sub></th><th>Soles con dato</th><th>Mín. del aire</th><th>Máx. del aire</th><th>Récords</th><th>Suelo mín./máx.</th><th>Presión</th><th>UV más frecuente</th></tr>
       ${c.estaciones.map(m => `<tr><td>${m.estacion}</td><td>${m.ls[0]}–${m.ls[1]}°</td><td>${fmt(m.n)}</td><td>${fm(m.tmin)} °C</td><td>${fm(m.tmax)} °C</td><td>${fm(m.tmin_rec)} / ${fm(m.tmax_rec)} °C</td><td>${fm(m.gmin)} / ${fm(m.gmax)} °C</td><td>${fm(m.p)} Pa</td><td>${uvTop(m.uv)}</td></tr>`).join('')}</table></div>
+    <h2>Año por año <span class="tag">medido</span></h2>
+    <div class="tablaw"><table class="comp"><tr><th>Año marciano</th><th>Desde</th><th>Hasta</th><th>Soles con dato</th><th>Mín. del aire</th><th>Máx. del aire</th><th>Presión</th></tr>
+      ${c.anios.map(a => `<tr><td>${a.my}</td><td>${a.desde}</td><td>${a.hasta}</td><td>${fmt(a.n)}</td><td>${fm(a.tmin)} °C</td><td>${fm(a.tmax)} °C</td><td>${fm(a.p)} Pa</td></tr>`).join('')}</table></div>
     <p class="fuente">Promedios de los valores diarios (cálculo propio sobre datos medidos). "Suelo": temperatura de la superficie medida por el sensor infrarrojo de REMS. UV: categoría de radiación ultravioleta que informa REMS.</p>
     <h2>La presión baja porque Curiosity sube</h2>${grafPresion(c.diario)}
     <p class="sub">La presión sube y baja con las estaciones porque parte del CO₂ de la atmósfera se congela en los casquetes polares y después vuelve a la atmósfera. La caída de fondo, de ${fm(c.anios[0].p)} Pa de promedio el primer año a ${fm(c.anios.at(-1).p)} Pa el último, coincide con lo que subió Curiosity por el Monte Sharp: unos 1.000 m, de −4.520 m en John Klein a −3.488 m en Nazca (cálculo propio con una altura de escala de ~11 km: unos 70 Pa menos).</p>
@@ -1840,472 +1899,6 @@ addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { pararPlay(); elegirEv(LT.i + (e.key === 'ArrowRight' ? 1 : -1), true); e.preventDefault(); e.stopImmediatePropagation(); }
   if (e.key === 'Escape') cerrarLinea();
 }, true);
-// ==================== Expedición: rutas para astronauta + rover presurizado (círculo de 20 km) ====================
-// Relieve: capas/expedicion/ (zona_expedicion.py, DEM USGS de 1 m a 5 m, grilla de 20 m). Reglas: data/parametros.json.
-// Cada número lleva su etiqueta: medido (dato), cálculo propio o supuesto (provisorio).
-const EXP = {
-  // ---- parámetros (copiados de data/parametros.json del repo; ahí está cada fuente) ----
-  P: {
-    pendAstro: 20,        // ° · requisito lunar Artemis (NTRS 20210026296) · supuesto: a validar para Marte
-    vLlano: 2.5,          // km/h a pie en llano · supuesto del equipo; Tobler (terrestre) para la pendiente
-    pendRover: 20,        // ° · Curiosity (blog: 99% de posiciones bajo 17,4°) y Apollo LRV 20–23° (NTRS 20250011301)
-    evitarFrio: true,     // el rover evita el 10% más frío de noche (THEMIS): Curiosity nunca anduvo ahí · calibrado con su recorrido real
-    escalonRover: 6,      // máx. tramos de 5 m (de 16) sobre 20° por celda · calibrado: el 99% de las celdas que pisó Curiosity cumple
-    vRover: 3,            // km/h rover presurizado · NASA DRA 5.0 (SP-2009-566, p. 43): 3 km/h de diseño en Marte · se puede pasar a 10 (SEV lunar)
-    vRoverOpciones: { 3: 'NASA DRA 5.0 · Marte (3 km/h de diseño)', 10: 'NASA SEV · Luna (10 km/h)' },
-    vCuriosity: 100,      // m/h de manejo de Curiosity · dato (blog)
-    solCuriosity: [30, 60], // m por sol de manejo · dato (blog)
-    dosisDia: 0.64,       // mSv/día en la superficie de Gale · medido (RAD, Hassler et al. 2014)
-    blindaje: 0.25,       // reducción = 0,25 × fracción de cielo tapado · cálculo propio calibrado con Murray Buttes
-    refugioMin: 30,       // min máximos a pie hasta el refugio (el rover) · supuesto del equipo (Helio2050)
-    evaNom: 6, evaMax: 8, // h de salida · traje xEMU (EVA-EXP-0075) · lunar: a validar
-    esclusaMin: 10,       // min para ponerse el traje y salir por el suitport · NASA SEV FS-2011-08-045-JSC
-    muestraMin: 30,       // min trabajando en cada muestra · supuesto (se cambia en el panel)
-    carrera: 600,         // mSv · NASA-STD-3001 [V1 4030]
-    metabEVA: 1200,       // BTU/h promedio para dimensionar una salida en Marte · NASA ICES-2026 (Ogilvie et al., NTRS 20260003038)
-    metabCaminata: 1700,  // BTU/h caminando con traje a 3,6 km/h en gravedad de Marte (tripulante promedio) · misma fuente
-    vCaminataMax: 3.6,    // km/h: cerca del límite sostenible en Marte · misma fuente (estudio de 10 km de Norcross et al. 2009)
-    tormenta: 8.1,        // mGy en el evento del 20/5/2024 a cielo abierto junto a Curiosity · medido (RAD, NASA 10/6/2024)
-    casco: 1,             // g/cm² típicos de la cabina presurizada de un rover · NASA (Kim et al., WRMISS 2012): no es refugio
-    refugioSPE: 20,       // g/cm² de blindaje sugerido para un refugio de tormenta · NASA (Clowdsley, NTRS 20210009760)
-    altAstro: 2, altRover: 3, // m de las antenas (casco/mochila y mástil) para la línea de vista · supuesto
-    horaSalida: 9,        // hora solar local (LMST) de la primera salida · se elige en el panel
-    estacion: 'otoño',
-  },
-  G: null, carga: null, worker: null, ents: [], capa: null, modo: null,
-  base: null, muestras: [], res: null, sim: null,
-};
-
-const RM = 3396190;   // radio de Marte (m), convención del repo
-function latCentrica(latg) { return Math.atan(Math.tan(latg * Math.PI / 180) * (B * B) / (A * A)) * 180 / Math.PI; }
-
-async function expCargar() {
-  if (EXP.G) return EXP.G;
-  if (EXP.carga) return EXP.carga;
-  EXP.carga = (async () => {
-    if (!location.protocol.startsWith('http')) throw new Error('Abrí Gale Earth con abrir.bat (o desde la página publicada) para usar la expedición.');
-    const meta = await (await fetch('capas/expedicion/meta.json')).json();
-    const leer = async n => {
-      const r = await fetch('capas/expedicion/' + n); if (!r.ok) throw new Error('falta capas/expedicion/' + n);
-      let b = new Uint8Array(await r.arrayBuffer());
-      if (b[0] === 0x1f && b[1] === 0x8b) b = new Uint8Array(await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
-      return b.buffer;
-    };
-    const [elev, pend, empin, cielo] = await Promise.all(['elev_i16.bin.gz', 'pend_u8.bin.gz', 'empin_u8.bin.gz', 'cielo_u8.bin.gz'].map(leer));
-    let noche; try { noche = new Uint8Array(await leer('noche_pct_u8.bin.gz')); } catch { noche = new Uint8Array(meta.ancho * meta.alto).fill(255); }
-    const G = { meta, W: meta.ancho, H: meta.alto, elev: new Int16Array(elev), pend: new Uint8Array(pend), empin: new Uint8Array(empin), cielo: new Uint8Array(cielo), noche };
-    G.dxm = meta.grados_lon * Math.PI / 180 * RM * Math.cos(meta.centro.lat * Math.PI / 180);
-    G.dym = meta.grados_lat * Math.PI / 180 * RM;
-    EXP.G = G;
-    EXP.worker = new Worker(URL.createObjectURL(new Blob([`(${expTrabajador.toString()})()`], { type: 'text/javascript' })));
-    EXP.worker.postMessage({ tipo: 'grilla', W: G.W, H: G.H, dxm: G.dxm, dym: G.dym, elev: G.elev.slice(), pend: G.pend.slice(), empin: G.empin.slice(), noche: G.noche.slice(), cielo: G.cielo.slice(), P: EXP.P });
-    return G;
-  })();
-  try { return await EXP.carga; } catch (e) { EXP.carga = null; throw e; }
-}
-const expCelda = (lon, latc) => { const m = EXP.G.meta; return [Math.floor((m.lat_norte - latc) / m.grados_lat), Math.floor((lon - m.lon_oeste) / m.grados_lon)]; };
-const expLonLat = i => { const m = EXP.G.meta, W = EXP.G.W, f = Math.floor(i / W), c = i % W; return [m.lon_oeste + (c + .5) * m.grados_lon, m.lat_norte - (f + .5) * m.grados_lat]; };
-function expDist(lon, latc) { const c = EXP.G.meta.centro; return Math.hypot((lon - c.lon) * Math.PI / 180 * RM * Math.cos(c.lat * Math.PI / 180), (latc - c.lat) * Math.PI / 180 * RM); }
-function expPunto(lon, latc) {   // qué hay en ese lugar según la grilla
-  const G = EXP.G, [f, c] = expCelda(lon, latc);
-  if (f < 0 || c < 0 || f >= G.H || c >= G.W) return null;
-  const i = f * G.W + c, p = G.pend[i];
-  return { i, sinDato: p === 255, fuera: expDist(lon, latc) > G.meta.radio_km * 1000, pend: p / 4, empin: G.empin[i], cielo: G.cielo[i] / 255, elev: G.elev[i] };
-}
-
-// ---------- capa de pendientes + círculo ----------
-function expDibujarZona() {
-  if (EXP.capa) return;
-  const G = EXP.G, m = G.meta, cv = document.createElement('canvas'); cv.width = G.W; cv.height = G.H;
-  const cx = cv.getContext('2d'), im = cx.createImageData(G.W, G.H), d = im.data;
-  for (let i = 0; i < G.W * G.H; i++) {
-    const p = G.pend[i]; let c = null;
-    if (p === 255) { const f = Math.floor(i / G.W), k = i % G.W, [lo, la] = expLonLat(i); if (expDist(lo, la) <= m.radio_km * 1000 && ((f + k) % 8 < 2)) c = [150, 150, 150, 150]; }
-    else if (p > 100) c = [200, 30, 30, 190];        // > 25°
-    else if (p > 80) c = [235, 110, 40, 170];        // 20–25°
-    else if (p > 60) c = [240, 200, 60, 120];        // 15–20°
-    if (c) d.set(c, i * 4);
-  }
-  cx.putImageData(im, 0, 0);
-  const rect = C.Rectangle.fromDegrees(m.lon_oeste, geodetica(m.lat_norte - G.H * m.grados_lat), m.lon_oeste + G.W * m.grados_lon, geodetica(m.lat_norte));
-  const capas = capasImagen();
-  if (capas) C.SingleTileImageryProvider.fromUrl(cv.toDataURL('image/png'), { rectangle: rect, tileWidth: G.W, tileHeight: G.H }).then(pr => { EXP.capa = capas.addImageryProvider(pr); EXP.capa.alpha = 0.6; });
-  const c = m.centro, pts = [];
-  for (let k = 0; k <= 256; k++) { const a = k / 256 * 2 * Math.PI, r = m.radio_km * 1000;
-    pts.push(pos(c.lon + Math.sin(a) * r / (RM * Math.cos(c.lat * Math.PI / 180)) * 180 / Math.PI, c.lat + Math.cos(a) * r / RM * 180 / Math.PI)); }
-  EXP.circulo = viewer.entities.add({ polyline: { positions: pts, width: 3, clampToGround: true, material: new C.PolylineDashMaterialProperty({ color: C.Color.fromCssColorString('#f28c38'), dashLength: 18 }) } });
-}
-function expCapaThemis(ver) {
-  const t = EXP.G.meta.themis_noche; if (!t) return avisar('Falta la capa THEMIS (herramientas/themis_noche.py).');
-  if (EXP.capaTh) { EXP.capaTh.show = ver; return; }
-  if (!ver) return;
-  const rect = C.Rectangle.fromDegrees(t.lon_oeste, geodetica(t.lat_sur), t.lon_este, geodetica(t.lat_norte)), capas = capasImagen();
-  if (capas) C.SingleTileImageryProvider.fromUrl('capas/expedicion/' + t.archivo, { rectangle: rect, tileWidth: t.ancho, tileHeight: t.alto })
-    .then(pr => { EXP.capaTh = capas.addImageryProvider(pr); EXP.capaTh.alpha = 0.75; EXP.capaTh.show = $('expTh') ? $('expTh').checked : true; });
-}
-function expMostrarZona(v) { if (!v && EXP.capaTh) EXP.capaTh.show = false; if (EXP.capa) EXP.capa.show = v; if (EXP.circulo) EXP.circulo.show = v; }
-
-// ---------- elegir en el mapa ----------
-function expTocar(m) {
-  if (!EXP.modo || pestaña !== 'expedicion') return;
-  const r = viewer.camera.getPickRay(m.position); let p = null;
-  if (r) p = MODO === 'globo' ? viewer.scene.globe.pick(r, viewer.scene) : (viewer.scene.pickPositionSupported ? viewer.scene.pickPosition(m.position) : null);
-  if (!p) return;
-  const cg = C.Cartographic.fromCartesian(p, MARS), lon = C.Math.toDegrees(cg.longitude), latc = latCentrica(C.Math.toDegrees(cg.latitude));
-  expAgregar(EXP.modo, lon, latc, null);
-}
-{ const h = new C.ScreenSpaceEventHandler(viewer.scene.canvas); h.setInputAction(m => { if (EXP.modo) expTocar(m); }, C.ScreenSpaceEventType.LEFT_CLICK); }
-
-function expAgregar(tipo, lon, latc, nombre) {
-  const q = expPunto(lon, latc);
-  if (!q || q.fuera) return avisar('Ese punto está fuera del círculo de 20 km alrededor de Curiosity.');
-  if (q.sinDato) return avisar('Ahí no hay DEM de 1 m del USGS (zona rayada): no se puede calcular una ruta segura.');
-  const lim = tipo === 'base' ? EXP.P.pendRover : EXP.P.pendAstro;
-  if (q.pend > lim) avisar(`Ojo: la pendiente media ahí es ${fmt(q.pend, 1)}°, sobre el límite de ${lim}°. Se buscará el punto transitable más cercano.`);
-  const p = { lon, lat: latc, nombre: nombre || (tipo === 'base' ? 'Inicio' : `Muestra ${EXP.muestras.length + 1}`), q };
-  if (tipo === 'base') EXP.base = p; else EXP.muestras.push(p);
-  EXP.modo = null; EXP.res = null; expPintarPuntos(); vistaExpedicion();
-}
-function expPintarPuntos() {
-  for (const e of EXP.ents) viewer.entities.remove(e); EXP.ents = [];
-  const pin = (p, txt, col) => EXP.ents.push(viewer.entities.add({ position: pos(p.lon, p.lat), billboard: { image: icono(txt, col, 26, '#fff'), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY },
-    label: { text: p.nombre, font: '600 12px system-ui', pixelOffset: new C.Cartesian2(16, 0), horizontalOrigin: C.HorizontalOrigin.LEFT, outlineWidth: 4, style: C.LabelStyle.FILL_AND_OUTLINE, outlineColor: C.Color.BLACK, heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY } }));
-  if (EXP.base) pin(EXP.base, '⌂', '#4FA3D9');
-  EXP.muestras.forEach((m, k) => pin(m, String(k + 1), '#ffd166'));
-  const r = EXP.res; if (!r || !r.ok) return;
-  for (const t of r.tramos) {
-    const col = t.tipo === 'rover' ? '#4FA3D9' : t.tipo === 'ida' ? '#ffd166' : '#ff9f43';
-    EXP.ents.push(viewer.entities.add({ polyline: { positions: t.pts.map(q => pos(q[0], q[1])), width: t.tipo === 'rover' ? 5 : 4, clampToGround: true, classificationType: C.ClassificationType.BOTH,
-      material: t.tipo === 'vuelta' ? new C.PolylineDashMaterialProperty({ color: C.Color.fromCssColorString(col), dashLength: 12 }) : C.Color.fromCssColorString(col) } }));
-    if (t.tipo === 'rover' && t.fin) EXP.ents.push(viewer.entities.add({ position: pos(t.fin[0], t.fin[1]), billboard: { image: icono('R', '#4FA3D9', 20, '#fff'), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY } }));
-  }
-}
-
-// ---------- cálculo (en el trabajador) ----------
-function expCalcular() {
-  if (!EXP.base || !EXP.muestras.length) return avisar('Elegí un inicio y al menos una muestra.');
-  const idx = p => { const [f, c] = expCelda(p.lon, p.lat); return f * EXP.G.W + c; };
-  // orden: vecino más cercano en línea recta desde el inicio (simple y declarado)
-  const pend = [...EXP.muestras], orden = []; let cur = EXP.base;
-  while (pend.length) { let k = 0, best = 1e18; pend.forEach((m, j) => { const d = Math.hypot((m.lon - cur.lon) * Math.cos(cur.lat * Math.PI / 180), m.lat - cur.lat); if (d < best) { best = d; k = j; } }); cur = pend.splice(k, 1)[0]; orden.push(cur); }
-  EXP.muestras = orden; expPintarPuntos();
-  $('expRes').innerHTML = '<div class="sub">Calculando rutas sobre 4 millones de celdas de 20 m…</div>';
-  const t0 = performance.now();
-  EXP.worker.onmessage = e => { const r = EXP.res = e.data; r.ms = performance.now() - t0;
-    if (r.ok) for (const t of r.tramos) { t.pts = t.celdas.map(q => expLonLat(q[0])); if (t.tipo === 'rover') t.fin = t.pts[t.pts.length - 1]; }
-    if (pestaña === 'expedicion') expMostrarResultado(); else expPintarPuntos(); };
-  EXP.baseCelda = idx(EXP.base);
-  EXP.worker.postMessage({ tipo: 'plan', base: idx(EXP.base), muestras: EXP.muestras.map(idx), P: EXP.P });
-}
-
-// El trabajador corre aparte (no traba el globo). Dijkstra con montículo binario sobre la grilla de 20 m, 8 vecinos.
-function expTrabajador() {
-  let W, H, dxm, dym, elev, pend, empin, noche, cielo, P, N;
-  const VEC = [];
-  const montículo = () => { let k = new Float64Array(1 << 16), v = new Int32Array(1 << 16), n = 0;
-    return { get n() { return n; }, push(key, val) { if (n === k.length) { const k2 = new Float64Array(n * 2), v2 = new Int32Array(n * 2); k2.set(k); v2.set(v); k = k2; v = v2; }
-        let i = n++; while (i > 0) { const p = (i - 1) >> 1; if (k[p] <= key) break; k[i] = k[p]; v[i] = v[p]; i = p; } k[i] = key; v[i] = val; },
-      pop() { const rk = k[0], rv = v[0]; n--; if (n > 0) { const lk = k[n], lv = v[n]; let i = 0; for (;;) { let c = 2 * i + 1; if (c >= n) break; if (c + 1 < n && k[c + 1] < k[c]) c++; if (k[c] >= lk) break; k[i] = k[c]; v[i] = v[c]; i = c; } k[i] = lk; v[i] = lv; } this.k = rk; return rv; } }; };
-  const tobler = s => P.vLlano * Math.exp(-3.5 * Math.abs(s + 0.05)) / Math.exp(-0.175);   // km/h
-  const libre = (i, lim) => pend[i] !== 255 && pend[i] / 4 <= lim;
-  // costo en horas de ir de a hasta b (vecinos); Infinity si no se puede
-  const costoPie = (a, b, d) => { if (!libre(b, P.pendAstro)) return Infinity; const s = (elev[b] - elev[a]) / d; return d / 1000 / tobler(s); };
-  // el rover además evita las celdas con muchos escalones de 5 m sobre 20° (calibrado con el recorrido real de Curiosity)
-  const frio = i => noche[i] !== 255 && noche[i] > 90;   // el 10% más frío de noche en la zona (THEMIS)
-  const libreRover = i => libre(i, P.pendRover) && empin[i] <= P.escalonRover && !(P.evitarFrio && frio(i));
-  const costoRover = (a, b, d) => libreRover(b) ? d / 1000 / P.vRover : Infinity;
-  function dijkstra(fuentes, costo, inverso, opciones = {}) {
-    const dist = new Float64Array(N).fill(Infinity), prev = new Int32Array(N).fill(-1), h = montículo();
-    for (const s of fuentes) { dist[s] = 0; h.push(0, s); }
-    const lim = opciones.limite ?? Infinity;
-    while (h.n) {
-      const u = h.pop(), g = h.k; if (g > dist[u]) continue; if (g > lim) break;
-      if (opciones.alSacar && opciones.alSacar(u, g)) break;
-      const f = (u / W) | 0, c = u - f * W;
-      for (const [df, dc, d] of VEC) {
-        const ff = f + df, cc = c + dc; if (ff < 0 || cc < 0 || ff >= H || cc >= W) continue;
-        const v = ff * W + cc, w = inverso ? costo(v, u, d) : costo(u, v, d); if (!(w < Infinity)) continue;
-        const ng = g + w; if (ng < dist[v]) { dist[v] = ng; prev[v] = u; h.push(ng, v); }
-      }
-    }
-    return { dist, prev };
-  }
-  const cadena = (prev, desde) => { const r = [desde]; let u = desde; while (prev[u] >= 0) { u = prev[u]; r.push(u); } return r; };
-  // transitable más cercano (si el punto pedido cae en una pendiente fuera de límite)
-  function cercano(i, lim, ok = j => libre(j, lim)) { if (ok(i)) return i; const f0 = (i / W) | 0, c0 = i % W;
-    for (let r = 1; r < 60; r++) { let best = -1, bd = 1e9; for (let df = -r; df <= r; df++) for (let dc = -r; dc <= r; dc++) { if (Math.max(Math.abs(df), Math.abs(dc)) !== r) continue;
-      const f = f0 + df, c = c0 + dc; if (f < 0 || c < 0 || f >= H || c >= W) continue; const j = f * W + c; if (ok(j)) { const dd = Math.hypot(df * dym, dc * dxm); if (dd < bd) { bd = dd; best = j; } } }
-      if (best >= 0) return best; } return -1; }
-  // recorre un camino de celdas y arma puntos con tiempo, pendiente y dosis acumulados
-  function perfil(celdas, costo, t0, dosis0) {
-    const out = []; let t = t0, dosis = dosis0;
-    for (let k = 0; k < celdas.length; k++) {
-      const i = celdas[k];
-      if (k > 0) { const a = celdas[k - 1], df = ((i / W) | 0) - ((a / W) | 0), dc = (i % W) - (a % W), d = Math.hypot(df * dym, dc * dxm), dt = costo(a, i, d);
-        t += dt; dosis += P.dosisDia / 24 * dt * (1 - P.blindaje * cielo[i] / 255); }
-      out.push([i, t, dosis]);
-    }
-    return out;
-  }
-  // ¿hay línea de vista entre a y b? (relieve de 20 m + curvatura de Marte; antenas a P.altAstro y P.altRover m)
-  function vista(a, b) {
-    const fa = (a / W) | 0, ca = a % W, fb = (b / W) | 0, cb = b % W, n = Math.max(Math.abs(fb - fa), Math.abs(cb - ca));
-    if (n < 2) return 1;
-    const za = elev[a] + P.altAstro, zb = elev[b] + P.altRover, D = Math.hypot((fb - fa) * dym, (cb - ca) * dxm);
-    for (let k = 1; k < n; k++) { const f = k / n, i = Math.round(fa + (fb - fa) * f) * W + Math.round(ca + (cb - ca) * f), z = elev[i];
-      if (z === -32768) continue; const d1 = D * f, d2 = D - d1;
-      if (z + d1 * d2 / (2 * 3396190) > za + (zb - za) * f) return 0; }
-    return 1;
-  }
-  const largo = celdas => { let s = 0; for (let k = 1; k < celdas.length; k++) { const a = celdas[k - 1], i = celdas[k]; s += Math.hypot((((i / W) | 0) - ((a / W) | 0)) * dym, ((i % W) - (a % W)) * dxm); } return s; };
-  onmessage = e => {
-    const m = e.data;
-    if (m.tipo === 'grilla') { ({ W, H, dxm, dym, elev, pend, empin, noche, cielo, P } = m); N = W * H;
-      for (const [df, dc] of [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]) VEC.push([df, dc, Math.hypot(df * dym, dc * dxm)]); return; }
-    if (m.tipo === 'refugio') {   // lugar con más cielo tapado a ≤ m.min minutos a pie
-      const r = dijkstra([m.celda], costoPie, false, { limite: m.min / 60 }); let best = m.celda;
-      for (let u = 0; u < N; u++) if (r.dist[u] < Infinity && cielo[u] !== 255 && cielo[u] > cielo[best]) best = u;
-      postMessage({ tipo: 'refugio', celda: best, cielo: cielo[best] / 255, cieloAqui: cielo[m.celda] / 255, min: r.dist[best] * 60, camino: cadena(r.prev, best).reverse() });
-      return; }
-    if (m.tipo === 'tormenta') {
-      const out = { tipo: 'tormenta', pieMin: 0, roverH: 0 };
-      let desde = m.celda;
-      if (m.rover != null && m.rover !== m.celda) { const r = dijkstra([m.celda], costoPie, false, { alSacar: u => u === m.rover }); out.pieMin = r.dist[m.rover] * 60; desde = m.rover; }
-      const rb = dijkstra([desde], costoRover, false, { alSacar: u => u === m.base }); out.roverH = rb.dist[m.base];
-      const rr = dijkstra([m.celda], costoPie, false, { limite: 10 / 60 }); let best = m.celda;
-      for (let u = 0; u < N; u++) if (rr.dist[u] < Infinity && cielo[u] !== 255 && cielo[u] > cielo[best]) best = u;
-      out.refugio = { celda: best, cielo: cielo[best] / 255, min: rr.dist[best] * 60 }; out.cieloAqui = cielo[m.celda] / 255;
-      postMessage(out); return; }
-    if (m.tipo !== 'plan') return;
-    P = m.P;
-    const lim = P.refugioMin / 60, tramos = [], paradas = [];
-    let rover = cercano(m.base, P.pendRover, libreRover), t = 0, dosis = 0, dosisPie = 0, eva = 0;
-    if (rover < 0) { postMessage({ ok: false, error: 'No hay terreno transitable para el rover cerca del inicio.' }); return; }
-    const base = rover;
-    for (let k = 0; k < m.muestras.length; k++) {
-      const obj = cercano(m.muestras[k], P.pendAstro);
-      if (obj < 0) { paradas.push({ k, ok: false, motivo: 'pendiente fuera de límite en todo el entorno' }); continue; }
-      // tiempos a pie: ida (celda → muestra) y vuelta (muestra → celda), limitados por la regla del refugio
-      const ida = dijkstra([obj], costoPie, true, { limite: lim * 1.6 });
-      const vuelta = dijkstra([obj], costoPie, false, { limite: lim });
-      let mejor = -1, mejorCosto = Infinity;
-      const r = dijkstra([rover], costoRover, false, { alSacar: (u, g) => {
-        if (g > mejorCosto) return true;
-        const tv = vuelta.dist[u], ti = ida.dist[u];
-        if (tv <= lim && ti < Infinity) { const c = g + ti + tv; if (c < mejorCosto) { mejorCosto = c; mejor = u; } }
-        return false; } });
-      // comparación: solo a pie desde el inicio (sin regla del refugio)
-      let soloPie = null;
-      if (k === 0) { const sp = dijkstra([base], costoPie, false, { alSacar: u => u === obj }); if (sp.dist[obj] < Infinity) { const cam = cadena(sp.prev, obj).reverse(); const pf = perfil(cam, costoPie, 0, 0);
-        soloPie = { horas: sp.dist[obj], km: largo(cam) / 1000, dosis: pf[pf.length - 1][2] }; } }
-      if (mejor < 0) {   // ¿cuánto habría que caminar desde lo más cerca que llega el rover?
-        const ida2 = dijkstra([obj], costoPie, true, { limite: 3 }); let mm = Infinity, km = -1;
-        for (let u = 0; u < N; u++) if (r.dist[u] < Infinity && ida2.dist[u] < mm) { mm = ida2.dist[u]; km = u; }
-        const extra = km < 0 ? 'y a pie serían más de 3 h de marcha' : `lo más cerca que llega el rover queda a ${Math.round(mm * 60)} min a pie (${(largo(cadena(ida2.prev, km)) / 1000).toFixed(1)} km): rompe la regla`;
-        paradas.push({ k, ok: false, motivo: `el rover no llega a menos de ${P.refugioMin} min a pie de la muestra; ${extra}`, soloPie }); continue; }
-      const camR = cadena(r.prev, mejor).reverse(), pfR = perfil(camR, costoRover, t, dosis);
-      t = pfR[pfR.length - 1][1]; dosis = pfR[pfR.length - 1][2];
-      tramos.push({ tipo: 'rover', celdas: pfR, km: largo(camR) / 1000 });
-      const tSalida = t; t += P.esclusaMin / 60;
-      const camI = cadena(ida.prev, mejor), pfI = perfil(camI, costoPie, t, dosis);
-      t = pfI[pfI.length - 1][1]; dosis = pfI[pfI.length - 1][2];
-      tramos.push({ tipo: 'ida', celdas: pfI, km: largo(camI) / 1000, k, vista: pfI.map(q => vista(q[0], mejor)) });
-      const tMuestra = P.muestraMin / 60, dM = P.dosisDia / 24 * tMuestra * (1 - P.blindaje * cielo[obj] / 255);
-      t += tMuestra; dosis += dM;
-      tramos.push({ tipo: 'muestra', celdas: [[obj, t, dosis]], k });
-      const camV = cadena(vuelta.prev, mejor).reverse(), pfV = perfil(camV, costoPie, t, dosis);
-      t = pfV[pfV.length - 1][1]; dosis = pfV[pfV.length - 1][2];
-      tramos.push({ tipo: 'vuelta', celdas: pfV, km: largo(camV) / 1000, k, vista: pfV.map(q => vista(q[0], mejor)) });
-      const evaH = t - tSalida + P.esclusaMin / 60; t += P.esclusaMin / 60; eva += evaH; dosisPie += dosis - pfR[pfR.length - 1][2];
-      let maxPend = 0, sinVista = 0, pieH = 0; for (const q of [...pfI, ...pfV]) { maxPend = Math.max(maxPend, pend[q[0]] / 4); }
-      for (const [pf, tr] of [[pfI, tramos[tramos.length - 3]], [pfV, tramos[tramos.length - 1]]]) for (let j = 1; j < pf.length; j++) { const dt = pf[j][1] - pf[j - 1][1]; pieH += dt; if (!tr.vista[j]) sinVista += dt; }
-      const muestraVista = vista(obj, mejor);
-      const pieFrio = [...pfI, ...pfV].filter(q => frio(q[0])).length / Math.max(pfI.length + pfV.length, 1), roverFrio = pfR.filter(q => frio(q[0])).length / Math.max(pfR.length, 1);
-      paradas.push({ k, ok: true, rover: camR.length, idaMin: ida.dist[mejor] * 60, vueltaMin: vuelta.dist[mejor] * 60, evaH, maxPend, soloPie, sinVistaMin: sinVista * 60, pieH, muestraVista, tSalida, pieFrio, roverFrio,
-        roverKm: largo(camR) / 1000, pieKm: largo(camI) / 1000 + largo(camV) / 1000 });
-      rover = mejor;
-    }
-    // regreso del rover al inicio
-    const rb = dijkstra([rover], costoRover, false, { alSacar: u => u === base });
-    if (rb.dist[base] < Infinity && rover !== base) { const cam = cadena(rb.prev, base).reverse(), pf = perfil(cam, costoRover, t, dosis);
-      t = pf[pf.length - 1][1]; dosis = pf[pf.length - 1][2]; tramos.push({ tipo: 'rover', celdas: pf, km: largo(cam) / 1000, regreso: true }); }
-    const kmRover = tramos.filter(x => x.tipo === 'rover').reduce((s, x) => s + x.km, 0);
-    postMessage({ ok: true, tramos, paradas, horas: t, dosis, dosisPie, eva, kmRover, kmPie: tramos.filter(x => x.tipo === 'ida' || x.tipo === 'vuelta').reduce((s, x) => s + x.km, 0) });
-  };
-}
-
-// ---------- resultado ----------
-const BTU_KCAL = 0.252;   // 1 BTU = 0,252 kcal
-const lmst = (h0, t) => (h0 + t / 1.0275) % 24;   // hora solar local de Marte: una hora marciana dura 1,0275 h terrestres
-const hhmm = h => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.floor((h % 1) * 60)).padStart(2, '0')}`;
-async function expClima() {
-  if (EXP.clima) return EXP.clima;
-  try { const [c, v] = await Promise.all([fetch('datos/clima_rems.json').then(r => r.json()), fetch('datos/viento_humedad.json').then(r => r.json())]); EXP.clima = { c, v }; }
-  catch (e) { EXP.clima = null; }
-  return EXP.clima;
-}
-function expTarjetaClima(r) {
-  const P = EXP.P, cl = EXP.clima; if (!cl) return '';
-  const e = cl.c.estaciones.find(x => x.estacion === P.estacion), ev = cl.v.estaciones.find(x => x.estacion === P.estacion);
-  const horas = new Set(); let noche = false;
-  for (const t of r.tramos) if (t.tipo !== 'rover') for (const q of t.celdas) { const h = lmst(P.horaSalida, q[1]); horas.add(Math.floor(h)); if (h < 6 || h >= 18) noche = true; }
-  const vh = cl.v.viento_hora.filter(x => horas.has(x.h) && x.n >= 5), vmax = vh.length ? Math.max(...vh.map(x => x.p90)) : null;
-  const uvT = Object.values(e.uv).reduce((a, b) => a + b, 0), uvAlto = ((e.uv.High || 0) + (e.uv.Very_High || 0)) / uvT * 100;
-  const fin = lmst(P.horaSalida, r.horas);
-  return `<div class="tarjeta"><b>Clima de la salida: ${P.estacion} (Ls ${e.ls[0]}–${e.ls[1]}°), saliendo a las ${hhmm(P.horaSalida)} LMST</b>
-    <div class="sub">Regreso a la base cerca de las ${hhmm(fin)} LMST${r.horas / 1.0275 > 24 - P.horaSalida ? ' del sol siguiente' : ''}. Promedios de REMS en esta estación: mínima ${fmt(e.tmin, 0)} °C, máxima ${fmt(e.tmax, 0)} °C (récords ${fmt(e.tmin_rec, 0)} y ${fmt(e.tmax_rec, 0)} °C). UV alto o muy alto en el ${fmt(uvAlto, 0)}% de los soles. <span class="tag">medido</span></div>
-    ${noche ? `<div class="sub" style="color:#ffb86b">Parte de la caminata cae de noche (antes de las 06:00 o después de las 18:00 LMST, aproximado): el aire se acerca a la mínima de la estación, ${fmt(e.tmin, 0)} °C. Conviene salir más temprano.</div>` : `<div class="sub">Toda la caminata es de día (entre las 06:00 y las 18:00 LMST, aproximado).</div>`}
-    ${vmax != null ? `<div class="sub">Viento en esas horas: hasta ${fmt(vmax, 1)} m/s (percentil 90). Es una muestra parcial de REMS hasta 2016; en ${P.estacion}, el máximo medido fue ${fmt(ev.viento_max, 1)} m/s. <span class="tag">medido</span></div>` : ''}</div>`;
-}
-const hm = h => { const m = Math.round(h * 60); return m >= 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min` : `${m} min`; };
-function expMostrarResultado() {
-  const r = EXP.res, P = EXP.P, el = $('expRes');
-  if (!r.ok) { el.innerHTML = `<div class="tarjeta"><b>No se pudo armar la ruta</b><div class="sub">${r.error}</div></div>`; return; }
-  expPintarPuntos();
-  const sinBl = r.dosis / (r.horas / 24);
-  const okEva = r.paradas.filter(p => p.ok).every(p => p.evaH <= P.evaNom);
-  const curiosity = r.kmRover * 1000;
-  el.innerHTML = `
-    <div class="ind"><div><small>Duración total</small><b>${hm(r.horas)}</b></div><div><small>Rover presurizado</small><b>${fmt(r.kmRover, 1)} <small>km</small></b></div><div><small>A pie</small><b>${fmt(r.kmPie, 1)} <small>km</small></b></div><div><small>Dosis de la salida</small><b>${fmt(r.dosis, 3)} <small>mSv</small></b></div></div>
-    <div class="sub">Dosis = ${fmt(P.dosisDia, 2)} mSv/día (RAD, medido) × tiempo, menos ${fmt(P.blindaje, 2)} × cielo tapado por el relieve (cálculo propio). Es ${fmt(r.dosis / P.carrera * 100, 3)}% del límite de carrera de ${P.carrera} mSv (NASA-STD-3001). Dentro del rover se cuenta igual que afuera: la cabina de un rover presurizado tiene cerca de ${P.casco} g/cm² (NASA), muy poco frente a los ${P.refugioSPE} g/cm² que NASA sugiere para un refugio. <span class="tag">cálculo</span></div>
-    <h2>Paradas</h2>
-    ${r.paradas.map(p => { const m = EXP.muestras[p.k];
-      if (!p.ok) return `<div class="tarjeta"><b>${p.k + 1}. ${m.nombre}</b> <span class="tag" style="background:#c0392b33">no alcanzable</span><div class="sub">${p.motivo}.</div>${p.soloPie ? `<div class="sub">Solo a pie desde el inicio: ${hm(p.soloPie.horas)} de marcha (${fmt(p.soloPie.km, 1)} km).</div>` : ''}</div>`;
-      const alerta = p.evaH > P.evaMax ? `<span class="tag" style="background:#c0392b55">pasa las ${P.evaMax} h del traje</span>` : p.evaH > P.evaNom ? `<span class="tag" style="background:#e67e2255">pasa las ${P.evaNom} h nominales</span>` : `<span class="tag" style="background:#4caf7d33">dentro de las reglas</span>`;
-      return `<div class="tarjeta"><b>${p.k + 1}. ${m.nombre}</b> ${alerta}
-        <div class="sub">Rover: ${fmt(p.roverKm, 2)} km hasta la parada R. ${p.pieKm < 0.03 ? 'El rover puede estacionar junto a la muestra: no hace falta caminar.' : `A pie: ${fmt(p.idaMin, 0)} min de ida y ${fmt(p.vueltaMin, 0)} min de vuelta (máx. ${P.refugioMin} min al rover), ${fmt(p.pieKm, 2)} km.`}
-        Salida completa: ${hm(p.evaH)} (incluye ${P.esclusaMin} min de suitport por salida y ${P.muestraMin} min en la muestra). Pendiente media máxima pisada: ${fmt(p.maxPend, 1)}°.</div>
-        ${p.pieFrio > 0 ? `<div class="sub" style="color:#ffb86b">El ${fmt(p.pieFrio * 100, 0)}% de la caminata pasa por terreno muy frío de noche (THEMIS): posible arena o polvo suelto, donde Curiosity nunca anduvo. Revisar en la foto HiRISE.</div>` : ''}${p.roverFrio > 0 ? `<div class="sub" style="color:#ffb86b">El rover cruza un ${fmt(p.roverFrio * 100, 0)}% de terreno muy frío de noche.</div>` : ''}
-        ${p.soloPie ? `<div class="sub">Comparación, solo a pie desde el inicio: ${hm(p.soloPie.horas)} (${fmt(p.soloPie.km, 1)} km) y ${fmt(p.soloPie.dosis, 3)} mSv; ${p.soloPie.horas * 60 > P.refugioMin ? 'rompe la regla de los 30 min a un refugio.' : 'cumple la regla.'}</div>` : ''}</div>`; }).join('')}
-    ${expTarjetaClima(r)}
-    <div class="tarjeta"><b>Gasto del traje</b><div class="sub">${r.paradas.filter(p => p.ok).map(p => { const kcal = (p.pieH * P.metabCaminata + Math.max(p.evaH - p.pieH, 0) * P.metabEVA) * BTU_KCAL;
-      return `Muestra ${p.k + 1}: unas ${fmt(kcal, 0)} kcal en ${hm(p.evaH)} con traje.`; }).join(' ')}
-      Se calcula con ${fmt(P.metabCaminata)} BTU/h al caminar (lo que midió NASA a ${fmt(P.vCaminataMax, 1)} km/h en gravedad de Marte, cerca del límite sostenible; acá se camina más despacio, así que la cifra es conservadora) y ${fmt(P.metabEVA)} BTU/h para el resto de la salida (promedio con que NASA dimensiona una salida en Marte). <span class="tag">cálculo con datos NASA</span></div></div>
-    <div class="tarjeta"><b>Comunicación con el rover</b><div class="sub">${r.paradas.filter(p => p.ok).map(p => p.pieH < 0.01 ? `Muestra ${p.k + 1}: no hace falta caminar.` :
-      `Muestra ${p.k + 1}: ${p.sinVistaMin < 0.5 ? 'línea de vista directa con el rover durante toda la caminata' : `${fmt(p.sinVistaMin, 0)} de ${fmt(p.pieH * 60, 0)} min sin línea de vista directa`}${p.muestraVista ? '' : ', y en el lugar de la muestra el relieve tapa al rover'}.`).join(' ')}
-      Se calcula sobre el relieve de 20 m más la curvatura de Marte, con antenas a ${P.altAstro} m (astronauta) y ${P.altRover} m (mástil del rover). Las alturas son un supuesto. Sin línea de vista hace falta un repetidor o el paso de un orbitador. <span class="tag">cálculo propio</span></div></div>
-    <div class="tarjeta"><b>Si lo hiciera Curiosity</b><div class="sub">El mismo trayecto del rover (${fmt(r.kmRover, 1)} km) a ${P.vCuriosity} m/h de manejo y ${P.solCuriosity[0]}–${P.solCuriosity[1]} m por sol: unos ${fmt(curiosity / P.solCuriosity[1], 0)} a ${fmt(curiosity / P.solCuriosity[0], 0)} soles. Con astronautas: ${hm(r.horas)}. <span class="tag">cálculo con datos del blog</span></div></div>
-    <div class="btns"><button class="btn prim" id="expSim">▶ Simular en vivo</button><button class="btn" id="expVer">Ver la ruta</button></div>
-    <details class="sec"><summary>Qué tiene en cuenta y qué no</summary><div class="sub"><ul>
-      <li><b>Medido:</b> relieve (DEM USGS de 1 m llevado a 5 m y a 20 m), dosis de RAD en Gale.</li>
-      <li><b>Cálculo propio:</b> pendiente media de cada celda de 20 m, cielo tapado, tiempos por Dijkstra, dosis acumulada.</li>
-      <li><b>Supuestos (provisorios):</b> límite de 20° del traje (lunar), velocidad a pie de Tobler (terrestre, ${P.vLlano} km/h en llano), rover presurizado a ${P.vRover} km/h (${P.vRoverOpciones[P.vRover]}), 20° de media y como mucho ${P.escalonRover} de 16 tramos de 5 m sobre 20° por celda (el 99% de las celdas que pisó Curiosity cumple esa regla), ${P.refugioMin} min a un refugio, ${P.muestraMin} min por muestra, orden de las muestras por cercanía en línea recta.</li>
-      <li><b>Arena (indicio, no mapa):</b> THEMIS infrarrojo de noche de Mars Odyssey (mosaico USGS, 100 m, cualitativo). Lo más frío de noche suele ser material suelto. Curiosity nunca anduvo por el 10% más frío de la zona, por eso el rover lo evita${P.evitarFrio ? '' : ' (desactivado)'}. En 2014 tuvo que abandonar Hidden Valley por el patinaje de las ruedas en la arena.</li>
-      <li><b>Falta (sin dato para toda la zona):</b> mapa de arena en unidades (la inercia térmica cuantitativa de USGS no se pudo descargar desde acá), rocas sueltas que dañan ruedas, velocidad del rover según la pendiente, pendiente máxima de un rover presurizado en Marte (se usa la del Apollo LRV). Las celdas de 20 m pueden esconder escalones más empinados: mirá la foto HiRISE antes de salir.</li>
-      <li>Cálculo en ${fmt(r.ms / 1000, 1)} s sobre la grilla de 20 m.</li></ul></div></details>`;
-  $('expSim').onclick = expSimular;
-  $('expVer').onclick = () => { const pts = r.tramos.flatMap(t => t.pts); const bs = C.BoundingSphere.fromPoints(pts.map(p => pos(p[0], p[1], EXP.G.elev[expCelda(p[0], p[1])[0] * EXP.G.W + expCelda(p[0], p[1])[1]] || 0)));
-    viewer.camera.flyToBoundingSphere(bs, { offset: new C.HeadingPitchRange(0.2, -0.75, bs.radius * 2.6 + 800), duration: 2 }); };
-  $('expVer').onclick();
-}
-
-// ---------- simulación en vivo ----------
-function expSimular() {
-  const r = EXP.res; if (!r || !r.ok) return;
-  if (EXP.sim) expParar();
-  const serie = [];
-  let parqueo = null;
-  for (const t of r.tramos) { t.celdas.forEach((q, k) => serie.push({ i: q[0], t: q[1], d: q[2], tipo: t.tipo, lonlat: t.pts[k], vista: t.vista ? t.vista[k] : 1, parqueo })); if (t.tipo === 'rover') parqueo = t.celdas[t.celdas.length - 1][0]; }
-  const P = EXP.P, G = EXP.G, IC = { r: icono('R', '#4FA3D9', 30, '#fff'), a: icono('A', '#ffd166', 30, '#fff') };
-  const s = EXP.sim = { serie, k: 0, th: 0, vel: 600, pausa: false, seguir: true };
-  const actual = () => serie[Math.min(s.k, serie.length - 1)];
-  s.ent = viewer.entities.add({ position: new C.CallbackProperty(() => { const a = actual(); return pos(a.lonlat[0], a.lonlat[1]); }, false),
-    billboard: { image: new C.CallbackProperty(() => actual().tipo === 'rover' ? IC.r : IC.a, false), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY } });
-  const hud = $('expHud'); hud.classList.remove('oculto');
-  hud.innerHTML = `<div class="hT"><span id="hInfo"></span><button class="btn" id="hTorm" title="¿Qué pasa si llega ahora la tormenta solar del 20/5/2024?">☢ Tormenta solar</button><button class="btn" id="hPausa"></button><select id="hVel">${[60, 300, 600, 1800].map(v => `<option value="${v}" ${v === s.vel ? 'selected' : ''}>×${v}</option>`).join('')}</select><button class="btn" id="hSeguir"></button><button class="btn" id="hCerrar">✕</button></div><div id="hDatos"></div>`;
-  $('hPausa').onclick = () => { s.alerta = null; if (s.k >= serie.length - 1) { s.k = 0; s.th = 0; s.pausa = false; } else s.pausa = !s.pausa; };
-  $('hVel').onchange = e => { s.vel = +e.target.value; }; $('hCerrar').onclick = expParar;
-  $('hSeguir').onclick = () => { s.seguir = !s.seguir; };
-  $('hTorm').onclick = () => expTormenta(s, serie[Math.min(s.k, serie.length - 1)]);
-  let ultimo = performance.now();
-  const paso = ahora => {
-    if (EXP.sim !== s) return;
-    const dt = (ahora - ultimo) / 1000; ultimo = ahora;
-    if (!s.pausa) { s.th += dt * s.vel / 3600; while (s.k < serie.length - 1 && serie[s.k + 1].t <= s.th) s.k++; }
-    const a = actual(), pieza = a.tipo === 'rover' ? 'En el rover presurizado' : a.tipo === 'muestra' ? 'Tomando la muestra' : a.tipo === 'ida' ? 'A pie hacia la muestra' : 'A pie, de vuelta al rover';
-    let fuera = 0; if (a.tipo !== 'rover') { let j = s.k; while (j > 0 && serie[j - 1].tipo !== 'rover') j--; fuera = a.t - (j > 0 ? serie[j - 1].t : 0); }
-    let alRover = null; if (a.tipo === 'vuelta') { let j = s.k; while (j < serie.length - 1 && serie[j + 1].tipo === 'vuelta') j++; alRover = (serie[j].t - a.t) * 60; }
-    const pe = G.pend[a.i] / 4, cie = G.cielo[a.i] / 255, el = G.elev[a.i];
-    $('hInfo').innerHTML = `<b>${pieza}</b> · ${hm(a.t)} desde la salida · ${hhmm(lmst(P.horaSalida, a.t))} LMST`;
-    $('hPausa').textContent = s.pausa ? '▶' : '❚❚'; $('hSeguir').textContent = s.seguir ? 'Cámara libre' : 'Seguir';
-    $('hDatos').innerHTML = `<div class="hG"><div><small>Posición</small><b>${fmt(a.lonlat[1], 5)}°, ${fmt(a.lonlat[0], 5)}° E</b></div><div><small>Altura</small><b>${fmt(el)} m</b></div>
-      <div><small>Pendiente</small><b style="color:${pe > 20 ? '#ff6b6b' : pe > 15 ? '#ffd166' : 'inherit'}">${fmt(pe, 1)}°</b></div><div><small>Dosis acumulada</small><b>${fmt(a.d, 3)} mSv</b></div>
-      <div><small>Cielo tapado</small><b>${fmt(cie * 100, 0)}%</b></div>
-      ${a.tipo === 'ida' || a.tipo === 'vuelta' || a.tipo === 'muestra' ? `<div><small>Enlace con el rover</small><b style="color:${a.vista ? 'inherit' : '#ffb86b'}">${a.vista ? 'directo' : 'sin línea de vista'}</b></div>` : ''}
-      ${a.tipo !== 'rover' ? `<div><small>Fuera del rover</small><b style="color:${fuera > P.evaNom ? '#ff6b6b' : 'inherit'}">${hm(fuera)} de ${P.evaNom} h</b></div>${alRover != null ? `<div><small>Falta para el rover</small><b style="color:${alRover > P.refugioMin ? '#ff6b6b' : 'inherit'}">${fmt(Math.max(alRover, 0), 0)} min</b></div>` : ''}` : ''}</div>
-      ${s.alerta ? `<div class="sub" style="margin-top:6px;color:#ffb86b">${s.alerta}</div>` : ''}
-      <div class="barra" style="margin-top:6px"><span style="width:${(s.k / (serie.length - 1) * 100).toFixed(1)}%;background:var(--acento)"></span></div>`;
-    if (s.seguir) { const hs = MODO === 'globo' ? viewer.scene.globe.getHeight(C.Cartographic.fromDegrees(a.lonlat[0], geodetica(a.lonlat[1]))) : null; const p = pos(a.lonlat[0], a.lonlat[1], hs ?? el); viewer.camera.lookAt(p, new C.HeadingPitchRange(viewer.camera.heading, -0.45, a.tipo === 'rover' ? 1400 : 500)); }
-    if (s.k >= serie.length - 1) { s.pausa = true; }
-    requestAnimationFrame(paso);
-  };
-  requestAnimationFrame(paso);
-}
-// ☢ ¿Qué pasa si la tormenta solar del 20/5/2024 llega en este momento de la salida?
-function expTormenta(s, a) {
-  const P = EXP.P; s.pausa = true; s.alerta = 'Calculando cómo ponerse a resguardo…';
-  EXP.worker.onmessage = e => { const o = e.data; if (o.tipo !== 'tormenta' || EXP.sim !== s) return;
-    const [lo, la] = expLonLat(o.refugio.celda);
-    if (s.entRef) viewer.entities.remove(s.entRef);
-    s.entRef = viewer.entities.add({ position: pos(lo, la), billboard: { image: icono('☢', '#ffb86b', 24, '#000'), heightReference: CLAMP, disableDepthTestDistance: Number.POSITIVE_INFINITY } });
-    const fuera = a.tipo !== 'rover';
-    s.alerta = `☢ Tormenta solar (como la del 20/5/2024): a cielo abierto junto a Curiosity, RAD midió ${fmt(P.tormenta, 1)} mGy en el evento, unos ${fmt(P.tormenta / 0.21, 0)} días de la dosis normal (0,21 mGy/día). No es mortal, pero hay que resguardarse.
-      ${fuera ? `A pie: ${fmt(o.pieMin, 0)} min hasta el rover.` : ''} El rover no sirve de refugio (≈${P.casco} g/cm²; NASA sugiere ${P.refugioSPE} g/cm²): volver a la base lleva ${hm(o.roverH)}.
-      Mientras tanto, el lugar más resguardado a ≤ 10 min a pie (marca ☢) tiene ${fmt(o.refugio.cielo * 100, 0)}% del cielo tapado por el relieve (acá ${fmt(o.cieloAqui * 100, 0)}%). Según NASA, los acantilados dan protección extra.`;
-  };
-  EXP.worker.postMessage({ tipo: 'tormenta', celda: a.i, rover: a.tipo === 'rover' ? null : a.parqueo, base: EXP.baseCelda, P });
-}
-function expParar() { const s = EXP.sim; if (!s) return; viewer.entities.remove(s.ent); if (s.entRef) viewer.entities.remove(s.entRef); EXP.sim = null; $('expHud').classList.add('oculto'); viewer.camera.lookAtTransform(C.Matrix4.IDENTITY); }
-
-// ---------- panel ----------
-async function vistaExpedicion() {
-  cont().innerHTML = `<p class="sub">Círculo de 20 km alrededor de Curiosity (sol 5070). Elegí desde dónde sale el rover presurizado y qué muestras buscar. El rover deja al astronauta a no más de ${EXP.P.refugioMin} min a pie de cada muestra y el planificador evita las pendientes que superan los límites.</p><div id="expCuerpo"><div class="sub">Cargando el relieve de la zona…</div></div>`;
-  let G; try { G = await expCargar(); await expClima(); } catch (e) { $('expCuerpo').innerHTML = `<div class="tarjeta"><b>No se pudo cargar la zona</b><div class="sub">${e.message || e}</div></div>`; return; }
-  if (pestaña !== 'expedicion') return;
-  expDibujarZona(); expMostrarZona(true);
-  const cob = G.meta.cobertura_dem_fino_pct, P = EXP.P;
-  const cerca = POZOS.filter(p => expDist(p.lon, p.lat) <= G.meta.radio_km * 1000 && !expPunto(p.lon, p.lat)?.sinDato);
-  $('expCuerpo').innerHTML = `
-    <div class="leyenda"><span><i style="background:#f0c83c"></i>15–20°</span><span><i style="background:#eb6e28"></i>20–25° (límite)</span><span><i style="background:#c81e1e"></i>más de 25°</span><span><i style="background:#969696"></i>sin DEM fino</span></div>
-    <div class="sub">DEM de 1 m del USGS en el ${fmt(cob['10'], 0)}% de los primeros 10 km y en el ${fmt(cob['20'], 0)}% del círculo. Donde no hay, no se rutea. <span class="tag">medido + cálculo</span></div>
-    <label class="fila"><span>Mostrar pendientes y círculo</span><input type="checkbox" id="expVerZona" checked></label>
-    <h2>1. Inicio del rover</h2>
-    <div class="btns"><button class="btn ${EXP.modo === 'base' ? 'prim' : ''}" id="expElegirBase">${EXP.modo === 'base' ? 'Tocá el mapa…' : 'Elegir en el mapa'}</button><button class="btn" id="expBaseHoy">Junto a Curiosity</button>
-      ${SITIOS.filter(s => expDist(s.lon, s.lat) <= G.meta.radio_km * 1000).map(s => `<button class="btn" data-sitio="${s.id}">★ ${s.nombre}</button>`).join('')}</div>
-    ${EXP.base ? `<div class="sub">⌂ ${EXP.base.nombre}: ${fmt(EXP.base.lat, 4)}°, ${fmt(EXP.base.lon, 4)}° E · pendiente ${fmt(EXP.base.q.pend, 1)}°</div>` : ''}
-    <h2>2. Muestras a buscar</h2>
-    <div class="btns"><button class="btn ${EXP.modo === 'muestra' ? 'prim' : ''}" id="expElegirM">${EXP.modo === 'muestra' ? 'Tocá el mapa…' : '+ Tocar un punto en el mapa'}</button><button class="btn" id="expAzar">Lugar al azar</button>${EXP.muestras.length ? '<button class="btn" id="expBorrar">Borrar todas</button>' : ''}</div>
-    <label class="fila"><span>O un pozo de Curiosity</span><select id="expPozo"><option value="">elegir…</option>${cerca.map(p => `<option value="${p.nombre}">${p.n ?? ''} ${p.nombre}</option>`).join('')}</select></label>
-    ${EXP.muestras.map((m, k) => `<div class="sub">${k + 1}. ${m.nombre}: ${fmt(m.lat, 4)}°, ${fmt(m.lon, 4)}° E · pendiente ${fmt(m.q.pend, 1)}° · cielo tapado ${fmt(m.q.cielo * 100, 0)}%</div>`).join('')}
-    <h2>3. Condiciones</h2>
-    <label class="fila"><span>Rover presurizado</span><select id="expVR">${Object.entries(P.vRoverOpciones).map(([v, t]) => `<option value="${v}" ${+v === P.vRover ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-    <label class="fila"><span>Estación (sur de Marte)</span><select id="expEst">${['otoño', 'invierno', 'primavera', 'verano'].map((e, k) => `<option ${e === P.estacion ? 'selected' : ''} value="${e}">${e} · Ls ${k * 90}–${k * 90 + 90}°</option>`).join('')}</select></label>
-    <label class="fila"><span>Hora de salida (LMST)</span><select id="expHora">${[6, 7, 8, 9, 10, 11, 12, 13, 14].map(h => `<option ${h === P.horaSalida ? 'selected' : ''} value="${h}">${hhmm(h)}</option>`).join('')}</select></label>
-    <label class="fila"><span>El rover evita lo más frío de noche (posible arena, THEMIS)</span><input type="checkbox" id="expFrio" ${P.evitarFrio ? 'checked' : ''}></label>
-    <label class="fila"><span>Ver THEMIS de noche (Mars Odyssey)</span><input type="checkbox" id="expTh" ${EXP.capaTh && EXP.capaTh.show ? 'checked' : ''}></label>
-    <label class="fila"><span>Minutos en cada muestra <span class="tag">supuesto</span></span><input type="number" id="expMin" min="5" max="180" step="5" value="${P.muestraMin}" style="width:64px"></label>
-    <div class="btns"><button class="btn prim" id="expCalc">Calcular la ruta segura</button></div>
-    <div id="expRes"></div>`;
-  $('expVerZona').onchange = e => expMostrarZona(e.target.checked);
-  $('expElegirBase').onclick = () => { EXP.modo = EXP.modo === 'base' ? null : 'base'; vistaExpedicion(); if (EXP.modo) avisar('Tocá el mapa dentro del círculo naranja para poner el inicio.', 5000); };
-  $('expElegirM').onclick = () => { EXP.modo = EXP.modo === 'muestra' ? null : 'muestra'; vistaExpedicion(); if (EXP.modo) avisar('Tocá el mapa dentro del círculo naranja para marcar la muestra.', 5000); };
-  $('expBaseHoy').onclick = () => expAgregar('base', HOY[0] + 0.0004, HOY[1], 'Junto a Curiosity');
-  cont().querySelectorAll('[data-sitio]').forEach(b => b.onclick = () => { const s = SITIOS.find(x => x.id === b.dataset.sitio); expAgregar('base', s.lon, s.lat, s.nombre); });
-  $('expPozo').onchange = e => { const p = POZOS.find(x => x.nombre === e.target.value); if (p) expAgregar('muestra', p.lon, p.lat, `Pozo ${p.nombre}`); };
-  if ($('expBorrar')) $('expBorrar').onclick = () => { EXP.muestras = []; EXP.res = null; expPintarPuntos(); vistaExpedicion(); };
-  $('expAzar').onclick = () => {   // celda al azar dentro del círculo, con DEM fino y pendiente bajo el límite del traje
-    for (let n = 0; n < 5000; n++) { const i = Math.floor(Math.random() * G.W * G.H), [lo, la] = expLonLat(i), q = expPunto(lo, la);
-      if (q && !q.fuera && !q.sinDato && q.pend <= P.pendAstro) { expAgregar('muestra', lo, la, `Muestra al azar ${EXP.muestras.length + 1}`); return; } } };
-  $('expMin').onchange = e => { P.muestraMin = Math.max(5, Math.min(180, +e.target.value || 30)); };
-  $('expCalc').onclick = expCalcular;
-  $('expFrio').onchange = e => { P.evitarFrio = e.target.checked; EXP.res = null; $('expRes').innerHTML = ''; };
-  $('expTh').onchange = e => expCapaThemis(e.target.checked);
-  $('expVR').onchange = e => { P.vRover = +e.target.value; EXP.res = null; $('expRes').innerHTML = ''; };
-  $('expEst').onchange = e => { P.estacion = e.target.value; if (EXP.res) expMostrarResultado(); };
-  $('expHora').onchange = e => { P.horaSalida = +e.target.value; if (EXP.res) expMostrarResultado(); };
-  if (EXP.res) expMostrarResultado();
-  else if (!EXP.base && !EXP.ent0) { EXP.ent0 = true; viewer.camera.flyTo({ destination: pos(G.meta.centro.lon, G.meta.centro.lat - 0.62, 52000), orientation: { heading: 0, pitch: -0.95, roll: 0 }, duration: 2 }); }
-}
 abrir('explorar', false);
 const h = location.hash.match(/pozo-(\d+)/); if (h) setTimeout(() => fichaPozo(NUM[+h[1] - 1], true), 3500);
 window.__gale = { viewer, POZOS, SITIOS, O, kepler, subpunto, proximoPaso };

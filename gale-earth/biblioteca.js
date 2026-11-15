@@ -1,5 +1,5 @@
 // ==================== Biblioteca ====================
-// Toda la información guardada en el Drive (Marte/Perforaciones Datos Crudos), ordenada para consultar:
+// Toda la información de los pozos (NASA PDS, base de mineralogía de Gale, blog y fotos de NASA), ordenada para consultar:
 // perforaciones (ficha completa), comparar pozos, temas para futuras misiones, fuentes. Lee datos/biblioteca.json,
 // que arma armar_biblioteca.py. Si un dato no existe, la ficha lo dice: no se completa con estimaciones.
 const BIB = { datos: null, cargando: null, vista: 'inicio', pozo: null, orden: 'n', filtro: '', soloCon: '', drive: null, ordenTabla: ['n', 1] };
@@ -64,7 +64,7 @@ function bibInicio() {
     <h2>Referencia</h2>
     ${tarjeta('fuentes', 'Fuentes y calidad de los datos', 'De dónde sale cada dato, qué falta y qué valores hay que tomar con cuidado.', `<span class="bibic" style="background:#7E57C2">ⓘ</span>`)}
     <div class="tarjeta bibt" id="bibAyuda"><span class="bibic" style="background:#3c4043">?</span><b>Controles y ayuda</b><div class="sub">Cómo moverse por el mapa con mouse, teclado o dedos.</div></div>
-    <p class="fuente">Datos: carpeta del Drive Marte/Perforaciones Datos Crudos, armada con NASA PDS, base ODR del cráter Gale y fotos crudas de NASA/JPL-Caltech/MSSS.</p>`;
+    <p class="fuente">Datos: Planetary Data System de NASA (${url('https://pds-geosciences.wustl.edu/missions/msl/index.htm')}), base de mineralogía y geoquímica del cráter Gale del equipo CheMin (${url('https://doi.org/10.48484/JN48-YW52')}), blog de Curiosity (${url('https://science.nasa.gov/mission/msl-curiosity/')}) y fotos crudas de NASA/JPL-Caltech/MSSS (${url('https://mars.nasa.gov/msl/multimedia/raw-images/')}).</p>`;
   engancharBib(); $('bibAyuda').onclick = () => $('ayuda').classList.remove('oculto');
 }
 
@@ -142,7 +142,7 @@ function bibPozo() {
   const fot = p.fotos.length ? `<div class="fotos">${p.fotos.map(f => `<a href="${f.url || f.src}" target="_blank" rel="noopener" title="${escB(f.archivo)}"><img loading="lazy" src="${f.src}" alt="${escB(f.camara)}"><span>${escB(f.camara || '')}</span></a>`).join('')}</div>
       <p class="fuente">${p.fotos.length} destacadas de ${p.fotos_total} fotos crudas del sol de la perforación (todas en <code>Imagenes/todas_las_imagenes.zip</code>). Fotos: NASA/JPL-Caltech/MSSS. Tocá una para abrir el original en NASA.</p>` : '<p class="sub">Sin fotos destacadas.</p>';
   const base = `G:\\Mi unidad\\Marte\\Perforaciones Datos Crudos\\${p.nombre}`;
-  const arch = `<p class="sub">${BIB.drive ? 'Tocá un archivo para abrirlo o bajarlo (lo sirve la PC desde el Drive).' : `Están en <code>${escB(base)}</code>.`}</p>
+  const arch = `<p class="sub">${BIB.drive ? 'Tocá un archivo para abrirlo o bajarlo (copia local de los archivos públicos de NASA).' : `Están en <code>${escB(base)}</code>.`}</p>
     <table>${p.archivos.map(([r, b]) => `<tr><td>${BIB.drive ? `<a href="perforaciones/${encodeURIComponent(p.nombre)}/${r.split('/').map(encodeURIComponent).join('/')}" target="_blank" rel="noopener">${escB(r)}</a>` : escB(r)}</td><td style="white-space:nowrap">${kB(b)}</td></tr>`).join('')}</table>`;
   cont().innerHTML = `<div style="display:flex;justify-content:space-between;gap:6px">${volverBib('lista')}
       <span><button class="btn" id="bAnt" ${i <= 0 ? 'disabled' : ''}>←</button> <button class="btn" id="bSig" ${i >= P.length - 1 ? 'disabled' : ''}>→</button></span></div>
@@ -151,7 +151,7 @@ function bibPozo() {
     <h3>${p.n ? p.n + '. ' : ''}${escB(p.nombre)}</h3>
     <div class="sub">Sol ${p.sol ?? '—'} · ${escB(p.fecha)} (aprox.) · ${escB(p.roca || '—')} · ${p.elev != null ? fmt(p.elev) + ' m' : ''}</div>
     ${p.hallazgo ? `<p>${escB(p.hallazgo)}</p>` : ''}${p.tecnico ? `<p class="sub">${escB(p.tecnico)}</p>` : ''}
-    <div class="btns"><button class="btn prim" id="bMapa">Ver en el mapa</button>${p.odr && p.odr.url ? `<a class="btn" href="${p.odr.url}" target="_blank" rel="noopener">Ficha en la base ODR</a>` : ''}</div>
+    <div class="btns"><button class="btn prim" id="bMapa">Ver en el mapa</button>${p.odr && p.odr.url ? `<a class="btn" href="${p.odr.url}" target="_blank" rel="noopener">Ficha en la base de mineralogía de Gale (NASA)</a>` : ''}</div>
     <div class="ind">
       <div><small>Agua en minerales <span class="tag">calculado</span></small><b style="color:var(--agua)">${p.agua_kg_t != null ? fmt(p.agua_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
       <div><small>CO₂ en carbonatos <span class="tag">calculado</span></small><b style="color:#d9a441">${p.co2_kg_t != null ? fmt(p.co2_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
@@ -165,8 +165,9 @@ function bibPozo() {
     ${p.blog && p.blog.length ? sec('Lo que contó el equipo', 'blog de Curiosity · resumen propio', p.blog.map(x => `<div class="tarjeta" style="cursor:default"><div class="sub">${escB(x.fecha)}</div>${escB(x.texto)} <a href="${x.url}" target="_blank" rel="noopener">Leer</a></div>`).join('') + '<p class="fuente">Los números de laboratorio de este pozo todavía no están en el PDS: el blog dice qué se hizo, no los resultados.</p>', true) : ''}
     ${sec('Qué falta', '', p.falta.length ? '<ul>' + p.falta.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>' : '<p class="sub">Nada pendiente registrado.</p>', false)}
     ${p.cruce.length ? sec('Cruce con la base ODR', '', '<ul>' + p.cruce.map(f => `<li>${escB(f)}</li>`).join('') + '</ul>', false) : ''}
-    ${sec(`Archivos crudos (${p.archivos.length})`, 'Drive', arch, false)}
-    <p class="fuente">${escB(p.fuente_hallazgo || '')}</p>`;
+    ${sec(`Archivos crudos (${p.archivos.length})`, 'copia local de NASA PDS', arch, false)}
+    <p class="fuente">${escB(p.fuente_hallazgo || '')}</p>
+    ${fuentesPozo(p, [...(p.fotos && p.fotos[0] && p.fotos[0].url ? [['Foto cruda de ese sol en el servidor de NASA', p.fotos[0].url]] : []), ...(p.blog || []).slice(0, 3).map(x => ['Blog de Curiosity (NASA), ' + x.fecha, x.url])])}`;
   engancharBib();
   $('bAnt').onclick = () => irBib('pozo', P[i - 1].nombre); $('bSig').onclick = () => irBib('pozo', P[i + 1].nombre);
   $('bMapa').onclick = () => {
@@ -200,7 +201,7 @@ function bibComparar() {
 
 function bibTemas() {
   cont().innerHTML = `${volverBib('inicio')}<div class="doc">${BIB.datos.temas_html}</div>
-    <p class="fuente">Documento del equipo: Drive, carpeta "zz Analisis y temas para futuras misiones". "No tratados" quiere decir que nuestro proyecto todavía no los trabajó.</p>`;
+    <p class="fuente">Documento del equipo. "No tratados" quiere decir que nuestro proyecto todavía no los trabajó.</p>`;
   engancharBib();
 }
 
@@ -224,7 +225,7 @@ function bibFuentes() {
       <li>Valores de SAM imposibles para una porción de ~45 mg (supuesto) se marcan con ⚠ y no se usan: HCl, NO y H₂S en Mojave 2 y Telegraph Peak, HCl en un experimento de Cumberland y el H₂O de 7×10⁷ mol de Glen Etive (error de la tabla de PDS).</li>
       <li>Pozos nuevos: Nevado Sajama 2 ya tiene química (APXS) y el experimento de orgánicos con TMAH; Campo Marte, Basque Lakes y Nazca solo tienen lo que contó el equipo en el blog: sus números salen en la próxima entrega del PDS (los datos actuales llegan hasta marzo de 2026).</li>
       <li>Clima: el resumen diario de REMS es de divulgación (CAB); lo verificamos contra los datos calibrados del PDS. El viento y la humedad salen de nuestra lectura de los archivos calibrados de REMS en el PDS (muestreo propio); hay datos de viento hasta alrededor del sol 1482 (2016).</li></ul>
-    <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> desde el Drive (${escB(BIB.datos.origen)}).</p>`;
+    <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> a partir de datos públicos de NASA (PDS, blog y fotos crudas) y de la base de mineralogía de Gale.</p>`;
   engancharBib();
 }
 
@@ -262,9 +263,13 @@ function bibClima() {
       <div><small>Récord de calor</small><b>${fm(c.records.calor.valor)} <small>°C</small></b><small>${c.records.calor.fecha}</small></div></div>
     <h2>El último año marciano</h2>${grafClima(c.diario)}
     <h2>Las cuatro estaciones <span class="tag">medido · promedio de ${c.anios.length} años marcianos</span></h2>
+    ${(() => { const h = lsMarte(new Date()); return `<div class="tarjeta" style="cursor:default"><b>Hoy en Gale: año marciano ${h.my}, L<sub>s</sub> ${fmt(h.ls, 0)}°, ${estacionSur(h.ls)}</b><div class="sub">Calculado con el algoritmo Mars24 de NASA (Allison y McEwen 2000). Los años marcianos se cuentan desde el 11 de abril de 1955 (Clancy et al. 2000); Curiosity llegó en el año 31.</div></div>`; })()}
     <p class="sub">En Marte la época del año se mide con la longitud solar (L<sub>s</sub>): el ángulo de Marte en su órbita, de 0° a 360°. NASA y el equipo de REMS la usan para comparar años. Gale está en el hemisferio sur, así que L<sub>s</sub> 0–90° es otoño, 90–180° invierno, 180–270° primavera y 270–360° verano. Cada estación dura entre 142 y 194 soles porque la órbita de Marte es elíptica.</p>
     <div class="tablaw"><table class="comp"><tr><th>Estación</th><th>L<sub>s</sub></th><th>Soles con dato</th><th>Mín. del aire</th><th>Máx. del aire</th><th>Récords</th><th>Suelo mín./máx.</th><th>Presión</th><th>UV más frecuente</th></tr>
       ${c.estaciones.map(m => `<tr><td>${m.estacion}</td><td>${m.ls[0]}–${m.ls[1]}°</td><td>${fmt(m.n)}</td><td>${fm(m.tmin)} °C</td><td>${fm(m.tmax)} °C</td><td>${fm(m.tmin_rec)} / ${fm(m.tmax_rec)} °C</td><td>${fm(m.gmin)} / ${fm(m.gmax)} °C</td><td>${fm(m.p)} Pa</td><td>${uvTop(m.uv)}</td></tr>`).join('')}</table></div>
+    <h2>Año por año <span class="tag">medido</span></h2>
+    <div class="tablaw"><table class="comp"><tr><th>Año marciano</th><th>Desde</th><th>Hasta</th><th>Soles con dato</th><th>Mín. del aire</th><th>Máx. del aire</th><th>Presión</th></tr>
+      ${c.anios.map(a => `<tr><td>${a.my}</td><td>${a.desde}</td><td>${a.hasta}</td><td>${fmt(a.n)}</td><td>${fm(a.tmin)} °C</td><td>${fm(a.tmax)} °C</td><td>${fm(a.p)} Pa</td></tr>`).join('')}</table></div>
     <p class="fuente">Promedios de los valores diarios (cálculo propio sobre datos medidos). "Suelo": temperatura de la superficie medida por el sensor infrarrojo de REMS. UV: categoría de radiación ultravioleta que informa REMS.</p>
     <h2>La presión baja porque Curiosity sube</h2>${grafPresion(c.diario)}
     <p class="sub">La presión sube y baja con las estaciones porque parte del CO₂ de la atmósfera se congela en los casquetes polares y después vuelve a la atmósfera. La caída de fondo, de ${fm(c.anios[0].p)} Pa de promedio el primer año a ${fm(c.anios.at(-1).p)} Pa el último, coincide con lo que subió Curiosity por el Monte Sharp: unos 1.000 m, de −4.520 m en John Klein a −3.488 m en Nazca (cálculo propio con una altura de escala de ~11 km: unos 70 Pa menos).</p>

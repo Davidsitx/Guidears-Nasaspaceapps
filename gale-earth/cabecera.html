@@ -81,6 +81,7 @@ body.cajonAbierto #busca{display:none}
 #reloj{margin:0 14px 6px;background:var(--sup2);border-radius:12px;padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 #reloj .seg button{background:none;border:1px solid var(--linea);color:var(--suave);border-radius:8px;padding:3px 8px;cursor:pointer;font-size:11px}
 #reloj .seg button.on{background:var(--acento);color:#111;border-color:var(--acento)}
+#ahora{font-weight:700;letter-spacing:.04em}#ahora.vivo{color:#ff5d5d;border-color:#ff5d5d55}
 #contenido{overflow:auto;padding:4px 18px 18px;flex:1;-webkit-overflow-scrolling:touch}
 
 /* ── fichas (contenido del cajón) ── */
@@ -190,15 +191,13 @@ table.comp tr[data-p]:hover td{background-color:#ffffff0d}
 #fuentesBox .cesium-credit-lightbox-overlay{display:none}
 #fuentesBox img{max-height:18px;vertical-align:middle}
 
-/* ── ventanas (ayuda, celular) ── */
+/* ── ventanas (ayuda) ── */
 .modal{position:absolute;inset:0;z-index:20;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}
 .modal .caja{background:var(--sup);border-radius:20px;box-shadow:var(--sombra);padding:20px 22px;max-width:440px;width:100%;max-height:90vh;overflow:auto;border:1px solid #ffffff10}
 .modal h3{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
 .modal kbd{background:var(--sup3);border-radius:5px;padding:1px 6px;font:600 11px system-ui;margin-right:3px;border-bottom:2px solid #0006}
 .modal .lin{padding:5px 0;border-bottom:1px solid #ffffff0d;display:flex;gap:10px;align-items:baseline}
 .modal .lin span:first-child{min-width:150px}
-#qr{display:flex;justify-content:center;margin:12px 0}
-#qr svg,#qr img{width:200px;height:200px;background:#fff;border-radius:12px;padding:8px}
 .url{font:600 15px ui-monospace,monospace;background:var(--sup2);border-radius:10px;padding:8px 10px;text-align:center;word-break:break-all;user-select:all}
 
 #aviso{position:absolute;left:50%;transform:translateX(-50%);bottom:46px;z-index:15;background:#3c4043;color:#e8eaed;padding:11px 16px;border-radius:10px;font-size:13px;max-width:min(560px,calc(100vw - 32px));box-shadow:var(--sombra)}
@@ -297,12 +296,7 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
   #fuentesBox{bottom:calc(88px + var(--inf-seg))}
   #aviso{bottom:calc(92px + var(--inf-seg))}
 }
-#expHud{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(44px + var(--inf-seg));z-index:7;width:min(640px,calc(100vw - var(--riel) - 24px));background:var(--sup);border:1px solid #ffffff14;border-radius:16px;box-shadow:var(--sombra);padding:10px 14px}
-body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) - 428px)/2)}
-#expHud .hT{display:flex;align-items:center;gap:8px;flex-wrap:wrap}#expHud .hT b{font-size:15px}#expHud .hT span{color:var(--suave);font-size:12px;flex:1}#expHud .hT #hInfo b{color:var(--texto)}
-#expHud .hT select{background:var(--sup2);color:var(--texto);border:1px solid var(--linea);border-radius:8px;padding:3px}
-#expHud .hG{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px 12px;margin-top:6px}#expHud .hG small{display:block;color:var(--suave);font-size:11px}#expHud .hG b{font-size:14px}
-@media (max-width:760px){body.cajonAbierto #expHud{display:none}#expHud{left:calc(var(--riel)/2 + 50%)}}
+body.cajonAbierto @media (max-width:760px){body.cajonAbierto .fuentesOf{margin:10px 0 4px;padding:9px 11px;border:1px solid var(--linea);border-radius:10px;font-size:12px;color:var(--suave)}.fuentesOf b{color:var(--texto);font-size:12.5px}.fuentesOf ul{margin:5px 0 0;padding-left:16px}.fuentesOf li{margin:3px 0}.fuentesOf a{color:var(--acento);word-break:break-all}
 </style>
 </head>
 <body>
@@ -318,10 +312,8 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
   <button class="rb" data-t="orbita" title="Orbitadores"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-25 12 12)"/><circle cx="20.2" cy="8.2" r="1.6"/></svg>Órbitas</button>
   <button class="rb" data-t="biblioteca" title="Biblioteca: toda la información guardada"><svg class="i" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>Biblioteca</button>
   <button class="rb" id="rHistoria" title="Línea de tiempo: de la formación de Gale a hoy"><svg class="i" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9.1.1L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"/></svg>Historia</button>
-  <button class="rb" data-t="expedicion" title="Expedición: rutas seguras para astronauta y rover"><svg class="i" viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/></svg>Expedición</button>
   <button class="rb" data-t="capas" title="Capas y estilo del mapa"><svg class="i" viewBox="0 0 24 24"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg>Capas</button>
   <div class="esp"></div>
-  <button class="rb solopc" id="rCel" title="Abrir en el celular"><svg class="i" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>Celular</button>
   <button class="rb solopc" id="vAyuda" title="Controles y ayuda"><svg class="i" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>Ayuda</button>
   <button class="rb solopc" id="rPantalla" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>Pantalla</button>
 </nav>
@@ -350,7 +342,7 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
   <div id="asa" title="Agrandar o achicar"></div>
   <div id="cajonCab"><h2 id="cajonTitulo">Explorar</h2>
     <button id="cerrarCajon" title="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
-  <div id="reloj" class="oculto"><span id="hora">—</span><span class="seg" id="vel"><button data-x="1" class="on">×1</button><button data-x="60">×60</button><button data-x="600">×600</button></span><button class="btn" id="ahora">Ahora</button></div>
+  <div id="reloj" class="oculto"><span id="hora">—</span><span class="seg" id="vel"><button data-x="1" class="on">×1</button><button data-x="60">×60</button><button data-x="600">×600</button></span><button class="btn" id="ahora" title="Volver a la hora actual (UTC, tiempo universal)">● EN VIVO</button></div>
   <div id="contenido"></div>
 </aside>
 
@@ -360,7 +352,6 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
     <div id="lPista"></div>
     <button id="lCerrar" title="Cerrar la línea de tiempo"><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></div>
 </div>
-<div id="expHud" class="oculto" role="status" aria-live="polite"></div>
 <div id="controles">
   <button class="cb" id="brujula" title="Norte arriba (clic) · girar: Shift + arrastrar"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#ffffff22" stroke-width="1.5"/><path d="M20 5l5 15h-10z" fill="#e5534b"/><path d="M20 35l-5-15h10z" fill="#e8eaed"/><text x="20" y="4.6" font-size="0" fill="none">N</text></svg></button>
   <button class="cb" id="b3d" title="Vista 2D / 3D">3D</button>
@@ -397,11 +388,6 @@ body.cajonAbierto #expHud{left:calc(var(--riel) + 428px + (100vw - var(--riel) -
     <div class="lin"><span><kbd>/</kbd></span><span>buscar</span></div>
   </div>
   <p class="sub">La brújula vuelve el norte arriba. El botón 3D alterna entre vista desde arriba e inclinada.</p>
-</div></div>
-
-<div id="celular" class="modal oculto"><div class="caja">
-  <h3>Abrir en el celular <button class="btn" data-cerrar>Cerrar</button></h3>
-  <div id="celInfo" class="sub">Buscando la dirección de esta computadora en la red…</div>
 </div></div>
 
 <div id="aviso" class="oculto"></div>

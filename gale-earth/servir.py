@@ -280,7 +280,6 @@ if __name__ == "__main__":
         ips = ips_red()
         if ips:
             print("Desde el celular (mismo Wi-Fi): " + "  o  ".join(f"http://{ip}:{puerto}/index.html" for ip in ips))
-            print("  (en Gale Earth, botón Celular: muestra un código QR)")
             print("  Si Windows pregunta, permití el acceso en Redes privadas. Para usarlo solo en esta PC: python servir.py --solo-pc")
     print("Perforaciones del Drive: " + (carpeta_perforaciones() or "no encontradas (la Biblioteca funciona igual, sin abrir archivos crudos)"))
     threading.Timer(1.0, lambda: webbrowser.open(url)).start()

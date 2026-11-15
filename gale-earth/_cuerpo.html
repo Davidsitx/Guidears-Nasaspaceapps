@@ -290,7 +290,7 @@ async function prepararNube() {
   try { if (location.protocol.startsWith('http')) t = await (await fetch('teselas.json')).json(); } catch {}
   let pref = null; try { pref = localStorage.getItem('galeEarthMotor'); } catch {}
   MODO = t && t.terreno && pref !== 'cesium' ? 'globo' : 'cesium';
-  if (t && !t.terreno) setTimeout(() => avisar('El servidor no encontró las teselas de Marte completo (carpeta Google Mars\\teselas o Google Drive). Se muestra Cesium Mars, que solo tiene alta resolución en un sector de Gale.', 20000), 3000);
+  if (t && !t.terreno) setTimeout(() => avisar('El servidor no encontró las teselas de Marte completo (carpeta teselas). Se muestra Cesium Mars, que solo tiene alta resolución en un sector de Gale.', 20000), 3000);
   if (MODO === 'globo') {
     try {
       TERRENO = await crearTerreno();
@@ -363,7 +363,20 @@ const ESCALAS = {
   co2: { campo: 'co2_kg_t', max: 100, c: ['#2a2420', '#d9a441', '#fff1b8'], u: 'kg/t', n: 'CO₂ en carbonatos' },
   fe: { campo: 'oxidos_fe_pct', max: 30, c: ['#2a1d1d', '#c0392b', '#ffb199'], u: '%', n: 'óxidos de hierro' },
   cl: { campo: 'cloro_pct', max: 2.1, c: ['#1d2a1f', '#4caf7d', '#d6ffd0'], u: '%', n: 'cloro' },
+  arcillas: { campo: 'ch_arcillas', max: 30, c: ['#14243a', '#40c4ff', '#d8f5ff'], u: '% de la roca', n: 'arcillas (CheMin)' },
+  sulfatos: { campo: 'ch_sulfatos', max: 60, c: ['#2a2410', '#ffd640', '#fff6c8'], u: '% cristalino', n: 'sulfatos (CheMin)' },
+  hematita: { campo: 'ch_hematita', max: 20, c: ['#2a1414', '#ff503c', '#ffd0c8'], u: '% cristalino', n: 'hematita (CheMin)' },
+  amorfo: { campo: 'ch_amorfo', max: 75, c: ['#1e1e28', '#9c8cff', '#e8e2ff'], u: '% de la roca', n: 'material amorfo (CheMin)' },
 };
+// Resumen de CheMin por pozo (capas/minerales/pozos_chemin.json, de herramientas/capas_minerales_radiacion.py).
+let CHEMIN_POZOS = null;
+async function cargarCheminPozos() {
+  if (CHEMIN_POZOS) return CHEMIN_POZOS;
+  try { CHEMIN_POZOS = await (await fetch('capas/minerales/pozos_chemin.json')).json();
+    for (const p of POZOS) { const q = CHEMIN_POZOS.pozos[p.nombre]; if (q) { p.ch_arcillas = q.arcillas; p.ch_sulfatos = q.sulfatos; p.ch_hematita = q.hematita; p.ch_amorfo = q.amorfo; } } }
+  catch { avisar('Para pintar los pozos por mineral abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
+  return CHEMIN_POZOS;
+}
 let colorPor = 'zona';
 const mezcla = (cs, t) => { t = Math.max(0, Math.min(1, t)); const k = t < .5 ? 0 : 1, u = t < .5 ? t * 2 : (t - .5) * 2;
   const a = cs[k].match(/\w\w/g).map(h => parseInt(h, 16)), b = cs[k + 1].match(/\w\w/g).map(h => parseInt(h, 16));
@@ -479,10 +492,30 @@ $('vAyuda').onclick = () => $('ayuda').classList.remove('oculto');
     if ($('exag')) $('exag').value = String(NIV[k]); }; }
 $('vMarte').onclick = () => irA('marte'); $('vGale').onclick = () => { abrir('explorar'); fichaGale(); }; $('vRec').onclick = () => irA('rec'); $('vHoy').onclick = () => irA('hoy');
 
+// ---------- fecha marciana: longitud solar (Ls) y año marciano ----------
+// Ls: algoritmo Mars24 de NASA GISS (Allison y McEwen 2000, Planet. Space Sci. 48:215). Año marciano: el año 1 empezó
+// el 11/4/1955 en Ls 0 (Clancy et al. 2000, JGR 105:9553). Comprobado: aterrizaje de Curiosity Ls 150,7 del año 31.
+function lsMarte(fecha) {
+  const jdUT = fecha.getTime() / 86400000 + 2440587.5, d = jdUT + 69.184 / 86400 - 2451545.0;
+  const M = (19.3871 + 0.52402073 * d) * Math.PI / 180, aFMS = 270.3871 + 0.524038496 * d;
+  const T = [[0.0071, 2.2353, 49.409], [0.0057, 2.7543, 168.173], [0.0039, 1.1177, 191.837], [0.0037, 15.7866, 21.736], [0.0021, 2.1354, 15.704], [0.0020, 2.4694, 95.528], [0.0018, 32.8493, 49.095]];
+  const pbs = T.reduce((s, [A, tau, phi]) => s + A * Math.cos((0.985626 * d / tau + phi) * Math.PI / 180), 0);
+  const ec = (10.691 + 3e-7 * d) * Math.sin(M) + 0.623 * Math.sin(2 * M) + 0.050 * Math.sin(3 * M) + 0.005 * Math.sin(4 * M) + 0.0005 * Math.sin(5 * M) + pbs;
+  const ls = ((aFMS + ec) % 360 + 360) % 360;
+  return { ls, my: 1 + Math.round((jdUT - 2435208.5) / 686.9725 - ls / 360) };
+}
+const estacionSur = ls => ['otoño', 'invierno', 'primavera', 'verano'][Math.floor(ls / 90) % 4];   // Gale está en el hemisferio sur
+
 // ---------- reloj de los orbitadores ----------
 document.querySelectorAll('#vel button').forEach(b => b.onclick = () => { viewer.clock.multiplier = +b.dataset.x; document.querySelectorAll('#vel button').forEach(x => x.classList.toggle('on', x === b)); });
-$('ahora').onclick = () => { viewer.clock.currentTime = C.JulianDate.now(); };
-viewer.clock.onTick.addEventListener(c => { $('hora').textContent = C.JulianDate.toDate(c.currentTime).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'; });
+$('ahora').onclick = () => { viewer.clock.currentTime = C.JulianDate.now(); viewer.clock.multiplier = 1; document.querySelectorAll('#vel button').forEach(x => x.classList.toggle('on', x.dataset.x === '1')); };
+let relojAnt = '';
+viewer.clock.onTick.addEventListener(c => {
+  const f = C.JulianDate.toDate(c.currentTime), m = lsMarte(f), vivo = Math.abs(f - Date.now()) < 60000;
+  const t = `${f.toISOString().slice(0, 16).replace('T', ' ')} UTC · año marciano ${m.my} · Ls ${Math.round(m.ls)}° · ${estacionSur(m.ls)} en Gale`;
+  if (t !== relojAnt) { $('hora').textContent = t; relojAnt = t; }
+  $('ahora').classList.toggle('vivo', vivo);
+});
 
 // ---------- borde del cráter Gale (punto de interés) ----------
 // Trazado con nuestro DEM: línea de cresta en 360 perfiles radiales (ver datos/borde_gale.json).
@@ -541,8 +574,20 @@ capas.borde.push(viewer.entities.add({ position: pos(nBorde[0], nBorde[1]),
 
 // ---------- selección con clic ----------
 viewer.screenSpaceEventHandler.setInputAction(m => {
-  const o = viewer.scene.pick(m.position); if (!o || !o.id || !o.id.properties) return;
-  const pr = o.id.properties, tipo = pr.tipo.getValue();
+  // Se mira todo lo que hay bajo el dedo (no solo lo de arriba): los círculos de los sitios de base tapaban a los pozos.
+  const ORDEN = ['pozo', 'sitio', 'orbitador', 'luna', 'zona', 'gale'];
+  const bajo = viewer.scene.drillPick(m.position, 12).map(o => o && o.id && o.id.properties && o.id.properties.tipo ? o.id : null).filter(Boolean);
+  let e = bajo.sort((x, y) => ORDEN.indexOf(x.properties.tipo.getValue()) - ORDEN.indexOf(y.properties.tipo.getValue()))[0];
+  if (!e || e.properties.tipo.getValue() !== 'pozo') {        // toque apenas al lado de un pin de pozo: se toma el más cercano (hasta 22 px)
+    let best = null, bd = 22;
+    for (const x of viewer.entities.values) { const q = x.properties; if (!q || !q.tipo || q.tipo.getValue() !== 'pozo' || !x.isShowing) continue;
+      const c = C.Cartographic.fromCartesian(x.position.getValue(viewer.clock.currentTime), MARS), h = MODO === 'globo' ? viewer.scene.globe.getHeight(c) : null;
+      const w = C.SceneTransforms.worldToWindowCoordinates(viewer.scene, C.Cartesian3.fromRadians(c.longitude, c.latitude, h ?? c.height, MARS)); if (!w) continue;
+      const d = Math.hypot(w.x - m.position.x, w.y - m.position.y); if (d < bd) { bd = d; best = x; } }
+    if (best) e = best;
+  }
+  if (!e) return;
+  const pr = e.properties, tipo = pr.tipo.getValue();
   if (tipo === 'pozo') { abrir('explorar'); fichaPozo(POZOS.find(p => p.nombre === pr.nombre.getValue()), true); }
   if (tipo === 'zona') { abrir('explorar'); fichaZona(pr.id.getValue()); }
   if (tipo === 'sitio') { abrir('base'); fichaSitio(pr.id.getValue()); }
@@ -555,13 +600,12 @@ viewer.screenSpaceEventHandler.setInputAction(m => {
 let pestaña = 'explorar';
 function abrir(t, mostrar = true) {
   pestaña = t; document.querySelectorAll('.rb[data-t]').forEach(b => b.classList.toggle('on', mostrar && b.dataset.t === t));
-  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca', expedicion: 'Expedición: rutas seguras' })[t];
+  $('cajonTitulo').textContent = ({ explorar: 'Explorar Gale', base: 'Base en Gale', orbita: 'Órbitas y lunas', capas: 'Capas', biblioteca: 'Biblioteca' })[t];
   $('cajon').classList.remove('ancho');
   $('reloj').classList.toggle('oculto', t !== 'orbita');
-  if (t !== 'expedicion') try { EXP.modo = null; expMostrarZona(false); } catch {}
   if (mostrar && window.abrirCajon) abrirCajon();
   $('contenido').scrollTop = 0;
-  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca, expedicion: vistaExpedicion })[t](); }
+  ({ explorar: vistaExplorar, base: vistaBase, orbita: vistaOrbitas, capas: vistaCapas, biblioteca: vistaBiblioteca })[t](); }
 const cont = () => $('contenido');
 
 function vistaExplorar() {
@@ -620,6 +664,17 @@ function fichaZona(id) {
   cont().querySelectorAll('.pz').forEach(el => el.onclick = () => fichaPozo(NUM[+el.dataset.n - 1], true));
 }
 const COL_MIN = { plagioclasa: '#8d99ae', andesina: '#8d99ae', piroxeno: '#5c677d', augita: '#5c677d', pigeonita: '#5c677d', ortopiroxeno: '#5c677d', hematita: '#c0392b', magnetita: '#555', goethita: '#d35400', anhidrita: '#f1e3c6', basanita: '#e8d8b0', yeso: '#ffffff', siderita: '#d9a441', starkeyita: '#4fa3d9', kieserita: '#79c0f0', 'sulfato de mg·4h2o': '#4fa3d9', halita: '#e0f7ff', jarosita: '#e6c229', natrojarosita: '#e6c229', akaganeíta: '#a0522d', tridimita: '#ff79c6', cristobalita: '#f5a3d0', cuarzo: '#d0d0d0', sanidina: '#b0a8d9' };
+// Fuentes oficiales de cada pozo, con el enlace a la vista (NASA y archivos oficiales).
+const url = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t || u.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>`;
+function fuentesPozo(p, extra = []) {
+  const ls = [
+    ['Base de mineralogía y geoquímica del cráter Gale (NASA, equipo CheMin): ficha de este pozo', p.enlace_datos || (p.odr && p.odr.url)],
+    ['La misma base, publicación con DOI (Bristow y Lafuente)', 'https://doi.org/10.48484/JN48-YW52'],
+    ['Datos de laboratorio de Curiosity (CheMin, APXS, SAM) en el Planetary Data System de NASA', 'https://pds-geosciences.wustl.edu/missions/msl/index.htm'],
+    ['Fotos de los pozos de Curiosity (NASA/JPL-Caltech/MSSS)', 'https://science.nasa.gov/photojournal/curiositys-42-drill-holes/'],
+    ...extra];
+  return `<div class="fuentesOf"><b>Fuentes oficiales</b><ul>${ls.filter(x => x[1]).map(([t, u]) => `<li>${t}: ${url(u)}</li>`).join('')}</ul></div>`;
+}
 function fichaPozo(p, volar) {
   if (!p) return; sel = p; repintar(); if (volar) volarA(p.lon, p.lat, 700);
   const z = ZID[p.zona], tot = p.minerales.reduce((a, m) => a + m[1], 0) || 1, i = NUM.indexOf(p);
@@ -642,7 +697,8 @@ function fichaPozo(p, volar) {
     <div class="btns"><a class="btn" href="${p.enlace_datos}" target="_blank" rel="noopener">Datos en NASA</a>
       <a class="btn" href="../Guidears-Nasaspaceapps-main/prototipo/mapa-perforaciones/index.html#pozo-${p.n ?? 'atacama'}">Mapa 2D</a>
       <button class="btn prim" id="aBib">Ficha completa en la Biblioteca</button></div>
-    <p class="fuente">Hallazgo: ${p.fuente_hallazgo}. Posición: ${p.fuente_posicion}.</p>`;
+    <p class="fuente">Hallazgo: ${p.fuente_hallazgo}. Posición: ${p.fuente_posicion}.</p>
+    ${fuentesPozo(p, [['Posición: localizaciones de Curiosity (PLACES) en el PDS de NASA', 'https://pds-imaging.jpl.nasa.gov/volumes/msl.html']])}`;
   $('volver').onclick = () => { sel = null; repintar(); vistaExplorar(); };
   $('ant').onclick = () => fichaPozo(NUM[i - 1], true); $('sig').onclick = () => fichaPozo(NUM[i + 1], true);
   $('aBib').onclick = () => { BIB.vista = 'pozo'; BIB.pozoMapa = p; abrir('biblioteca'); };
@@ -738,15 +794,16 @@ const ANALISIS = [
   ['relieve_color', 'Relieve en color (llanuras → montañas)', 'Falso color por altura con sombreado: azul = llanuras bajas, verde-amarillo = laderas, rojo-blanco = Monte Sharp.', 0.75],
   ['orto_color', 'Foto HiRISE coloreada por altura', 'Brillo de la foto HiRISE (25 cm, reducida) con el color de la altura. Donde no hay foto se usa el sombreado.', 0.85],
   ['zonas_prohibidas', 'Zonas prohibidas por pendiente', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite).', 0.9],
-  ['dosis_color', 'Radiación en superficie (estimada)', 'Rojo = dosis máxima a cielo abierto (RAD). Azul = sitios donde el relieve tapa parte del cielo y baja la dosis. Cálculo propio, provisorio.', 0.6],
+  ['dosis', 'Radiación en superficie (día / noche)', 'Dosis de rayos cósmicos medida por RAD, corregida por el cielo que tapa el relieve. Rojo = más dosis, azul = menos. De noche la presión del aire sube y la dosis baja cerca de un 5 % (RAD).', 0.5],
 ];
 const CAPA_A = {};
+let HORARIO_RAD = 'dia';
 async function capaAnalisis(id, on, alfa) {
   if (!D.capas5m || !capasImagen()) return avisar('Las capas de análisis necesitan el terreno 3D cargado.');
   if (on && !CAPA_A[id]) {
     try {
       const r = D.capas5m.rect_geodetico;
-      const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
+      const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id === 'dosis' ? 'dosis_' + HORARIO_RAD : id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
       CAPA_A[id] = capasImagen().addImageryProvider(prov);
     } catch (e) {
       return avisar(location.protocol === 'file:' ? 'Para ver esta capa abrí Gale Earth con abrir.bat (Windows) o abrir.sh: el navegador no permite usar imágenes locales en 3D desde file://.' : 'No se pudo cargar la capa ' + id + ': ' + (e.message || e), 14000);
@@ -754,13 +811,40 @@ async function capaAnalisis(id, on, alfa) {
   }
   if (CAPA_A[id]) { CAPA_A[id].show = on; CAPA_A[id].alpha = alfa; }
 }
+async function cambiarHorarioRad(h) {
+  HORARIO_RAD = h; const L = CAPA_A.dosis;
+  if (L) { const on = L.show, a = L.alpha; capasImagen().remove(L, true); delete CAPA_A.dosis; if (on) await capaAnalisis('dosis', true, a); }
+}
+function leyendaRad() {
+  const r = D.capas5m && D.capas5m.radiacion; if (!r) return '';
+  return `<div class="fila"><span>Horario</span><span class="seg" id="radHora"><button data-h="dia" class="${HORARIO_RAD === 'dia' ? 'on' : ''}">☀ Día</button><button data-h="noche" class="${HORARIO_RAD === 'noche' ? 'on' : ''}">☾ Noche</button></span></div>
+    <div class="sub" style="display:flex;align-items:center;gap:8px"><span>${fmt(r.min, 2)}</span><span style="flex:1;height:10px;border-radius:5px;background:linear-gradient(90deg,#285ac8,#50aae6,#fadc5a,#f07832,#c81e28)"></span><span>${fmt(r.max, 2)} mSv/día</span></div>
+    <div class="sub">Promedio en la zona: de día ${fmt(r.dia_media, 3)} y de noche ${fmt(r.noche_media, 3)} mSv/día. Fórmula: ${r.formula}. <span class="tag">medido + cálculo</span></div>
+    <p class="fuente">RAD: Hassler et al. 2014, Science (<a href="https://doi.org/10.1126/science.1244797" target="_blank" rel="noopener">doi.org/10.1126/science.1244797</a>). Día y noche: Rafkin et al. 2014, JGR Planets (<a href="https://doi.org/10.1002/2013JE004525" target="_blank" rel="noopener">doi.org/10.1002/2013JE004525</a>). Datos de RAD: <a href="https://pds-ppi.igpp.ucla.edu/" target="_blank" rel="noopener">pds-ppi.igpp.ucla.edu</a> (NASA PDS).</p>`;
+}
+let MINS = null; const CAPA_M = {};
+async function capaMineral(id, on) {
+  if (!MINS) try { MINS = await (await fetch('capas/minerales/minerales.json')).json(); } catch { return avisar('Para ver los minerales abrí Gale Earth con abrir.bat (o desde la página publicada).'); }
+  if (on && !CAPA_M[id]) {
+    const r = MINS.rect_geodetico; if (!capasImagen()) return;
+    CAPA_M[id] = capasImagen().addImageryProvider(await C.SingleTileImageryProvider.fromUrl(`capas/minerales/${id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) }));
+  }
+  if (CAPA_M[id]) CAPA_M[id].show = on;
+}
+const MIN_LISTA = [['arcillas', 'Arcillas de Fe/Mg', '#40c4ff'], ['sulfatos', 'Sulfatos hidratados', '#ffd640'], ['agua', 'Agua en minerales', '#78ffc8'], ['hematita', 'Óxidos férricos / hematita', '#ff503c'], ['olivino', 'Olivino', '#96ff5a'], ['piroxeno', 'Piroxeno alto en calcio', '#c878ff']];
 function vistaCapas() {
   cont().innerHTML = `<h2>Capas</h2>
     ${[['recorrido', 'Recorrido de Curiosity por zonas'], ['pozos', 'Las 49 perforaciones'], ['etiquetas', 'Nombres de zonas'], ['base', 'Sitios candidatos para la base'], ['orbitas', 'Orbitadores y órbitas']].map(([k, t]) => `<label class="fila"><span>${t}</span><input type="checkbox" data-c="${k}" ${VIS[k] ? 'checked' : ''}></label>`).join('')}
-    <div class="fila"><span>Color de los pozos</span><select id="colorPor"><option value="zona">zona</option><option value="agua">agua en minerales</option><option value="co2">carbonatos (CO₂)</option><option value="fe">óxidos de hierro</option><option value="cl">cloro</option></select></div>
+    <div class="fila"><span>Color de los pozos</span><select id="colorPor"><option value="zona">zona</option><option value="agua">agua en minerales</option><option value="co2">carbonatos (CO₂)</option><option value="fe">óxidos de hierro</option><option value="cl">cloro</option><option value="arcillas">arcillas (CheMin)</option><option value="sulfatos">sulfatos (CheMin)</option><option value="hematita">hematita (CheMin)</option><option value="amorfo">material amorfo (CheMin)</option></select></div>
+    <p class="sub" id="leyColor"></p>
     <div class="fila"><span>Exagerar el relieve</span><select id="exag"><option value="1">×1 (real)</option><option value="1.5">×1,5</option><option value="2">×2</option><option value="3">×3</option></select></div>
     ${D.capas5m ? `<h2>Análisis del terreno (5 m)</h2><p class="sub">Todo el área de Curiosity en Gale (${Math.round(D.capas5m.caja_planetocentrica.ancho * 5 / 1000)} × ${Math.round(D.capas5m.caja_planetocentrica.alto * 5 / 1000)} km). Elevación ${Math.round(D.capas5m.elev_min)} a ${Math.round(D.capas5m.elev_max)} m. Límite de pendiente: astronauta ${D.capas5m.parametros.pendiente_astronauta}°, rover ${D.capas5m.parametros.pendiente_rover}°.</p>
     ${ANALISIS.map(([k, t, d, a]) => `<label class="fila"><span title="${d}">${t}</span><input type="checkbox" data-a="${k}" ${CAPA_A[k] && CAPA_A[k].show ? 'checked' : ''}></label><div class="fila"><span class="sub">${d}</span><input type="range" min="0.1" max="1" step="0.05" data-o="${k}" value="${CAPA_A[k] ? CAPA_A[k].alpha : a}" style="width:90px"></div>`).join('')}` : ''}
+    ${D.capas5m ? leyendaRad() : ''}
+    <h2>Minerales vistos desde órbita (CRISM)</h2>
+    <p class="sub">Espectrómetro CRISM de la sonda Mars Reconnaissance Orbiter (NASA), sobre la franja que recorrió Curiosity. Más color = señal más fuerte dentro de la zona (es relativa, no una cantidad). Lo medido en cada pozo se ve con "Color de los pozos" → CheMin.</p>
+    ${MIN_LISTA.map(([k, t, c]) => `<label class="fila"><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${c};margin-right:6px"></i>${t}</span><input type="checkbox" data-m="${k}" ${CAPA_M[k] && CAPA_M[k].show ? 'checked' : ''}></label>`).join('')}
+    <p class="fuente">CRISM: mosaicos del cráter Gale de NASA/JHU-APL (Seelos et al. 2012), <a href="https://crism.jhuapl.edu/msl_landing_sites/" target="_blank" rel="noopener">crism.jhuapl.edu/msl_landing_sites</a>. CheMin en los pozos: <a href="https://pds-geosciences.wustl.edu/missions/msl/chemin.htm" target="_blank" rel="noopener">pds-geosciences.wustl.edu/missions/msl/chemin.htm</a> (NASA PDS).</p>
     <h2>Motor 3D</h2>
     <div class="fila"><span>Globo</span><select id="motor"><option value="globo">Marte completo (CTX 5 m + HiRISE 25 cm)</option><option value="cesium">Cesium Mars (3D Tiles)</option></select></div>
     ${MODO === 'globo' ? `<p class="sub">Todo Marte con el mosaico CTX de 5 m por píxel. Relieve: HRSC/MOLA (200 m) en el planeta y modelo de 1 m (a 5 m) en la zona de Curiosity. Fotos HiRISE de 25 cm en Gale.</p>
@@ -779,7 +863,11 @@ function vistaCapas() {
   $('motor').value = MODO; $('motor').onchange = e => { try { localStorage.setItem('galeEarthMotor', e.target.value); } catch {} location.reload(); };
   cont().querySelectorAll('[data-b]').forEach(el => el.onchange = () => { CAPAS_BASE[el.dataset.b].show = el.checked; });
   if ($('colorCTX')) { $('colorCTX').value = MODO_COLOR; $('colorCTX').onchange = e => { MODO_COLOR = e.target.value; try { localStorage.setItem('galeEarthColor', MODO_COLOR); } catch {} capaCTX(); }; }
-  $('colorPor').value = colorPor; $('colorPor').onchange = e => { colorPor = e.target.value; repintar(); };
+  const ley = () => { const e = ESCALAS[colorPor]; $('leyColor').innerHTML = e ? `${e.n}: de 0 (oscuro) a ${fmt(e.max)} ${e.u} (claro). Gris = sin dato.` : ''; };
+  $('colorPor').value = colorPor; ley();
+  $('colorPor').onchange = async e => { colorPor = e.target.value; if (ESCALAS[colorPor] && ESCALAS[colorPor].campo.startsWith('ch_')) await cargarCheminPozos(); repintar(); ley(); };
+  cont().querySelectorAll('[data-m]').forEach(el => el.onchange = () => capaMineral(el.dataset.m, el.checked));
+  cont().querySelectorAll('#radHora button').forEach(b => b.onclick = async () => { cont().querySelectorAll('#radHora button').forEach(x => x.classList.toggle('on', x === b)); await cambiarHorarioRad(b.dataset.h); });
   $('exag').value = String(viewer.scene.verticalExaggeration || 1); $('exag').onchange = e => { const v = +e.target.value; viewer.scene.verticalExaggeration = v; $('relBadge').textContent = '×' + String(v).replace('.', ','); $('relBadge').classList.toggle('oculto', v === 1); };
   $('guardarTok').onclick = () => { const v = $('tok').value.trim(); if (v && !v.startsWith('••')) { try { localStorage.setItem('galeEarthToken', v); } catch {} location.reload(); } };
   $('borrarTok').onclick = () => { try { localStorage.removeItem('galeEarthToken'); } catch {} location.reload(); };
