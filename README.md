@@ -22,13 +22,22 @@ Every stop is tied to a current science question of the Curiosity team.
 - Curiosity mission blog, NASA (science.nasa.gov).
 - RAD radiation measurements (Hassler et al., 2014); terrain shielding (DLR, JGR Planets 2026).
 - NASA "Where is Curiosity?" map for the current position.
-- Apache License 2.0.
-- Topografía (relieve, altura, modelos de elevación) MOLA, HRSC, CRX, HiRISE
+- Full traverse color: USGS/ASC HiRISE color mosaic of Gale (`MSL_Gale_HiRISE-LRGB_78quads_sharp_cog.tif`).
+- Full traverse and drill-hole positions: NASA MSL live map feeds (`MSL_traverse.json`, `MSL_waypoints.json`).
+- Topografía (relieve, altura, modelos de elevación) MOLA, HRSC, CTX, HiRISE
 - Imagen (fotografía visible) HiRISE, CTX, HRSC, CaSSIS, MOC
-- Full source register: `docs/fuentes.md`.
 - Composición/termal (minerales, temperatura, propiedades de la superficie) THEMIS, CRISM, OMEGA, TES
 - Agua y hielo / subsuelo SHARAD, MARSIS, GRS, FREND
 - Atmósfera y clima MCS, MAVEN, EMIRS/EXI
+- Full source register: `docs/fuentes.md`.
 
 ## License
 
+Our code and documents are released under the **Apache License 2.0** (see [`LICENSE`](LICENSE)).
+
+Third-party components keep their own licenses:
+- three.js r170 (MIT), bundled in `escena3d/vendor/` with `LICENSE-three-MIT.txt`.
+- CesiumJS 1.147 (Apache 2.0), loaded from jsDelivr by `gale-earth/`.
+- Star catalog and Milky Way outline via d3-celestial (BSD), see `gale-earth/README.md`.
+
+NASA, USGS and ESA data are used under their public data policies and are credited in `docs/fuentes.md`. The "ER-6 Terrain Explorer" simulator was visual inspiration only; no code was copied.

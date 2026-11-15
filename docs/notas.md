@@ -151,6 +151,16 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
 - Probado con `servir.py`: Gale Earth → misión → Marte completo, ida y vuelta.
 - Prueba final en celular (390 px): la barra de abajo de la misión ahora es una sola fila que se desliza, los mensajes salen como aviso breve y las vistas usan nombres cortos (Marte, Travesía, Hoy) debajo de Panel/Datos. Sin internet, Gale Earth no carga Cesium, pero el botón a la misión funciona igual (es un enlace).
 
+## 2026-11-14 noche · Compañero (con Claude) · LICENCIA Y ORIGEN DE LOS DATOS DE LA TRAVESÍA
+- **`LICENSE` agregado** (texto oficial de Apache 2.0, bajado de apache.org). La sección "License" del README ya está completa, con las licencias de terceros: three.js (MIT), CesiumJS (Apache 2.0) y d3-celestial (BSD).
+- **Resuelto el pendiente 1 de David** (de dónde salen el mosaico de color y el GeoPackage). Está en `docs/fuentes.md` y en `data/README.md`, con los comandos para volver a bajarlos:
+  - Color: mosaico HiRISE LRGB de USGS/ASC (`MSL_Gale_HiRISE-LRGB_78quads_sharp_cog.tif`).
+  - Elevación: DEM USGS de 1 m remuestreado a 4 m.
+  - Recorrido: `MSL_traverse.json` de NASA.
+  - Pozos: `MSL_waypoints.json`. Es la posición del rover estacionado, no la del pozo exacto.
+- **Gale Earth, dosis corregida a 0,64 mSv/día** (lo marcó David). En `gale-earth/capas/gale_5m/capas.json` se reescalaron `dosis_superficie`, `dosis_min` y `dosis_max` (× 0,64/0,67). La dosis es lineal en ese valor, así que el PNG de colores no cambia. **No rearmé `gale-earth/index.html`** para no chocar con `david/union-gale-earth`, que también lo modifica. Después de unir las dos ramas, correr `python _ensamblar.py` y `python armar.py` en `gale-earth/`. Al volver a procesar con `gale_datos.py`, ya toma 0,64 de `data/parametros.json`.
+- README: corregido "CRX" por "CTX" y ordenada la lista de fuentes. El resto del README sigue mezclado en castellano: se pasa al inglés mañana.
+- Sigue faltando: unir `david/union-gale-earth` a main (decide David), activar GitHub Pages y decidir qué hacemos con las teselas de Gale Earth. Propuesta: GALE-3D como demo principal y Gale Earth con menos capas.
 
 ## 2026-11-14 tarde (2) · David (con Claude) · QA: FUENTES "?", CINTA AL PISO, CARTELES, E1–E5, VISOR AL MANEJAR
 - **"?" en cada ítem:** capas, leyendas, fichas de paradas y perforaciones, panel derecho, clima, expedición y "¿Por qué perforar en Gale?". Al tocarlo se abre una ventanita con la fuente y "Abrir la fuente". Lista completa de enlaces: `docs/fuentes-enlaces.md` (`herramientas/listar_fuentes.py`).
