@@ -43,9 +43,10 @@ Desde el 15/11, la misión que antes abría otra página (GALE-3D) vive acá, en
   - paradas S, A1–A4, B1, B2, C2–C4, Q1, M1, R1 y Z1 (carteles con su color), rutas A, B y las caminatas de C (líneas pegadas al terreno), y la expedición sur E1–E5;
   - **Base Gale** en la Zona 2 (modelo 3D);
   - Curiosity o el **GX-2** en la salida, con el astronauta al lado.
+  - El **rover tripulado GX-3** estacionado en la Base Gale (ficha, Alas, Modo cangrejo, Dron y Perforar 2 m), con la **ruta T** de la base a la zona de hoy.
   - Cada cartel, la base y el rover abren su ficha en el panel, con las mismas fuentes ("?").
   - Al pasar el mouse, cualquier cartel (también los pozos y zonas de Gale Earth) muestra la mano, se agranda y dice qué es.
-- **Barra de la misión:** En pareja · Rover ruta A · A pie ruta B · Tripulado C · Expedición sur · Base Gale · Curiosity / GX-2.
+- **Barra de la misión:** En pareja · Rover ruta A · A pie ruta B · Tripulado GX-3 (desde la base o la ruta C, con caminatas por los suitports) · Expedición sur · Base Gale · Curiosity / GX-2.
   - Todo recorrido arranca **en pausa** ("Listos para salir") y dura **4 min** por defecto (1, 2, 4 u 8).
   - Se detiene en cada parada y tiene vista desde atrás o con los ojos del astronauta. Esc sale.
 - **Misión en pareja:** cámara del casco del Astronauta 1, Astronauta 2 a 6 m (visor con suelo, CRISM, radiación y refugio, más minimapa) y mensajes de la Base Gale y de la Tierra con la demora real de la luz.

@@ -1069,6 +1069,9 @@ const FUENTES_URL = {
   ingenuity: ['NASA: Ingenuity hizo 72 vuelos, unos 128,8 minutos en el aire y 17 km recorridos', 'https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/'],
   mmrtg: ['NASA: el MMRTG da unos 110 W eléctricos al empezar la misión', 'https://science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf'],
   sitiosBase: ['Análisis de sitios del equipo (15/11): tres centros para una base con zona de aterrizaje en la llanura del aterrizaje, con el DEM USGS de 1 m, HiRISE y el recorrido de Curiosity (data/base/sitios_base.geojson)', 'https://github.com/Davidsitx/Guidears-Nasaspaceapps/blob/main/data/base/sitios_base.geojson'],
+  sev: ['NASA, hoja técnica del Space Exploration Vehicle (SEV): cabina presurizada para 2 (4 en emergencia), hasta 14 días, ~10 km/h, 12 ruedas que giran 360°, suitports (salida en menos de 10 min), esclusa con 2,5 cm de agua congelada, protege hasta 72 h; 4,5 m de largo, 3 m de alto, 3.000 kg', 'https://www.nasa.gov/wp-content/uploads/2015/08/464826main_sev_factsheet_508.pdf'],
+  marsPR: ['NASA Mars Architecture Team, Chappell et al. (IEEE Aerospace 2022): rover presurizado para 2 en Marte, 5.193 kg con 60 kWh (200 kWh en la opción elegida), 8 km/h, 1,85 kW de consumo de la cabina, carga a 3 kW con el reactor de fisión, panel solar de 3,5 kW', 'https://ntrs.nasa.gov/citations/20210022250'],
+  prPower: ['NASA, Human Mars Surface Mission Nuclear Power Considerations (IEEE Aerospace 2018): un rover presurizado consume cerca de 2 kW quieto y manejar suma unos 5 kW', 'https://ntrs.nasa.gov/citations/20170006519'],
   suitport: ['NASA JSC (2012): suitports, el traje queda acoplado afuera; la preparación de una salida pasa de horas a menos de 30 minutos y el polvo no entra', 'https://ntrs.nasa.gov/citations/20120018014'],
   jplApprox: ['NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte', 'https://ssd.jpl.nasa.gov/planets/approx_pos.html'],
   odometria: ['NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos', 'https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/'],
@@ -3037,6 +3040,7 @@ function conectarBotones(cont) {
   cont.querySelectorAll('[data-expe-hasta]').forEach(b => b.onclick = () => { $('ficha').classList.add('oculto'); entrarExpe(b.dataset.quien, b.dataset.expeHasta); expe.jugando = true; $('ex-play').textContent = '❚❚ Pausa'; });
   cont.querySelectorAll('[data-perforar-expe]').forEach(b => b.onclick = () => { const e = EXP.paradas.find(o => o.id === b.dataset.perforarExpe); $('ficha').classList.add('oculto'); irAExpe(e); perforar({ x: e.x, z: e.z, nombre: e.parada, quien: e.quien === 'astronauta' ? 'astronauta' : 'vehiculo' }); });
   cont.querySelectorAll('[data-rn]').forEach(b => b.onclick = () => rnBoton(b.dataset.rn));
+  cont.querySelectorAll('[data-gx3]').forEach(b => b.onclick = () => gx3Boton(b.dataset.gx3));
   cont.querySelectorAll('[data-pozo-viaje]').forEach(b => b.onclick = () => { $('ficha').classList.add('oculto'); entrarViaje(POZOS[+b.dataset.pozoViaje].dTR); });
 }
 function listarParadas() {
@@ -3075,8 +3079,10 @@ lienzo.addEventListener('pointerup', e => {
   rayo.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camara);
   const hit = rayo.intersectObjects(marcadores.map(m => m.sp), false)[0];
   if (hit && !marcando && !destinoModo) { mostrarFicha(hit.object.userData.marcador); return; }
+  const hRT = RT && !marcando && !destinoModo && !fp ? rayo.intersectObject(RT.g, true)[0] : null;      // el GX-3 está bajo el techo del garaje: gana el más cercano
   if (BASE && !marcando && !destinoModo && !fp) {          // tocar una parte de la base abre su ficha
     const hb = rayo.intersectObjects(BASE.partes, true)[0];
+    if (hRT && (!hb || hRT.distance <= hb.distance + 0.5)) { mostrarGX3(); return; }
     if (hb) { let o = hb.object; while (o && !o.userData.parteBase) o = o.parent; if (o) { mostrarBase(o.userData.parteBase); return; } }
   }
   if (RN?.activo && !marcando && !destinoModo && !fp && rayo.intersectObject(RN.g, true).length) { mostrarGX(); return; }
@@ -4342,6 +4348,7 @@ renderer.setAnimationLoop(ahora => {
   const andando = (fp && fp.r.tipo === 'vehiculo' && fp.jugando) || (est.auto && rutaRover && sRover < rutaRover.largo);
   cabeza.rotation.y += ((andando ? 0 : 0.7 * Math.sin(relojEscena * 0.35)) - cabeza.rotation.y) * Math.min(1, dtReal * 2);
   if (RN?.activo) { RN.seguir(); RN.tick(dtReal); }
+  if (RT) RT.tick(dtReal);
   cieloDomo.position.copy(camara.position);
   // sombra del sol alrededor del rover
   if (expe.activo) sol.target.position.copy(controles.target); else sol.target.position.set(est.x, rover.position.y, est.z); sol.position.copy(sol.target.position).addScaledVector(dirSol, 400);
@@ -4898,6 +4905,252 @@ $('rnDron').onclick = rnDron;
 $('rnPerf').onclick = rnPerforar;
 $('rnFicha').onclick = mostrarGX;
 
+// ---------- Rover tripulado GX-3: para las misiones con personas (diseño propio del equipo) ----------
+// No reemplaza a Curiosity ni al GX-2: es un vehículo aparte que se estaciona junto al garaje de la Base Gale. Sigue la idea del SEV de NASA
+// (cabina presurizada para dos, doce ruedas en seis patas que giran 360°, suitports atrás) y del rover presurizado de los
+// estudios de NASA para Marte (batería que se carga con el reactor de la base). Suma lo que ya tiene el GX-2: taladro de 2 m,
+// dron, alas solares, mástil con LiDAR. Adelante = +x, arriba = +y, derecha = +z.
+const RT = (() => {
+  if (!BASE) return null;
+  const g = new THREE.Group(); g.name = 'gx3'; escena.add(g);
+  const cuerpo = new THREE.Group(); g.add(cuerpo);
+  const M = {
+    casco: new THREE.MeshStandardMaterial({ color: 0xf3efe8, roughness: 0.45, metalness: 0.08, emissive: 0x231f1b }),
+    panel: new THREE.MeshStandardMaterial({ color: 0xe2ddd4, roughness: 0.6, metalness: 0.1 }),
+    naranja: new THREE.MeshStandardMaterial({ color: 0xd9733f, roughness: 0.45, metalness: 0.2 }),
+    agua: new THREE.MeshStandardMaterial({ color: 0x2f6fb0, roughness: 0.4, metalness: 0.2 }),
+    goma: new THREE.MeshStandardMaterial({ color: 0x3f3b37, roughness: 0.9, metalness: 0.15 }),
+    vidrio: new THREE.MeshStandardMaterial({ color: 0x0d1d28, roughness: 0.04, metalness: 0.85, emissive: 0x06141c }),
+    marco: new THREE.MeshStandardMaterial({ color: 0x2b2926, roughness: 0.5, metalness: 0.4 }),
+    luz: new THREE.MeshStandardMaterial({ color: 0xfff1d0, emissive: 0xffdca0, emissiveIntensity: 1.5 }),
+    roja: new THREE.MeshStandardMaterial({ color: 0xff4a3a, emissive: 0xff2a1a, emissiveIntensity: 1.4 }),
+    lidar: new THREE.MeshStandardMaterial({ color: 0x1c1f24, roughness: 0.2, metalness: 0.6, emissive: 0x08303a }),
+    bateria: new THREE.MeshStandardMaterial({ color: 0x3a3936, roughness: 0.55, metalness: 0.35 }),
+  };
+  { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 128; const x = cv.getContext('2d');
+    x.fillStyle = '#16284f'; x.fillRect(0, 0, 256, 128); x.strokeStyle = '#6a8bbd'; x.lineWidth = 1.2;
+    for (let i = 0; i <= 256; i += 21.3) { x.beginPath(); x.moveTo(i + 0.5, 0); x.lineTo(i + 0.5, 128); x.stroke(); }
+    for (let j = 0; j <= 128; j += 21.3) { x.beginPath(); x.moveTo(0, j + 0.5); x.lineTo(256, j + 0.5); x.stroke(); }
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; M.celda = new THREE.MeshStandardMaterial({ map: t, roughness: 0.25, metalness: 0.5 }); }
+  { // nombre pintado en los costados
+    const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128; const x = cv.getContext('2d');
+    x.fillStyle = '#d9733f'; x.fillRect(0, 54, 512, 10);
+    x.fillStyle = '#2b2926'; x.font = '800 64px system-ui, sans-serif'; x.textBaseline = 'middle'; x.fillText('GX-3', 8, 30);
+    x.font = '700 30px system-ui, sans-serif'; x.fillText('BASE GALE · TRIPULADO', 10, 98);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    M.nombre = new THREE.MeshStandardMaterial({ map: t, transparent: true, roughness: 0.6, alphaTest: 0.05 }); }
+  { const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64; const x = cv.getContext('2d');
+    for (let i = 0; i < 8; i++) { x.fillStyle = i % 2 ? '#1b1210' : '#f2c230'; x.beginPath(); x.moveTo(i * 16 - 32, 64); x.lineTo(i * 16 - 16, 64); x.lineTo(i * 16 + 48, 0); x.lineTo(i * 16 + 32, 0); x.fill(); }
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(6, 1);
+    M.aviso = new THREE.MeshStandardMaterial({ map: t, roughness: 0.6 }); }
+  const Y = new THREE.Vector3(0, 1, 0), V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const cil = (r1, r2, h, mat, padre, p, rot, seg = 20) => malla(new THREE.CylinderGeometry(r1, r2, h, seg), mat, padre, p, rot);
+  const caja = (w, h, d, mat, padre, p, rot) => malla(new THREE.BoxGeometry(w, h, d), mat, padre, p, rot);
+  const anillo = (r, t, mat, padre, p, rot) => malla(new THREE.TorusGeometry(r, t, 8, 32), mat, padre, p, rot);
+  const entre = (a, b, r, mat, padre, seg = 10) => { const v = new THREE.Vector3().subVectors(b, a), m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, v.length(), seg), mat);
+    m.position.copy(a).addScaledVector(v, 0.5); m.quaternion.setFromUnitVectors(Y, v.normalize()); m.castShadow = true; padre.add(m); return m; };
+
+  // 1) cabina presurizada: perfil de costado extruido a lo ancho, con bordes redondeados
+  const piso = 1.32, techo = 3.0, ATRAS = -2.7, NARIZ = 2.75, ANCHO = 2.5, BEV = 0.13;
+  const perfil = new THREE.Shape([V(ATRAS, piso), V(2.25, piso), V(NARIZ, 1.72), V(NARIZ, 2.02), V(1.85, techo), V(-2.45, techo), V(ATRAS, 2.75)].map(p => new THREE.Vector2(p.x, p.y)));
+  const geoCab = new THREE.ExtrudeGeometry(perfil, { depth: ANCHO, bevelEnabled: true, bevelThickness: BEV, bevelSize: BEV, bevelSegments: 3, curveSegments: 4 });
+  geoCab.translate(0, 0, -ANCHO / 2);
+  const cab = malla(geoCab, M.casco, cuerpo); cab.name = 'cabina';
+  const Z = ANCHO / 2 + BEV;                                  // costado de la cabina
+  // ventanas: parabrisas en tres paños, ventana baja para ver el suelo y dos ventanitas por costado
+  const pend = Math.atan2(techo - 2.02, 1.85 - NARIZ), largoP = Math.hypot(techo - 2.02, 1.85 - NARIZ);
+  const cP = V((NARIZ + 1.85) / 2, (2.02 + techo) / 2, 0), nx = (techo - 2.02) / largoP, ny = (NARIZ - 1.85) / largoP;
+  caja(largoP - 0.08, 0.03, ANCHO - 0.2, M.vidrio, cuerpo, [cP.x + nx * (BEV + 0.01), cP.y + ny * (BEV + 0.01), 0], [0, 0, pend - Math.PI]);
+  for (const z of [-0.42, 0.42]) caja(largoP - 0.04, 0.05, 0.07, M.marco, cuerpo, [cP.x + nx * (BEV + 0.03), cP.y + ny * (BEV + 0.03), z], [0, 0, pend - Math.PI]);
+  caja(0.03, 0.26, ANCHO - 0.3, M.vidrio, cuerpo, [NARIZ + BEV + 0.01, 1.87, 0]);
+  for (const s of [1, -1]) caja(0.52, 0.42, 0.03, M.vidrio, cuerpo, [1.55, 2.38, s * (Z + 0.01)]);
+  // franja naranja, nombre en los costados, juntas de los paneles y escalón de entrada
+  caja(5.6, 0.09, ANCHO + 2 * BEV + 0.02, M.naranja, cuerpo, [0, 1.6, 0]);
+  for (const s of [1, -1]) {
+    const n = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.35), M.nombre); n.position.set(-1.05, 2.05, s * (Z + 0.012)); n.rotation.y = s > 0 ? 0 : Math.PI; cuerpo.add(n);
+    for (const x of [-1.9, -0.95, 0.1]) caja(0.025, 1.35, 0.01, M.panel, cuerpo, [x, 2.2, s * (Z + 0.006)]);
+  }
+  // 2) refugio de tormenta solar en la parte de atrás: paredes con tanques de agua (franjas azules)
+  for (const x of [-2.55, -2.25, -1.95]) caja(0.12, techo - piso + 0.22, ANCHO + 2 * BEV + 0.04, M.agua, cuerpo, [x, (techo + piso) / 2, 0]);
+  // 3) dos suitports en la pared de atrás, con los trajes acoplados de espaldas, y un balcón con escalera
+  const pared = ATRAS - BEV;
+  for (const z of [-0.55, 0.55]) { anillo(0.42, 0.06, M.marco, cuerpo, [pared - 0.02, 2.15, z], [0, Math.PI / 2, 0]); cil(0.38, 0.38, 0.05, M.panel, cuerpo, [pared - 0.01, 2.15, z], [0, 0, Math.PI / 2], 24); }
+  caja(0.95, 0.07, ANCHO, M.marco, cuerpo, [pared - 0.48, 1.12, 0]);
+  for (const z of [-1.2, 1.2]) { entre(V(pared - 0.92, 1.15, z), V(pared - 0.92, 2.0, z), 0.025, MAT.alu, cuerpo, 6); entre(V(pared - 0.92, 2.0, z), V(pared - 0.05, 2.0, z), 0.025, MAT.alu, cuerpo, 6); }
+  for (let i = 0; i < 3; i++) caja(0.32, 0.05, 0.8, M.marco, cuerpo, [pared - 1.05 - i * 0.18, 0.86 - i * 0.28, 0]);
+  const trajes = [];
+  for (const z of [-0.55, 0.55]) { const t = astro.clone(true); t.visible = true; t.position.set(pared - 0.38, 1.16, z); t.rotation.y = Math.PI; t.scale.setScalar(0.97); t.name = `traje_${trajes.length}`; cuerpo.add(t); trajes.push(t); }
+  // 4) compuerta de acople al costado derecho (para unirse a la esclusa de la base sin salir afuera)
+  anillo(0.52, 0.08, M.marco, cuerpo, [0.55, 2.1, Z + 0.03], [0, 0, 0]); cil(0.47, 0.47, 0.05, M.panel, cuerpo, [0.55, 2.1, Z + 0.02], [Math.PI / 2, 0, 0], 28);
+  caja(0.5, 0.07, 0.04, M.naranja, cuerpo, [0.55, 2.1, Z + 0.06]);
+  // 5) bandeja de baterías debajo del piso y puerto de carga (se enchufa en el garaje)
+  caja(5.1, 0.32, 2.2, M.bateria, cuerpo, [-0.05, 1.12, 0]);
+  for (let i = 0; i < 6; i++) caja(0.7, 0.24, 0.04, i % 2 ? M.naranja : M.marco, cuerpo, [-2.2 + i * 0.85, 1.12, 1.12]);
+  caja(0.22, 0.22, 0.05, M.marco, cuerpo, [-1.55, 1.85, -(Z + 0.02)]); cil(0.06, 0.06, 0.04, M.naranja, cuerpo, [-1.55, 1.85, -(Z + 0.05)], [Math.PI / 2, 0, 0], 12);
+  // 6) faros, luces de posición, baliza y cámara de suelo
+  for (const z of [-0.95, 0.95]) { caja(0.06, 0.12, 0.3, M.marco, cuerpo, [NARIZ + BEV + 0.03, 1.5, z]); caja(0.02, 0.08, 0.26, M.luz, cuerpo, [NARIZ + BEV + 0.06, 1.5, z]); }
+  for (const z of [-1.2, 1.2]) caja(0.03, 0.06, 0.1, M.roja, cuerpo, [pared - 0.02, 2.75, z]);
+  cil(0.07, 0.07, 0.1, M.naranja, cuerpo, [-0.4, techo + BEV + 0.05, 0], [0, 0, 0], 12);
+  entre(V(NARIZ + 0.05, 1.45, 0.35), V(NARIZ + 0.4, 1.2, 0.35), 0.03, MAT.alu, cuerpo, 6); caja(0.16, 0.12, 0.14, M.marco, cuerpo, [NARIZ + 0.43, 1.14, 0.35]);
+  // 7) techo: mástil con LiDAR y cámaras estéreo, antena a la Tierra, radiadores y plataforma del dron
+  const T0 = techo + BEV;
+  const mastil = new THREE.Group(); mastil.position.set(1.62, T0, -0.75); cuerpo.add(mastil);
+  cil(0.05, 0.06, 0.18, MAT.alu, mastil, [0, 0.09, 0], [0, 0, 0], 10);
+  caja(0.24, 0.14, 0.42, M.casco, mastil, [0.03, 0.24, 0]);
+  for (const z of [-0.13, 0.13]) cil(0.04, 0.04, 0.05, M.vidrio, mastil, [0.16, 0.25, z], [0, 0, Math.PI / 2], 14);
+  const lidar = new THREE.Group(); lidar.name = 'lidar'; lidar.position.set(0.02, 0.37, 0); mastil.add(lidar);
+  cil(0.09, 0.09, 0.12, M.lidar, lidar, [0, 0, 0], [0, 0, 0], 18); caja(0.04, 0.05, 0.02, M.luz, lidar, [0.08, 0, 0]);
+  cil(0.3, 0.3, 0.05, M.casco, cuerpo, [-2.12, T0 + 0.2, 0.42], [0.5, 0, 0.35], 24); cil(0.04, 0.04, 0.2, MAT.alu, cuerpo, [-2.12, T0 + 0.09, 0.42]);
+  for (const z of [-1.05, 1.05]) for (let i = 0; i < 7; i++) caja(0.04, 0.32, 0.22, MAT.gris, cuerpo, [-2.35 + i * 0.09, T0 + 0.16, z]);
+  const PLAT = [-1.75, T0 + 0.02, -0.5];
+  cil(0.32, 0.32, 0.03, M.marco, cuerpo, [PLAT[0], T0 + 0.01, PLAT[2]], [0, 0, 0], 20);
+  const dron = new THREE.Group(); dron.name = 'dron'; dron.position.set(...PLAT); dron.scale.setScalar(0.8); cuerpo.add(dron);
+  caja(0.2, 0.16, 0.2, M.casco, dron, [0, 0.16, 0]);
+  for (let i = 0; i < 4; i++) { const a = Math.PI / 4 + i * Math.PI / 2; entre(V(Math.cos(a) * 0.08, 0.1, Math.sin(a) * 0.08), V(Math.cos(a) * 0.22, 0, Math.sin(a) * 0.22), 0.012, MAT.alu, dron, 5); }
+  cil(0.015, 0.015, 0.3, MAT.alu, dron, [0, 0.38, 0], [0, 0, 0], 6);
+  const rotores = [0.42, 0.5].map((h, i) => { const r = new THREE.Group(); r.name = `rotor_${i}`; r.position.y = h; dron.add(r); caja(1.0, 0.012, 0.07, M.marco, r, [0, 0, 0]); return r; });
+  caja(0.1, 0.008, 0.1, M.celda, dron, [0, 0.54, 0]);
+  // 8) alas solares: plegadas quedan acostadas sobre el techo; abiertas giran 180° hacia afuera y quedan horizontales
+  const alas = [];
+  for (const lado of [1, -1]) {
+    const b = new THREE.Group(); b.name = `ala_${lado > 0 ? 0 : 1}`; b.position.set(0.05, T0 + 0.05, lado * (Z - 0.02)); cuerpo.add(b);
+    caja(2.6, 0.05, 1.22, MAT.alu, b, [0, 0, lado * 0.62]); caja(2.52, 0.02, 1.14, M.celda, b, [0, 0.035, lado * 0.62]);
+    cil(0.03, 0.03, 2.6, MAT.gris, b, [0, 0, 0], [0, 0, Math.PI / 2], 8);
+    alas.push({ b, lado });
+  }
+  // 9) taladro de 2 m adelante a la derecha (torre, carro, sarta y las tres barras de 50 cm en su soporte)
+  const torre = new THREE.Group(); torre.name = 'torre'; torre.position.set(NARIZ + 0.45, 0.62, 0.92); cuerpo.add(torre);
+  caja(0.5, 0.1, 0.3, MAT.gris, cuerpo, [NARIZ + 0.2, 1.42, 0.92]); caja(0.5, 0.1, 0.3, MAT.gris, cuerpo, [NARIZ + 0.2, 2.3, 0.92]);
+  for (const z of [-0.12, 0.12]) caja(0.06, 2.3, 0.05, MAT.alu, torre, [0, 1.15, z]);
+  caja(0.2, 0.1, 0.36, MAT.gris, torre, [0, 2.32, 0]);
+  for (let h = 0.3; h < 2.2; h += 0.4) caja(0.04, 0.03, 0.26, MAT.alu, torre, [0, h, 0]);
+  const carro = new THREE.Group(); carro.name = 'carro'; carro.position.set(0, 2.1, 0); torre.add(carro);
+  caja(0.26, 0.3, 0.3, M.naranja, carro, [0.06, 0, 0]); cil(0.06, 0.06, 0.2, M.marco, carro, [0.06, -0.24, 0], [0, 0, 0], 12);
+  const sarta = cil(0.035, 0.035, 1, MAT.alu, torre, [0.06, 0, 0], [0, 0, 0], 10); sarta.name = 'sarta';
+  const mecha = cil(0.05, 0.02, 0.12, M.marco, torre, [0.06, 0, 0], [0, 0, 0], 10); mecha.name = 'mecha';
+  caja(1.1, 0.06, 0.12, MAT.gris, cuerpo, [0.9, 2.74, Z + 0.06]);
+  const barras = [0, 1, 2].map(i => { const b = cil(0.03, 0.03, 0.5, MAT.alu, cuerpo, [0.62 + i * 0.28, 2.8, Z + 0.1], [0, 0, Math.PI / 2], 8); b.name = `barra_${i}`; return b; });
+  // 10) brazo robótico adelante a la izquierda (se maneja desde adentro, sin salir), plegado
+  const brazo = new THREE.Group(); brazo.name = 'brazo'; brazo.position.set(NARIZ + 0.12, 1.55, -0.95); cuerpo.add(brazo);
+  cil(0.1, 0.1, 0.14, M.marco, brazo, [0, 0, 0], [Math.PI / 2, 0, 0], 14);
+  entre(V(0, 0, 0), V(0.55, 0.45, 0), 0.06, MAT.alu, brazo); cil(0.08, 0.08, 0.12, M.marco, brazo, [0.55, 0.45, 0], [Math.PI / 2, 0, 0], 12);
+  entre(V(0.55, 0.45, 0), V(0.4, -0.15, 0), 0.05, MAT.alu, brazo);
+  caja(0.14, 0.12, 0.16, MAT.gris, brazo, [0.4, -0.22, 0]); for (const z of [-0.05, 0.05]) caja(0.03, 0.14, 0.02, M.marco, brazo, [0.4, -0.33, z]);
+  // 11) seis patas con dos ruedas cada una (doce ruedas de 1 m, como el SEV); cada pata gira 360° para ir en cualquier dirección
+  const RW = 0.5, XS = [2.0, 0, -2.0], ZP = 1.62, patas = [], ruedas = [];
+  const geoTaco = new THREE.BoxGeometry(0.06, 0.04, 0.12);
+  let k = 0;
+  for (const lado of [1, -1]) for (const x of XS) {
+    const p = new THREE.Group(); p.name = `pata_${patas.length}`; p.position.set(x, RW, lado * ZP); g.add(p);
+    // horquilla y amortiguador hasta el soporte del cuerpo
+    caja(0.16, 0.66, 0.16, MAT.gris, p, [0, 0.33, 0]); cil(0.06, 0.06, 0.62, M.marco, p, [0, 0, 0], [Math.PI / 2, 0, 0], 10);
+    cil(0.09, 0.09, 0.3, M.naranja, p, [0, 0.62, 0], [0, 0, 0], 12);
+    for (const dz of [-0.22, 0.22]) {
+      const w = new THREE.Group(); w.position.set(0, 0, dz); p.add(w);
+      const giro = new THREE.Group(); giro.name = `rueda_${k++}`; w.add(giro);
+      cil(RW, RW, 0.24, M.goma, giro, [0, 0, 0], [Math.PI / 2, 0, 0], 28);
+      cil(RW * 0.62, RW * 0.62, 0.26, MAT.alu, giro, [0, 0, 0], [Math.PI / 2, 0, 0], 20);
+      cil(0.1, 0.1, 0.28, M.marco, giro, [0, 0, 0], [Math.PI / 2, 0, 0], 12);
+      for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; const tc = new THREE.Mesh(geoTaco, M.goma); tc.position.set(Math.cos(a) * (RW + 0.012), Math.sin(a) * (RW + 0.012), 0); tc.rotation.z = a; giro.add(tc); }
+      ruedas.push({ giro, x, z: lado * ZP + dz });
+    }
+    patas.push({ p, x, z: lado * ZP, lado });
+    // brazo de la suspensión: del cuerpo a la pata (fijo)
+    entre(V(x, 1.18, lado * 1.05), V(x, 1.18, lado * (ZP - 0.08)), 0.07, MAT.gris, cuerpo, 10);
+    entre(V(x + 0.35, 1.0, lado * 1.05), V(x, 1.15, lado * (ZP - 0.08)), 0.045, MAT.alu, cuerpo, 8);
+  }
+  // estacionado en la plataforma, al lado de su garaje (afuera se ve desde arriba y puede abrir las alas), con la nariz hacia el recorrido
+  const gar = new THREE.Vector3(-16.6, 0, -15).applyEuler(BASE.grupo.rotation).add(BASE.grupo.position);
+  g.position.copy(gar); g.rotation.y = BASE.grupo.rotation.y + Math.PI;
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  return { g, cuerpo, patas, ruedas, alas, lidar, dron, rotores, carro, sarta, mecha, barras, torre, trajes, PLAT, RW,
+    alasOn: false, alasT: 0, cangrejo: 0, cangrejoT: 0, prof: 0, bajada: 0, perforando: false, vuelo: null, gar };
+})();
+if (RT) {
+  RT.tick = dt => {
+    RT.lidar.rotation.y += dt * 6;
+    RT.alasT += ((RT.alasOn ? 1 : 0) - RT.alasT) * Math.min(1, dt * 2.2);
+    for (const { b, lado } of RT.alas) b.rotation.x = lado * (1 - RT.alasT) * Math.PI;
+    RT.cangrejoT += (RT.cangrejo - RT.cangrejoT) * Math.min(1, dt * 2.5);
+    for (const { p } of RT.patas) p.rotation.y = RT.cangrejoT;
+    // sarta del taladro (igual que en el GX-2)
+    RT.torre.updateMatrixWorld();
+    const pie = new THREE.Vector3(0.06, 0, 0).applyMatrix4(RT.torre.matrixWorld), suelo = RT.torre.worldToLocal(new THREE.Vector3(pie.x, alturaGlobal(pie.x, pie.z), pie.z)).y;
+    const tope = RT.carro.position.y - 0.34, guardada = tope - 0.4, abajo = RT.perforando ? guardada + (suelo - RT.prof - guardada) * RT.bajada : guardada;
+    RT.sarta.scale.y = Math.max(0.05, tope - abajo); RT.sarta.position.y = (tope + abajo) / 2; RT.mecha.position.y = abajo - 0.02;
+    const v = RT.vuelo;
+    if (v) {
+      RT.rotores.forEach((r, i) => { r.rotation.y += (i ? -1 : 1) * dt * 40; });
+      v.t += dt; const T = v.t;
+      RT.cuerpo.updateMatrixWorld();
+      const base = new THREE.Vector3(...RT.PLAT).applyMatrix4(RT.cuerpo.matrixWorld), fw = new THREE.Vector3(1, 0, 0).applyQuaternion(RT.g.quaternion);
+      const lejos = base.clone().addScaledVector(fw, 30); lejos.y = alturaGlobal(lejos.x, lejos.z) + 10;
+      const alto = base.clone(); alto.y += 8;
+      const tramo = (a, b, f) => a.clone().lerp(b, suave(Math.min(1, Math.max(0, f))));
+      RT.dron.position.copy(T < 2 ? tramo(base, alto, T / 2) : T < 5 ? tramo(alto, lejos, (T - 2) / 3)
+        : T < 9 ? lejos.clone().add(new THREE.Vector3(Math.sin(T * 1.3) * 2, 0, Math.cos(T * 1.3) * 2).multiplyScalar(Math.min(1, T - 5)))
+        : T < 12 ? tramo(lejos, alto, (T - 9) / 3) : tramo(alto, base, (T - 12) / 2));
+      if (T >= 14) { RT.cuerpo.attach(RT.dron); RT.dron.position.set(...RT.PLAT); RT.dron.rotation.set(0, 0, 0); RT.vuelo = null; decir('El dron volvió al techo del GX-3.'); }
+    }
+  };
+  RT.tick(0);
+}
+const PARTES_GX3 = [
+  ['Cabina presurizada para dos', 'Dos personas viven y manejan sin traje hasta 14 días (cuatro en una emergencia), como en el SEV de NASA, que es del tamaño de una camioneta y tiene parabrisas bajo para ver el suelo. El nuestro mide unos 6 × 2,8 m y 3,2 m de alto (supuesto, en el rango del SEV: 4,5 m de largo y 3 m de alto).', ['sev']],
+  ['Suitports atrás', 'Los dos trajes quedan acoplados a la pared de atrás: se entra por la mochila y en menos de 10 minutos se sale a caminar, casi sin perder aire y sin meter polvo en la cabina. Es lo que la Base Gale tiene en su esclusa.', ['sev', 'suitport']],
+  ['Refugio de tormenta solar', 'La parte de atrás está rodeada de tanques de agua (las franjas azules): el agua frena las partículas de una tormenta solar. En el SEV, la esclusa con 2,5 cm de agua congelada cumple esa función y la cabina protege hasta 72 horas. El espesor del nuestro es supuesto.', ['sev']],
+  ['Doce ruedas en seis patas', 'Ruedas de 1 m, de a dos en cada pata, como el SEV. Cada pata gira 360°: el rover puede ir de costado ("modo cangrejo") para acomodarse en una pendiente o acoplarse a la base.', ['sev']],
+  ['Batería y carga en la base', 'Va a batería, como el rover presurizado de los estudios de NASA para Marte: 200 kWh, a 8 km/h, con 1,85 kW para mantener la cabina (calefacción, aire, computadoras), cargando a 3 kW con el reactor de la base. Manejar suma unos 5 kW. Con eso, en llano gasta unos 0,7 kWh por km a 10 km/h: unos 290 km con la batería llena, sin reserva (cálculo propio). Se carga en el garaje de la Base Gale.', ['marsPR', 'prPower', 'fsp']],
+  ['Alas solares', 'Dos paneles de 2,6 × 1,2 m que se despliegan desde el techo cuando está quieto, para sumar energía de día. El estudio de NASA lleva un panel de 3,5 kW que rinde la mitad mientras maneja. Los nuestros son más chicos: supuesto, sin medición.', ['marsPR']],
+  ['Taladro de 2 m', 'El mismo taladro del GX-2, adelante a la derecha: mecha y tres barras de unos 50 cm, como el de Rosalind Franklin (ESA), que toma muestras cada 50 cm. Se maneja desde la cabina.', ['exoDrill', 'exoDrillTest']],
+  ['Brazo robótico', 'Para agarrar piedras y acercarlas a la ventana sin salir, como los brazos que propone NASA para el SEV. Va plegado adelante a la izquierda.', ['sev']],
+  ['Dron explorador', 'Sale del techo y mira 30 m adelante, a 10 m del suelo, como Ingenuity con Perseverance: 72 vuelos, unos 128,8 minutos en el aire y 17 km recorridos.', ['ingenuity']],
+  ['Mástil con LiDAR y antena', 'El LiDAR arma el relieve en 3D para manejar con poca luz o con polvo; la antena habla con la base y con la Tierra. Propuesta del equipo.', []],
+  ['Compuerta de acople', 'En el costado derecho: se acopla a la esclusa de la base para pasar sin traje. Propuesta del equipo, como la escotilla de acople del SEV.', ['sev']],
+];
+function htmlGX3() {
+  const f = (t, d, k, abierto) => `<details${abierto ? ' open' : ''}><summary>${t}</summary><p>${d} ${k.map(fq).join(' ')}</p></details>`;
+  return `<span class="prov">propuesta del equipo</span><h1 class="parada-cab"><span class="chip" style="background:#b06bff">GX3</span>Rover tripulado GX-3</h1>
+    <p>El vehículo de las misiones con personas. No reemplaza a Curiosity ni al GX-2: se estaciona al lado de su garaje en la Base Gale y sale con dos astronautas adentro, sin traje. Llega a la zona de trabajo, se estaciona y la tripulación sale por los suitports de atrás. Es un diseño nuestro: cada sistema se apoya en uno que existe o que NASA estudió, con su fuente.</p>
+    <p class="sub">Supuestos del equipo: 10 km/h (como el SEV), 200 kWh de batería, unas 6 t con las baterías. ${fq('sev')} ${fq('marsPR')}</p>
+    ${PARTES_GX3.map(([t, d, k], i) => f(t, d, k, i === 0)).join('')}
+    <div class="botones"><button data-gx3="ver">Ver en la base</button><button data-gx3="alas">Alas</button><button data-gx3="cangrejo">Modo cangrejo</button><button data-gx3="dron">Dron</button><button class="pri" data-gx3="perf">Perforar 2 m</button></div>`;
+}
+function gx3Ver() { if (!RT) return; if (fp) salirFP(false); modoCam = 'libre'; $('sCam').value = 'libre'; seguirTras = null;
+  const o = RT.g.position.clone().add(new THREE.Vector3(0, 1.8, 0)), fw = new THREE.Vector3(1, 0, 0).applyQuaternion(RT.g.quaternion), de = new THREE.Vector3(fw.z, 0, -fw.x);
+  volarA(o.clone().addScaledVector(fw, 11).addScaledVector(de, 7).add(new THREE.Vector3(0, 3.5, 0)), o, 1.8); }
+function gx3Perforar() {
+  if (!RT || RT.perforando) return;
+  RT.perforando = true; RT.prof = 0; RT.bajada = 0;
+  const p = new THREE.Vector3(0.06, 0, 0).applyMatrix4(RT.torre.matrixWorld), x = p.x, z = p.z, y = alturaGlobal(x, z), dur = 10000, t0 = performance.now();
+  llegada('Perforación profunda · SIMULACIÓN', 'Rover tripulado GX-3 · hasta 2 m', '', []); $('ll-prog').classList.remove('oculto');
+  const paso = () => {
+    const f = Math.min(1, (performance.now() - t0) / dur), h = Math.max(0, (f - 0.1) / 0.9);
+    RT.bajada = suave(Math.min(1, f / 0.1)); RT.prof = 2 * h;
+    const k = Math.min(3, Math.floor(h * 4)), s = h * 4 - k;
+    RT.carro.position.y = f < 0.1 ? 2.1 : 2.1 - 1.2 * s; RT.barras.forEach((b, i) => { b.visible = i >= k; });
+    $('ll-prog').firstElementChild.style.width = `${Math.round(f * 100)}%`;
+    $('ll-sub').textContent = f < 0.1 ? 'La torre baja la mecha hasta el suelo…' : `Profundidad: ${num(RT.prof, 2)} m de 2 m · ${k ? `barra ${k} de 3 acoplada` : 'solo la mecha'}. La tripulación lo maneja desde la cabina.`;
+    if (Math.random() < 0.6) soplarPolvo(new THREE.Vector3(x, y, z), 3, 0.3);
+    if (f < 1) { requestAnimationFrame(paso); return; }
+    RT.carro.position.y = 2.1; RT.prof = 0; RT.perforando = false; RT.barras.forEach(b => { b.visible = true; });
+    cerrarLlegada(); mostrarMuestra(x, z, 'Rover GX-3 · muestra a 2 m', 'vehiculo');
+  };
+  requestAnimationFrame(paso);
+}
+function gx3Boton(k) {
+  if (!RT) return; $('wiki').classList.add('oculto');
+  const lejos = camara.position.distanceTo(RT.g.position) > 45; if (lejos || k === 'ver') gx3Ver();
+  if (k === 'ver') return;
+  setTimeout(() => ({
+    alas: () => { RT.alasOn = !RT.alasOn; decir(RT.alasOn ? 'GX-3: alas solares abiertas.' : 'GX-3: alas solares plegadas.'); },
+    cangrejo: () => { RT.cangrejo = RT.cangrejo ? 0 : Math.PI / 2; decir(RT.cangrejo ? 'Modo cangrejo: las seis patas giran 90° y el GX-3 puede ir de costado.' : 'Patas derechas otra vez.'); },
+    dron: () => { if (RT.vuelo) return; RT.cuerpo.updateMatrixWorld(); escena.attach(RT.dron); RT.vuelo = { t: 0 }; decir('El dron del GX-3 sale a mirar 30 m adelante, a 10 m del suelo.'); },
+    perf: gx3Perforar,
+  })[k](), lejos ? 1600 : 0);
+}
+function mostrarGX3() { $('ficha-texto').innerHTML = htmlGX3(); $('ficha').classList.remove('oculto'); $('ficha-texto').querySelectorAll('[data-gx3]').forEach(b => b.onclick = () => gx3Boton(b.dataset.gx3)); }
+
 // ---------- misión en pareja: el Astronauta 1 muestra lo que ve (cámara del casco) y el Astronauta 2 lleva los datos en el
 // visor; la base (el rover) y el control en la Tierra les mandan avisos armados con los datos de la escena ----------
 // demora de la luz Tierra–Marte: posiciones aproximadas de los planetas (JPL, elementos de Standish, válidos 1800–2050)
@@ -5026,6 +5279,7 @@ const WIKI = [
   ['clima', 'Clima y estaciones', () => `<h2>Clima en Gale</h2>` + ESTACIONES.map(e => `<h3>Ls ${e.de}°–${e.a}° · ${e.nombre}</h3><ul>${e.lineas.map(([t, f]) => `<li>${t} ${fq(f)}</li>`).join('')}</ul>`).join('') + `<h3>Lo que viene</h3><div>${$('clima').innerHTML}</div>`],
   ['base', 'Base Gale', () => htmlBase()],
   ['gx2', 'Rover GX-2 (próximas excavaciones)', () => htmlGX()],
+  ['gx3', 'Rover tripulado GX-3 (misiones con personas)', () => htmlGX3()],
   ['seguridad', 'Rover y astronauta', () => `<h2>Límites del rover y del astronauta</h2>
     <table class="tabla"><tr><td>Pendiente máxima del traje</td><td>${PR.pMax}° ${fq('evaConops')}</td></tr><tr><td>Pendiente máxima del rover</td><td>${PR.rMax}° <span class="prov">supuesto</span></td></tr>
     <tr><td>Velocidad a pie en llano</td><td>${num(PR.vCam * 3.6, 1)} km/h, corregida por pendiente (Tobler) <span class="prov">supuesto</span></td></tr>
@@ -5218,6 +5472,8 @@ window.__exportarMision = () => {
     zona: { lon_oeste: M.lon_oeste, lon_este: M.lon_este, lat_norte: M.lat_norte, lat_sur: M.lat_sur },
     curiosity: { lon: clon, lat: clat, yaw: r2(est.yaw), elev: r1(D.zmin + alturaGlobal(est.x, est.z)) },
     paradas, rutas: rutasX, expedicion: expe, base, gx2: limpiarFicha(htmlGX()),
+    gx3: RT ? (() => { const [lon, lat] = LL(RT.g.position.x, RT.g.position.z); return { lon, lat, yaw: r2(RT.g.rotation.y), elev: r1(D.zmin + alturaGlobal(RT.g.position.x, RT.g.position.z)),
+      alto: r2(RT.g.position.y - alturaGlobal(RT.g.position.x, RT.g.position.z)), ficha: limpiarFicha(htmlGX3()), par: { ...(P.vehiculo_tripulado || {}) } }; })() : null,
     terrenos, minerales,
     estaciones: ESTACIONES.map(e => ({ de: e.de, a: e.a, nombre: e.nombre, lineas: e.lineas })),
     parametros: { PR: { ...PR }, EVA: { ...EVA }, zancada: ZANCADA },
@@ -5257,6 +5513,7 @@ window.__exportarModelos = async GLTFExporter => {
   const astroC = astro.clone(true); astroC.visible = true;
   const piezas = { curiosity: preparar(curiosity), gx2: preparar(gx), astronauta: preparar(astroC) };
   if (BASE) piezas.base_gale = preparar(BASE.grupo, true);
+  if (RT) { if (RT.vuelo) { RT.cuerpo.attach(RT.dron); RT.dron.position.set(...RT.PLAT); RT.vuelo = null; } RT.alasOn = false; RT.alasT = 0; RT.cangrejo = RT.cangrejoT = 0; RT.perforando = false; RT.carro.position.y = 2.1; RT.barras.forEach(b => { b.visible = true; }); RT.tick(0); piezas.gx3 = preparar(RT.g); }
   const ex = new GLTFExporter(), out = {};
   for (const [k, s] of Object.entries(piezas)) {
     const buf = await ex.parseAsync(s, { binary: true, onlyVisible: true });
@@ -5266,7 +5523,7 @@ window.__exportarModelos = async GLTFExporter => {
   ubicarRover();
   return out;
 };
-window.__base = BASE; window.__mostrarBase = mostrarBase; window.__V3 = THREE.Vector3; window.__THREE = THREE; window.__RN = RN; window.__rn = { activar: rnActivar, perforar: rnPerforar, dron: rnDron, ficha: mostrarGX };
+window.__base = BASE; window.__mostrarBase = mostrarBase; window.__V3 = THREE.Vector3; window.__THREE = THREE; window.__RN = RN; window.__rn = { activar: rnActivar, perforar: rnPerforar, dron: rnDron, ficha: mostrarGX }; window.__RT = RT; window.__gx3 = { ficha: mostrarGX3, boton: gx3Boton, html: htmlGX3 };
 window.__escena = { GLOBO, expe, EXP, entrarExpe, salirExpe, perforar, lsDeFecha, pintarClima, muestraOrbital, llegadaParada, paradasDeRuta, get kPolvo() { return kPolvo; }, AL, get cartel() { return cartelClave; }, get CTX() { return CTX; }, TR, POZOS, viaje, entrarViaje, salirViaje, vistaTravesia, mostrarPozo, controles, BASE_S, fijarCamara: (p, t) => { vuelo = null; seguirTras = null; modoCam = 'libre'; camara.position.set(...p); controles.target.set(...t); controles.update(); }, dibujarCapa, evaluarAlertas, yo, setControl, volverABase, abrirPerfil, agente, campoRegreso, get control() { return control; }, huellasAstro, huellasRover, astro, get fp() { return fp; }, paradasGeo, lecturaMineral, mostrarFicha, caminarHasta, rutas, D, alturaEn, puntoEn, Z, CIELO, PEND, marcadores, camara, est, per, planificar, celdaDe, setCam };   // para depurar
 </script>
 </body>

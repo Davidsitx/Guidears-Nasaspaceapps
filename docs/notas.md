@@ -2,6 +2,31 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (2) · David (con Claude) · ROVER TRIPULADO GX-3 EN LA BASE GALE
+- **Decidió (David):** un rover nuevo para las misiones tripuladas, aparte de Curiosity y del GX-2 (que quedan como están). Vive en la Base Gale y puede hacer lo mismo que los otros.
+- **Hizo:**
+  - **Modelo GX-3** en la escena (`escena3d/plantilla.html`, bloque `RT`), estacionado al lado del garaje de la base. Diseño propio:
+    - cabina presurizada para dos con parabrisas bajo y refugio de tormenta con tanques de agua;
+    - dos suitports atrás con los trajes acoplados y compuerta de acople al costado;
+    - doce ruedas de 1 m en seis patas que giran 360° ("modo cangrejo");
+    - batería abajo, alas solares que se despliegan del techo, mástil con LiDAR, antena, dron, taladro de 2 m y brazo robótico.
+    - Cada sistema tiene ficha y fuente: SEV de NASA, rover presurizado del Mars Architecture Team, Rosalind Franklin, Ingenuity.
+  - **Ruta T** (`herramientas/ruta_base.py`, la llama `exportar_mision.py`): A* sobre el terreno de 12 m desde la Base Gale hasta la zona de hoy.
+    - Resultado: 14,1 km, sube 1.062 m, 1 h 25 min a 10 km/h y 18 kWh (9 % de la batería). Cálculo propio.
+    - Rodea las dunas por el oeste, por el borde de la franja con datos, y cruza ~1,2 km de arena probable: revisar con imagen de detalle.
+    - Archivo: `data/rutas/ruta_base_gx3.geojson`.
+  - **En Gale Earth** (`gale-earth/mision.js`):
+    - el GX-3 está estacionado en la base, con ficha y hover; Alas, Modo cangrejo, Dron y Perforar 2 m están animados por nodos;
+    - el botón "Tripulado · GX-3" de la barra deja elegir "Desde la Base Gale" (ruta T) o "En la zona de hoy" (ruta C);
+    - la ruta C ahora la hace el GX-3, con vista desde atrás o desde la cabina, y la barra muestra la batería;
+    - en las paradas A2, A3 y A4 aparece "Salir a caminar": la caminata sale por los suitports y al final se vuelve al GX-3 y la ruta C sigue;
+    - en la misión en pareja y a pie, el GX-3 queda estacionado en la salida.
+    - Enlaces directos nuevos: `#gx3` y `#desdebase`.
+- **Cambió en compartido:**
+  - `data/parametros.json` → `vehiculo_tripulado`: suma batería, potencias, masa y eficiencia, cada uno con fuente o marcado como supuesto.
+  - El alcance pasa de 125 a 200 km: el SEV dice 125 **millas**, era un error de unidades.
+- **Falta:** confirmar con el compañero (ingeniería aeroespacial) las medidas y la energía del GX-3; revisar el cruce de las dunas de la ruta T con HiRISE.
+
 ## 2026-11-15 mañana · David (con Claude) · MISIÓN CURIOSITY DENTRO DE GALE EARTH: UNA SOLA PANTALLA
 - **Decidió (David):** "Misión Curiosity 3D" va en la misma pantalla que Gale Earth, en "Curiosity hoy", con la misma lógica visual. Nada de saltar a otro Marte.
 - **Hizo:**

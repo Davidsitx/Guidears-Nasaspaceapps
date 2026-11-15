@@ -259,7 +259,7 @@ Sirve aunque la unificación no llegue: corrige lo que más se nota en el video.
 - **Terminado cuando:** todo lo de la zona de hoy se ve y se toca en Gale Earth, con fuente, y los pines tienen los estados de 3.3.
 
 ### Fase 4 · Modelos 3D en el globo (M–L)
-> 🟡 casi: los cuatro modelos están en el globo y se mueven las ruedas y las piernas. Falta animar el taladro y el dron del GX-2.
+> 🟡 casi: los cinco modelos están en el globo (se sumó el rover tripulado GX-3) y se mueven las ruedas y las piernas. El GX-3 ya anima en el globo el taladro, el dron, las alas y el modo cangrejo. Falta animar el taladro y el dron del GX-2.
 
 - **Qué:** Curiosity, el GX-2, el astronauta y la Base Gale como modelos `.glb` sobre el terreno de 1 m de Gale Earth.
 - **Dónde:**
