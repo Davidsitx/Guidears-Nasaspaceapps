@@ -159,7 +159,7 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
 - Arreglado: la página no terminaba de cargar porque la base usaba una variable de otro bloque (`R is not defined`). Ahora `BASE.radio`.
 - Falta: ver `docs/desarrollo/pendientes.md` (ítems 13 a 15).
 ## 2026-11-15 mañana (11) · Compañero (con Claude) · AUDITORÍA DE GALE EARTH (ERRORES, FUENTES, ACTUALIDAD)
-- Informe completo: `docs/auditoria_gale_earth_2026-11-15.pdf`.
+- Informe: reemplazado por `docs/informe_verificacion_2026-11-15.pdf` (versión final del mediodía).
 - Barrido automático por 150 pantallas: 0 errores de JavaScript.
 - Arreglado:
   - enlace THEMIS 404 → stac.astrogeology.usgs.gov/docs/data/mars/themis_controlled_mosaics/;
