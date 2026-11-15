@@ -5,17 +5,17 @@
 // (siguen ahí al actualizar Maps in Mars) y se pueden exportar a un archivo. Un recorrido que vuelve a la base queda como "camino candidato":
 // se dibuja y el A* lo prefiere (cuesta 30 % menos pasar por él) para planificar los siguientes.
 document.head.insertAdjacentHTML('beforeend', `<style id="plEstilos">
-#plBarra{display:none;flex-direction:column;align-items:center;gap:2px;padding:4px;background:var(--sup,#1d1f24);border-radius:20px;box-shadow:var(--sombra,0 4px 14px #0008)}
+#plBarra{display:none;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;background:rgba(20,21,24,.92);border:1px solid #ffffff12;border-radius:16px;box-shadow:var(--sombra,0 4px 14px #0008)}
 body.pl-on:not(.mi-modo) #plBarra{display:flex}
-#plBarra button{width:34px;height:34px;border:0;border-radius:50%;background:none;color:#e8eaed;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;position:relative;padding:0}
-#plBarra button:hover{background:#ffffff14}
-#plBarra button.on{background:var(--acento,#f28c38);color:#1b1210}
-#plBarra hr{width:20px;border:0;border-top:1px solid #ffffff22;margin:2px auto}
+#plBarra button{width:44px;height:34px;border:0;border-radius:12px;background:none;color:var(--suave,#aab);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;padding:0}
+#plBarra button svg{width:22px;height:22px;fill:currentColor}
+#plBarra button:hover{background:#ffffff10;color:var(--texto,#e8eaed)}
+#plBarra button.on{background:#f28c3826;color:var(--acento2,#f9a65a)}
+#plBarra hr{width:24px;border:0;border-top:1px solid #ffffff1a;margin:3px auto}
 #plBarra .plMas{display:none;flex-direction:column;gap:2px;align-items:center}
 #plBarra.abierta .plMas{display:flex}
-#plBarra #plToggle{font-size:16px}
-#plBarra.abierta #plToggle{background:#ffffff14}
-#plBarra button[data-tip]:hover::after{content:attr(data-tip);position:absolute;right:44px;top:50%;transform:translateY(-50%);white-space:nowrap;background:#111;color:#fff;font-size:12.5px;padding:5px 9px;border-radius:7px;pointer-events:none;z-index:2}
+#plBarra.abierta #plToggle{color:var(--texto,#e8eaed)}
+#plBarra button[data-tip]:hover::after{content:attr(data-tip);position:absolute;right:52px;top:50%;transform:translateY(-50%);white-space:nowrap;background:rgba(20,21,24,.96);border:1px solid #ffffff1a;color:#e8eaed;font-size:12.5px;padding:5px 9px;border-radius:8px;pointer-events:none;z-index:2}
 body.pl-on.pl-dibujo #globo canvas{cursor:crosshair!important}
 body.pl-on.pl-borrar #globo canvas{cursor:not-allowed!important}
 #plAyuda{position:absolute;left:50%;transform:translateX(-50%);top:78px;z-index:9;background:#1d1f24ee;color:#e8eaed;border-radius:10px;padding:8px 14px;font-size:13px;display:none;box-shadow:0 6px 20px #0008;max-width:min(560px,70vw);text-align:center}
@@ -46,23 +46,39 @@ const plNuevo = () => ({ id: plId(), nombre: lg('Misión sin nombre', 'Untitled 
   pts: [], notas: [], medidas: [], trazos: [], figuras: [] });
 
 // ---------- barra de herramientas ----------
+// íconos de línea iguales a los del riel de la izquierda (Material Icons, Apache 2.0), sin emojis
+const PL_IC = {
+  herr: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
+  mano: 'M23 5.5V20c0 2.2-1.8 4-4 4h-7.3c-1.08 0-2.1-.43-2.85-1.19L1 14.83s1.26-1.23 1.3-1.25c.22-.19.49-.29.79-.29.22 0 .42.06.6.16.04.01 4.31 2.46 4.31 2.46V4c0-.83.67-1.5 1.5-1.5S11 3.17 11 4v7h1V1.5c0-.83.67-1.5 1.5-1.5S15 .67 15 1.5V11h1V2.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V11h1V5.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5z',
+  punto: 'M19 15.18V7c0-2.21-1.79-4-4-4s-4 1.79-4 4v10c0 1.1-.9 2-2 2s-2-.9-2-2V8.82C8.16 8.4 9 7.3 9 6c0-1.66-1.34-3-3-3S3 4.34 3 6c0 1.3.84 2.4 2 2.82V17c0 2.21 1.79 4 4 4s4-1.79 4-4V7c0-1.1.9-2 2-2s2 .9 2 2v8.18A2.996 2.996 0 0 0 18 21c1.66 0 3-1.34 3-3 0-1.3-.84-2.4-2-2.82z',
+  nota: 'M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z',
+  medir: 'M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4h2V8h2v8z',
+  pincel: 'M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37-1.34-1.34a.996.996 0 0 0-1.41 0L9 12.25 11.75 15l8.96-8.96a.996.996 0 0 0 0-1.41z',
+  rect: 'M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H6V6h12v12z',
+  circ: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z',
+  borrar: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5-1-1h-5l-1 1H5v2h14V4z',
+  deshacer: 'M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z',
+  panel: 'M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z',
+  salir: 'M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
+};
+const plSvg = k => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${PL_IC[k]}"/></svg>`;
 const PL_HERR = [
-  ['mano', '✋', lg('Mano: mover el mapa', 'Hand: move the map')],
-  ['punto', '➊', lg('Puntos de ruta (0 = Base Gale; tocá una perforación para usarla)', 'Route points (0 = Gale Base; tap a drill hole to use it)')],
-  ['nota', '📌', lg('Pin con nota', 'Pin with a note')],
-  ['medir', '📏', lg('Medir distancia (doble clic para terminar)', 'Measure distance (double-click to finish)')],
-  ['pincel', '✏️', lg('Pincel: dibujar a mano alzada (si cerrás la figura, da el área)', 'Brush: freehand drawing (closing the shape gives the area)')],
-  ['rect', '▭', lg('Rectángulo: arrastrá de esquina a esquina', 'Rectangle: drag corner to corner')],
-  ['circ', '◯', lg('Círculo: arrastrá desde el centro', 'Circle: drag from the center')],
-  ['borrar', '⌫', lg('Borrar: tocá lo que quieras sacar', 'Erase: tap what you want to remove')],
+  ['mano', lg('Mano: mover el mapa', 'Hand: move the map')],
+  ['punto', lg('Puntos de ruta (0 = Base Gale; tocá una perforación para usarla)', 'Route points (0 = Gale Base; tap a drill hole to use it)')],
+  ['nota', lg('Pin con nota', 'Pin with a note')],
+  ['medir', lg('Medir distancia (doble clic para terminar)', 'Measure distance (double-click to finish)')],
+  ['pincel', lg('Pincel: dibujar a mano alzada (si cerrás la figura, da el área)', 'Brush: freehand drawing (closing the shape gives the area)')],
+  ['rect', lg('Rectángulo: arrastrá de esquina a esquina', 'Rectangle: drag corner to corner')],
+  ['circ', lg('Círculo: arrastrá desde el centro', 'Circle: drag from the center')],
+  ['borrar', lg('Borrar: tocá lo que quieras sacar', 'Erase: tap what you want to remove')],
 ];
 // barra de herramientas: a la derecha, arriba de la brújula, plegable (no tapa el mapa ni los otros botones)
 $('controles').insertAdjacentHTML('afterbegin', `<div id="plBarra" class="abierta" role="toolbar" aria-label="${lg('Herramientas del planificador', 'Planner tools')}">
-  <button id="plToggle" data-tip="${lg('Mostrar u ocultar herramientas', 'Show or hide tools')}" aria-label="${lg('Herramientas', 'Tools')}">✎</button>
-  <div class="plMas">${PL_HERR.map(([k, ic, t]) => `<button data-plh="${k}" data-tip="${t}" aria-label="${t}">${ic}</button>`).join('')}<hr>
-  <button data-pla="deshacer" data-tip="${lg('Deshacer (Ctrl+Z)', 'Undo (Ctrl+Z)')}">↶</button>
-  <button data-pla="panel" data-tip="${lg('Panel de la misión', 'Mission panel')}">☰</button>
-  <button data-pla="salir" data-tip="${lg('Salir del planificador', 'Leave the planner')}">✕</button></div></div>`);
+  <button id="plToggle" data-tip="${lg('Mostrar u ocultar herramientas', 'Show or hide tools')}" aria-label="${lg('Herramientas', 'Tools')}">${plSvg('herr')}</button>
+  <div class="plMas"><hr>${PL_HERR.map(([k, t]) => `<button data-plh="${k}" data-tip="${t}" aria-label="${t}">${plSvg(k)}</button>`).join('')}<hr>
+  <button data-pla="deshacer" data-tip="${lg('Deshacer (Ctrl+Z)', 'Undo (Ctrl+Z)')}" aria-label="${lg('Deshacer', 'Undo')}">${plSvg('deshacer')}</button>
+  <button data-pla="panel" data-tip="${lg('Panel de la misión', 'Mission panel')}" aria-label="${lg('Panel de la misión', 'Mission panel')}">${plSvg('panel')}</button>
+  <button data-pla="salir" data-tip="${lg('Salir del planificador', 'Leave the planner')}" aria-label="${lg('Salir del planificador', 'Leave the planner')}">${plSvg('salir')}</button></div></div>`);
 document.body.insertAdjacentHTML('beforeend', '<div id="plAyuda"></div>');
 $('plToggle').onclick = () => $('plBarra').classList.toggle('abierta');
 document.querySelectorAll('#plBarra [data-plh]').forEach(b => b.onclick = () => plHerr(b.dataset.plh));
@@ -266,6 +282,14 @@ function plTempFin(guardar = false) {
 }
 
 // ---------- ruta más segura y números ----------
+// Tramos ya calculados: al mover o agregar un punto solo se recalculan los tramos que cambiaron (el A* de un tramo largo tarda ~0,3 s).
+const PL_MEMO = new Map();
+function plRuta(a, b, aPie) {
+  const k = [a[0].toFixed(6), a[1].toFixed(6), b[0].toFixed(6), b[1].toFixed(6), aPie ? 1 : 0, PMR.pref ? PMR.prefN || 1 : 0].join(',');
+  let r = PL_MEMO.get(k);
+  if (!r) { const x = pmrRuta(a, b, aPie); r = { v: x.v, forzado: x.forzado, L: pmrLinea(x.v, aPie) }; if (PL_MEMO.size > 200) PL_MEMO.clear(); PL_MEMO.set(k, r); }
+  return r;
+}
 async function plCalcular() {
   const p = PL.proy, k = ++PL.calc; if (!p) return;
   if (!p.pts.length) { PL.ruta = null; plDibujar(); return plResultados(); }
@@ -275,7 +299,7 @@ async function plCalcular() {
   const v = [plBase(), ...p.pts.map(q => [q.lon, q.lat])]; if (p.volver) v.push(plBase());
   const legs = [];
   for (let i = 1; i < v.length; i++) {
-    const r = pmrRuta(v[i - 1], v[i], aPie), L = pmrLinea(r.v, aPie), S = L.pts;
+    const r = plRuta(v[i - 1], v[i], aPie), L = r.L, S = L.pts;
     const lim = aPie ? PR.pMax : PR.rMax, paso = S.length > 1 ? L.largo / (S.length - 1) : 0;
     legs.push({ de: i - 1, a: p.volver && i === v.length - 1 ? 0 : i, vuelta: p.volver && i === v.length - 1, v: r.v, L,
       arena: S.filter(q => q[9] === -2).length * paso, sobre: S.filter(q => q[5] > lim).length * paso, fuera: S.filter(q => !pmrDentro(q[0], q[1])).length * paso, pmax: Math.max(0, ...S.map(q => q[5])) });
@@ -297,7 +321,7 @@ async function plCalcular() {
 }
 function plResultados() {
   const el = $('plRes'); if (!el) return; const R = PL.ruta, p = PL.proy;
-  if (!R) { el.innerHTML = `<p class="sub">${lg('Agregá al menos un punto (herramienta ➊) para calcular la ruta.', 'Add at least one point (➊ tool) to compute the route.')}</p>`; return; }
+  if (!R) { el.innerHTML = `<p class="sub">${lg('Agregá al menos un punto (herramienta «Puntos de ruta») para calcular la ruta.', 'Add at least one point ("Route points" tool) to compute the route.')}</p>`; return; }
   const T = R.T, PR = MI.D.parametros.PR, EVA = MI.D.parametros.EVA, nom = i => i === 0 ? lg('Base', 'Base') : String(i);
   const av = [];
   if (T.sobre > 0) av.push(['#ff4d4d', lg(`Quedan ${plKm(T.sobre)} sobre pendientes de más de ${R.aPie ? PR.pMax : PR.rMax}°: algún punto está en una ladera muy empinada. Movelo a un lugar más plano.`, `${plKm(T.sobre)} remain on slopes over ${R.aPie ? PR.pMax : PR.rMax}°: a point sits on a very steep slope. Move it somewhere flatter.`)]);
@@ -325,10 +349,10 @@ function plPanel(foco) {
   const p = PL.proy, P = plLeer('mimProyectos', {}), lista = Object.values(P).sort((a, b) => b.mod - a.mod);
   const pozos = typeof NUM !== 'undefined' ? NUM.filter(q => pmrDentro(q.lon, q.lat)) : [];
   miFicha(lg('Planificador de misión', 'Mission planner'), `
-    <p class="sub">${lg('Usá la barra de la izquierda: ➊ agrega puntos en orden (el 0 es la Base Gale), 📌 deja notas, 📏 mide, ✏️ ▭ ◯ marcan zonas. La ruta más segura entre puntos se calcula sola.', 'Use the bar on the left: ➊ adds points in order (0 is Gale Base), 📌 leaves notes, 📏 measures, ✏️ ▭ ◯ mark areas. The safest route between points is computed automatically.')}</p>
+    <p class="sub">${lg('Usá la barra de herramientas de la derecha: «Puntos de ruta» agrega puntos en orden (el 0 es la Base Gale), el pin deja notas, la regla mide y el pincel, el rectángulo y el círculo marcan zonas. La ruta más segura entre puntos se calcula sola.', 'Use the tool bar on the right: "Route points" adds points in order (0 is Gale Base), the pin leaves notes, the ruler measures, and the brush, rectangle and circle mark areas. The safest route between points is computed automatically.')}</p>
     <div class="pl-fila"><input type="text" id="plNombre" value="${miEsc(p.nombre)}" style="flex:1" aria-label="${lg('Título del recorrido', 'Route title')}" placeholder="${lg('Título del recorrido', 'Route title')}">
       <button class="mib pri" id="plGuardarR">${p.guardado ? lg('Guardado ✓', 'Saved ✓') : lg('Guardar recorrido', 'Save route')}</button></div>
-    <div class="pl-fila"><button class="mib" id="plNuevoP">+ ${lg('Recorrido nuevo', 'New route')}</button><button class="mib" id="plInforme">📄 ${lg('Informe PDF', 'PDF report')}</button>
+    <div class="pl-fila"><button class="mib" id="plNuevoP">+ ${lg('Recorrido nuevo', 'New route')}</button><button class="mib" id="plInforme">${lg('Informe PDF', 'PDF report')}</button>
       <label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="plPeligro" ${PL.peligro ? 'checked' : ''}> ${lg('Zonas de peligro', 'Hazard zones')}</label></div>
     ${lista.filter(x => x.guardado).length ? `<h2>${lg('Recorridos guardados', 'Saved routes')}</h2>${lista.filter(x => x.guardado).map(x => `<div class="pl-fila" data-gid="${x.id}" style="font-size:13px;margin:3px 0">
       <label style="display:flex;gap:6px;align-items:center;flex:1;min-width:0" title="${lg('Ver u ocultar en el mapa', 'Show or hide on the map')}"><input type="checkbox" data-plg="ver" ${x.visible !== false ? 'checked' : ''}><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.id === p.id ? '▸ ' : ''}${miEsc(x.nombre)}</span></label>
@@ -348,9 +372,9 @@ function plPanel(foco) {
     ${p.notas.length ? `<h2>${lg('Notas en el mapa', 'Notes on the map')} (${p.notas.length})</h2>${p.notas.map(n => `<div class="pl-pt" data-nid="${n.id}"><div class="cab"><span class="pl-num" style="background:${PL_COL.nota}">✎</span><b style="flex:1">${n.lat.toFixed(4)}°, ${n.lon.toFixed(4)}° E</b><button class="x" data-pln="ir">◎</button><button class="x" data-pln="x">×</button></div>
       <textarea data-pln="texto" placeholder="${lg('Escribí la nota…', 'Write the note…')}">${miEsc(n.texto || '')}</textarea></div>`).join('')}` : ''}
     ${p.medidas.length || p.trazos.length || p.figuras.length ? `<h2>${lg('Dibujos y medidas', 'Drawings and measurements')}</h2><table>
-      ${p.medidas.map(m => `<tr><td>📏 ${lg('Medida', 'Measurement')}</td><td>${plKm(plLargo(m.pts))}</td></tr>`).join('')}
-      ${p.trazos.map(t => `<tr><td>✏️ ${t.cerrado ? lg('Área a mano', 'Freehand area') : lg('Trazo', 'Stroke')}</td><td>${t.cerrado ? plM2(plArea(t.pts)) : plKm(plLargo(t.pts))}</td></tr>`).join('')}
-      ${p.figuras.map(f => { const r = miDist(f.a[0], f.a[1], f.b[0], f.b[1]); return `<tr><td>${f.tipo === 'rect' ? '▭ ' + lg('Rectángulo', 'Rectangle') : '◯ ' + lg('Círculo', 'Circle')}</td><td>${f.tipo === 'rect' ? plM2(plArea(plRect(f.a, f.b))) : plM2(Math.PI * r * r)}</td></tr>`; }).join('')}</table>` : ''}
+      ${p.medidas.map(m => `<tr><td>${lg('Medida', 'Measurement')}</td><td>${plKm(plLargo(m.pts))}</td></tr>`).join('')}
+      ${p.trazos.map(t => `<tr><td>${t.cerrado ? lg('Área a mano', 'Freehand area') : lg('Trazo', 'Stroke')}</td><td>${t.cerrado ? plM2(plArea(t.pts)) : plKm(plLargo(t.pts))}</td></tr>`).join('')}
+      ${p.figuras.map(f => { const r = miDist(f.a[0], f.a[1], f.b[0], f.b[1]); return `<tr><td>${f.tipo === 'rect' ? lg('Rectángulo', 'Rectangle') : lg('Círculo', 'Circle')}</td><td>${f.tipo === 'rect' ? plM2(plArea(plRect(f.a, f.b))) : plM2(Math.PI * r * r)}</td></tr>`; }).join('')}</table>` : ''}
     <h2>${lg('Caminos candidatos', 'Candidate paths')} (${plLeer('mimCandidatos', []).length})</h2>
     <p class="sub">${lg('Cuando un recorrido simulado vuelve a la base, su camino queda guardado como candidato a camino seguro. Se dibujan en verde y el cálculo de rutas los prefiere.', 'When a simulated route returns to base, its path is saved as a candidate safe path. They are drawn in green and the route calculation prefers them.')}</p>
     ${plLeer('mimCandidatos', []).map(c => `<div class="pl-fila" data-cid="${c.id}" style="font-size:12.5px"><span style="color:${PL_COL.cand}">━</span> <span style="flex:1">${miEsc(c.nombre)} · ${plKm(c.km)} · ${new Date(c.fecha).toLocaleDateString()}</span><button class="x" data-plc="x" title="${lg('Quitar', 'Remove')}">×</button></div>`).join('')}
@@ -426,6 +450,8 @@ function plRecorrer() {
   PL.recId = id; PL.fin = false; UR.id = id;
   document.body.classList.remove('pl-on'); plTempFin(); if (window.cerrarCajon) cerrarCajon();
   miModo(id, 'ruta');
+  // arranca solo: sin la tarjeta «Listos para salir» arriba (repetía el botón Salir de la barra de abajo y tapaba la ruta)
+  setTimeout(async () => { await urTerrenoListo(); const m = MI.modo; if (m?.id === id && !m.jugando && m.d < 1 && !m.control) { miCard(); miJugar(true); } }, 500);
 }
 {
   const tick0 = miTick;
@@ -462,7 +488,7 @@ function plPreferidos() {
   for (const c of lista) for (let i = 1; i < c.pts.length; i++) { const [a, b] = [c.pts[i - 1], c.pts[i]], n = Math.max(1, Math.ceil(miDist(a[0], a[1], b[0], b[1]) / 6));
     for (let u = 0; u <= n; u++) { const [cc, ff] = pmrCelda(a[0] + (b[0] - a[0]) * u / n, a[1] + (b[1] - a[1]) * u / n);
       for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const x = cc + dx, y = ff + dy; if (x >= 0 && y >= 0 && x < T.W && y < T.H) G[y * T.W + x] = 1; } } }
-  PMR.pref = G; PL.pref = true;
+  PMR.pref = G; PMR.prefN = (PMR.prefN || 1) + 1; PL.pref = true;
 }
 $('urIntNuevo').onclick = () => PL.activo ? plSalir() : plAbrir();
 $('urIntNuevo').title = lg('Planificador de misión: puntos en orden desde la base, notas, medidas y dibujos, con la ruta más segura, tiempo, energía y radiación', 'Mission planner: points in order from the base, notes, measurements and drawings, with the safest route, time, energy and radiation');

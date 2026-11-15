@@ -114,7 +114,7 @@ function urIdaVuelta() {
 }
 // leyenda en el reproductor y botón para manejar al astronauta
 document.querySelector('#miPlay .cab').insertAdjacentHTML('afterend', `<div id="urLeyenda"><span id="urLeyTxt"></span></div>`);
-$('miSalir').insertAdjacentHTML('beforebegin', `<button class="mib" id="urControl" aria-pressed="false" title="${lg('Manejar al astronauta con el teclado (W A S D o flechas; Shift ×10). Volvé a tocar para seguir la ruta.', 'Walk the astronaut yourself with the keyboard (W A S D or arrows; Shift ×10). Tap again to go back to the route.')}">🕹 ${lg('Manejar al astronauta', 'Walk the astronaut')}</button>`);
+$('miSalir').insertAdjacentHTML('beforebegin', `<button class="mib" id="urControl" aria-pressed="false" title="${lg('Manejar al astronauta con el teclado (W A S D o flechas; Shift ×10). Volvé a tocar para seguir la ruta.', 'Walk the astronaut yourself with the keyboard (W A S D or arrows; Shift ×10). Tap again to go back to the route.')}">${lg('Manejar al astronauta', 'Walk the astronaut')}</button>`);
 function urLeyenda(m) {
   const L = m?.L, cl = document.body.classList;
   if (!L || !L.idaVuelta || m.libre) { cl.remove('ur-ley'); return; }
@@ -133,7 +133,7 @@ function urLeyenda(m) {
     urLeyenda(m);
     document.body.classList.toggle('ur-apie', !m.libre);
     $('urControl').setAttribute('aria-pressed', 'false');
-    $('urControl').innerHTML = '🕹 ' + (m.trip ? lg('Manejar el PMR', 'Drive the PMR') : m.rover ? lg(`Manejar ${MI.rover === 'gx2' ? 'el GX-2' : 'a Curiosity'}`, `Drive ${MI.rover === 'gx2' ? 'the GX-2' : 'Curiosity'}`) : lg('Manejar al astronauta', 'Walk the astronaut'));
+    $('urControl').innerHTML = (m.trip ? lg('Manejar el PMR', 'Drive the PMR') : m.rover ? lg(`Manejar ${MI.rover === 'gx2' ? 'el GX-2' : 'a Curiosity'}`, `Drive ${MI.rover === 'gx2' ? 'the GX-2' : 'Curiosity'}`) : lg('Manejar al astronauta', 'Walk the astronaut'));
     if (tipo === 'pareja') miMsg('base', lg('Si querés, manejá vos al Astronauta 1 con «Manejar al astronauta» (W A S D). Te avisamos pendiente, arena, dosis y distancia al PMR.', 'If you like, walk Astronaut 1 yourself with "Walk the astronaut" (W A S D). We will flag slope, sand, dose and distance to the PMR.'));
     if (/^U\d+$/.test(id)) { miVisibles(); $('miPid').textContent = lg('Tú', 'You'); }
   };
@@ -394,7 +394,7 @@ function urRecorrer() {
   // el detalle de reposo se guarda una sola vez (si se volviera a leer en cada movimiento, un tour empezado en pleno giro quedaría con poco detalle para siempre)
   const G = viewer.scene.globe, BASE = G.maximumScreenSpaceError;
   G.loadingDescendantLimit = Math.min(G.loadingDescendantLimit, 20);
-  G.tileCacheSize = Math.max(G.tileCacheSize, 600);     // más teselas en memoria: al volver a un lugar (tour, recorridos) no se vuelven a pedir y no aparecen a parches
+  // (tileCacheSize queda en el valor de _cuerpo.html: subirlo a 600+ llenaba la memoria de la placa y aparecían teselas negras)
   let t = null, mov = false;
   const movimiento = () => { clearTimeout(t); if (!mov) { mov = true; G.maximumScreenSpaceError = Math.max(BASE, 2.6); } };
   const quieto = () => { clearTimeout(t); t = setTimeout(() => { if (mov && !(typeof TOUR !== 'undefined' && TOUR.activo)) { mov = false; G.maximumScreenSpaceError = BASE; } }, 350); };
@@ -403,6 +403,69 @@ function urRecorrer() {
   viewer.camera.moveEnd.addEventListener(quieto);
   // ?fps muestra los cuadros por segundo (para medir antes y después)
   if (/[?&]fps\b/.test(location.search)) viewer.scene.debugShowFramesPerSecond = true;
+}
+
+// ---------- guardián del terreno: nunca un hueco negro ----------
+// Cada 2 s mira una grilla de 64×36 puntos de la imagen. Un punto que cae sobre Marte (el rayo toca el elipsoide)
+// y es negro puro es un hueco: ninguna foto ni sombra nuestra llega a negro (el tono más oscuro de la paleta es 38,22,16).
+// Si el hueco sigue ahí en tres miradas seguidas (6 s, no es una tesela que todavía está bajando), se libera memoria
+// de la placa de video y se vuelven a pedir todas las teselas. Se cuentan bloques de 2×2 puntos para no confundir
+// el borde negro de los carteles con un hueco.
+{
+  const G = viewer.scene.globe, W = 64, H = 36, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g2 = cv.getContext('2d', { willReadFrequently: true }), P = new C.Cartesian2(), Q = new C.Cartesian3();
+  let mirar = false, seguidas = 0, ultimo = 0;
+  window.GUARDIAN = { reparaciones: 0, ultimoHueco: 0 };
+  viewer.scene.postRender.addEventListener(() => {
+    if (!mirar) return; mirar = false;
+    if (typeof MODO !== 'undefined' && MODO !== 'globo') return;
+    if (!G.show || document.body.classList.contains('intro')) return;
+    let d; try { g2.drawImage(viewer.scene.canvas, 0, 0, W, H); d = g2.getImageData(0, 0, W, H).data; } catch { return; }
+    const cw = viewer.scene.canvas.clientWidth, ch = viewer.scene.canvas.clientHeight, neg = new Uint8Array(W * H);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4; if (d[i] > 4 || d[i + 1] > 4 || d[i + 2] > 4) continue;
+      P.x = (x + 0.5) * cw / W; P.y = (y + 0.5) * ch / H;
+      if (viewer.camera.pickEllipsoid(P, MARS, Q)) neg[y * W + x] = 1;
+    }
+    let bloques = 0;
+    for (let y = 0; y < H - 1; y++) for (let x = 0; x < W - 1; x++) if (neg[y * W + x] && neg[y * W + x + 1] && neg[(y + 1) * W + x] && neg[(y + 1) * W + x + 1]) bloques++;
+    GUARDIAN.ultimoHueco = bloques;
+    // con la cámara "debajo" de una tesela gruesa (bajando a nivel del suelo) el negro es pasajero y lo tapa la cortina de abajo
+    seguidas = bloques >= 2 && !viewer.scene.cameraUnderground ? seguidas + 1 : 0;
+    if (seguidas >= 3 && (G.tilesLoaded || seguidas >= 8) && performance.now() - ultimo > 12000) {
+      ultimo = performance.now(); seguidas = 0; GUARDIAN.reparaciones++;
+      G.tileCacheSize = Math.max(150, Math.round(G.tileCacheSize * 0.6));   // libera texturas que no se ven
+      try { G._surface.invalidateAllTiles(); } catch {}
+      console.warn('[Maps in Mars] hueco en el terreno: se vuelven a pedir las teselas (vez ' + GUARDIAN.reparaciones + ')');
+    }
+  });
+  setInterval(() => { if (document.hidden) return; mirar = true; viewer.scene.requestRender(); }, 2000);
+}
+
+// ---------- cortina mientras baja el terreno de cerca ----------
+// Al bajar la cámara a nivel del suelo (un recorrido, el PMR en la base) las teselas finas tardan unos segundos y, mientras,
+// la tesela gruesa queda por encima de la cámara: se veía una franja negra o blanca. Mientras Cesium avisa que la cámara
+// quedó "debajo" del terreno dibujado, se tapa el 3D con una cortina y un aviso; se saca apenas llega el terreno fino.
+document.head.insertAdjacentHTML('beforeend', `<style>
+#urCortina{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(ellipse at 50% 60%,#3a261c 0%,#1a120e 70%);color:#e8eaed;font:500 14px system-ui,sans-serif}
+#urCortina.vis{opacity:1}
+#urCortina div{display:flex;gap:10px;align-items:center;background:rgba(20,21,24,.85);border:1px solid #ffffff14;border-radius:14px;padding:10px 16px}
+#urCortina i{width:16px;height:16px;border-radius:50%;border:2px solid #ffffff33;border-top-color:var(--acento,#f28c38);animation:urGiro .8s linear infinite}
+@keyframes urGiro{to{transform:rotate(360deg)}}
+</style>`);
+viewer.container.insertAdjacentHTML('beforeend', `<div id="urCortina" aria-live="polite"><div><i></i>${lg('Cargando el terreno de cerca…', 'Loading the close-up terrain…')}</div></div>`);
+{
+  const S = viewer.scene, el = $('urCortina'); let desde = 0, fuera = 0;
+  S.postRender.addEventListener(() => {
+    const ahora = performance.now(), abajo = S.cameraUnderground && S.globe.show;
+    if (abajo) { fuera = 0; if (!desde) desde = ahora; } else { desde = 0; if (!fuera) fuera = ahora; }
+    const ver = abajo ? (ahora - desde > 120 && ahora - desde < 25000) : false;
+    if (ver !== el.classList.contains('vis') && (ver || ahora - fuera > 250)) el.classList.toggle('vis', ver);
+  });
+  // promesa: el terreno de cerca ya está (la cámara no quedó debajo de una tesela gruesa), con un tope
+  window.urTerrenoListo = (tope = 8000) => new Promise(ok => { const t0 = performance.now(), mirar = () => {
+    if (!S.cameraUnderground || performance.now() - t0 > tope) return ok(); setTimeout(mirar, 150); }; setTimeout(mirar, 250); });
 }
 
 // ==================== tanda 15/11 tarde: fluidez 2, pines del otro lado, cámara libre en los recorridos, botones ====================
@@ -531,7 +594,7 @@ function zcReset() { Object.assign(ZC, { z: 1, zObj: 1, dh: 0, dp: 0, usado: fal
   addEventListener('pointerup', () => { arr = null; });
   cv.addEventListener('dblclick', e => { if (!enModo()) return; e.preventDefault(); zcReset(); });
   // ayuda chica en el reproductor
-  document.querySelector('#miPlay .cab')?.insertAdjacentHTML('afterend', `<div id="urCamTip" style="font-size:11.5px;color:var(--suave);margin:-2px 0 6px">🖱 ${lg('Rueda: alejarte para ver todo el recorrido · arrastrar: girar · doble clic: volver', 'Wheel: zoom out to see the whole route · drag: orbit · double-click: reset')}</div>`);
+  document.querySelector('#miPlay .cab')?.insertAdjacentHTML('afterend', `<div id="urCamTip" style="font-size:11.5px;color:var(--suave);margin:-2px 0 6px">${lg('Rueda: alejarte para ver todo el recorrido · arrastrar: girar · doble clic: volver', 'Wheel: zoom out to see the whole route · drag: orbit · double-click: reset')}</div>`);
   const modo0 = miModo; miModo = function (...a) { zcReset(); return modo0(...a); };
 }
 

@@ -15,7 +15,7 @@
     addEventListener('error', e => { if (e.message && !/ResizeObserver/.test(e.message)) avisarError(e.message); });
     addEventListener('unhandledrejection', e => console.warn('[Maps in Mars] promesa sin resolver:', e.reason));   // teselas que no llegan, etc.: no se molesta al usuario
     // Si el celular o la placa de video "pierden" WebGL (pasa al cambiar de app o con poca memoria), se avisa en vez de quedar en negro.
-    viewer.scene.canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); avisar('El navegador pausó el 3D (falta de memoria o cambio de app). Recargá la página para seguir.', 0); });
+    viewer.scene.canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); avisar(IDIOMA === 'en' ? 'The browser paused the 3D view (low graphics memory or app switch). Reloading…' : 'El navegador pausó el 3D (falta de memoria o cambio de app). Recargando…', 0); setTimeout(() => location.reload(), 2500); });
     viewer.scene.renderError.addEventListener((s, err) => avisar('El 3D se detuvo por un error del navegador: ' + String(err && err.message || err).slice(0, 100) + '. Recargá la página.', 0));
    
   }

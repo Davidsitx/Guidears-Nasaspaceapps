@@ -31,7 +31,7 @@ button{font:inherit;color:inherit}
 svg.i{width:22px;height:22px;fill:currentColor;flex:none}
 #globo{position:absolute;inset:0}
 .cesium-viewer-bottom{display:none!important}           /* los créditos van en la barra de estado */
-.cesium-widget-credits{display:none}
+.cesium-widget-credits{display:none!important}   /* Cesium le pone display en línea; los créditos están en "Datos" */
 .oculto{display:none!important}
 
 /* ── riel izquierdo (como Google Earth) ── */
@@ -500,8 +500,26 @@ viewer.scene.backgroundColor = C.Color.BLACK;
 viewer.scene.skyBox = new C.SkyBox({ sources: Object.fromEntries([['positiveX', 'px'], ['negativeX', 'mx'], ['positiveY', 'py'], ['negativeY', 'my'], ['positiveZ', 'pz'], ['negativeZ', 'mz']].map(([k, f]) => [k, `capas/cielo/via_lactea_${f}.jpg`])) });
 if (viewer.scene.moon) viewer.scene.moon.show = false;          // la Luna de Cesium es la de la Tierra: en Marte no va
 const MOVIL = matchMedia('(pointer:coarse)').matches;
+// Lo que va pegado al suelo (rutas, zonas, figuras) se pinta solo sobre el terreno. Cesium lo pinta por defecto también
+// sobre los modelos 3D, y la ruta quedaba dibujada encima del PMR, de la base y de los astronautas.
+{
+  const SOLO_SUELO = C.ClassificationType.TERRAIN, add0 = C.EntityCollection.prototype.add;
+  const fijar = (g, suelo) => { if (!g) return; const v = g.classificationType; if ((v === undefined || v === null) && suelo) g.classificationType = SOLO_SUELO; };
+  C.EntityCollection.prototype.add = function (e) {
+    if (e) {
+      const val = x => (x && typeof x.getValue === 'function') ? x.getValue(C.JulianDate.now()) : x;
+      if (e.polyline) fijar(e.polyline, !!val(e.polyline.clampToGround));
+      for (const k of ['polygon', 'ellipse', 'rectangle', 'corridor']) if (e[k]) fijar(e[k], val(e[k].height) === undefined && val(e[k].extrudedHeight) === undefined);
+    }
+    return add0.call(this, e);
+  };
+}
 viewer.scene.globe.baseColor = C.Color.fromCssColorString('#6b4a3a');
 viewer.scene.globe.showGroundAtmosphere = false;
+// Si una tesela gruesa (mientras baja la fina) queda por encima de la cámara, o se ve el faldón de una tesela vecina,
+// Cesium muestra su lado de atrás: por defecto lo descarta (se ve el espacio negro) o lo pinta negro. Se dibuja con color de Marte.
+viewer.scene.globe.backFaceCulling = false;
+viewer.scene.globe.undergroundColor = C.Color.fromCssColorString('#6b4a3a');
 // Atmósfera de Marte: cielo color caramelo (polvo en suspensión) y bruma hacia el horizonte.
 // Es una aproximación visual: se corre el color de la atmósfera terrestre de Cesium hacia el naranja.
 viewer.scene.skyAtmosphere = new C.SkyAtmosphere(MARS);
@@ -512,13 +530,14 @@ viewer.scene.globe.enableLighting = false;
 viewer.scene.globe.maximumScreenSpaceError = 1.5;     // más detalle: pide teselas más finas antes
 // Pantallas de alta densidad: Cesium dibuja por defecto a la mitad de resolución y la imagen se ve borrosa.
 if (!matchMedia('(pointer:coarse)').matches) { viewer.useBrowserRecommendedResolution = false; viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2) / (window.devicePixelRatio || 1); }
-viewer.scene.globe.tileCacheSize = 1500;              // guarda más teselas: menos parpadeo al alejar y acercar
+viewer.scene.globe.tileCacheSize = 400;               // teselas guardadas además de las visibles. Antes 1500: con tres capas de 512 px llenaba la memoria de la placa de video
+                                                      // y las teselas nuevas salían negras (hueco). 400 alcanza para volver a un lugar sin pedir todo de nuevo.
 viewer.scene.globe.preloadAncestors = true;
 viewer.scene.globe.preloadSiblings = true;            // carga también las vecinas: al girar no aparecen huecos
 viewer.scene.globe.loadingDescendantLimit = 40;
 if (MOVIL) {                                           // celular: menos detalle simultáneo para que vaya fluido
   viewer.scene.globe.maximumScreenSpaceError = 3;
-  viewer.scene.globe.tileCacheSize = 500;
+  viewer.scene.globe.tileCacheSize = 200;
   viewer.scene.globe.loadingDescendantLimit = 16;
   viewer.scene.globe.preloadSiblings = false;
 }
@@ -546,7 +565,21 @@ class EsquemaPC extends C.GeographicTilingScheme {
 }
 // Lee una tesela de alturas; si no existe (borde de una zona), recorta y amplía la de su nivel superior.
 const _alt = new Map();
+// Nunca falla: si algo sale mal (red, archivo cortado), se usa la tesela de arriba ampliada; una tesela de terreno
+// que falla deja un hueco negro en el globo, y eso no puede pasar.
 async function alturasTesela(x, y, n) {
+  try { return await alturasTesela0(x, y, n); }
+  catch (e) { console.warn('[Maps in Mars] tesela de terreno', n, x, y, e); return n > 0 ? ampliarDeArriba(await alturasTesela(x >> 1, y >> 1, n - 1), x, y) : new Float32Array(65 * 65); }
+}
+function ampliarDeArriba(P, x, y) {
+  const ox = (x & 1) * 32, oy = (y & 1) * 32, h = new Float32Array(65 * 65);
+  for (let i = 0; i < 65; i++) for (let j = 0; j < 65; j++) {
+    const fy = oy + i / 2, fx = ox + j / 2, y0 = Math.floor(fy), x0 = Math.floor(fx), y1 = Math.min(64, y0 + 1), x1 = Math.min(64, x0 + 1), u = fx - x0, v = fy - y0;
+    h[i * 65 + j] = (P[y0 * 65 + x0] * (1 - u) + P[y0 * 65 + x1] * u) * (1 - v) + (P[y1 * 65 + x0] * (1 - u) + P[y1 * 65 + x1] * u) * v;
+  }
+  return h;
+}
+async function alturasTesela0(x, y, n) {
   const k = `${n}/${x}/${y}`;
   if (_alt.has(k)) return _alt.get(k);
   let h = null, falloRed = false;
@@ -559,7 +592,8 @@ async function alturasTesela(x, y, n) {
   }
   if (!r) falloRed = true;
   if (r && r.ok) {
-    const b = await r.arrayBuffer(), dv = new DataView(b), mn = dv.getFloat32(0, true), es = dv.getFloat32(4, true);
+    const b = await r.arrayBuffer(); if (b.byteLength !== 8 + 65 * 65 * 2) throw new Error('tesela cortada (' + b.byteLength + ' bytes)');
+    const dv = new DataView(b), mn = dv.getFloat32(0, true), es = dv.getFloat32(4, true);
     const q = new Uint16Array(b, 8); h = new Float32Array(q.length);
     for (let i = 0; i < q.length; i++) h[i] = mn + q[i] * es;
   } else if (n > 0) {
@@ -649,7 +683,13 @@ class CTXColor extends C.UrlTemplateImageryProvider {
   constructor(o, modo = 'color', mezcla = 0.3, huecosTransparentes = false) { super(o); this.modo = modo; this.mezcla = mezcla; this.huecos = huecosTransparentes; }
   async requestImage(x, y, l, req) {
     const p = super.requestImage(x, y, l, req); if (!p) return p;          // undefined = Cesium reintenta más tarde
-    let g = null; try { g = await p; } catch {}
+    let g = null; try { g = await p; } catch (e) {
+      // falla de red (no "no hay foto"): se reintenta antes de dibujar solo el color Viking, que quedaría fijo y borroso
+      for (let i = 0; i < 3 && !g && !(e && e.statusCode === 404); i++) {
+        await new Promise(ok => setTimeout(ok, 500 * (i + 1)));
+        try { g = await super.requestImage(x, y, l); } catch (e2) { e = e2; }
+      }
+    }
     const [vi, S] = await Promise.all([VIKING_IMG, sombraTesela(x, y, l).catch(() => null)]);
     if (!g && !vi) throw new Error('sin imagen');
     const c = document.createElement('canvas'); c.width = c.height = 512; const t = c.getContext('2d', { willReadFrequently: true });
@@ -755,13 +795,31 @@ window.capaCTX = capaCTX;
 function capaCTX() {
   const L = viewer.imageryLayers;
   if (CAPAS_BASE.ctx) L.remove(CAPAS_BASE.ctx, true);
+  const debajo = CAPAS_BASE.fondo && L.contains(CAPAS_BASE.fondo) ? L.indexOf(CAPAS_BASE.fondo) + 1 : 0;   // siempre arriba del fondo
   CAPAS_BASE.ctx = L.addImageryProvider(new CTXColor({
     url: 'https://astro.arcgis.com/arcgis/rest/services/OnMars/CTX/MapServer/tile/{z}/{y}/{x}', tilingScheme: new EsquemaPC(),
     tileWidth: 512, tileHeight: 512, maximumLevel: 12,
-    credit: 'Imagen: CTX 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri); color: Viking MDIM 2.1 (NASA/USGS)' }, MODO_COLOR, 0.3), 0);
+    credit: 'Imagen: CTX 5 m (NASA/JPL/MSSS/Murray Lab, servicio NASA–Esri); color: Viking MDIM 2.1 (NASA/USGS)' }, MODO_COLOR, 0.3), debajo);
   CAPAS_BASE.ctx.contrast = 1.05;
 }
+// Fondo de seguridad: todo Marte en una sola imagen (color Viking con la misma paleta que CTX, 2048 × 1024, ~10 km/píxel).
+// Está lista desde el arranque, así que una tesela cuya foto CTX todavía no llegó (o no llega) se ve color Marte, nunca negra.
+async function capaFondo() {
+  const vi = await VIKING_IMG; if (!vi) return;
+  const W = 2048, H = 1024, c = document.createElement('canvas'); c.width = W; c.height = H; const t = c.getContext('2d', { willReadFrequently: true });
+  t.imageSmoothingQuality = 'high'; t.drawImage(vi, 0, 0, W, H);
+  const d = t.getImageData(0, 0, W, H), a = d.data, w = 0.3;
+  for (let i = 0; i < a.length; i += 4) {
+    const VL = 0.3 * a[i] + 0.59 * a[i + 1] + 0.11 * a[i + 2], L0 = Math.max(0, Math.min(255, Math.round(Math.min(AJUSTE.techo, VL * AJUSTE.escalaViking)))), f = L0 / (VL || 1);
+    for (let k = 0; k < 3; k++) a[i + k] = LUT[L0 * 3 + k] * (1 - w) + Math.min(255, a[i + k] * f) * w;
+    a[i + 3] = 255;
+  }
+  t.putImageData(d, 0, 0);
+  const prov = await C.SingleTileImageryProvider.fromUrl(c.toDataURL('image/jpeg', 0.9), { rectangle: C.Rectangle.fromDegrees(-180, -90, 180, 90), ellipsoid: MARS });
+  CAPAS_BASE.fondo = viewer.imageryLayers.addImageryProvider(prov, 0);
+}
 function crearImagenes(t) {
+  capaFondo().catch(e => console.warn('[Maps in Mars] fondo', e));
   capaCTX();
   // Ortofoto MSL a 1 m (USGS, de HiRISE) en toda la zona de Curiosity (33 × 57 km), coloreado igual que CTX.
   if (t && t.orto) CAPAS_BASE.orto = viewer.imageryLayers.addImageryProvider(new CTXColor({
@@ -1546,7 +1604,7 @@ viewer.scene.preRender.addEventListener(() => {
     addEventListener('error', e => { if (e.message && !/ResizeObserver/.test(e.message)) avisarError(e.message); });
     addEventListener('unhandledrejection', e => console.warn('[Maps in Mars] promesa sin resolver:', e.reason));   // teselas que no llegan, etc.: no se molesta al usuario
     // Si el celular o la placa de video "pierden" WebGL (pasa al cambiar de app o con poca memoria), se avisa en vez de quedar en negro.
-    viewer.scene.canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); avisar('El navegador pausó el 3D (falta de memoria o cambio de app). Recargá la página para seguir.', 0); });
+    viewer.scene.canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); avisar(IDIOMA === 'en' ? 'The browser paused the 3D view (low graphics memory or app switch). Reloading…' : 'El navegador pausó el 3D (falta de memoria o cambio de app). Recargando…', 0); setTimeout(() => location.reload(), 2500); });
     viewer.scene.renderError.addEventListener((s, err) => avisar('El 3D se detuvo por un error del navegador: ' + String(err && err.message || err).slice(0, 100) + '. Recargá la página.', 0));
    
   }
@@ -3194,10 +3252,10 @@ function fichaPMR() {
   const g = MI.D.pmr; if (!g) return; const T = MI.lineas.T, C2 = MI.lineas.C, v = g.par?.velocidad_km_h || 10, bat = miBat();
   const tarj = (acc, tit, sub, extra = '') => `<div class="tarjeta" data-mi="${acc}" ${extra}><b>${tit}</b><div class="sub">${sub}</div></div>`;
   const usar = `<h2>${lg('Qué puede hacer', 'What it can do')}</h2>
-    ${tarj('guia', lg('🧭 Guía recomendada · expedición completa', '🧭 Recommended guide · full expedition'), lg('Sale del hábitat, para en seis perforaciones de Curiosity y en puntos intermedios (uno sale a pie y el otro queda en el PMR), termina junto a Curiosity hoy y vuelve.', 'Leaves the habitat, stops at six of Curiosity\'s drill holes and at points in between (one walks, the other stays in the PMR), ends next to Curiosity today and returns.'))}
-    ${tarj('armar', lg('✏️ Armar mi guía', '✏️ Build my own guide'), lg('Elegí las perforaciones y los puntos del mapa por donde pasar.', 'Pick the drill holes and map points to visit.'))}
-    ${tarj('irpozo', lg('📍 Ir a una perforación', '📍 Drive to a drill hole'), lg('Cualquiera de las 49: la ruta más segura desde donde está el PMR.', 'Any of the 49: the safest route from where the PMR is.'))}
-    ${tarj('libre', lg('🕹️ Manejo libre', '🕹️ Free drive'), lg('Lo manejás vos con W A S D o las flechas; avisa la pendiente y la arena.', 'You drive it with W A S D or the arrows; it warns about slope and sand.'))}
+    ${tarj('guia', lg('Guía recomendada · expedición completa', 'Recommended guide · full expedition'), lg('Sale del hábitat, para en seis perforaciones de Curiosity y en puntos intermedios (uno sale a pie y el otro queda en el PMR), termina junto a Curiosity hoy y vuelve.', 'Leaves the habitat, stops at six of Curiosity\'s drill holes and at points in between (one walks, the other stays in the PMR), ends next to Curiosity today and returns.'))}
+    ${tarj('armar', lg('Armar mi guía', 'Build my own guide'), lg('Elegí las perforaciones y los puntos del mapa por donde pasar.', 'Pick the drill holes and map points to visit.'))}
+    ${tarj('irpozo', lg('Ir a una perforación', 'Drive to a drill hole'), lg('Cualquiera de las 49: la ruta más segura desde donde está el PMR.', 'Any of the 49: the safest route from where the PMR is.'))}
+    ${tarj('libre', lg('Manejo libre', 'Free drive'), lg('Lo manejás vos con W A S D o las flechas; avisa la pendiente y la arena.', 'You drive it with W A S D or the arrows; it warns about slope and sand.'))}
     ${T ? tarj('ruta', lg('Ruta T · de la base a la zona de hoy', 'Route T · from the base to today\'s area'), lg(`${miM(T.largo)}, sube ${miNum(T.sube)} m: ${miH(T.horas)} a ${v} km/h y ${miNum(T.kwh)} kWh (${miNum(T.kwh / bat * 100)} % de la batería). Cálculo propio.`, `${miM(T.largo)}, climbs ${miNum(T.sube)} m: ${miH(T.horas)} at ${v} km/h and ${miNum(T.kwh)} kWh (${miNum(T.kwh / bat * 100)} % of the battery). Our calculation.`), 'data-r="T"') : ''}
     ${C2 ? tarj('ruta', lg('Ruta C · en la zona de hoy, con caminatas', 'Route C · in today\'s area, with walks'), lg(`${miM(C2.largo)}; en ${Object.keys(MI.camDe).length} paradas uno sale por los suitports a caminar.`, `${miM(C2.largo)}; at ${Object.keys(MI.camDe).length} stops one goes out through the suitports.`), 'data-r="C"') : ''}`;
   const k = g.ficha.indexOf('<details'), html = k > 0 ? g.ficha.slice(0, k) + usar + `<h2>${lg('Cómo es', 'What it is like')}</h2>` + g.ficha.slice(k) : g.ficha + usar;
@@ -4435,7 +4493,7 @@ function urIdaVuelta() {
 }
 // leyenda en el reproductor y botón para manejar al astronauta
 document.querySelector('#miPlay .cab').insertAdjacentHTML('afterend', `<div id="urLeyenda"><span id="urLeyTxt"></span></div>`);
-$('miSalir').insertAdjacentHTML('beforebegin', `<button class="mib" id="urControl" aria-pressed="false" title="${lg('Manejar al astronauta con el teclado (W A S D o flechas; Shift ×10). Volvé a tocar para seguir la ruta.', 'Walk the astronaut yourself with the keyboard (W A S D or arrows; Shift ×10). Tap again to go back to the route.')}">🕹 ${lg('Manejar al astronauta', 'Walk the astronaut')}</button>`);
+$('miSalir').insertAdjacentHTML('beforebegin', `<button class="mib" id="urControl" aria-pressed="false" title="${lg('Manejar al astronauta con el teclado (W A S D o flechas; Shift ×10). Volvé a tocar para seguir la ruta.', 'Walk the astronaut yourself with the keyboard (W A S D or arrows; Shift ×10). Tap again to go back to the route.')}">${lg('Manejar al astronauta', 'Walk the astronaut')}</button>`);
 function urLeyenda(m) {
   const L = m?.L, cl = document.body.classList;
   if (!L || !L.idaVuelta || m.libre) { cl.remove('ur-ley'); return; }
@@ -4454,7 +4512,7 @@ function urLeyenda(m) {
     urLeyenda(m);
     document.body.classList.toggle('ur-apie', !m.libre);
     $('urControl').setAttribute('aria-pressed', 'false');
-    $('urControl').innerHTML = '🕹 ' + (m.trip ? lg('Manejar el PMR', 'Drive the PMR') : m.rover ? lg(`Manejar ${MI.rover === 'gx2' ? 'el GX-2' : 'a Curiosity'}`, `Drive ${MI.rover === 'gx2' ? 'the GX-2' : 'Curiosity'}`) : lg('Manejar al astronauta', 'Walk the astronaut'));
+    $('urControl').innerHTML = (m.trip ? lg('Manejar el PMR', 'Drive the PMR') : m.rover ? lg(`Manejar ${MI.rover === 'gx2' ? 'el GX-2' : 'a Curiosity'}`, `Drive ${MI.rover === 'gx2' ? 'the GX-2' : 'Curiosity'}`) : lg('Manejar al astronauta', 'Walk the astronaut'));
     if (tipo === 'pareja') miMsg('base', lg('Si querés, manejá vos al Astronauta 1 con «Manejar al astronauta» (W A S D). Te avisamos pendiente, arena, dosis y distancia al PMR.', 'If you like, walk Astronaut 1 yourself with "Walk the astronaut" (W A S D). We will flag slope, sand, dose and distance to the PMR.'));
     if (/^U\d+$/.test(id)) { miVisibles(); $('miPid').textContent = lg('Tú', 'You'); }
   };
@@ -4715,7 +4773,7 @@ function urRecorrer() {
   // el detalle de reposo se guarda una sola vez (si se volviera a leer en cada movimiento, un tour empezado en pleno giro quedaría con poco detalle para siempre)
   const G = viewer.scene.globe, BASE = G.maximumScreenSpaceError;
   G.loadingDescendantLimit = Math.min(G.loadingDescendantLimit, 20);
-  G.tileCacheSize = Math.max(G.tileCacheSize, 600);     // más teselas en memoria: al volver a un lugar (tour, recorridos) no se vuelven a pedir y no aparecen a parches
+  // (tileCacheSize queda en el valor de _cuerpo.html: subirlo a 600+ llenaba la memoria de la placa y aparecían teselas negras)
   let t = null, mov = false;
   const movimiento = () => { clearTimeout(t); if (!mov) { mov = true; G.maximumScreenSpaceError = Math.max(BASE, 2.6); } };
   const quieto = () => { clearTimeout(t); t = setTimeout(() => { if (mov && !(typeof TOUR !== 'undefined' && TOUR.activo)) { mov = false; G.maximumScreenSpaceError = BASE; } }, 350); };
@@ -4724,6 +4782,69 @@ function urRecorrer() {
   viewer.camera.moveEnd.addEventListener(quieto);
   // ?fps muestra los cuadros por segundo (para medir antes y después)
   if (/[?&]fps\b/.test(location.search)) viewer.scene.debugShowFramesPerSecond = true;
+}
+
+// ---------- guardián del terreno: nunca un hueco negro ----------
+// Cada 2 s mira una grilla de 64×36 puntos de la imagen. Un punto que cae sobre Marte (el rayo toca el elipsoide)
+// y es negro puro es un hueco: ninguna foto ni sombra nuestra llega a negro (el tono más oscuro de la paleta es 38,22,16).
+// Si el hueco sigue ahí en tres miradas seguidas (6 s, no es una tesela que todavía está bajando), se libera memoria
+// de la placa de video y se vuelven a pedir todas las teselas. Se cuentan bloques de 2×2 puntos para no confundir
+// el borde negro de los carteles con un hueco.
+{
+  const G = viewer.scene.globe, W = 64, H = 36, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g2 = cv.getContext('2d', { willReadFrequently: true }), P = new C.Cartesian2(), Q = new C.Cartesian3();
+  let mirar = false, seguidas = 0, ultimo = 0;
+  window.GUARDIAN = { reparaciones: 0, ultimoHueco: 0 };
+  viewer.scene.postRender.addEventListener(() => {
+    if (!mirar) return; mirar = false;
+    if (typeof MODO !== 'undefined' && MODO !== 'globo') return;
+    if (!G.show || document.body.classList.contains('intro')) return;
+    let d; try { g2.drawImage(viewer.scene.canvas, 0, 0, W, H); d = g2.getImageData(0, 0, W, H).data; } catch { return; }
+    const cw = viewer.scene.canvas.clientWidth, ch = viewer.scene.canvas.clientHeight, neg = new Uint8Array(W * H);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4; if (d[i] > 4 || d[i + 1] > 4 || d[i + 2] > 4) continue;
+      P.x = (x + 0.5) * cw / W; P.y = (y + 0.5) * ch / H;
+      if (viewer.camera.pickEllipsoid(P, MARS, Q)) neg[y * W + x] = 1;
+    }
+    let bloques = 0;
+    for (let y = 0; y < H - 1; y++) for (let x = 0; x < W - 1; x++) if (neg[y * W + x] && neg[y * W + x + 1] && neg[(y + 1) * W + x] && neg[(y + 1) * W + x + 1]) bloques++;
+    GUARDIAN.ultimoHueco = bloques;
+    // con la cámara "debajo" de una tesela gruesa (bajando a nivel del suelo) el negro es pasajero y lo tapa la cortina de abajo
+    seguidas = bloques >= 2 && !viewer.scene.cameraUnderground ? seguidas + 1 : 0;
+    if (seguidas >= 3 && (G.tilesLoaded || seguidas >= 8) && performance.now() - ultimo > 12000) {
+      ultimo = performance.now(); seguidas = 0; GUARDIAN.reparaciones++;
+      G.tileCacheSize = Math.max(150, Math.round(G.tileCacheSize * 0.6));   // libera texturas que no se ven
+      try { G._surface.invalidateAllTiles(); } catch {}
+      console.warn('[Maps in Mars] hueco en el terreno: se vuelven a pedir las teselas (vez ' + GUARDIAN.reparaciones + ')');
+    }
+  });
+  setInterval(() => { if (document.hidden) return; mirar = true; viewer.scene.requestRender(); }, 2000);
+}
+
+// ---------- cortina mientras baja el terreno de cerca ----------
+// Al bajar la cámara a nivel del suelo (un recorrido, el PMR en la base) las teselas finas tardan unos segundos y, mientras,
+// la tesela gruesa queda por encima de la cámara: se veía una franja negra o blanca. Mientras Cesium avisa que la cámara
+// quedó "debajo" del terreno dibujado, se tapa el 3D con una cortina y un aviso; se saca apenas llega el terreno fino.
+document.head.insertAdjacentHTML('beforeend', `<style>
+#urCortina{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(ellipse at 50% 60%,#3a261c 0%,#1a120e 70%);color:#e8eaed;font:500 14px system-ui,sans-serif}
+#urCortina.vis{opacity:1}
+#urCortina div{display:flex;gap:10px;align-items:center;background:rgba(20,21,24,.85);border:1px solid #ffffff14;border-radius:14px;padding:10px 16px}
+#urCortina i{width:16px;height:16px;border-radius:50%;border:2px solid #ffffff33;border-top-color:var(--acento,#f28c38);animation:urGiro .8s linear infinite}
+@keyframes urGiro{to{transform:rotate(360deg)}}
+</style>`);
+viewer.container.insertAdjacentHTML('beforeend', `<div id="urCortina" aria-live="polite"><div><i></i>${lg('Cargando el terreno de cerca…', 'Loading the close-up terrain…')}</div></div>`);
+{
+  const S = viewer.scene, el = $('urCortina'); let desde = 0, fuera = 0;
+  S.postRender.addEventListener(() => {
+    const ahora = performance.now(), abajo = S.cameraUnderground && S.globe.show;
+    if (abajo) { fuera = 0; if (!desde) desde = ahora; } else { desde = 0; if (!fuera) fuera = ahora; }
+    const ver = abajo ? (ahora - desde > 120 && ahora - desde < 25000) : false;
+    if (ver !== el.classList.contains('vis') && (ver || ahora - fuera > 250)) el.classList.toggle('vis', ver);
+  });
+  // promesa: el terreno de cerca ya está (la cámara no quedó debajo de una tesela gruesa), con un tope
+  window.urTerrenoListo = (tope = 8000) => new Promise(ok => { const t0 = performance.now(), mirar = () => {
+    if (!S.cameraUnderground || performance.now() - t0 > tope) return ok(); setTimeout(mirar, 150); }; setTimeout(mirar, 250); });
 }
 
 // ==================== tanda 15/11 tarde: fluidez 2, pines del otro lado, cámara libre en los recorridos, botones ====================
@@ -4852,7 +4973,7 @@ function zcReset() { Object.assign(ZC, { z: 1, zObj: 1, dh: 0, dp: 0, usado: fal
   addEventListener('pointerup', () => { arr = null; });
   cv.addEventListener('dblclick', e => { if (!enModo()) return; e.preventDefault(); zcReset(); });
   // ayuda chica en el reproductor
-  document.querySelector('#miPlay .cab')?.insertAdjacentHTML('afterend', `<div id="urCamTip" style="font-size:11.5px;color:var(--suave);margin:-2px 0 6px">🖱 ${lg('Rueda: alejarte para ver todo el recorrido · arrastrar: girar · doble clic: volver', 'Wheel: zoom out to see the whole route · drag: orbit · double-click: reset')}</div>`);
+  document.querySelector('#miPlay .cab')?.insertAdjacentHTML('afterend', `<div id="urCamTip" style="font-size:11.5px;color:var(--suave);margin:-2px 0 6px">${lg('Rueda: alejarte para ver todo el recorrido · arrastrar: girar · doble clic: volver', 'Wheel: zoom out to see the whole route · drag: orbit · double-click: reset')}</div>`);
   const modo0 = miModo; miModo = function (...a) { zcReset(); return modo0(...a); };
 }
 
@@ -4953,17 +5074,17 @@ window.__maps = { UR, abrir: urAbrir, base: urIrBase, control: urControl, analiz
 // (siguen ahí al actualizar Maps in Mars) y se pueden exportar a un archivo. Un recorrido que vuelve a la base queda como "camino candidato":
 // se dibuja y el A* lo prefiere (cuesta 30 % menos pasar por él) para planificar los siguientes.
 document.head.insertAdjacentHTML('beforeend', `<style id="plEstilos">
-#plBarra{display:none;flex-direction:column;align-items:center;gap:2px;padding:4px;background:var(--sup,#1d1f24);border-radius:20px;box-shadow:var(--sombra,0 4px 14px #0008)}
+#plBarra{display:none;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;background:rgba(20,21,24,.92);border:1px solid #ffffff12;border-radius:16px;box-shadow:var(--sombra,0 4px 14px #0008)}
 body.pl-on:not(.mi-modo) #plBarra{display:flex}
-#plBarra button{width:34px;height:34px;border:0;border-radius:50%;background:none;color:#e8eaed;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;position:relative;padding:0}
-#plBarra button:hover{background:#ffffff14}
-#plBarra button.on{background:var(--acento,#f28c38);color:#1b1210}
-#plBarra hr{width:20px;border:0;border-top:1px solid #ffffff22;margin:2px auto}
+#plBarra button{width:44px;height:34px;border:0;border-radius:12px;background:none;color:var(--suave,#aab);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;padding:0}
+#plBarra button svg{width:22px;height:22px;fill:currentColor}
+#plBarra button:hover{background:#ffffff10;color:var(--texto,#e8eaed)}
+#plBarra button.on{background:#f28c3826;color:var(--acento2,#f9a65a)}
+#plBarra hr{width:24px;border:0;border-top:1px solid #ffffff1a;margin:3px auto}
 #plBarra .plMas{display:none;flex-direction:column;gap:2px;align-items:center}
 #plBarra.abierta .plMas{display:flex}
-#plBarra #plToggle{font-size:16px}
-#plBarra.abierta #plToggle{background:#ffffff14}
-#plBarra button[data-tip]:hover::after{content:attr(data-tip);position:absolute;right:44px;top:50%;transform:translateY(-50%);white-space:nowrap;background:#111;color:#fff;font-size:12.5px;padding:5px 9px;border-radius:7px;pointer-events:none;z-index:2}
+#plBarra.abierta #plToggle{color:var(--texto,#e8eaed)}
+#plBarra button[data-tip]:hover::after{content:attr(data-tip);position:absolute;right:52px;top:50%;transform:translateY(-50%);white-space:nowrap;background:rgba(20,21,24,.96);border:1px solid #ffffff1a;color:#e8eaed;font-size:12.5px;padding:5px 9px;border-radius:8px;pointer-events:none;z-index:2}
 body.pl-on.pl-dibujo #globo canvas{cursor:crosshair!important}
 body.pl-on.pl-borrar #globo canvas{cursor:not-allowed!important}
 #plAyuda{position:absolute;left:50%;transform:translateX(-50%);top:78px;z-index:9;background:#1d1f24ee;color:#e8eaed;border-radius:10px;padding:8px 14px;font-size:13px;display:none;box-shadow:0 6px 20px #0008;max-width:min(560px,70vw);text-align:center}
@@ -4994,23 +5115,39 @@ const plNuevo = () => ({ id: plId(), nombre: lg('Misión sin nombre', 'Untitled 
   pts: [], notas: [], medidas: [], trazos: [], figuras: [] });
 
 // ---------- barra de herramientas ----------
+// íconos de línea iguales a los del riel de la izquierda (Material Icons, Apache 2.0), sin emojis
+const PL_IC = {
+  herr: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
+  mano: 'M23 5.5V20c0 2.2-1.8 4-4 4h-7.3c-1.08 0-2.1-.43-2.85-1.19L1 14.83s1.26-1.23 1.3-1.25c.22-.19.49-.29.79-.29.22 0 .42.06.6.16.04.01 4.31 2.46 4.31 2.46V4c0-.83.67-1.5 1.5-1.5S11 3.17 11 4v7h1V1.5c0-.83.67-1.5 1.5-1.5S15 .67 15 1.5V11h1V2.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V11h1V5.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5z',
+  punto: 'M19 15.18V7c0-2.21-1.79-4-4-4s-4 1.79-4 4v10c0 1.1-.9 2-2 2s-2-.9-2-2V8.82C8.16 8.4 9 7.3 9 6c0-1.66-1.34-3-3-3S3 4.34 3 6c0 1.3.84 2.4 2 2.82V17c0 2.21 1.79 4 4 4s4-1.79 4-4V7c0-1.1.9-2 2-2s2 .9 2 2v8.18A2.996 2.996 0 0 0 18 21c1.66 0 3-1.34 3-3 0-1.3-.84-2.4-2-2.82z',
+  nota: 'M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z',
+  medir: 'M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4h2V8h2v8z',
+  pincel: 'M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37-1.34-1.34a.996.996 0 0 0-1.41 0L9 12.25 11.75 15l8.96-8.96a.996.996 0 0 0 0-1.41z',
+  rect: 'M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H6V6h12v12z',
+  circ: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z',
+  borrar: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5-1-1h-5l-1 1H5v2h14V4z',
+  deshacer: 'M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z',
+  panel: 'M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z',
+  salir: 'M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
+};
+const plSvg = k => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${PL_IC[k]}"/></svg>`;
 const PL_HERR = [
-  ['mano', '✋', lg('Mano: mover el mapa', 'Hand: move the map')],
-  ['punto', '➊', lg('Puntos de ruta (0 = Base Gale; tocá una perforación para usarla)', 'Route points (0 = Gale Base; tap a drill hole to use it)')],
-  ['nota', '📌', lg('Pin con nota', 'Pin with a note')],
-  ['medir', '📏', lg('Medir distancia (doble clic para terminar)', 'Measure distance (double-click to finish)')],
-  ['pincel', '✏️', lg('Pincel: dibujar a mano alzada (si cerrás la figura, da el área)', 'Brush: freehand drawing (closing the shape gives the area)')],
-  ['rect', '▭', lg('Rectángulo: arrastrá de esquina a esquina', 'Rectangle: drag corner to corner')],
-  ['circ', '◯', lg('Círculo: arrastrá desde el centro', 'Circle: drag from the center')],
-  ['borrar', '⌫', lg('Borrar: tocá lo que quieras sacar', 'Erase: tap what you want to remove')],
+  ['mano', lg('Mano: mover el mapa', 'Hand: move the map')],
+  ['punto', lg('Puntos de ruta (0 = Base Gale; tocá una perforación para usarla)', 'Route points (0 = Gale Base; tap a drill hole to use it)')],
+  ['nota', lg('Pin con nota', 'Pin with a note')],
+  ['medir', lg('Medir distancia (doble clic para terminar)', 'Measure distance (double-click to finish)')],
+  ['pincel', lg('Pincel: dibujar a mano alzada (si cerrás la figura, da el área)', 'Brush: freehand drawing (closing the shape gives the area)')],
+  ['rect', lg('Rectángulo: arrastrá de esquina a esquina', 'Rectangle: drag corner to corner')],
+  ['circ', lg('Círculo: arrastrá desde el centro', 'Circle: drag from the center')],
+  ['borrar', lg('Borrar: tocá lo que quieras sacar', 'Erase: tap what you want to remove')],
 ];
 // barra de herramientas: a la derecha, arriba de la brújula, plegable (no tapa el mapa ni los otros botones)
 $('controles').insertAdjacentHTML('afterbegin', `<div id="plBarra" class="abierta" role="toolbar" aria-label="${lg('Herramientas del planificador', 'Planner tools')}">
-  <button id="plToggle" data-tip="${lg('Mostrar u ocultar herramientas', 'Show or hide tools')}" aria-label="${lg('Herramientas', 'Tools')}">✎</button>
-  <div class="plMas">${PL_HERR.map(([k, ic, t]) => `<button data-plh="${k}" data-tip="${t}" aria-label="${t}">${ic}</button>`).join('')}<hr>
-  <button data-pla="deshacer" data-tip="${lg('Deshacer (Ctrl+Z)', 'Undo (Ctrl+Z)')}">↶</button>
-  <button data-pla="panel" data-tip="${lg('Panel de la misión', 'Mission panel')}">☰</button>
-  <button data-pla="salir" data-tip="${lg('Salir del planificador', 'Leave the planner')}">✕</button></div></div>`);
+  <button id="plToggle" data-tip="${lg('Mostrar u ocultar herramientas', 'Show or hide tools')}" aria-label="${lg('Herramientas', 'Tools')}">${plSvg('herr')}</button>
+  <div class="plMas"><hr>${PL_HERR.map(([k, t]) => `<button data-plh="${k}" data-tip="${t}" aria-label="${t}">${plSvg(k)}</button>`).join('')}<hr>
+  <button data-pla="deshacer" data-tip="${lg('Deshacer (Ctrl+Z)', 'Undo (Ctrl+Z)')}" aria-label="${lg('Deshacer', 'Undo')}">${plSvg('deshacer')}</button>
+  <button data-pla="panel" data-tip="${lg('Panel de la misión', 'Mission panel')}" aria-label="${lg('Panel de la misión', 'Mission panel')}">${plSvg('panel')}</button>
+  <button data-pla="salir" data-tip="${lg('Salir del planificador', 'Leave the planner')}" aria-label="${lg('Salir del planificador', 'Leave the planner')}">${plSvg('salir')}</button></div></div>`);
 document.body.insertAdjacentHTML('beforeend', '<div id="plAyuda"></div>');
 $('plToggle').onclick = () => $('plBarra').classList.toggle('abierta');
 document.querySelectorAll('#plBarra [data-plh]').forEach(b => b.onclick = () => plHerr(b.dataset.plh));
@@ -5214,6 +5351,14 @@ function plTempFin(guardar = false) {
 }
 
 // ---------- ruta más segura y números ----------
+// Tramos ya calculados: al mover o agregar un punto solo se recalculan los tramos que cambiaron (el A* de un tramo largo tarda ~0,3 s).
+const PL_MEMO = new Map();
+function plRuta(a, b, aPie) {
+  const k = [a[0].toFixed(6), a[1].toFixed(6), b[0].toFixed(6), b[1].toFixed(6), aPie ? 1 : 0, PMR.pref ? PMR.prefN || 1 : 0].join(',');
+  let r = PL_MEMO.get(k);
+  if (!r) { const x = pmrRuta(a, b, aPie); r = { v: x.v, forzado: x.forzado, L: pmrLinea(x.v, aPie) }; if (PL_MEMO.size > 200) PL_MEMO.clear(); PL_MEMO.set(k, r); }
+  return r;
+}
 async function plCalcular() {
   const p = PL.proy, k = ++PL.calc; if (!p) return;
   if (!p.pts.length) { PL.ruta = null; plDibujar(); return plResultados(); }
@@ -5223,7 +5368,7 @@ async function plCalcular() {
   const v = [plBase(), ...p.pts.map(q => [q.lon, q.lat])]; if (p.volver) v.push(plBase());
   const legs = [];
   for (let i = 1; i < v.length; i++) {
-    const r = pmrRuta(v[i - 1], v[i], aPie), L = pmrLinea(r.v, aPie), S = L.pts;
+    const r = plRuta(v[i - 1], v[i], aPie), L = r.L, S = L.pts;
     const lim = aPie ? PR.pMax : PR.rMax, paso = S.length > 1 ? L.largo / (S.length - 1) : 0;
     legs.push({ de: i - 1, a: p.volver && i === v.length - 1 ? 0 : i, vuelta: p.volver && i === v.length - 1, v: r.v, L,
       arena: S.filter(q => q[9] === -2).length * paso, sobre: S.filter(q => q[5] > lim).length * paso, fuera: S.filter(q => !pmrDentro(q[0], q[1])).length * paso, pmax: Math.max(0, ...S.map(q => q[5])) });
@@ -5245,7 +5390,7 @@ async function plCalcular() {
 }
 function plResultados() {
   const el = $('plRes'); if (!el) return; const R = PL.ruta, p = PL.proy;
-  if (!R) { el.innerHTML = `<p class="sub">${lg('Agregá al menos un punto (herramienta ➊) para calcular la ruta.', 'Add at least one point (➊ tool) to compute the route.')}</p>`; return; }
+  if (!R) { el.innerHTML = `<p class="sub">${lg('Agregá al menos un punto (herramienta «Puntos de ruta») para calcular la ruta.', 'Add at least one point ("Route points" tool) to compute the route.')}</p>`; return; }
   const T = R.T, PR = MI.D.parametros.PR, EVA = MI.D.parametros.EVA, nom = i => i === 0 ? lg('Base', 'Base') : String(i);
   const av = [];
   if (T.sobre > 0) av.push(['#ff4d4d', lg(`Quedan ${plKm(T.sobre)} sobre pendientes de más de ${R.aPie ? PR.pMax : PR.rMax}°: algún punto está en una ladera muy empinada. Movelo a un lugar más plano.`, `${plKm(T.sobre)} remain on slopes over ${R.aPie ? PR.pMax : PR.rMax}°: a point sits on a very steep slope. Move it somewhere flatter.`)]);
@@ -5273,10 +5418,10 @@ function plPanel(foco) {
   const p = PL.proy, P = plLeer('mimProyectos', {}), lista = Object.values(P).sort((a, b) => b.mod - a.mod);
   const pozos = typeof NUM !== 'undefined' ? NUM.filter(q => pmrDentro(q.lon, q.lat)) : [];
   miFicha(lg('Planificador de misión', 'Mission planner'), `
-    <p class="sub">${lg('Usá la barra de la izquierda: ➊ agrega puntos en orden (el 0 es la Base Gale), 📌 deja notas, 📏 mide, ✏️ ▭ ◯ marcan zonas. La ruta más segura entre puntos se calcula sola.', 'Use the bar on the left: ➊ adds points in order (0 is Gale Base), 📌 leaves notes, 📏 measures, ✏️ ▭ ◯ mark areas. The safest route between points is computed automatically.')}</p>
+    <p class="sub">${lg('Usá la barra de herramientas de la derecha: «Puntos de ruta» agrega puntos en orden (el 0 es la Base Gale), el pin deja notas, la regla mide y el pincel, el rectángulo y el círculo marcan zonas. La ruta más segura entre puntos se calcula sola.', 'Use the tool bar on the right: "Route points" adds points in order (0 is Gale Base), the pin leaves notes, the ruler measures, and the brush, rectangle and circle mark areas. The safest route between points is computed automatically.')}</p>
     <div class="pl-fila"><input type="text" id="plNombre" value="${miEsc(p.nombre)}" style="flex:1" aria-label="${lg('Título del recorrido', 'Route title')}" placeholder="${lg('Título del recorrido', 'Route title')}">
       <button class="mib pri" id="plGuardarR">${p.guardado ? lg('Guardado ✓', 'Saved ✓') : lg('Guardar recorrido', 'Save route')}</button></div>
-    <div class="pl-fila"><button class="mib" id="plNuevoP">+ ${lg('Recorrido nuevo', 'New route')}</button><button class="mib" id="plInforme">📄 ${lg('Informe PDF', 'PDF report')}</button>
+    <div class="pl-fila"><button class="mib" id="plNuevoP">+ ${lg('Recorrido nuevo', 'New route')}</button><button class="mib" id="plInforme">${lg('Informe PDF', 'PDF report')}</button>
       <label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="plPeligro" ${PL.peligro ? 'checked' : ''}> ${lg('Zonas de peligro', 'Hazard zones')}</label></div>
     ${lista.filter(x => x.guardado).length ? `<h2>${lg('Recorridos guardados', 'Saved routes')}</h2>${lista.filter(x => x.guardado).map(x => `<div class="pl-fila" data-gid="${x.id}" style="font-size:13px;margin:3px 0">
       <label style="display:flex;gap:6px;align-items:center;flex:1;min-width:0" title="${lg('Ver u ocultar en el mapa', 'Show or hide on the map')}"><input type="checkbox" data-plg="ver" ${x.visible !== false ? 'checked' : ''}><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.id === p.id ? '▸ ' : ''}${miEsc(x.nombre)}</span></label>
@@ -5296,9 +5441,9 @@ function plPanel(foco) {
     ${p.notas.length ? `<h2>${lg('Notas en el mapa', 'Notes on the map')} (${p.notas.length})</h2>${p.notas.map(n => `<div class="pl-pt" data-nid="${n.id}"><div class="cab"><span class="pl-num" style="background:${PL_COL.nota}">✎</span><b style="flex:1">${n.lat.toFixed(4)}°, ${n.lon.toFixed(4)}° E</b><button class="x" data-pln="ir">◎</button><button class="x" data-pln="x">×</button></div>
       <textarea data-pln="texto" placeholder="${lg('Escribí la nota…', 'Write the note…')}">${miEsc(n.texto || '')}</textarea></div>`).join('')}` : ''}
     ${p.medidas.length || p.trazos.length || p.figuras.length ? `<h2>${lg('Dibujos y medidas', 'Drawings and measurements')}</h2><table>
-      ${p.medidas.map(m => `<tr><td>📏 ${lg('Medida', 'Measurement')}</td><td>${plKm(plLargo(m.pts))}</td></tr>`).join('')}
-      ${p.trazos.map(t => `<tr><td>✏️ ${t.cerrado ? lg('Área a mano', 'Freehand area') : lg('Trazo', 'Stroke')}</td><td>${t.cerrado ? plM2(plArea(t.pts)) : plKm(plLargo(t.pts))}</td></tr>`).join('')}
-      ${p.figuras.map(f => { const r = miDist(f.a[0], f.a[1], f.b[0], f.b[1]); return `<tr><td>${f.tipo === 'rect' ? '▭ ' + lg('Rectángulo', 'Rectangle') : '◯ ' + lg('Círculo', 'Circle')}</td><td>${f.tipo === 'rect' ? plM2(plArea(plRect(f.a, f.b))) : plM2(Math.PI * r * r)}</td></tr>`; }).join('')}</table>` : ''}
+      ${p.medidas.map(m => `<tr><td>${lg('Medida', 'Measurement')}</td><td>${plKm(plLargo(m.pts))}</td></tr>`).join('')}
+      ${p.trazos.map(t => `<tr><td>${t.cerrado ? lg('Área a mano', 'Freehand area') : lg('Trazo', 'Stroke')}</td><td>${t.cerrado ? plM2(plArea(t.pts)) : plKm(plLargo(t.pts))}</td></tr>`).join('')}
+      ${p.figuras.map(f => { const r = miDist(f.a[0], f.a[1], f.b[0], f.b[1]); return `<tr><td>${f.tipo === 'rect' ? lg('Rectángulo', 'Rectangle') : lg('Círculo', 'Circle')}</td><td>${f.tipo === 'rect' ? plM2(plArea(plRect(f.a, f.b))) : plM2(Math.PI * r * r)}</td></tr>`; }).join('')}</table>` : ''}
     <h2>${lg('Caminos candidatos', 'Candidate paths')} (${plLeer('mimCandidatos', []).length})</h2>
     <p class="sub">${lg('Cuando un recorrido simulado vuelve a la base, su camino queda guardado como candidato a camino seguro. Se dibujan en verde y el cálculo de rutas los prefiere.', 'When a simulated route returns to base, its path is saved as a candidate safe path. They are drawn in green and the route calculation prefers them.')}</p>
     ${plLeer('mimCandidatos', []).map(c => `<div class="pl-fila" data-cid="${c.id}" style="font-size:12.5px"><span style="color:${PL_COL.cand}">━</span> <span style="flex:1">${miEsc(c.nombre)} · ${plKm(c.km)} · ${new Date(c.fecha).toLocaleDateString()}</span><button class="x" data-plc="x" title="${lg('Quitar', 'Remove')}">×</button></div>`).join('')}
@@ -5374,6 +5519,8 @@ function plRecorrer() {
   PL.recId = id; PL.fin = false; UR.id = id;
   document.body.classList.remove('pl-on'); plTempFin(); if (window.cerrarCajon) cerrarCajon();
   miModo(id, 'ruta');
+  // arranca solo: sin la tarjeta «Listos para salir» arriba (repetía el botón Salir de la barra de abajo y tapaba la ruta)
+  setTimeout(async () => { await urTerrenoListo(); const m = MI.modo; if (m?.id === id && !m.jugando && m.d < 1 && !m.control) { miCard(); miJugar(true); } }, 500);
 }
 {
   const tick0 = miTick;
@@ -5410,7 +5557,7 @@ function plPreferidos() {
   for (const c of lista) for (let i = 1; i < c.pts.length; i++) { const [a, b] = [c.pts[i - 1], c.pts[i]], n = Math.max(1, Math.ceil(miDist(a[0], a[1], b[0], b[1]) / 6));
     for (let u = 0; u <= n; u++) { const [cc, ff] = pmrCelda(a[0] + (b[0] - a[0]) * u / n, a[1] + (b[1] - a[1]) * u / n);
       for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const x = cc + dx, y = ff + dy; if (x >= 0 && y >= 0 && x < T.W && y < T.H) G[y * T.W + x] = 1; } } }
-  PMR.pref = G; PL.pref = true;
+  PMR.pref = G; PMR.prefN = (PMR.prefN || 1) + 1; PL.pref = true;
 }
 $('urIntNuevo').onclick = () => PL.activo ? plSalir() : plAbrir();
 $('urIntNuevo').title = lg('Planificador de misión: puntos en orden desde la base, notas, medidas y dibujos, con la ruta más segura, tiempo, energía y radiación', 'Mission planner: points in order from the base, notes, measurements and drawings, with the safest route, time, energy and radiation');

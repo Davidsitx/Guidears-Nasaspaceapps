@@ -9,6 +9,7 @@ Marte en 3D, al estilo Google Earth, con todo lo que Curiosity midió en Gale. P
 - **En el celular:** con `abrir.bat` abierto en la PC y el celular en el **mismo Wi-Fi**, tocar **Celular** en el menú de la izquierda y escanear el código QR. También se puede escribir la dirección que muestra la ventana negra del servidor (por ejemplo `http://192.168.0.15:8765/index.html`). La primera vez Windows puede preguntar si Python puede usar la red: elegir **Redes privadas**. Para que solo funcione en la PC: `python servir.py --solo-pc`.
 - En el celular se puede **agregar a la pantalla de inicio** (menú del navegador → "Agregar a inicio"): queda con el logo, como una app.
 - Doble clic en `index.html` también funciona, pero solo con Cesium Mars (sin el globo propio ni las capas).
+- **En otra computadora (sin las teselas):** bajar el repo (GitHub → Code → Download ZIP), descomprimir y abrir `maps-in-mars/abrir.bat` (Windows) o `abrir.sh`. Hace falta Python 3 e internet: las teselas llegan solas desde Hugging Face (`nube.json`) y quedan guardadas en el navegador; la primera vez en cada zona tarda unos segundos. Si se copia la carpeta `teselas/` (~6 GB) desde la PC original, funciona sin depender de la nube.
 
 ## Interfaz (estilo Google Earth)
 - **Riel de la izquierda** (abajo en el celular): Buscar, Explorar, Base, Órbitas, Biblioteca, Historia (línea de tiempo), Capas, Celular, Ayuda y Pantalla completa. Tocar de nuevo una pestaña la cierra.
@@ -21,7 +22,7 @@ Marte en 3D, al estilo Google Earth, con todo lo que Curiosity midió en Gale. P
 
 ### Tecnología
 Maps in Mars es una página web: HTML + JavaScript + WebGL, con el motor CesiumJS (código abierto, Apache 2.0). Google Earth web usa la misma base (WebGL en el navegador; su motor está escrito en C++ y compilado a WebAssembly). Por eso funciona en Chrome, Edge, Firefox y Safari, en PC y en celular, sin instalar nada.
-Las teselas de Marte (varios GB) están en la PC o en Google Drive: por eso el celular las pide a la PC por Wi-Fi. Para abrirlo desde cualquier lugar habría que subir las teselas a un hosting (por ejemplo Cloudflare R2 o un bucket de Google Cloud) y publicar la página.
+Las teselas de Marte (varios GB) están en la PC y también en el dataset público de Hugging Face `ChuchuTEA/gale-earth-teselas`: sin la carpeta `teselas/`, `sw.js` las pide de ahí (solo los bytes de cada tesela). Para abrirlo desde cualquier lugar sin Python falta publicar la página (por ejemplo GitHub Pages).
 
 ## Qué tiene
 - **Globo 3D de Marte** (Cesium Mars): relieve MOLA + HRSC de todo el planeta (~200 m) y, en Gale, imagen de 25 cm y terreno de 1 m.
