@@ -2,6 +2,22 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (11) · Compañero (con Claude) · AUDITORÍA DE GALE EARTH (ERRORES, FUENTES, ACTUALIDAD)
+- Informe completo: `docs/auditoria_gale_earth_2026-11-15.pdf`.
+- Barrido automático por 150 pantallas: 0 errores de JavaScript.
+- Arreglado:
+  - enlace THEMIS 404 → stac.astrogeology.usgs.gov/docs/data/mars/themis_controlled_mosaics/;
+  - tabla de `docs/fuentes.md` (9 filas habían quedado después del pie);
+  - "Sol en el cénit…" ahora sale en inglés;
+  - filas "Gale Earth · Expedición" renombradas (ese paquete no se ve en la app).
+- Estado de las misiones verificado al 15/11: MAVEN terminada el 3/6/2026; Odyssey, MRO, MEX, TGO y Hope activas; MMX lanzada el 20/10; ESCAPADE hizo los sobrevuelos el 7 y el 9/11; Rosalind Franklin a fines de 2028.
+- **Para David** (fuentes secundarias o pendientes en escena3d): Space.com (31°), Smithsonian/Spaceflight Now (por qué Gale), 37 hallazgos "de memoria", yardangs sin enlace, VanBommel sin DOI, origen de la travesía y el gpkg.
+- Falta:
+  - revisar si el CheMin de Nevado Sajama 2 (sol 4795) ya está en el PDS (tanda 42);
+  - abrir a mano una ficha ODR (el sitio no respondió desde la PC);
+  - subir el relieve de Jezero a HF;
+  - PR nuevo.
+
 ## 2026-11-15 mañana (10) · Compañero (con Claude) · CAPA "AGUA EN EL PRIMER METRO DEL SUELO" (MEDIDA, TODO MARTE)
 - Nueva capa en Capas → Todo Marte. Es **medida** por el espectrómetro de rayos gamma (GRS) de Mars Odyssey entre 2002 y 2005.
   - Producto oficial del PDS: ODY-M-GRS-5-ELEMENTS-V1.0, `H2O_SR_5X5.TAB` (5° × 5°, suavizado de 10°, % en peso de H2O, de 60°S a 60°N, con su sigma). Se guardó la copia en `gale-earth/datos/crudos_grs/`.

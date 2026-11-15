@@ -2220,7 +2220,10 @@ async function mgNocheDibujar() {
   const nueva = capas.addImageryProvider(pr); nueva.alpha = 1;
   if (MG.noche) capas.remove(MG.noche, true);
   MG.noche = nueva; MG.noche.show = !!MG.vis.noche; MG.solActual = s;
-  if ($('mgSol')) $('mgSol').textContent = `Sol en el cénit sobre ${fmt(Math.abs(s.lat), 1)}° ${s.lat >= 0 ? 'N' : 'S'}, ${fmt(Math.abs(s.lon), 1)}° ${s.lon >= 0 ? 'E' : 'O'}. Hora en Gale: ${String(Math.floor(((s.mtc + 137.4 / 15) % 24 + 24) % 24)).padStart(2, '0')} h (hora media local).`;
+  if ($('mgSol')) { const en = (typeof IDIOMA !== 'undefined' && IDIOMA === 'en'), hh = String(Math.floor(((s.mtc + 137.4 / 15) % 24 + 24) % 24)).padStart(2, '0');
+    $('mgSol').textContent = en
+      ? `Sun at zenith over ${fmt(Math.abs(s.lat), 1)}° ${s.lat >= 0 ? 'N' : 'S'}, ${fmt(Math.abs(s.lon), 1)}° ${s.lon >= 0 ? 'E' : 'W'}. Time at Gale: ${hh} h (local mean time).`
+      : `Sol en el cénit sobre ${fmt(Math.abs(s.lat), 1)}° ${s.lat >= 0 ? 'N' : 'S'}, ${fmt(Math.abs(s.lon), 1)}° ${s.lon >= 0 ? 'E' : 'O'}. Hora en Gale: ${hh} h (hora media local).`; }
 }
 async function mgNoche(on) { MG.vis.noche = on; if (on) await mgNocheDibujar(); else if (MG.noche) MG.noche.show = false; }
 // se actualiza solo: cada 60 s reales, o antes si el reloj de Órbitas corre rápido
@@ -2239,7 +2242,7 @@ function mgSeccionCapas() {
     ${f('nombres', 'Topónimos (IAU)', 'Los nombres oficiales de montes, llanuras, valles y cráteres aprobados por la Unión Astronómica Internacional. Los más grandes se ven de lejos; los chicos, al acercarse. Entre paréntesis, la altura aproximada en el centro de montes y llanuras grandes (datum MOLA; la cumbre o el fondo pueden estar más arriba o más abajo).')}
     ${f('aterrizajes', 'Lugares de aterrizaje (Misiones)', 'Las misiones que llegaron a la superficie, con los datos de la pestaña Historia.')}
     ${f('noche', 'Día y noche ahora', '<span id="mgSol">Dónde es de día y de noche en Marte en este momento (o en la hora del reloj de Órbitas).</span>')}
-    <p class="fuente">Relieve: ${url('https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m', 'USGS, HRSC-MOLA Blended DEM 200 m')}. THEMIS: ${url('https://astrogeology.usgs.gov/search/map/themis_night_ir_controlled_mosaics_100m_v2', 'USGS, THEMIS Night IR Controlled Mosaics')}. Agua: ${url('https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/odgm_xxxx/data/smoothed/', 'NASA PDS, Mars Odyssey GRS (ODY-M-GRS-5-ELEMENTS-V1.0, H2O_SR_5X5)')}, Boynton et al. 2007, JGR 112. Nombres: ${url('https://planetarynames.wr.usgs.gov/', 'planetarynames.wr.usgs.gov')} (IAU/USGS). Día y noche: algoritmo Mars24 de NASA (${url('https://www.giss.nasa.gov/tools/mars24/', 'giss.nasa.gov/tools/mars24')}).</p>`;
+    <p class="fuente">Relieve: ${url('https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m', 'USGS, HRSC-MOLA Blended DEM 200 m')}. THEMIS: ${url('https://stac.astrogeology.usgs.gov/docs/data/mars/themis_controlled_mosaics/', 'USGS, THEMIS Night IR Controlled Mosaics')}. Agua: ${url('https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/odgm_xxxx/data/smoothed/', 'NASA PDS, Mars Odyssey GRS (ODY-M-GRS-5-ELEMENTS-V1.0, H2O_SR_5X5)')}, Boynton et al. 2007, JGR 112. Nombres: ${url('https://planetarynames.wr.usgs.gov/', 'planetarynames.wr.usgs.gov')} (IAU/USGS). Día y noche: algoritmo Mars24 de NASA (${url('https://www.giss.nasa.gov/tools/mars24/', 'giss.nasa.gov/tools/mars24')}).</p>`;
 }
 function mgEnganchar() {
   cont().querySelectorAll('#mgEsc button').forEach(b => b.onclick = async () => { MG.escala = b.dataset.e; cont().querySelectorAll('#mgEsc button').forEach(x => x.classList.toggle('on', x === b)); $('mgLey').innerHTML = mgLeyendaRampa(); await mgRampaLocal(); });
