@@ -9,6 +9,8 @@ We compare two ways of exploring the same real Martian terrain, starting where N
 
 Every stop is tied to a current science question of the Curiosity team.
 
+**Team / Equipo:** Tomás Lopreite · Tomás Arancibia · David Cejas
+
 **Installation:** [English](#quick-start) · [Castellano](#instalación-en-tu-computadora)
 
 ## Quick start
