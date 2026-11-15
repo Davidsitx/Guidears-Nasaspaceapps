@@ -9,13 +9,19 @@ We compare two ways of exploring the same real Martian terrain, starting where N
 
 Every stop is tied to a current science question of the Curiosity team.
 
-**Installation:** [English](#run-it-on-your-computer) · [Castellano](#instalación-en-tu-computadora)
+**Installation:** [English](#quick-start) · [Castellano](#instalación-en-tu-computadora)
 
-## Try it online
+## Quick start
 
-Open **<https://davidsitx.github.io/Guidears-Nasaspaceapps/>** in Chrome or Edge, on a computer or a phone. Nothing to install.
+**1. Just look at it (1 click, nothing to install).** Open **<https://davidsitx.github.io/Guidears-Nasaspaceapps/>** in Chrome or Edge, on a computer or a phone. The Mars terrain streams from our public dataset on Hugging Face, so the first visit to each area takes a few seconds.
 
-The online version streams the terrain tiles from our public dataset on Hugging Face, so the first visit to each area can be slow. For the smooth version, run it on your computer.
+**2. Run it on your own computer (Windows, about 5 minutes).** It is faster and smoother:
+1. Install Python from [python.org](https://www.python.org/downloads/). In the first installer screen, tick **"Add python.exe to PATH"**.
+2. Download the project: [main.zip](https://github.com/Davidsitx/Guidears-Nasaspaceapps/archive/refs/heads/main.zip). Right-click it → **Extract All…**
+3. Open the extracted folder, then the **`maps-in-mars`** folder, and double-click **`abrir.bat`**. If Windows warns you, click **More info → Run anyway**; if the firewall asks, allow **Private networks**.
+4. Your browser opens the app. Keep the black window open while you use it.
+
+That's all. The detailed guide below covers macOS and Linux, faster terrain, phones and fixes.
 
 ## Run it on your computer
 
@@ -46,9 +52,9 @@ git clone https://github.com/Davidsitx/Guidears-Nasaspaceapps.git
 
 The app lives in the **`maps-in-mars`** folder: it contains `abrir.bat`, `servir.py` and `index.html`.
 
-### 3. Terrain tiles (optional, recommended)
+### 3. Terrain tiles (optional)
 
-Without tiles, the globe falls back to the Cesium Mars terrain, which is detailed only in a small part of Gale. With them you get our global relief, Gale at 5 m and HiRISE photos at 25 cm.
+You do not need to download anything for the terrain: if your computer has no tiles, the app streams them from our public dataset, just like the online version. Download them only if you want it **faster** or want **phones on your Wi-Fi** to get the full terrain from your computer (phones cannot stream them on their own over a local address). If neither the local tiles nor the dataset are reachable, the app falls back to the Cesium Mars terrain, which is detailed only in a small part of Gale.
 
 The tiles are about 23 `.zip` files in the public dataset [ChuchuTEA/gale-earth-teselas](https://huggingface.co/datasets/ChuchuTEA/gale-earth-teselas). They go in `maps-in-mars/teselas/` **as `.zip`, without unzipping**. From inside the `maps-in-mars` folder, these two commands download them there (or download them by hand from the dataset's **Files and versions** tab):
 
@@ -94,6 +100,7 @@ The browser opens **<http://localhost:8765/index.html>** by itself. If port 8765
 ### 6. Phones and other devices on the same Wi-Fi
 
 - Open the address shown on the line "Desde el celular" in the server window, for example `http://192.168.0.15:8765/index.html`.
+- For the full terrain on phones, download the tiles on the computer first (step 3).
 - If it does not connect, the venue Wi-Fi is probably isolating devices. Share the phone's mobile hotspot instead, connect the computer and the other devices to it, and restart the server.
 - On a phone, **Add to Home Screen** installs it like an app.
 - To keep it on this computer only: `python servir.py --solo-pc`.
@@ -124,7 +131,8 @@ Terminal 2 prints a `https://….trycloudflare.com` address: add `/index.html` a
 | --- | --- |
 | `python` is not recognized, or the Microsoft Store opens | Reinstall Python with "Add python.exe to PATH". Or turn off Settings → Apps → Advanced app settings → App execution aliases → `python.exe` / `python3.exe`. `py` instead of `python` also works |
 | The server window closes right away | Open a terminal in `maps-in-mars` and run `python servir.py` to see the error |
-| "no encontré teselas" or "tiles not found" | The `.zip` files are not in `maps-in-mars/teselas/` (step 3). After moving them, reload the page |
+| The server says "no encontré teselas" | Not a problem: the app streams the tiles from the dataset. To make it faster, do step 3 |
+| The page warns that it did not find the tiles | Usually a phone on the local Wi-Fi while the computer has no tiles. Do step 3 on the computer |
 | Black globe or no imagery | No internet: CesiumJS and the imagery load live |
 | The mission does not load | The page was opened by double-clicking `index.html`. Use `http://localhost:8765/index.html` with the server running |
 | Old version still showing | Close old server windows and reload with Ctrl+Shift+R |
@@ -155,7 +163,17 @@ Terminal 2 prints a `https://….trycloudflare.com` address: add `/index.html` a
 
 ## Instalación en tu computadora
 
-**Para probarlo sin instalar nada:** abrí **<https://davidsitx.github.io/Guidears-Nasaspaceapps/>** en Chrome o Edge, en la compu o el celular. El terreno llega desde internet, así que la primera vez en cada zona puede tardar. Para la versión fluida, instalalo así.
+### Inicio rápido
+
+**1. Solo mirarlo (1 clic, sin instalar nada).** Abrí **<https://davidsitx.github.io/Guidears-Nasaspaceapps/>** en Chrome o Edge, en la compu o el celular. El terreno de Marte llega desde nuestro dataset público en Hugging Face, así que la primera vez en cada zona tarda unos segundos.
+
+**2. Usarlo en tu compu (Windows, unos 5 minutos).** Va más rápido y fluido:
+1. Instalá Python desde [python.org](https://www.python.org/downloads/). En la primera pantalla del instalador, marcá **"Add python.exe to PATH"**.
+2. Bajá el proyecto: [main.zip](https://github.com/Davidsitx/Guidears-Nasaspaceapps/archive/refs/heads/main.zip). Clic derecho → **Extraer todo…**
+3. Abrí la carpeta que se extrajo, después la carpeta **`maps-in-mars`**, y hacé doble clic en **`abrir.bat`**. Si Windows avisa, tocá **Más información → Ejecutar de todas formas**; si pregunta el Firewall, permití **Redes privadas**.
+4. El navegador abre la app. Dejá abierta la ventana negra mientras la usás.
+
+Eso es todo. La guía detallada que sigue explica Mac y Linux, terreno más rápido, celulares y soluciones.
 
 Maps in Mars es una página web y un pequeño servidor en Python que ya viene en el repo (`maps-in-mars/servir.py`). Solo usa lo que trae Python: no hay que instalar paquetes para usar la app.
 
@@ -184,9 +202,9 @@ git clone https://github.com/Davidsitx/Guidears-Nasaspaceapps.git
 
 La app está en la carpeta **`maps-in-mars`**: adentro tiene `abrir.bat`, `servir.py` e `index.html`.
 
-### 3. Teselas del terreno (opcional, recomendado)
+### 3. Teselas del terreno (opcional)
 
-Sin teselas, el globo usa el terreno de Cesium Mars, que solo tiene detalle en una parte chica de Gale. Con ellas tenés nuestro relieve de todo Marte, Gale a 5 m y las fotos HiRISE de 25 cm.
+No hace falta bajar nada para ver el terreno: si tu compu no tiene las teselas, la app las trae del dataset público, igual que la versión en línea. Bajalas solo si querés que vaya **más rápido** o que los **celulares de tu Wi-Fi** vean el terreno completo desde tu compu (los celulares no pueden traerlas solos con una dirección local). Si no hay teselas locales ni se llega al dataset, la app usa el terreno de Cesium Mars, que solo tiene detalle en una parte chica de Gale.
 
 Son unos 23 archivos `.zip` en el dataset público [ChuchuTEA/gale-earth-teselas](https://huggingface.co/datasets/ChuchuTEA/gale-earth-teselas). Van en `maps-in-mars/teselas/` **como `.zip`, sin descomprimir**. Desde adentro de la carpeta `maps-in-mars`, estos dos comandos las bajan ahí (o bajalas a mano desde la pestaña **Files and versions** del dataset):
 
@@ -221,6 +239,7 @@ Se abre una ventana de terminal: es el servidor. **Dejala abierta mientras uses 
 ### 6. Celulares y otras compus en el mismo Wi-Fi
 
 - Abrí la dirección de la línea "Desde el celular" de la ventana del servidor, por ejemplo `http://192.168.0.15:8765/index.html`.
+- Para que los celulares vean el terreno completo, bajá antes las teselas en la compu (paso 3).
 - Si no conecta, el Wi-Fi del lugar seguramente aísla los equipos. Prendé la zona Wi-Fi de un celular, conectá ahí la compu y los demás equipos, y volvé a arrancar el servidor.
 - En el celular, **Agregar a inicio** lo deja como una app.
 - Para que funcione solo en esta compu: `python servir.py --solo-pc`.
@@ -251,7 +270,8 @@ La terminal 2 muestra una dirección `https://….trycloudflare.com`: agregale `
 | --- | --- |
 | `python` no se reconoce, o se abre la Microsoft Store | Reinstalá Python marcando "Add python.exe to PATH", o apagá Configuración → Aplicaciones → Configuración avanzada de aplicaciones → Alias de ejecución de aplicaciones → `python.exe` / `python3.exe`. También sirve `py` en lugar de `python` |
 | La ventana del servidor se cierra enseguida | Abrí una terminal en `maps-in-mars` y corré `python servir.py` para ver el error |
-| Dice "no encontré teselas" | Los `.zip` no están en `maps-in-mars/teselas/` (paso 3). Después de moverlos, recargá la página |
+| El servidor dice "no encontré teselas" | No pasa nada: la app trae las teselas del dataset. Para que vaya más rápido, hacé el paso 3 |
+| La página avisa que no encontró las teselas | Suele ser un celular en el Wi-Fi local con la compu sin teselas. Hacé el paso 3 en la compu |
 | El globo queda negro o sin imagen | Falta internet: CesiumJS y las imágenes se cargan en vivo |
 | No carga la misión | Se abrió `index.html` con doble clic. Usá `http://localhost:8765/index.html` con el servidor abierto |
 | Se ve la versión vieja | Cerrá las ventanas de servidores viejos y recargá con Ctrl+Shift+R |
