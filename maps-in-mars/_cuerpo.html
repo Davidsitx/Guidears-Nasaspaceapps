@@ -365,7 +365,7 @@ function introGiro() {
   Promise.resolve(typeof miCargar === 'function' ? miCargar().catch(() => false) : true).then(() => { datos = true; });
   return new Promise(ok => {
     const f = () => {
-      const ahora = performance.now(), dt = Math.min(0.05, (ahora - ult) / 1000), t = (ahora - t0) / 1000; ult = ahora;
+      const ahora = performance.now(), dt = Math.min(0.1, (ahora - ult) / 1000), t = (ahora - t0) / 1000; ult = ahora;
       const avance = Math.min(0.98, (1 - pend / maxPend) * 0.7 + Math.min(1, t / 6) * 0.2 + (datos ? 0.1 : 0));
       if (!listo) {
         barra.style.width = (avance * 100).toFixed(0) + '%';
@@ -928,7 +928,10 @@ const ANALISIS = [
   ['dosis', 'Radiación en superficie (día / noche)', 'Dosis de rayos cósmicos medida por RAD, corregida por el cielo que tapa el relieve. Rojo = más dosis, azul = menos. De noche la presión del aire sube y la dosis baja cerca de un 5 % (RAD).', 0.5],
 ];
 const CAPA_A = {}, CAPA_AG = {};   // CAPA_AG: versión de todo Marte, debajo de la fina
-let HORARIO_RAD = 'dia';
+let HORARIO_RAD = 'auto';      // 'auto' = en vivo: día o noche según la hora real en Gale (Mars24); también se puede fijar a mano
+function horaGale() { try { const s = solMarte(new Date()); return ((s.mtc + 137.4 / 15) % 24 + 24) % 24; } catch { return 12; } }
+const horarioRadReal = () => HORARIO_RAD === 'auto' ? (horaGale() >= 6 && horaGale() < 18 ? 'dia' : 'noche') : HORARIO_RAD;
+setInterval(() => { if (HORARIO_RAD === 'auto' && CAPA_A.dosis && CAPA_A.dosis._horario !== horarioRadReal()) cambiarHorarioRad('auto'); }, 60000);
 async function capaAnalisis(id, on, alfa) {
   if (!D.capas5m || !capasImagen()) return avisar('Las capas de análisis necesitan el terreno 3D cargado.');
   if (on && !CAPA_A[id]) {
@@ -939,8 +942,8 @@ async function capaAnalisis(id, on, alfa) {
           CAPA_AG[id].push(capasImagen().addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/global/' + arch, { rectangle: C.Rectangle.fromDegrees(o, -90, e, 90) })));
       }
       const r = D.capas5m.rect_geodetico;
-      const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id === 'dosis' ? 'dosis_' + HORARIO_RAD : id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
-      CAPA_A[id] = capasImagen().addImageryProvider(prov);
+      const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id === 'dosis' ? 'dosis_' + horarioRadReal() : id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
+      CAPA_A[id] = capasImagen().addImageryProvider(prov); if (id === 'dosis') CAPA_A[id]._horario = horarioRadReal();
     } catch (e) {
       return avisar(location.protocol === 'file:' ? 'Para ver esta capa abrí Maps in Mars con abrir.bat (Windows) o abrir.sh: el navegador no permite usar imágenes locales en 3D desde file://.' : 'No se pudo cargar la capa ' + id + ': ' + (e.message || e), 14000);
     }
@@ -954,7 +957,8 @@ async function cambiarHorarioRad(h) {
 }
 function leyendaRad() {
   const r = D.capas5m && D.capas5m.radiacion; if (!r) return '';
-  return `<div class="fila"><span>Horario</span><span class="seg" id="radHora"><button data-h="dia" class="${HORARIO_RAD === 'dia' ? 'on' : ''}">☀ Día</button><button data-h="noche" class="${HORARIO_RAD === 'noche' ? 'on' : ''}">☾ Noche</button></span></div>
+  const hg = horaGale(), hhg = String(Math.floor(hg)).padStart(2, '0') + ':' + String(Math.floor(hg % 1 * 60)).padStart(2, '0');
+  return `<div class="fila"><span>Horario</span><span class="seg" id="radHora"><button data-h="auto" class="${HORARIO_RAD === 'auto' ? 'on' : ''}" title="Según la hora real en Gale (${hhg}, hora media local, Mars24)">● Ahora (${horarioRadReal() === 'dia' ? '☀' : '☾'})</button><button data-h="dia" class="${HORARIO_RAD === 'dia' ? 'on' : ''}">☀ Día</button><button data-h="noche" class="${HORARIO_RAD === 'noche' ? 'on' : ''}">☾ Noche</button></span></div>
     <div class="sub" style="display:flex;align-items:center;gap:8px"><span>${fmt(r.min, 2)}</span><span style="flex:1;height:10px;border-radius:5px;background:linear-gradient(90deg,#285ac8,#50aae6,#fadc5a,#f07832,#c81e28)"></span><span>${fmt(r.max, 2)} mSv/día</span></div>
     <div class="sub">Promedio en la zona: de día ${fmt(r.dia_media, 3)} y de noche ${fmt(r.noche_media, 3)} mSv/día. Fórmula: ${r.formula}.</div>
     <p class="fuente">RAD: Hassler et al. 2014, Science (<a href="https://doi.org/10.1126/science.1244797" target="_blank" rel="noopener">doi.org/10.1126/science.1244797</a>). Día y noche: Rafkin et al. 2014, JGR Planets (<a href="https://doi.org/10.1002/2013JE004525" target="_blank" rel="noopener">doi.org/10.1002/2013JE004525</a>). Datos de RAD: <a href="https://pds-ppi.igpp.ucla.edu/" target="_blank" rel="noopener">pds-ppi.igpp.ucla.edu</a> (NASA PDS).</p>`;

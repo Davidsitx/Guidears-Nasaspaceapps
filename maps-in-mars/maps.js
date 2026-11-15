@@ -131,8 +131,9 @@ function urLeyenda(m) {
   miModo = function (id, tipo, opc) {
     modo0(id, tipo, opc); const m = MI.modo; if (!m) return;
     urLeyenda(m);
-    document.body.classList.toggle('ur-apie', !m.rover && !m.libre);
+    document.body.classList.toggle('ur-apie', !m.libre);
     $('urControl').setAttribute('aria-pressed', 'false');
+    $('urControl').innerHTML = '🕹 ' + (m.trip ? lg('Manejar el PMR', 'Drive the PMR') : m.rover ? lg(`Manejar ${MI.rover === 'gx2' ? 'el GX-2' : 'a Curiosity'}`, `Drive ${MI.rover === 'gx2' ? 'the GX-2' : 'Curiosity'}`) : lg('Manejar al astronauta', 'Walk the astronaut'));
     if (tipo === 'pareja') miMsg('base', lg('Si querés, manejá vos al Astronauta 1 con «Manejar al astronauta» (W A S D). Te avisamos pendiente, arena, dosis y distancia al PMR.', 'If you like, walk Astronaut 1 yourself with "Walk the astronaut" (W A S D). We will flag slope, sand, dose and distance to the PMR.'));
     if (/^U\d+$/.test(id)) { miVisibles(); $('miPid').textContent = lg('Tú', 'You'); }
   };
@@ -143,14 +144,18 @@ function urLeyenda(m) {
 }
 $('urControl').onclick = () => urControl(!MI.modo?.control);
 async function urControl(on) {
-  const m = MI.modo; if (!m || m.rover || m.libre) return;
+  const m = MI.modo; if (!m || m.libre) return;
   if (on) {
     try { await pmrTerreno(); } catch { return avisar(lg('No se pudo cargar el terreno de 12 m.', 'Could not load the 12 m terrain.')); }
     const q = enLinea(m.L, m.d), qb = enLinea(m.L, Math.min(m.L.largo, m.d + 3));
     m.jugando = false; $('miPlayB').textContent = lg('▶ Seguir', '▶ Resume');
     m.control = { lon: q.lon, lat: q.lat, rumbo: rumboDe(q, qb), v: 0, odo: 0, t: q.t || 0, dosis: q.dosis || 0, teclas: {}, vistos: new Set(), mov: 0 };
     document.body.classList.add('ur-control'); MI.siguiendo = true;
-    miCard(lg('Astronauta a mano', 'Walking by hand'), lg('Lo manejás vos', 'You walk it'),
+    if (m.rover) miCard(lg('Manejo a mano', 'Driving by hand'), lg('Lo manejás vos', 'You drive it'),
+      lg(`W o ↑ adelante, S o ↓ atrás, A D o ← → para girar, Shift ×10. No sube pendientes de más de ${MI.D.parametros.PR.rMax}°; en la arena avisa (riesgo de enterrarse). ${m.trip ? 'Velocidad del PMR: 10 km/h.' : 'Curiosity maneja a unos 100 m por hora: acá el tiempo va 30 veces más rápido.'}`,
+        `W or ↑ forward, S or ↓ back, A D or ← → to turn, Shift ×10. It will not climb slopes over ${MI.D.parametros.PR.rMax}°; it warns on sand (risk of getting stuck). ${m.trip ? 'PMR speed: 10 km/h.' : 'Curiosity drives about 100 m per hour: here time runs 30 times faster.'}`),
+      [[lg('Entendido', 'Got it'), () => miCard(), true]]);
+    else miCard(lg('Astronauta a mano', 'Walking by hand'), lg('Lo manejás vos', 'You walk it'),
       lg(`W o ↑ adelante, S o ↓ atrás, A D o ← → para girar, Shift ×10. El traje no sube pendientes de más de ${MI.D.parametros.PR.pMax}°; en la arena vas más lento. La dosis y el tiempo siguen contando.`,
         `W or ↑ forward, S or ↓ back, A D or ← → to turn, Shift ×10. The suit will not take slopes over ${MI.D.parametros.PR.pMax}°; sand slows you down. Dose and time keep counting.`),
       [[lg('Entendido', 'Got it'), () => miCard(), true]]);
@@ -176,7 +181,8 @@ async function urControl(on) {
 function urAstroTick(dt) {
   const m = MI.modo, c = m.control, k = c.teclas, PR = MI.D.parametros.PR, EVA = MI.D.parametros.EVA, rap = k.shift || k.rap ? 10 : 1;
   const ade = k.ade ? 1 : k.atr ? -0.5 : 0, giro = (k.der ? 1 : 0) - (k.izq ? 1 : 0);
-  const aqui = pmrMuestra(c.lon, c.lat), vmax = PR.vCam * rap * (aqui.ar ? 0.7 : 1);
+  const rov = m.rover, lim = rov ? PR.rMax : PR.pMax, vBase = m.trip ? PR.vTrip / 3600 : rov ? PR.vRover / 3600 * 30 : PR.vCam;
+  const aqui = pmrMuestra(c.lon, c.lat), vmax = vBase * rap * (aqui.ar ? (rov ? 0.5 : 0.7) : 1);
   c.v += (ade * vmax - c.v) * Math.min(1, dt * 3); c.rumbo += giro * dt * 1.2;
   const una = (clave, f) => { if (!c.vistos.has(clave)) { c.vistos.add(clave); f(); } };
   const paso = c.v * dt; let [lo, la] = corrido(c.lon, c.lat, Math.sin(c.rumbo) * paso, Math.cos(c.rumbo) * paso);
@@ -184,16 +190,18 @@ function urAstroTick(dt) {
     const s = Math.sign(paso), [lo2, la2] = corrido(c.lon, c.lat, Math.sin(c.rumbo) * 4 * s, Math.cos(c.rumbo) * 4 * s);
     const ad = pmrDentro(lo2, la2) ? pmrMuestra(lo2, la2) : null, marcha = ad ? Math.abs(Math.atan((ad.z - aqui.z) / 4)) / d2r : 0;
     if (!ad) { c.v = 0; lo = c.lon; la = c.lat; una('borde', () => miMsg('base', lg('Fin del terreno con datos de 12 m: no sigas por ahí.', 'End of the 12 m terrain data: do not go further that way.'), 'alerta')); }
-    else if (ad.p > PR.pMax && marcha > PR.pMax * 0.6) { c.v = 0; lo = c.lon; la = c.lat;
-      una('p' + Math.round(lo2 * 1e4) + Math.round(la2 * 1e4), () => miMsg('a2', lg(`Pendiente de ${miNum(ad.p)}° adelante: el traje no la pasa (límite ${PR.pMax}°). Rodeala.`, `Slope of ${miNum(ad.p)}° ahead: the suit cannot take it (limit ${PR.pMax}°). Go around.`), 'alerta')); }
-    else { c.odo += Math.abs(paso); if (aqui.ar) una('ar' + Math.round(c.odo / 80), () => miMsg('a2', lg('Arena probable: vas más lento y cuesta más.', 'Probable sand: slower and harder going.'))); }
+    else if (ad.p > lim && marcha > lim * 0.6) { c.v = 0; lo = c.lon; la = c.lat;
+      una('p' + Math.round(lo2 * 1e4) + Math.round(la2 * 1e4), () => miMsg(rov ? 'base' : 'a2', rov ? lg(`Pendiente de ${miNum(ad.p)}° adelante: el rover no la pasa (límite ${lim}°). Rodeala.`, `Slope of ${miNum(ad.p)}° ahead: the rover cannot take it (limit ${lim}°). Go around.`) : lg(`Pendiente de ${miNum(ad.p)}° adelante: el traje no la pasa (límite ${lim}°). Rodeala.`, `Slope of ${miNum(ad.p)}° ahead: the suit cannot take it (limit ${lim}°). Go around.`), 'alerta')); }
+    else { c.odo += Math.abs(paso); if (aqui.ar) una('ar' + Math.round(c.odo / 80), () => miMsg(rov ? 'base' : 'a2', rov ? lg('Arena probable: riesgo de que las ruedas se entierren. Salí de ahí.', 'Probable sand: risk of the wheels digging in. Get out of there.') : lg('Arena probable: vas más lento y cuesta más.', 'Probable sand: slower and harder going.'), rov ? 'alerta' : undefined)); }
   }
   c.t += dt * rap / 3600 * (Math.abs(c.v) > 0.01 ? 1 : 1); c.dosis += PR.dosis * 1000 / 24 * (1 - PR.k * aqui.ci) * dt * rap / 3600;
   c.lon = lo; c.lat = la; const s0 = pmrMuestra(lo, la);
   c.mov += ((Math.abs(c.v) > 0.05 ? 1 : 0) - c.mov) * Math.min(1, dt * 6);
-  const a = MI.mod.astronauta; let obj = pos(lo, la, alturaSuelo(lo, la, s0.z));
-  if (a) { a.show = m.vista !== 'ojos'; obj = colocar(a, lo, la, c.rumbo, s0.z, 0, 0, false); if (a.show) pasoAstro(a, c.odo / MI.D.parametros.zancada * Math.PI * 2, c.mov, 0); }
-  miCamara(dt, obj, c.rumbo, { vista: m.vista, trip: false, rover: false, libre: true });
+  let obj = pos(lo, la, alturaSuelo(lo, la, s0.z));
+  if (rov) { const mod = m.trip ? MI.mod.pmr : MI.mod[MI.rover]; if (mod) { mod.show = true; obj = m.trip ? colocar(mod, lo, la, c.rumbo, s0.z, 4.0, 3.2, true) : colocar(mod, lo, la, c.rumbo, s0.z, MI.rover === 'gx2' ? 3.4 : 2.2, 2.5, true); if (m.trip) m.pmrEn = { lon: lo, lat: la, rumbo: c.rumbo, elev: s0.z }; } }
+  else { const a = MI.mod.astronauta; if (a) { a.show = m.vista !== 'ojos'; obj = colocar(a, lo, la, c.rumbo, s0.z, 0, 0, false); if (a.show) pasoAstro(a, c.odo / MI.D.parametros.zancada * Math.PI * 2, c.mov, 0); } }
+  miCamara(dt, obj, c.rumbo, { vista: m.vista, trip: !!m.trip, rover: !!rov, libre: true });
+  if (rov) { $('miD1').textContent = miH(c.t); $('miD2').textContent = miM(c.odo); $('miD3').textContent = `${miNum(s0.p, 1)}°`; $('miC3').classList.toggle('alerta', s0.p > lim); return; }
   // refugio: el PMR estacionado donde empezó la caminata
   const pmr = m.L.pmr || MI.pmrSalida || { lon: m.L.pts[0][0], lat: m.L.pts[0][1] }, dP = miDist(lo, la, pmr.lon, pmr.lat), minP = dP / PR.vCam / 60;
   const q = { lon: lo, lat: la, elev: s0.z, marcha: Math.abs(c.v) > 0.05 ? Math.abs(Math.atan((pmrMuestra(...corrido(lo, la, Math.sin(c.rumbo) * 3, Math.cos(c.rumbo) * 3)).z - s0.z) / 3)) / d2r : 0,
@@ -398,10 +406,10 @@ function urRecorrer() {
 
 // ==================== tanda 15/11 tarde: fluidez 2, pines del otro lado, cámara libre en los recorridos, botones ====================
 
-// ---------- pines del otro lado del planeta: no se dibujan a través de Marte ----------
-// Los pines van "sin prueba de profundidad" para que el relieve cercano no los tape; el costo era que, desde lejos (el tour),
-// se veían también los del otro lado del planeta. Ahora, si un pin queda detrás del horizonte, vuelve a tener prueba de profundidad
-// y el globo lo tapa (mismo criterio que los topónimos en marte.js).
+// ---------- pines, carteles y naves del otro lado del planeta: no se dibujan a través de Marte ----------
+// Los pines van sin prueba de profundidad para que el relieve cercano no los tape, y los carteles tienen un corrimiento al costado:
+// desde lejos (el tour, la vista de todo Marte) se veían los del otro lado, y los nombres de las naves que pasaban por detrás del planeta.
+// Ahora, si el punto queda detrás del horizonte, se oculta (pin, cartel y punto) y vuelve a aparecer cuando sale.
 {
   const R0 = MARS.radii.x - 9000, esfera = new C.Ellipsoid(R0, R0, MARS.radii.z - 9000), vistos = new WeakSet(), lista = [];
   const props = ['billboard', 'label', 'point'];
@@ -409,17 +417,24 @@ function urRecorrer() {
     const t = viewer.clock.currentTime, cols = [viewer.entities]; for (let i = 0; i < viewer.dataSources.length; i++) cols.push(viewer.dataSources.get(i).entities);
     for (const col of cols) for (const e of col.values) {
       if (vistos.has(e) || !e.position) continue;
-      const g = props.filter(k => e[k] && e[k].disableDepthTestDistance?.getValue?.(t) === Infinity); if (!g.length) continue;
-      const p = e.position.getValue(t); if (!p) continue;
-      vistos.add(e); lista.push({ e, g, p, vis: true });
+      const tipo = e.properties?.tipo?.getValue?.(t), nave = tipo === 'orbitador' || tipo === 'luna';
+      const g = props.filter(k => e[k] && (nave || e[k].disableDepthTestDistance?.getValue?.(t) === Infinity || e[k].pixelOffset)); if (!g.length) continue;
+      const fijo = e.position.isConstant; const p = fijo ? e.position.getValue(t) : null; if (fijo && !p) continue;
+      vistos.add(e); lista.push({ e, g, p, fijo, oculto: false, prev: {} });
     }
   };
-  let t0 = 0, n = 0;
-  viewer.scene.preRender.addEventListener(() => {
-    const t = performance.now(); if (t - t0 < 180) return; t0 = t;
+  let t0 = 0, n = 0; const _p = new C.Cartesian3();
+  viewer.scene.preRender.addEventListener((sc, time) => {
+    const t = performance.now(); if (t - t0 < 150) return; t0 = t;
     if (n++ % 15 === 0) juntar();
     const oc = new C.EllipsoidalOccluder(esfera, viewer.camera.positionWC);
-    for (const it of lista) { const v = oc.isPointVisible(it.p); if (v === it.vis) continue; it.vis = v; for (const k of it.g) it.e[k].disableDepthTestDistance = v ? Number.POSITIVE_INFINITY : 0; }
+    for (const it of lista) {
+      const p = it.fijo ? it.p : it.e.position.getValue(time, _p); if (!p) continue;
+      const tapado = !oc.isPointVisible(p); if (tapado === it.oculto) continue; it.oculto = tapado;
+      for (const k of it.g) { const gr = it.e[k];
+        if (tapado) { it.prev[k] = gr.show?.getValue ? gr.show.getValue(time) : gr.show; gr.show = false; }
+        else gr.show = it.prev[k] ?? true; }
+    }
   });
 }
 
@@ -566,4 +581,33 @@ function urEncuadreRecorrido(dur = 2.6) {
   };
 }
 
+// ---------- la línea de tiempo y la barra de la misión no se pisan: abrir una cierra la otra ----------
+{
+  if (typeof abrirLinea === 'function') { const al0 = abrirLinea; abrirLinea = async function (...a) { if (typeof MI !== 'undefined' && MI.activo) miDejar(); return al0(...a); }; }
+  const ent0 = miEntrar; miEntrar = function (...a) { if (typeof cerrarLinea === 'function' && document.body.classList.contains('lineaAbierta')) cerrarLinea(); return ent0(...a); };
+}
+// ---------- día y noche en vivo, prendido de entrada ----------
+// La sombra de la noche sigue la hora real de Marte (Mars24, ya estaba en marte.js) y se actualiza sola. Queda prendida al empezar;
+// de cerca (menos de 300 km) se aclara para que el terreno se siga leyendo aunque en Gale sea de noche. Se puede apagar en Capas.
+setTimeout(() => { try { if (typeof MG !== 'undefined' && !MG.vis.noche && !localStorage.getItem('mimNocheApagada')) mgNoche(true); } catch {} }, 9000);
+viewer.scene.preRender.addEventListener(() => {
+  if (typeof MG === 'undefined' || !MG.noche || !MG.noche.show) return;
+  const h = viewer.camera.positionCartographic.height, a = h > 900000 ? 1 : h < 300000 ? 0.4 : 0.4 + 0.6 * (h - 300000) / 600000;
+  if (Math.abs(MG.noche.alpha - a) > 0.02) MG.noche.alpha = a;
+});
+if (typeof mgNoche === 'function') { const mn0 = mgNoche; mgNoche = async function (on) { try { if (on) localStorage.removeItem('mimNocheApagada'); else localStorage.setItem('mimNocheApagada', '1'); } catch {} return mn0(on); }; }
+// ---------- Curiosity / GX-2 en la barra: además de cambiar el modelo, lleva al rover y deja manejarlo ----------
+{
+  const elegir = k => {
+    miRover(k);
+    if (MI.activo && !MI.modo && MI.D) {
+      const c = MI.D.curiosity, nom = k === 'gx2' ? 'GX-2' : 'Curiosity';
+      viewer.camera.flyToBoundingSphere(new C.BoundingSphere(pos(c.lon, c.lat, alturaSuelo(c.lon, c.lat, c.elev) + 1), 4), { offset: new C.HeadingPitchRange(Math.PI / 2 - c.yaw + 2.4, -0.3, 22), duration: 1.8, easingFunction: C.EasingFunction.CUBIC_IN_OUT });
+      miCard(nom, k === 'gx2' ? lg('Rover para las próximas excavaciones (diseño propio)', 'Rover for the next excavations (our design)') : lg(`Donde está hoy (sol ${typeof RS !== 'undefined' && RS.length ? RS[RS.length - 1] : 5070})`, `Where it is today (sol ${typeof RS !== 'undefined' && RS.length ? RS[RS.length - 1] : 5070})`),
+        lg('Podés seguir la ruta A o manejarlo vos con el teclado (respeta pendiente y arena).', 'You can follow route A or drive it yourself with the keyboard (it respects slope and sand).'),
+        [[lg('Manejarlo yo', 'Drive it myself'), async () => { miCard(); miModo('A', 'ruta'); setTimeout(() => urControl(true), 2700); }, true], [lg('Ruta A ▶', 'Route A ▶'), () => { miCard(); miModo('A', 'ruta'); }], [lg('Cerrar', 'Close'), () => miCard()]]);
+    }
+  };
+  document.querySelectorAll('#miBarra [data-rv]').forEach(b => b.onclick = () => elegir(b.dataset.rv));
+}
 window.__maps = { UR, abrir: urAbrir, base: urIrBase, control: urControl, analizar: urAnalizar };

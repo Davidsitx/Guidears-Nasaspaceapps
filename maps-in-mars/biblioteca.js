@@ -1,7 +1,7 @@
 // ==================== Biblioteca ====================
 // Toda la información de los pozos (NASA PDS, base de mineralogía de Gale, blog y fotos de NASA), ordenada para consultar:
 // perforaciones (ficha completa), comparar pozos, temas para futuras misiones, fuentes. Lee datos/biblioteca.json,
-// que arma armar_biblioteca.py. Si un dato no existe, la ficha lo dice: no se completa con estimaciones.
+// que arma el equipo (armar_biblioteca.py). Si un dato no existe, la ficha lo dice: no se completa con estimaciones.
 const BIB = { datos: null, cargando: null, vista: 'inicio', pozo: null, orden: 'n', filtro: '', soloCon: '', drive: null, ordenTabla: ['n', 1] };
 const normB = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '');
 const escB = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -28,6 +28,7 @@ async function cargarBiblioteca() {
         nsam: p.sam.filter(s => s.estado === 'confirmado').length };
     }
     try { const [c, r, v] = await Promise.all([fetch('datos/clima_rems.json'), fetch('datos/radiacion.json'), fetch('datos/viento_humedad.json')]); if (c.ok) BIB.clima = await c.json(); if (r.ok) BIB.rad = await r.json(); if (v.ok) BIB.vh = await v.json(); } catch {}
+    try { const [a1, a2] = await Promise.all([fetch('datos/analisis.json'), fetch('datos/fuentes_consultadas.json')]); if (a1.ok) BIB.analisis = await a1.json(); if (a2.ok) BIB.consultadas = (await a2.json()).fuentes; } catch {}
     try { const e = await fetch('perforaciones/estado.json', { cache: 'no-store' }); BIB.drive = e.ok ? (await e.json()).ok : false; } catch { BIB.drive = false; }
     return (BIB.datos = d);
   })().catch(e => { BIB.cargando = null; throw e; });
@@ -40,12 +41,12 @@ function vistaBiblioteca() {
     c.innerHTML = '<p class="sub">Cargando la biblioteca…</p>';
     cargarBiblioteca().then(() => pestaña === 'biblioteca' && vistaBiblioteca()).catch(e => {
       c.innerHTML = `<h2>Biblioteca</h2><p>No pude cargar <code>datos/biblioteca.json</code> (${escB(e.message)}).</p>
-        <p class="sub">${location.protocol === 'file:' ? 'Abriste el archivo con doble clic: el navegador no deja leer datos locales así. Abrí Maps in Mars con <b>abrir.bat</b>.' : 'Generalo con <code>python armar_biblioteca.py</code> en la carpeta Google Mars.'}</p>`;
+        <p class="sub">${location.protocol === 'file:' ? 'Abriste el archivo con doble clic: el navegador no deja leer datos locales así. Abrí Maps in Mars con <b>abrir.bat</b>.' : 'Volvé a abrir Maps in Mars con abrir.bat.'}</p>`;
     });
     return;
   }
-  ({ inicio: bibInicio, lista: bibLista, pozo: bibPozo, comparar: bibComparar, temas: bibTemas, fuentes: bibFuentes, clima: bibClima })[BIB.vista]();
-  $('cajon').classList.toggle('ancho', BIB.vista === 'comparar' || BIB.vista === 'pozo');
+  ({ inicio: bibInicio, lista: bibLista, pozo: bibPozo, comparar: bibComparar, temas: bibTemas, fuentes: bibFuentes, clima: bibClima, analisis: bibAnalisis, consultadas: bibConsultadas })[BIB.vista]();
+  $('cajon').classList.toggle('ancho', ['comparar', 'pozo', 'analisis', 'consultadas'].includes(BIB.vista));
 }
 const irBib = (v, pozo) => { BIB.vista = v; if (pozo !== undefined) BIB.pozo = pozo; $('contenido').scrollTop = 0; vistaBiblioteca(); };
 const volverBib = (a = 'inicio') => `<button class="btn" data-ir="${a}">← ${a === 'inicio' ? 'Biblioteca' : a === 'lista' ? 'Perforaciones' : 'Volver'}</button>`;
@@ -60,9 +61,10 @@ function bibInicio() {
     ${tarjeta('clima', 'Clima y radiación en Gale', 'Temperatura, presión, suelo y UV de cada estación (REMS, hasta agosto de 2026) y la radiación que midió RAD, con lo que significa para una salida a pie.', `<span class="bibic" style="background:#3d7cc9">☀</span>`)}
     ${tarjeta('comparar', 'Comparar pozos', 'Tabla con los indicadores clave de los 49 pozos. Tocá una columna para ordenar.', `<span class="bibic" style="background:#2E9E8F">▦</span>`)}
     <h2>Análisis</h2>
-    ${BIB.datos.temas_html ? tarjeta('temas', 'Temas para futuras misiones', 'Agua que todavía no contamos, agua fácil de extraer, riesgos al calentar el suelo, nitrógeno y oxígeno, calidad de los datos.', `<span class="bibic" style="background:#E8A33D">✦</span>`) : ''}
+    ${BIB.analisis ? tarjeta('analisis', IDIOMA === 'en' ? 'What we found in the data' : 'Lo que encontramos en los datos', IDIOMA === 'en' ? `We worked the raw data of the 49 drill holes: water released at low temperature, when acid gases start, oxygen and perchlorates, nitrogen, metals and phosphorus, and how the rock changes up Mount Sharp. ${BIB.analisis.candidatos.length} drill holes meet all three conditions for easy, clean water.` : `Trabajamos los datos crudos de los 49 pozos: agua que sale a baja temperatura, la temperatura a la que empiezan los gases ácidos, oxígeno y percloratos, nitrógeno, metales y fósforo, y cómo cambia la roca al subir el Monte Sharp. ${BIB.analisis.candidatos.length} pozos cumplen las tres condiciones para sacar agua fácil y limpia.`, `<span class="bibic" style="background:#E8A33D">✦</span>`) : ''}
     <h2>Referencia</h2>
     ${tarjeta('fuentes', 'Fuentes y calidad de los datos', 'De dónde sale cada dato, qué falta y qué valores hay que tomar con cuidado.', `<span class="bibic" style="background:#7E57C2">ⓘ</span>`)}
+    ${BIB.consultadas ? tarjeta('consultadas', IDIOMA === 'en' ? `All the sources we consulted (${BIB.consultadas.length})` : `Todas las fuentes consultadas (${BIB.consultadas.length})`, IDIOMA === 'en' ? 'Every page, paper and database we reviewed, grouped by site, with what we took from each.' : 'Cada página, artículo y base de datos que revisamos, agrupados por sitio, con lo que tomamos de cada uno.', `<span class="bibic" style="background:#5c6bc0">🔗</span>`) : ''}
     <div class="tarjeta bibt" id="bibAyuda"><span class="bibic" style="background:#3c4043">?</span><b>Controles y ayuda</b><div class="sub">Cómo moverse por el mapa con mouse, teclado o dedos.</div></div>
     <p class="fuente">Datos: Planetary Data System de NASA (${url('https://pds-geosciences.wustl.edu/missions/msl/index.htm')}), base de mineralogía y geoquímica del cráter Gale del equipo CheMin (${url('https://doi.org/10.48484/JN48-YW52')}), blog de Curiosity (${url('https://science.nasa.gov/mission/msl-curiosity/')}) y fotos crudas de NASA/JPL-Caltech/MSSS (${url('https://mars.nasa.gov/msl/multimedia/raw-images/')}).</p>`;
   engancharBib(); $('bibAyuda').onclick = () => $('ayuda').classList.remove('oculto');
@@ -225,7 +227,7 @@ function bibFuentes() {
       <li>Valores de SAM imposibles para una porción de ~45 mg (supuesto) se marcan con ⚠ y no se usan: HCl, NO y H₂S en Mojave 2 y Telegraph Peak, HCl en un experimento de Cumberland y el H₂O de 7×10⁷ mol de Glen Etive (error de la tabla de PDS).</li>
       <li>Pozos nuevos: Nevado Sajama 2 ya tiene química (APXS) y el experimento de orgánicos con TMAH; Campo Marte, Basque Lakes y Nazca solo tienen lo que contó el equipo en el blog: sus números salen en la próxima entrega del PDS (los datos actuales llegan hasta marzo de 2026).</li>
       <li>Clima: el resumen diario de REMS es de divulgación (CAB); lo verificamos contra los datos calibrados del PDS. El viento y la humedad salen de nuestra lectura de los archivos calibrados de REMS en el PDS (muestreo propio); hay datos de viento hasta alrededor del sol 1482 (2016).</li></ul>
-    <p class="fuente">Biblioteca generada con <code>armar_biblioteca.py</code> a partir de datos públicos de NASA (PDS, blog y fotos crudas) y de la base de mineralogía de Gale.</p>`;
+    <p class="fuente">Biblioteca armada por el equipo a partir de datos públicos de NASA (PDS, blog y fotos crudas) y de la base de mineralogía de Gale.</p>`;
   engancharBib();
 }
 
@@ -304,4 +306,79 @@ function vientoHumedad(v) {
       ${v.estaciones.map(m => `<tr><td>${m.estacion}</td><td>${m.ls[0]}–${m.ls[1]}°</td><td>${fm(m.viento_dia)} m/s</td><td>${fm(m.viento_noche)} m/s</td><td>${fm(m.viento_max)} m/s</td><td>${fm(m.hr)} %</td><td>${fm(m.vmr)} ppm</td></tr>`).join('')}</table></div>
     <p class="sub">La humedad relativa nocturna es mayor en otoño e invierno porque el aire está más frío, aunque contiene poca agua (decenas de partes por millón en volumen). En primavera y verano hay más vapor, pero el aire más cálido baja la humedad relativa. Para una base, la cantidad de agua en el aire es muy baja: la fuente de agua aprovechable son los minerales hidratados del suelo.</p>
     <p class="fuente">${escB(v.fuente)}</p><ul class="fuente">${v.notas.map(n => `<li>${escB(n)}</li>`).join('')}</ul>`;
+}
+
+
+// ---------- Lo que encontramos en los datos (análisis trabajados; datos/analisis.json, herramientas/analisis_wiki.py) ----------
+function bibAnalisis() {
+  const A = BIB.analisis, L = (es, en) => (typeof IDIOMA !== 'undefined' && IDIOMA === 'en') ? en : es;
+  const f1 = v => v == null ? '—' : fmt(v, 0), mol = v => v == null ? '—' : v.toExponential(1).replace('e', '×10^').replace(/\^(-?\d+)/, (m, e) => `<sup>${e}</sup>`);
+  const et = t => `<span class="prov" style="background:${t === 'm' ? '#2E9E8F33' : '#E8A33D33'};color:${t === 'm' ? '#7fd8c8' : '#ffcf8a'}">${t === 'm' ? L('medido', 'measured') : L('cálculo propio', 'our calculation')}</span>`;
+  const pozo = r => `<a href="#" data-p="${escB(r.nombre)}">${r.n} · ${escB(r.nombre)}</a>`;
+  const T = A.tendencias, C0 = A.criterios, res = A.agua_resumen;
+  const pts = A.perfil.filter(r => r.elev != null), e0 = Math.min(...pts.map(r => r.elev)), e1 = Math.max(...pts.map(r => r.elev)), W = 560, H = 210, m = 34;
+  const X = e => m + (e - e0) / (e1 - e0) * (W - 2 * m), serie = (k, max, col) => pts.filter(r => r[k] != null).map(r => `<circle cx="${X(r.elev).toFixed(1)}" cy="${(H - m - r[k] / max * (H - 2 * m)).toFixed(1)}" r="3.4" fill="${col}"><title>${escB(r.nombre)} · ${fmt(r[k], 1)} %</title></circle>`).join('');
+  const graf = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;background:#0002;border-radius:10px" role="img" aria-label="${L('Arcillas, SO3 y amorfo según la altura', 'Clays, SO3 and amorphous by elevation')}">
+    <line x1="${m}" y1="${H - m}" x2="${W - m}" y2="${H - m}" stroke="#ffffff33"/><text x="${m}" y="${H - 10}" fill="#9aa0a6" font-size="11">${fmt(e0, 0)} m</text><text x="${W - m}" y="${H - 10}" fill="#9aa0a6" font-size="11" text-anchor="end">${fmt(e1, 0)} m</text>
+    <text x="${W / 2}" y="${H - 10}" fill="#9aa0a6" font-size="11" text-anchor="middle">${L('altura (más arriba en el Monte Sharp →)', 'elevation (higher on Mount Sharp →)')}</text>
+    ${serie('amorfo', 80, '#9aa0a6')}${serie('arcillas', 80, '#4FA3D9')}${serie('so3', 80, '#E8A33D')}
+    <text x="${m + 4}" y="${m - 12}" fill="#4FA3D9" font-size="11">● ${L('arcillas', 'clays')} %</text><text x="${m + 90}" y="${m - 12}" fill="#E8A33D" font-size="11">● SO₃ %</text><text x="${m + 160}" y="${m - 12}" fill="#9aa0a6" font-size="11">● ${L('amorfo', 'amorphous')} %</text><text x="${W - m}" y="${m - 12}" fill="#9aa0a6" font-size="11" text-anchor="end">0–80 %</text></svg>`;
+  const trz = Object.entries(A.trazas).filter(([k]) => ['MnO', 'P2O5', 'Zn', 'Ni'].includes(k)).map(([k, v]) => v.top.slice(0, 3).map((t, i) => `<tr>${i ? '' : `<td rowspan="3"><b>${k.replace('2O5', '₂O₅')}</b></td>`}<td>${pozo(t)}</td><td>${fmt(t.valor, v.unidad === '%' ? 2 : 0)} ${v.unidad}</td><td>${fmt(t.veces_mediana, 1)}×</td></tr>`).join('')).join('');
+  const oxMax = [...A.oxicloros].sort((a, b) => b.o2_mol - a.o2_mol)[0], rho = k => T[k] ? `<b>${fmt(T[k].rho, 2)}</b> (${T[k].n})` : '—';
+  cont().innerHTML = `${volverBib('inicio')}<h3 style="margin-top:10px">${L('Lo que encontramos en los datos', 'What we found in the data')}</h3>
+    <p class="sub">${L(`Trabajamos los datos crudos de laboratorio de Curiosity (minerales de CheMin, química de APXS y gases de SAM, del PDS de NASA y de la base ODR del cráter Gale) para responder preguntas de una misión tripulada. Cada número dice si es ${et('m')} o ${et('c')}. En SAM usamos solo los experimentos confirmados para cada pozo y dejamos afuera los valores que la propia tabla marca como imposibles.`,
+      `We worked through Curiosity's raw lab data (CheMin minerals, APXS chemistry and SAM gases, from NASA's PDS and the Gale crater ODR database) to answer questions a crewed mission would ask. Every number says whether it is ${et('m')} or ${et('c')}. For SAM we only use experiments confirmed for each drill hole and leave out values the source table itself flags as impossible.`)}</p>
+
+    <h2>${L('1. El agua sale a baja temperatura casi siempre', '1. Water comes out at low temperature almost everywhere')}</h2>
+    <p>${L(`En <b>${res.baja_T} de ${res.con_datos}</b> pozos con datos de SAM, el primer pico de agua aparece por debajo de ${C0.baja_T_C} °C ${et('m')}. Para una base eso importa tanto como la cantidad: un horno a 200 °C gasta mucha menos energía que uno a 700 °C.`,
+      `In <b>${res.baja_T} of ${res.con_datos}</b> drill holes with SAM data, the first water peak appears below ${C0.baja_T_C} °C ${et('m')}. For a base this matters as much as the amount: a 200 °C oven uses far less energy than a 700 °C one.`)}</p>
+    <p>${L(`Entre ese primer pico de agua y el primer gas ácido (SO₂, HCl o H₂S) hay en el medio <b>${f1(res.margen_mediana_C)} °C</b> de margen ${et('c')}: calentando dentro de esa ventana se saca agua sin los gases que corroen equipos y ensucian el agua. Un margen negativo quiere decir que el gas ácido sale antes que el agua.`,
+      `Between that first water peak and the first acid gas (SO₂, HCl or H₂S) there is a median margin of <b>${f1(res.margen_mediana_C)} °C</b> ${et('c')}: heating within that window yields water without the gases that corrode equipment and contaminate the water. A negative margin means the acid gas comes out before the water.`)}</p>
+    <div style="overflow:auto"><table><tr><th>${L('Pozo', 'Drill hole')}</th><th>${L('1.er pico H₂O', '1st H₂O peak')}</th><th>${L('1.er gas ácido', '1st acid gas')}</th><th>${L('Margen', 'Margin')}</th></tr>
+      ${A.agua.map(r => `<tr><td>${pozo(r)}</td><td>${f1(r.h2o_primer_pico_C)} °C</td><td>${r.acido_primer_pico_C == null ? L('no aparece', 'none') : f1(r.acido_primer_pico_C) + ' °C'}</td><td>${r.margen_C == null ? '—' : f1(r.margen_C) + ' °C'}</td></tr>`).join('')}</table></div>
+
+    <h2>${L('2. Los mejores pozos para sacar agua fácil y limpia', '2. The best drill holes for easy, clean water')}</h2>
+    <p>${L(`Pedimos tres condiciones a la vez ${et('c')}: agua antes de ${C0.baja_T_C} °C, ningún gas ácido antes de ${C0.acido_min_C} °C y al menos ${C0.arcillas_min_pct} % de arcillas (CheMin), que guardan agua en su estructura. Las cumplen <b>${A.candidatos.length}</b>:`,
+      `We asked for three conditions at once ${et('c')}: water before ${C0.baja_T_C} °C, no acid gas before ${C0.acido_min_C} °C and at least ${C0.arcillas_min_pct} % clays (CheMin), which hold water in their structure. <b>${A.candidatos.length}</b> meet them:`)}</p>
+    <p>${A.candidatos.map(r => `${pozo(r)} <span class="sub">(${L('agua', 'water')} ${f1(r.h2o_primer_pico_C)} °C · ${L('ácido', 'acid')} ${f1(r.acido_primer_pico_C)} °C)</span>`).join(' · ')}</p>
+    <p class="sub">${L('Son lugares para estudiar primero si se busca agua cerca de una base en Gale. Falta medir cuánta agua por tonelada liberan a esa temperatura.', 'These are the places to study first when looking for water near a base in Gale. How much water per tonne they release at that temperature is still to be measured.')}</p>
+
+    <h2>${L('3. Oxígeno y percloratos: riesgo y recurso', '3. Oxygen and perchlorates: hazard and resource')}</h2>
+    <p>${L(`En <b>${new Set(A.oxicloros.map(r => r.n)).size}</b> pozos (${A.oxicloros.length} experimentos) sale O₂ junto con HCl ${et('m')}, la firma típica de compuestos oxiclorados como los percloratos: son tóxicos (afectan la tiroides) y hay que lavar el suelo antes de cultivar, pero también son una fuente de oxígeno. Mayor cantidad: ${oxMax ? `${pozo(oxMax)} (${mol(oxMax.o2_mol)} mol de O₂)` : '—'}.`,
+      `In <b>${new Set(A.oxicloros.map(r => r.n)).size}</b> drill holes (${A.oxicloros.length} experiments) O₂ comes out together with HCl ${et('m')}, the typical signature of oxychlorine compounds such as perchlorates: toxic (they affect the thyroid) and the soil must be washed before growing crops, but also a source of oxygen. Highest amount: ${oxMax ? `${pozo(oxMax)} (${mol(oxMax.o2_mol)} mol O₂)` : '—'}.`)}</p>
+    <p class="sub">${[...new Map(A.oxicloros.map(r => [r.n, r])).values()].map(pozo).join(' · ')}</p>
+
+    <h2>${L('4. Nitrógeno para cultivar', '4. Nitrogen for crops')}</h2>
+    <p>${L(`Se detecta NO, que viene de nitratos, en <b>${A.nitratos.length}</b> pozos ${et('m')}: ${A.nitratos.map(r => `${pozo(r)} (${mol(r.no_mol_max)} mol)`).join(' · ')}. El nitrógeno fijado es lo que más falta para cultivar en Marte. Los valores de Mojave 2 y Telegraph Peak quedan afuera: la tabla los marca como imposibles para la porción de muestra.`,
+      `NO, which comes from nitrates, is detected in <b>${A.nitratos.length}</b> drill holes ${et('m')}: ${A.nitratos.map(r => `${pozo(r)} (${mol(r.no_mol_max)} mol)`).join(' · ')}. Fixed nitrogen is the scarcest input for growing crops on Mars. The Mojave 2 and Telegraph Peak values are left out: the table flags them as impossible for the sample portion.`)}</p>
+
+    <h2>${L('5. Metales y fósforo: marcas del agua que pasó por la roca', '5. Metals and phosphorus: traces of water that flowed through the rock')}</h2>
+    <p>${L(`Valores más altos de APXS y cuántas veces la mediana de los pozos ${et('m')}. No son yacimientos: muestran dónde circularon fluidos. El fósforo además es nutriente. Groken aparece primero en manganeso y en fósforo.`, `Highest APXS values and how many times the drill-hole median ${et('m')}. They are not ore deposits: they show where fluids circulated. Phosphorus is also a nutrient. Groken ranks first in both manganese and phosphorus.`)}</p>
+    <table><tr><th></th><th>${L('Pozo', 'Drill hole')}</th><th>${L('Valor', 'Value')}</th><th>× ${L('mediana', 'median')}</th></tr>${trz}</table>
+
+    <h2>${L('6. Cómo cambia la roca al subir el Monte Sharp', '6. How the rock changes going up Mount Sharp')}</h2>
+    ${graf}
+    <p>${L(`Correlación con la altura (Spearman, ${et('c')}; entre paréntesis, cuántos pozos): SO₃ ${rho('so3')}, amorfo ${rho('amorfo')}, agua en minerales ${rho('agua_kg_t')} y arcillas ${rho('arcillas')}. Al subir hay más sulfatos y más material amorfo (la transición de arcillas a sulfatos que estudia el equipo de Curiosity); las arcillas, en cambio, aparecen a cualquier altura: no hace falta ir lejos para encontrarlas.`,
+      `Correlation with elevation (Spearman, ${et('c')}; number of drill holes in brackets): SO₃ ${rho('so3')}, amorphous ${rho('amorfo')}, water in minerals ${rho('agua_kg_t')} and clays ${rho('arcillas')}. Going up there are more sulfates and more amorphous material (the clay-to-sulfate transition the Curiosity team studies); clays, instead, show up at any elevation: no need to travel far to find them.`)}</p>
+
+    <h2>${L('7. Lo que hay que tomar con cuidado', '7. What to handle with care')}</h2>
+    <ul><li>${L(`${A.dudosos.length} experimentos con valores imposibles en la tabla de origen (${[...new Set(A.dudosos.map(r => r.nombre))].join(', ')}): no se usan.`, `${A.dudosos.length} experiments with impossible values in the source table (${[...new Set(A.dudosos.map(r => r.nombre))].join(', ')}): not used.`)}</li>
+      <li>${L(`${A.sin_laboratorio.length} pozos todavía sin datos de laboratorio publicados (${A.sin_laboratorio.map(r => r.nombre).join(', ')}).`, `${A.sin_laboratorio.length} drill holes still without published lab data (${A.sin_laboratorio.map(r => r.nombre).join(', ')}).`)}</li>
+      <li>${L('El agua total está subestimada: CheMin no da el agua de las arcillas ni del amorfo; acá usamos el pico de SAM como señal, no como cantidad.', 'Total water is underestimated: CheMin does not give the water in clays or amorphous material; here the SAM peak is used as a signal, not an amount.')}</li></ul>
+    <p class="fuente">${L('Datos: CheMin y SAM del PDS de NASA (pds-geosciences.wustl.edu), APXS del PDS, base ODR del cráter Gale (doi:10.48484/JN48-YW52). Criterios: solo experimentos SAM confirmados; valores marcados como dudosos, excluidos. Cálculo propio del equipo, 15/11/2026.', 'Data: CheMin and SAM from NASA PDS (pds-geosciences.wustl.edu), APXS from PDS, Gale crater ODR database (doi:10.48484/JN48-YW52). Criteria: confirmed SAM experiments only; values flagged as doubtful excluded. Our team\'s calculation, 15 Nov 2026.')}</p>`;
+  engancharBib();
+  cont().querySelectorAll('a[data-p]').forEach(a => a.onclick = e => { e.preventDefault(); irBib('pozo', a.dataset.p); });
+}
+
+// ---------- Todas las fuentes consultadas, por sitio ----------
+function bibConsultadas() {
+  const F = BIB.consultadas || [], grupos = {};
+  for (const f of F) (grupos[f.dominio] = grupos[f.dominio] || []).push(f);
+  const orden = Object.entries(grupos).sort((a, b) => b[1].length - a[1].length);
+  cont().innerHTML = `${volverBib('inicio')}<h3 style="margin-top:10px">${IDIOMA === 'en' ? 'All the sources we consulted' : 'Todas las fuentes consultadas'}</h3>
+    <p class="sub">${IDIOMA === 'en' ? `${F.length} links reviewed one by one, grouped by site (${orden.length} sites), with what we took from each (descriptions in Spanish, from the team's source records).` : `${F.length} enlaces revisados uno por uno, agrupados por sitio (${orden.length} sitios). Para cada uno, lo que tomamos de ahí. Vienen de los registros de fuentes del equipo.`}</p>
+    <input id="bibFq" placeholder="${IDIOMA === 'en' ? 'Filter by word or site…' : 'Filtrar por palabra o sitio…'}" style="width:100%;box-sizing:border-box;margin:6px 0 10px;padding:8px 10px;border-radius:9px;border:1px solid #ffffff22;background:#0003;color:inherit">
+    <div id="bibFl">${orden.map(([d, l]) => `<div class="bibfg"><h2>${escB(d)} <span class="sub">(${l.length})</span></h2>${l.map(f => `<div class="tarjeta" style="cursor:default"><div class="sub">${escB(f.que || '—')}</div><a href="${escB(f.url)}" target="_blank" rel="noopener" style="word-break:break-all;font-size:12px">${escB(f.url)}</a></div>`).join('')}</div>`).join('')}</div>`;
+  engancharBib();
+  $('bibFq').oninput = e => { const q = e.target.value.toLowerCase(); cont().querySelectorAll('.bibfg').forEach(g => { let n = 0; g.querySelectorAll('.tarjeta').forEach(t => { const v = !q || t.textContent.toLowerCase().includes(q); t.style.display = v ? '' : 'none'; n += v; }); g.style.display = n ? '' : 'none'; }); };
 }

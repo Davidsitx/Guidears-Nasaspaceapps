@@ -49,7 +49,7 @@ function pmrAstar(a, b, aPie, lim) {
   const P = T.p, AR = T.ar, CI = T.ci, hmin = aPie ? 0.8 : 1;
   // cerca del borde del terreno con datos se cobra más: sin eso la ruta se pegaba al borde (lo que hay más allá no se conoce y en el mapa parecía ir "por fuera")
   const BORDE = 30, borde = i => { const c = i % W, f = (i - c) / W, d = Math.min(c, W - 1 - c, f, H - 1 - f); return d >= BORDE ? 0 : 4 * (1 - d / BORDE); };
-  const costo = i => { const p = P[i]; if (p > lim && i !== s && i !== g) return -1; const q = p / 10; return (aPie ? 1 + q * q + 0.5 * AR[i] - 0.5 * CI[i] : 1 + q * q + 6 * AR[i]) + borde(i); };
+  const costo = i => { const p = P[i]; if (p > lim && i !== s && i !== g) return -1; const q = p / 10; return ((aPie ? 1 + q * q + 0.5 * AR[i] - 0.5 * CI[i] : 1 + q * q + 6 * AR[i]) + borde(i)) * (PMR.pref && PMR.pref[i] ? 0.7 : 1); };   // caminos candidatos del planificador: 30 % más baratos
   let hi = PMR.hi, hf = PMR.hf, hn = 0;
   const push = (i, f) => { if (hn >= hi.length) { const a2 = new Int32Array(hi.length * 2); a2.set(hi); const b2 = new Float32Array(hf.length * 2); b2.set(hf); PMR.hi = hi = a2; PMR.hf = hf = b2; }
     let k = hn++; while (k > 0) { const p = (k - 1) >> 1; if (hf[p] <= f) break; hi[k] = hi[p]; hf[k] = hf[p]; k = p; } hi[k] = i; hf[k] = f; };
