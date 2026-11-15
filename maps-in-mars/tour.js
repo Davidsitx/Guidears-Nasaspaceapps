@@ -196,9 +196,11 @@ async function iniciarTour() {
       tTexto(tx('<b>Overhead</b>, MRO and Mars Odyssey — NASA\'s own 3D models, on orbits computed live — relay Curiosity\'s data to Earth.',
                 '<b>Arriba</b>, MRO y Mars Odyssey, con los modelos 3D de NASA y órbitas calculadas en vivo, retransmiten los datos de Curiosity a la Tierra.'), paso(9));
       await tNegro(true);
+      // siguiendo a MRO el suelo pasa a 3 km/s: con el detalle normal se pedían teselas sin parar y la imagen se trababa
+      const G9 = viewer.scene.globe, sse9 = G9.maximumScreenSpaceError; G9.maximumScreenSpaceError = 6;
       mro.ent.viewFrom = new C.Cartesian3(-45, -30, 16); viewer.trackedEntity = mro.ent;
-      await tEsperar(600); await tNegro(false); await tEsperar(8000);
-      await tNegro(true); viewer.trackedEntity = undefined;
+      await tEsperar(900); await tNegro(false); await tEsperar(8000);
+      await tNegro(true); viewer.trackedEntity = undefined; G9.maximumScreenSpaceError = sse9;
     } else await tNegro(true);
     viewer.camera.setView({ destination: pos(115, 4, 3.4e7) });
     await tNegro(false);

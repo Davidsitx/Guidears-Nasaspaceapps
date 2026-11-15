@@ -214,14 +214,16 @@ function bibFuentes() {
     fot: P.reduce((s, p) => s + (p.fotos_total || 0), 0), odr: P.filter(p => p.odr && p.odr.tiene_ficha).length };
   const cnt = e => P.reduce((s, p) => s + p.sam.filter(x => x.estado === e).length, 0);
   cont().innerHTML = `${volverBib('inicio')}<h3 style="margin-top:10px">Fuentes y calidad de los datos</h3>
-    <table><tr><th>Dato</th><th>Pozos</th><th>Fuente</th></tr>
-      <tr><td>Minerales (CheMin)</td><td>${n.che}/49</td><td>NASA PDS Geosciences, CheMin RDR</td></tr>
-      <tr><td>Química (APXS)</td><td>${n.ap}/49</td><td>NASA PDS (tablas supplement); ${n.apodr} desde la base ODR</td></tr>
+    ${(() => { const en = IDIOMA === 'en', np = 49 - n.che; return `<p class="sub">${en ? `All <b>49/49</b> drill holes have a complete record: place, date, finding with source and photos. For ${np} of them (the newest) NASA has not yet released the lab data: we will load it as soon as it appears on the PDS.` : `Las <b>49/49</b> perforaciones tienen ficha completa: lugar, fecha, hallazgo con fuente y fotos. En ${np} de ellas (las más nuevas) NASA todavía no publicó los datos de laboratorio: los cargamos en cuanto salgan en el PDS.`}</p>
+    <table><tr><th>${en ? 'Data' : 'Dato'}</th><th>${en ? 'Drill holes' : 'Pozos'}</th><th>${en ? 'Source' : 'Fuente'}</th></tr>
+      <tr><td>${en ? 'Record, finding and photos' : 'Ficha, hallazgo y fotos'}</td><td>49/49</td><td>${en ? 'NASA/JPL-Caltech/MSSS (raw images), Curiosity blog and ODR database' : 'NASA/JPL-Caltech/MSSS (fotos crudas), blog de Curiosity y base ODR'}</td></tr>
+      <tr><td>${en ? 'Minerals (CheMin)' : 'Minerales (CheMin)'}</td><td>${n.che}/${n.che} ${en ? 'released' : 'publicados'}</td><td>NASA PDS Geosciences, CheMin RDR · ${49 - n.che} ${en ? 'drill holes not yet released by NASA' : 'pozos aún sin publicar por NASA'}</td></tr>
+      <tr><td>${en ? 'Chemistry (APXS)' : 'Química (APXS)'}</td><td>${n.ap}/${n.ap} ${en ? 'released' : 'publicados'}</td><td>NASA PDS ${en ? '(supplement tables)' : '(tablas supplement)'}${n.apodr ? `; ${n.apodr} ODR` : ''} · ${49 - n.ap} ${en ? 'drill holes not yet released by NASA' : 'pozos aún sin publicar por NASA'}</td></tr>`; })()}
       <tr><td>Gases (SAM)</td><td>${n.sam} exp.</td><td>NASA PDS SAM nivel 2; asignación a cada pozo por la base ODR y por la designación de la muestra en las notas de PDS</td></tr>
       <tr><td>Clima (REMS)</td><td>${BIB.clima ? fmt(BIB.clima.diario.length) + ' soles' : '—'}</td><td>REMS (CAB/NASA), resumen diario hasta el sol ${BIB.clima ? BIB.clima.ultimo.sol : '—'}; PDS calibrado hasta el sol ${BIB.clima ? BIB.clima.pds_ultimo_sol : '—'}</td></tr>
       <tr><td>Radiación (RAD)</td><td>publicado</td><td>Hassler 2014, Guo 2015 y 2021, NASA 2024 (los datos PDS de RAD son cuentas sin calibrar a dosis)</td></tr>
       <tr><td>Fotos crudas</td><td>${fmt(n.fot)}</td><td>NASA/JPL-Caltech/MSSS, raw images</td></tr>
-      <tr><td>Ficha en la base ODR</td><td>${n.odr}/49</td><td>Gale Crater Mineralogy and Geochemistry Database, doi:10.48484/JN48-YW52</td></tr></table>
+      <tr><td>Ficha en la base ODR</td><td>${n.odr}/${n.odr} ${IDIOMA === 'en' ? 'released' : 'publicadas'}</td><td>Gale Crater Mineralogy and Geochemistry Database, doi:10.48484/JN48-YW52</td></tr></table>
     <h2>Tomar con cuidado</h2><ul>
       <li>SAM: ${cnt('confirmado')} experimentos confirmados (ODR o designación de PDS), ${cnt('probable')} probables (misma semana que la perforación, sin designación publicada), ${cnt('otra_muestra')} de otra muestra (arenas de Gobabeb y Ogunquit Beach) y ${cnt('sin_muestra')} corridas que no son muestra (blancos, calibración, atmósfera).</li>
       <li>Valores de SAM imposibles para una porción de ~45 mg (supuesto) se marcan con ⚠ y no se usan: HCl, NO y H₂S en Mojave 2 y Telegraph Peak, HCl en un experimento de Cumberland y el H₂O de 7×10⁷ mol de Glen Etive (error de la tabla de PDS).</li>

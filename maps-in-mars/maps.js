@@ -394,6 +394,7 @@ function urRecorrer() {
   // el detalle de reposo se guarda una sola vez (si se volviera a leer en cada movimiento, un tour empezado en pleno giro quedaría con poco detalle para siempre)
   const G = viewer.scene.globe, BASE = G.maximumScreenSpaceError;
   G.loadingDescendantLimit = Math.min(G.loadingDescendantLimit, 20);
+  G.tileCacheSize = Math.max(G.tileCacheSize, 600);     // más teselas en memoria: al volver a un lugar (tour, recorridos) no se vuelven a pedir y no aparecen a parches
   let t = null, mov = false;
   const movimiento = () => { clearTimeout(t); if (!mov) { mov = true; G.maximumScreenSpaceError = Math.max(BASE, 2.6); } };
   const quieto = () => { clearTimeout(t); t = setTimeout(() => { if (mov && !(typeof TOUR !== 'undefined' && TOUR.activo)) { mov = false; G.maximumScreenSpaceError = BASE; } }, 350); };
@@ -480,7 +481,8 @@ function calAplicar(n) {
   const tiempos = []; let ult = performance.now(), malo = 0, bueno = 0, revis = performance.now();
   viewer.scene.postRender.addEventListener(() => {
     const t = performance.now(); tiempos.push(t - ult); ult = t; if (tiempos.length > 240) tiempos.shift();
-    if (CAL.modo !== 'auto' || t - revis < 1000 || document.hidden) return; revis = t;
+    // en el tour no se toca (cambiar el antialias rearma la imagen y se notaba como un tirón en la grabación)
+    if (CAL.modo !== 'auto' || t - revis < 1000 || document.hidden || (typeof TOUR !== 'undefined' && TOUR.activo)) { if (t - revis >= 1000) revis = t; return; }
     const ult2 = tiempos.slice(-120).sort((a, b) => a - b), p75 = ult2[Math.floor(ult2.length * 0.75)] || 0;
     if (p75 > 28) { malo++; bueno = 0; } else if (p75 < 14) { bueno++; malo = 0; } else { malo = 0; bueno = 0; }
     if (malo >= 2) { malo = 0; calAplicar(CAL.nivel + 1); }
@@ -551,7 +553,9 @@ function urEncuadreRecorrido(dur = 2.6) {
     const sp = b.querySelector('span'); if (sp) sp.innerHTML = lg(`<b>Misión Curiosity · hasta hoy</b><small>2012 → sol ${typeof RS !== 'undefined' && RS.length ? RS[RS.length - 1] : 5070} · recorrido y 49 perforaciones</small>`, `<b>Curiosity mission · so far</b><small>2012 → sol ${typeof RS !== 'undefined' && RS.length ? RS[RS.length - 1] : 5070} · traverse and 49 drill holes</small>`);
     const ir = async e => { e?.preventDefault?.(); if (MI.modo) miSalirModo(false); if (MI.verRec) await miVerRecorrido(false); miVerPozos(true); urEncuadreRecorrido(3);
       if (typeof abrirLinea === 'function') setTimeout(() => abrirLinea(), 900); };
-    b.onclick = ir; b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') ir(e); };
+    // en captura y cortando el resto: otro módulo también le pone un clic que entraba a la misión nueva
+    b.onclick = null; b.addEventListener('click', e => { e.stopImmediatePropagation(); ir(e); }, true);
+    b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.stopImmediatePropagation(); ir(e); } }, true);
   }
 }
 
@@ -609,5 +613,15 @@ if (typeof mgNoche === 'function') { const mn0 = mgNoche; mgNoche = async functi
     }
   };
   document.querySelectorAll('#miBarra [data-rv]').forEach(b => b.onclick = () => elegir(b.dataset.rv));
+}
+// ---------- una sola cosa abajo a la vez: la línea de tiempo y la barra de la misión no se pisan nunca ----------
+// Gana la última que se abrió, venga del botón que venga (Historia, Misión Curiosity · hasta hoy, Nueva misión, una ficha, el buscador…).
+{
+  const barra = $('miBarra'), visible = () => barra && !barra.classList.contains('oculto') && barra._on !== false;
+  new MutationObserver(() => { if (visible() && document.body.classList.contains('lineaAbierta') && typeof cerrarLinea === 'function') cerrarLinea(); })
+    .observe(barra, { attributes: true, attributeFilter: ['class'] });
+  let linea0 = document.body.classList.contains('lineaAbierta');
+  new MutationObserver(() => { const l = document.body.classList.contains('lineaAbierta'); if (l && !linea0) { if (MI.modo) miSalirModo(false); if (MI.activo) miDejar(); if (typeof PL !== 'undefined' && PL.activo) plSalir(); } linea0 = l; })
+    .observe(document.body, { attributes: true, attributeFilter: ['class'] });
 }
 window.__maps = { UR, abrir: urAbrir, base: urIrBase, control: urControl, analizar: urAnalizar };
