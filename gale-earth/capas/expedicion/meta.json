@@ -24,12 +24,24 @@
   "elev_i16": "altura (m) int16 little-endian; -32768 = sin dato fino",
   "pend_u8": "pendiente media de las 16 celdas de 5 m, grados x4; 255 = sin dato fino",
   "empin_u8": "cantidad de celdas de 5 m (de 16) con pendiente > 20 grados; 255 = sin dato fino",
-  "cielo_u8": "fracción de cielo tapada x255 (16 direcciones, horizonte 400 m, DEM de 20 m); 255 = sin dato"
+  "cielo_u8": "fracción de cielo tapada x255 (16 direcciones, horizonte 400 m, DEM de 20 m); 255 = sin dato",
+  "noche_pct_u8": "percentil de frío nocturno THEMIS dentro de la zona (100 = lo más frío); 255 = sin dato"
  },
  "fuentes": {
   "dem": "USGS Astrogeology, MSL_Gale_DEM_Mosaic_1m_v3 (Calef y Parker 2016), promediado a 5 m. Dato medido.",
   "pendiente": "Cálculo propio sobre ese DEM a 5 m (gradiente central) y resumido a 20 m.",
   "cielo": "Cálculo propio, mismo método que herramientas/travesia.py (seno del ángulo del horizonte)."
  },
- "armado_con": "gale-earth/herramientas/zona_expedicion.py"
+ "armado_con": "gale-earth/herramientas/zona_expedicion.py",
+ "themis_noche": {
+  "archivo": "themis_noche.png",
+  "ancho": 409,
+  "alto": 407,
+  "lon_oeste": 137.04406591026702,
+  "lon_este": 137.73407364896394,
+  "lat_norte": -4.482519710801213,
+  "lat_sur": -5.1691533285265026,
+  "fuente": "USGS Astrogeology, THEMIS Night IR Controlled Mosaic Aeolis 30S135E 100 m/px v2 (2014), Mars Odyssey. Producto cualitativo de 8 bits.",
+  "uso": "Indicio relativo de material suelto (más frío de noche). No es inercia térmica en unidades; no se usa como regla de ruteo."
+ }
 }

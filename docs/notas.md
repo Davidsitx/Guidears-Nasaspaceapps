@@ -2,6 +2,27 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada · Compañero (con Claude) · EXPEDICIÓN: ARENA, ROVER DE MARTE, TRAJE, CLIMA, TORMENTA Y COMUNICACIÓN
+- **Arena (indicio):** `herramientas/themis_noche.py` lee por rangos la ventana de Gale del mosaico **THEMIS Night IR** de Mars Odyssey (USGS, 100 m, cualitativo de 8 bits). Arma `capas/expedicion/themis_noche.png` y el percentil de "frío de noche" por celda.
+  - Validación: el recorrido real de Curiosity va por terreno tibio (mediana en el percentil 21) y **nunca pisó el 10% más frío**.
+  - Por eso el rover evita ese 10%, con una casilla que se puede desactivar. La caminata solo avisa.
+  - La inercia térmica cuantitativa de USGS está en astropedia/astrogeology, que no es accesible desde acá. Si se consigue, reemplaza este indicio.
+- **Rover presurizado:** 3 km/h por defecto, según **NASA DRA 5.0** (SP-2009-566, p. 43, velocidad de diseño en Marte). Se puede pasar a 10 km/h (SEV lunar).
+- **Traje:**
+  - 1700 BTU/h caminando con traje a 3,6 km/h en gravedad de Marte, cerca del límite sostenible;
+  - 1200 BTU/h de promedio para dimensionar una salida en Marte.
+  - Fuente: NASA ICES-2026, Ogilvie et al., NTRS 20260003038, con datos de Norcross et al. 2009. Se muestran las kcal por salida.
+- **Blindaje:** la cabina de un rover tiene ≈1 g/cm² (Kim et al., NASA, WRMISS 2012) y NASA sugiere 20 g/cm² para un refugio (Clowdsley, NTRS 20210009760). Por eso dentro del rover se cuenta la misma dosis que afuera y el rover no es refugio de tormenta.
+- **Horario:** se eligen la estación (Ls) y la hora de salida (LMST).
+  - Muestra mínimas, máximas, récords y UV de REMS por estación y el viento por hora (REMS, muestra hasta 2016).
+  - Avisa si la caminata cae de noche (aproximado: 06–18 LMST).
+  - La hora marciana dura 1,0275 h terrestres.
+- **Tormenta solar:** botón ☢ en la simulación. Usa los 8,1 mGy que midió RAD el 20/5/2024 (NASA, 10/6/2024) y calcula:
+  - minutos hasta el rover y tiempo de regreso a la base;
+  - el lugar con más cielo tapado a ≤ 10 min a pie.
+- **Comunicación:** línea de vista entre astronauta y rover sobre el relieve de 20 m más la curvatura de Marte. Las antenas a 2 y 3 m son supuesto. Da minutos sin línea de vista por parada y un aviso en vivo.
+- **Arreglado:** el panel de la simulación ya no se redibuja entero, así que los botones responden.
+
 ## 2026-11-14 noche (4) · Compañero (con Claude) · GALE EARTH: EXPEDICIÓN CON RUTAS SEGURAS (20 km)
 - **Pestaña nueva "Expedición"** en Gale Earth. Es un círculo de 20 km alrededor de Curiosity: se elige el inicio del rover presurizado y una o varias muestras (tocando el mapa, al azar o un pozo). Calcula:
   - la ruta del rover;
