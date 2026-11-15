@@ -428,7 +428,7 @@ body.enTour #idiomaSel{visibility:hidden}
 'use strict';
 const D = JSON.parse(document.getElementById('datos').textContent);
 const C = Cesium, $ = id => document.getElementById(id);
-const IDIOMA = (() => { try { return localStorage.getItem('galeEarthIdioma') || 'en'; } catch { return 'en'; } })();   // inglés por defecto
+const IDIOMA = (() => { try { return sessionStorage.getItem('mimIdioma') || 'en'; } catch { return 'en'; } })();   // cada visita nueva entra en inglés; el cambio a castellano dura mientras la pestaña esté abierta
 window.IDIOMA = IDIOMA; document.documentElement.lang = IDIOMA;
 const fmt = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString(IDIOMA === 'es' ? 'es-AR' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
 // ==================== Idioma: inglés por defecto, castellano con el botón ES ====================
@@ -475,7 +475,7 @@ function tradEtiquetas(lista) {   // carteles del globo (Cesium dibuja el texto 
   for (const e of lista) { const l = e.label; if (!l || !l.text || !l.text.isConstant) continue;
     const v = l.text.getValue(), t = trad(v); if (t !== v) l.text = t; }
 }
-function cambiarIdioma(i) { try { localStorage.setItem('galeEarthIdioma', i); } catch {} location.reload(); }
+function cambiarIdioma(i) { try { sessionStorage.setItem('mimIdioma', i); localStorage.removeItem('galeEarthIdioma'); } catch {} location.reload(); }
 window.cambiarIdioma = cambiarIdioma;
 
 

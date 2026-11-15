@@ -42,5 +42,5 @@ function tradEtiquetas(lista) {   // carteles del globo (Cesium dibuja el texto 
   for (const e of lista) { const l = e.label; if (!l || !l.text || !l.text.isConstant) continue;
     const v = l.text.getValue(), t = trad(v); if (t !== v) l.text = t; }
 }
-function cambiarIdioma(i) { try { localStorage.setItem('galeEarthIdioma', i); } catch {} location.reload(); }
+function cambiarIdioma(i) { try { sessionStorage.setItem('mimIdioma', i); localStorage.removeItem('galeEarthIdioma'); } catch {} location.reload(); }
 window.cambiarIdioma = cambiarIdioma;

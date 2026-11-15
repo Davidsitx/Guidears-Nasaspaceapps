@@ -3,7 +3,7 @@
 'use strict';
 const D = JSON.parse(document.getElementById('datos').textContent);
 const C = Cesium, $ = id => document.getElementById(id);
-const IDIOMA = (() => { try { return localStorage.getItem('galeEarthIdioma') || 'en'; } catch { return 'en'; } })();   // inglés por defecto
+const IDIOMA = (() => { try { return sessionStorage.getItem('mimIdioma') || 'en'; } catch { return 'en'; } })();   // cada visita nueva entra en inglés; el cambio a castellano dura mientras la pestaña esté abierta
 window.IDIOMA = IDIOMA; document.documentElement.lang = IDIOMA;
 const fmt = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString(IDIOMA === 'es' ? 'es-AR' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
 /*__IDIOMA_JS__*/
