@@ -105,3 +105,4 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 | SR-1 Freedom (línea de tiempo) | NASA, nasa.gov/mission/space-reactor-1-freedom; hoja "America Underway in Space on Nuclear Power" (NASA, 24/3/2026) |
 | odr_gale_56_fichas.json (escritorio de la PC, no versionado) | Copia de las 56 fichas CheMin de la base del cráter Gale (galecrater.samples.odr.io, doi:10.48484/JN48-YW52): de ahí salen los enlaces "ODR" de la Biblioteca |
 | Modelos 3D de MRO y Mars Odyssey | NASA 3D Resources (github.com/nasa/NASA-3D-Resources): "Mars Reconnaissance Orbiter (MRO) (C)" y "Mars Odyssey", .glb, sin copyright |
+| Relieve fino de Jezero (20 m) | NASA/JPL Mars 2020, M20_JezeroCrater_CTXDEM_20m.tif (Science Investigation Maps), servidor USGS Astrogeology: asc-pds-services, mosaic/mars2020_trn/CTX/ScienceInvestigationMaps_JPL/ |

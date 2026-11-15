@@ -2,6 +2,21 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (7) · Compañero (con Claude) · INGLÉS POR DEFECTO, TOUR DE 2 MINUTOS Y RELIEVE DE JEZERO
+- Hecho (gale-earth/):
+  - **Idioma:** botón EN/ES en el riel; inglés por defecto (se guarda en localStorage `galeEarthIdioma`).
+    - La interfaz se sigue escribiendo en castellano. `idioma.js` traduce lo que aparece en pantalla con `datos/idioma_en.json` (unas 1.030 frases; los números se sacan y se vuelven a poner, así una frase sirve para todos los pozos).
+    - También traduce los carteles del globo, y los números salen en formato inglés.
+    - Si se agrega texto nuevo, hay que sumar su frase al diccionario; si no, queda en castellano.
+  - **Tour** (botón Tour en el riel, `tour.js`): unos 2 minutos, con bandas de cine, título y 7 escenas: Marte, Gale, el recorrido en vuelo bajo, las manchas CRISM, lo que confirmó CheMin, la radiación de día y de noche, y MRO en 3D.
+    - Los textos salen de los datos (km recorridos, 49 pozos, 26–34 % de arcilla, hasta 28 % de hematita).
+    - Esc o "Skip" lo cortan y todo vuelve a como estaba.
+  - **Relieve de Jezero** a 20 m: `teselas_terreno_jezero.py` sobre el CTX DEM de Mars 2020 (NASA/JPL, servidor USGS), niveles 10–13, fundido con HRSC-MOLA en 4 km de borde.
+    - Genera `teselas/terreno_jezero_n10-13.zip` (64 MB) y un rango nuevo en `meta.json`, dentro de `terreno_zz_meta.zip`.
+    - Ya está en la PC. **Falta subirlo a Hugging Face** (zip + meta + índices: `indices_nube.py` y `subir_hf.bat`) antes de publicar.
+- No se puso Perseverance (el protagonista es Curiosity).
+- Bordes entre teselas: los de la ortofoto y HiRISE ya se funden. La imagen CTX no se ve desde el entorno de pruebas (el servicio está bloqueado ahí), así que los saltos de brillo entre teselas de CTX hay que revisarlos a ojo en la PC.
+
 ## 2026-11-15 mañana (6) · Compañero (con Claude) · NAVES EN 3D
 - Hecho (gale-earth/): MRO y Mars Odyssey ahora son modelos 3D oficiales de NASA (NASA 3D Resources, sin copyright), en `capas/modelos/mro.glb` (1,2 MB) y `odyssey.glb` (5,8 MB).
   - Se orientan según su movimiento.

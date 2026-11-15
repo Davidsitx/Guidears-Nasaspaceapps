@@ -3,7 +3,10 @@
 'use strict';
 const D = JSON.parse(document.getElementById('datos').textContent);
 const C = Cesium, $ = id => document.getElementById(id);
-const fmt = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString('es-AR', { maximumFractionDigits: d, minimumFractionDigits: d });
+const IDIOMA = (() => { try { return localStorage.getItem('galeEarthIdioma') || 'en'; } catch { return 'en'; } })();   // inglés por defecto
+window.IDIOMA = IDIOMA; document.documentElement.lang = IDIOMA;
+const fmt = (v, d = 0) => v == null ? '—' : Number(v).toLocaleString(IDIOMA === 'es' ? 'es-AR' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
+/*__IDIOMA_JS__*/
 
 // ---------- Marte: elipsoide IAU 2015 (49901) y token de Cesium ion ----------
 C.Ellipsoid.default = C.Ellipsoid.MARS;
@@ -18,6 +21,8 @@ const viewer = new C.Viewer('globo', {
   globe: new C.Globe(MARS), baseLayer: false, skyAtmosphere: false, baseLayerPicker: false, geocoder: false, timeline: false, animation: false,
   homeButton: false, sceneModePicker: false, navigationHelpButton: false, infoBox: false, selectionIndicator: false, fullscreenButton: false,
 });
+viewer.entities.collectionChanged.addEventListener((col, añadidas) => tradEtiquetas(añadidas));   // carteles del globo en inglés
+document.querySelectorAll('#idiomaSel button').forEach(b => { b.classList.toggle('on', b.dataset.i === IDIOMA); b.onclick = () => { if (b.dataset.i !== IDIOMA) cambiarIdioma(b.dataset.i); }; });
 viewer.scene.backgroundColor = C.Color.BLACK;
 // Cielo: Vía Láctea y estrellas reales (catálogo Hipparcos de ESA + contorno de la Vía Láctea de J. R. Vieira, vía d3-celestial).
 // Las 6 caras del cubo las genera herramientas/cielo_via_lactea.py.

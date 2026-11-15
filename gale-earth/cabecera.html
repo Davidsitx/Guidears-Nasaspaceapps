@@ -286,6 +286,31 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
 #tipMancha{position:fixed;z-index:60;width:340px;max-height:60vh;overflow:auto;padding:11px 13px;border-radius:12px;background:#1b1d22f2;border:1px solid var(--linea);box-shadow:0 8px 28px #0008;color:var(--texto);font-size:13px;line-height:1.4}
 #tipMancha a{color:var(--acento)}
 #tipMancha .fuente{font-size:11.5px}
+
+/* ---- tour guiado ---- */
+#rTour .i{fill:var(--acento)}
+#tour{position:fixed;inset:0;z-index:90;pointer-events:none;font-family:system-ui,sans-serif}
+#tour .tBanda{position:fixed;left:0;right:0;background:#000;transition:transform .9s cubic-bezier(.6,0,.2,1);will-change:transform}
+#tour .tArriba{top:0;height:9vh;transform:translateY(-100%)}#tour .tAbajo{bottom:0;height:17vh;transform:translateY(100%);display:flex;flex-direction:column;align-items:center;justify-content:center}
+#tour.on .tArriba,#tour.on .tAbajo{transform:none}
+#tour .tTexto{max-width:min(980px,86vw);text-align:center;color:#f3ece4;font-size:clamp(15px,1.45vw,21px);line-height:1.45;opacity:0;transform:translateY(8px);transition:opacity .7s,transform .7s}
+#tour .tTexto.vis{opacity:1;transform:none}
+#tour .tTexto b{color:#ffd29a;font-weight:650}
+#tour .tPaso{position:absolute;left:3vw;top:14px;color:#ffffff66;font-size:12px;letter-spacing:.25em}
+#tour .tBarra{position:absolute;left:0;right:0;bottom:0;height:2px;background:#ffffff14}
+#tour .tTitulo{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;opacity:0;transform:scale(1.04);transition:opacity 1.2s,transform 4s ease-out;text-shadow:0 2px 30px #000}
+#tour .tTitulo.vis{opacity:1;transform:scale(1)}
+#tour .tTitulo b{font-size:clamp(38px,6.2vw,92px);letter-spacing:.32em;font-weight:300;color:#fff;padding-left:.32em}
+#tour .tTitulo span{font-size:clamp(14px,1.5vw,22px);letter-spacing:.12em;color:#ffd29a;text-transform:uppercase}
+#tour .tNegro{position:fixed;inset:0;background:#000;opacity:0;transition:opacity .6s}
+#tour .tNegro.vis{opacity:1}
+#tour .tSaltar{position:fixed;top:2.4vh;right:2.5vw;pointer-events:auto;background:#ffffff14;color:#fff;border:1px solid #ffffff33;border-radius:18px;padding:6px 14px;font-size:13px;cursor:pointer;opacity:0;transition:opacity .8s}
+#tour.on .tSaltar{opacity:1}
+body.enTour #riel,body.enTour #busca,body.enTour #controles,body.enTour #estado,body.enTour #cajon,body.enTour #linea,body.enTour #reloj,body.enTour #tipMancha{visibility:hidden!important;pointer-events:none!important}
+#idiomaSel{display:flex;gap:2px;margin:0 auto 6px;background:#ffffff10;border-radius:9px;padding:2px}
+#idiomaSel button{background:none;border:0;color:var(--suave);font:600 11px system-ui;padding:4px 7px;border-radius:7px;cursor:pointer}
+#idiomaSel button.on{background:var(--acento);color:#111}
+body.enTour #idiomaSel{visibility:hidden}
 </style>
 </head>
 <body>
@@ -296,6 +321,7 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
 <nav id="riel" aria-label="Menú principal">
   <img class="logo" src="capas/logo/logo-128.png" alt="Gale Earth" title="Gale Earth · ver Marte entero" id="logoRiel">
   <button class="rb" id="rBuscar" title="Buscar"><svg class="i" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>Buscar</button>
+  <button class="rb" id="rTour" title="Tour guiado de 2 minutos"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>Tour</button>
   <button class="rb" data-t="explorar" title="Explorar Gale"><svg class="i" viewBox="0 0 24 24"><path d="M12 10.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1 1.1-.49 1.1-1.1-.49-1.1-1.1-1.1zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19z"/></svg>Explorar</button>
   <button class="rb" data-t="base" title="Base en Gale"><svg class="i" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Base</button>
   <button class="rb" data-t="orbita" title="Orbitadores"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" fill="none" stroke="currentColor" stroke-width="1.8" transform="rotate(-25 12 12)"/><circle cx="20.2" cy="8.2" r="1.6"/></svg>Órbitas</button>
@@ -304,6 +330,7 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
   <button class="rb" data-t="capas" title="Capas y estilo del mapa"><svg class="i" viewBox="0 0 24 24"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg>Capas</button>
   <button class="rb" data-t="motor" title="Motor del globo: cuál se usa para dibujar Marte"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2c1.3 0 2.6 2.4 3 6H9c.4-3.6 1.7-6 3-6zm-3.9.9C7.5 6.4 7.1 8.1 7 10H4.3a8 8 0 0 1 3.8-5.1zm7.8 0A8 8 0 0 1 19.7 10H17c-.1-1.9-.5-3.6-1.1-5.1zM4.3 12H7c.1 1.9.5 3.6 1.1 5.1A8 8 0 0 1 4.3 12zm4.7 0h6c-.4 3.6-1.7 6-3 6s-2.6-2.4-3-6zm8 0h2.7a8 8 0 0 1-3.8 5.1c.6-1.5 1-3.2 1.1-5.1z"/></svg>Motor</button>
   <div class="esp"></div>
+  <div id="idiomaSel" title="Language / Idioma"><button data-i="en">EN</button><button data-i="es">ES</button></div>
   <button class="rb solopc" id="vAyuda" title="Controles y ayuda"><svg class="i" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>Ayuda</button>
   <button class="rb solopc" id="rPantalla" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>Pantalla</button>
 </nav>
