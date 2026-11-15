@@ -9,7 +9,8 @@ const PMR = { T: null, cargando: null, guia: null, marcar: false, armar: { pozos
 const PMR_RECO = [1, 3, 7, 27, 37, 44];          // John Klein, Windjana, Buckskin, Mary Anning, Tapo Caparo, Valle de la Luna
 const PMR_COL = { manejo: '#b06bff', caminata: '#ff8a3d', regreso: '#4fbf7d', pozo: '#e0703a', inst: '#2a9d8f', curiosity: '#c04fb5', mapa: '#e0703a' };
 const PMR_TAREA = { perf: 0.75, sismo: 0.75, magneto: 0.75, muestra: 0.75 };     // horas de trabajo en cada parada (supuesto, provisorio)
-const PMR_ESTAC = 130;                            // el PMR estaciona a unos 130 m de la parada y el resto se hace a pie (supuesto)
+const PMR_ESTAC = 40;                             // el PMR estaciona a unos 40 m de la parada y el resto se hace a pie (supuesto: no pisar ni ensuciar el lugar de la muestra)
+const pmrEstac = P => P?.tarea === 'magneto' ? 130 : PMR_ESTAC;   // el magnetómetro, a más de 100 m del vehículo (supuesto)
 
 // ---------- terreno ----------
 async function pmrTerreno() {
@@ -46,7 +47,9 @@ function pmrAstar(a, b, aPie, lim) {
   const [ca, fa] = pmrCelda(a[0], a[1]), [cb, fb] = pmrCelda(b[0], b[1]), s = fa * W + ca, g = fb * W + cb;
   const mg = 260, cx0 = Math.max(0, Math.min(ca, cb) - mg), cx1 = Math.min(W - 1, Math.max(ca, cb) + mg), fy0 = Math.max(0, Math.min(fa, fb) - mg), fy1 = Math.min(H - 1, Math.max(fa, fb) + mg);
   const P = T.p, AR = T.ar, CI = T.ci, hmin = aPie ? 0.8 : 1;
-  const costo = i => { const p = P[i]; if (p > lim && i !== s && i !== g) return -1; const q = p / 10; return aPie ? 1 + q * q + 0.5 * AR[i] - 0.5 * CI[i] : 1 + q * q + 6 * AR[i]; };
+  // cerca del borde del terreno con datos se cobra más: sin eso la ruta se pegaba al borde (lo que hay más allá no se conoce y en el mapa parecía ir "por fuera")
+  const BORDE = 30, borde = i => { const c = i % W, f = (i - c) / W, d = Math.min(c, W - 1 - c, f, H - 1 - f); return d >= BORDE ? 0 : 4 * (1 - d / BORDE); };
+  const costo = i => { const p = P[i]; if (p > lim && i !== s && i !== g) return -1; const q = p / 10; return (aPie ? 1 + q * q + 0.5 * AR[i] - 0.5 * CI[i] : 1 + q * q + 6 * AR[i]) + borde(i); };
   let hi = PMR.hi, hf = PMR.hf, hn = 0;
   const push = (i, f) => { if (hn >= hi.length) { const a2 = new Int32Array(hi.length * 2); a2.set(hi); const b2 = new Float32Array(hf.length * 2); b2.set(hf); PMR.hi = hi = a2; PMR.hf = hf = b2; }
     let k = hn++; while (k > 0) { const p = (k - 1) >> 1; if (hf[p] <= f) break; hi[k] = hi[p]; hf[k] = hf[p]; k = p; } hi[k] = i; hf[k] = f; };
@@ -170,9 +173,10 @@ async function pmrConstruir(paradas, opc = {}) {
   for (const P of lista) {
     k++; await paso(lg(`Parada ${k} de ${lista.length}: ${P.nombre}. Manejo y caminata.`, `Stop ${k} of ${lista.length}: ${P.nombre}. Drive and walk.`));
     const r = pmrRuta(p, [P.lon, P.lat], false), v = r.v;
-    // estaciona a ~130 m de la parada (por el camino)
+    // estaciona a ~40 m de la parada por el camino (130 m en la estación magnética)
+    const E = pmrEstac(P);
     let acum = 0, corte = v.length - 1, punto = v[v.length - 1];
-    for (let i = v.length - 1; i > 0; i--) { const s = miDist(v[i - 1][0], v[i - 1][1], v[i][0], v[i][1]); if (acum + s >= PMR_ESTAC) { const u = (PMR_ESTAC - acum) / s; punto = [v[i][0] + (v[i - 1][0] - v[i][0]) * u, v[i][1] + (v[i - 1][1] - v[i][1]) * u]; corte = i; break; } acum += s; corte = 0; punto = v[0]; }
+    for (let i = v.length - 1; i > 0; i--) { const s = miDist(v[i - 1][0], v[i - 1][1], v[i][0], v[i][1]); if (acum + s >= E) { const u = (E - acum) / s; punto = [v[i][0] + (v[i - 1][0] - v[i][0]) * u, v[i][1] + (v[i - 1][1] - v[i][1]) * u]; corte = i; break; } acum += s; corte = 0; punto = v[0]; }
     const vm = [...v.slice(0, corte), punto];
     if (vm.length >= 2) { const t = manejo(vm, 'manejo', lg(`Manejo a ${P.nombre}`, `Drive to ${P.nombre}`), P, r.forzado); if (t) rumbo = t.rumboFin; }
     p = punto;
@@ -245,7 +249,7 @@ function pmrFichaGuia() {
     <div class="hall"><b><span class="mi-pill" style="background:${PMR_COL.inst}">SIS</span> <span class="mi-pill" style="background:${PMR_COL.inst}">MAG</span> ${lg('Dos estaciones en los tramos más largos', 'Two stations on the longest legs')}</b><span class="sub">${lg('Llano (< 8°), sin arena y con algo de reparo del relieve, cerca del medio del tramo.', 'Flat (< 8°), no sand and some terrain shelter, near the middle of the leg.')}</span></div>
     <div class="hall"><b><span class="mi-pill" style="background:${PMR_COL.curiosity}">MSL</span> ${lg('Curiosity hoy y regreso', 'Curiosity today and return')}</b><span class="sub">${lg('Muestras junto al rover y vuelta a la Base Gale.', 'Samples next to the rover and back to Gale Base.')}</span></div>
     <h2>${lg('Cómo se calcula la ruta más segura', 'How the safest route is computed')}</h2>
-    <p class="sub">${lg('A* sobre celdas de 12 m. PMR: pendiente ≤ 20° y un costo alto sobre arena probable. A pie: pendiente ≤ 20° (traje) y preferencia por la sombra del relieve. Estaciona a unos 130 m de cada parada y el resto se camina. Supuestos marcados como provisorios.', 'A* on 12 m cells. PMR: slope ≤ 20° and a high cost on probable sand. On foot: slope ≤ 20° (suit) and a preference for terrain shade. It parks about 130 m from each stop and walks the rest. Assumptions marked as provisional.')} ${miFq('evaConops')}${miFq('jplMov')} <span class="prov">${lg('provisorio', 'provisional')}</span></p>`,
+    <p class="sub">${lg('A* sobre celdas de 12 m. PMR: pendiente ≤ 20° y un costo alto sobre arena probable. A pie: pendiente ≤ 20° (traje) y preferencia por la sombra del relieve. Estaciona a unos 40 m de cada parada (130 m en la estación magnética) y el resto se camina. Supuestos marcados como provisorios.', 'A* on 12 m cells. PMR: slope ≤ 20° and a high cost on probable sand. On foot: slope ≤ 20° (suit) and a preference for terrain shade. It parks about 40 m from each stop (130 m at the magnetic station) and walks the rest. Assumptions marked as provisional.')} ${miFq('evaConops')}${miFq('jplMov')} <span class="prov">${lg('provisorio', 'provisional')}</span></p>`,
     volverHoy() + bt(lg('Armar mi guía', 'Build my guide'), 'armar') + bt(lg('Calcular y recorrer ▶', 'Compute and follow ▶'), 'guia', '', true), 'guia');
 }
 function pmrFichaParada(i) {
@@ -333,7 +337,7 @@ function pmrTemp() {        // pines de los puntos elegidos en el mapa (todavía
 // ir a una de las 49 perforaciones: ruta más segura desde donde esté el PMR, caminata y perforación de 2 m
 function pmrFichaIrPozo() {
   const todas = (typeof POZOS !== 'undefined' ? POZOS : []).filter(p => p.n != null), fil = (PMR.filtroIr || '').toLowerCase();
-  miFicha(lg('Ir a una perforación', 'Drive to a drill hole'), `<p class="sub">${lg(`Desde donde está el PMR (${MI.pmrFuera ? 'donde quedó' : 'la Base Gale'}): la ruta más segura para el vehículo, estaciona a unos 130 m y uno sigue a pie a perforar 2 m mientras el otro queda en el PMR.`, `From where the PMR is (${MI.pmrFuera ? 'where it was left' : 'Gale Base'}): the safest route for the vehicle, it parks about 130 m away and one continues on foot to drill 2 m while the other stays in the PMR.`)}</p>
+  miFicha(lg('Ir a una perforación', 'Drive to a drill hole'), `<p class="sub">${lg(`Desde donde está el PMR (${MI.pmrFuera ? 'donde quedó' : 'la Base Gale'}): la ruta más segura para el vehículo, estaciona a unos 40 m y uno sigue a pie a perforar 2 m mientras el otro queda en el PMR.`, `From where the PMR is (${MI.pmrFuera ? 'where it was left' : 'Gale Base'}): the safest route for the vehicle, it parks about 40 m away and one continues on foot to drill 2 m while the other stays in the PMR.`)}</p>
     <input class="mi-buscar" id="pmrFiltroIr" placeholder="${lg('Buscar por nombre o número', 'Search by name or number')}" value="${miEsc(PMR.filtroIr || '')}">
     <div class="mi-lista">${todas.filter(p => !fil || p.nombre.toLowerCase().includes(fil) || String(p.n) === fil).map(p => `<button class="fil" data-mi="pozo" data-n="${p.n}"><span class="mi-pill" style="background:${colorDe(p)}">${p.n}</span>${miEsc(p.nombre)}<small>sol ${p.sol} · ${miM(miDist(pmrInicio().lon, pmrInicio().lat, p.lon, p.lat))}</small></button>`).join('')}</div>`, volverHoy() + bt('PMR', 'pmr'), 'irpozo');
   const f = $('pmrFiltroIr'); f.oninput = () => { PMR.filtroIr = f.value; const p0 = f.selectionStart; pmrFichaIrPozo(); const g = $('pmrFiltroIr'); g.focus(); g.setSelectionRange(p0, p0); };
@@ -387,7 +391,7 @@ function pmrLlegada(m, id) {
 function pmrFinTramo(m) {
   const G = PMR.guia, T = G.tramos[G.i], sig = G.tramos[G.i + 1], L = T.L, q = enLinea(L, L.largo);
   if (T.tipo === 'caminata') { miMsg('a1', lg('De vuelta en el PMR. Entro por el suitport.', 'Back at the PMR. Coming in through the suitport.')); miMsg('base', lg(`Salida cerrada: ${miH(L.horas)}, ${miNum(L.dosis, 1)} µSv.`, `EVA closed: ${miH(L.horas)}, ${miNum(L.dosis, 1)} µSv.`)); }
-  else { const P = T.parada; miMsg('a2', P ? lg(`Estacionados a ${PMR_ESTAC} m de ${miEsc(P.nombre)}.`, `Parked ${PMR_ESTAC} m from ${miEsc(P.nombre)}.`) : lg('En el garaje de la Base Gale. Expedición cumplida.', 'In the Gale Base garage. Expedition complete.')); }
+  else { const P = T.parada; miMsg('a2', P ? lg(`Estacionados a ${pmrEstac(P)} m de ${miEsc(P.nombre)}.`, `Parked ${pmrEstac(P)} m from ${miEsc(P.nombre)}.`) : lg('En el garaje de la Base Gale. Expedición cumplida.', 'In the Gale Base garage. Expedition complete.')); }
   if (!sig) {
     MI.pmrFuera = T.tipo === 'regreso' ? null : pmrPosFinal(T);
     return miCard(lg('Expedición terminada', 'Expedition complete'), G.volver ? lg('De vuelta en el hábitat', 'Back in the habitat') : miEsc(T.titulo),
@@ -396,7 +400,7 @@ function pmrFinTramo(m) {
   }
   const ir = () => pmrTramo(G.i + 1);
   if (sig.tipo === 'caminata') miCard(lg('Llegaron a la parada', 'They reached the stop'), `<span class="mi-pill" style="background:${sig.parada.color}">${miEsc(sig.parada.codigo)}</span>${miEsc(sig.parada.nombre)}`,
-    lg(`El PMR queda estacionado a ${PMR_ESTAC} m. El Astronauta 1 se pone el traje por el suitport (menos de 10 min) y el 2 queda en la cabina.`, `The PMR parks ${PMR_ESTAC} m away. Astronaut 1 suits up through the suitport (under 10 min) and Astronaut 2 stays in the cabin.`) + miFq('suitport'),
+    lg(`El PMR queda estacionado a ${pmrEstac(sig.parada)} m. El Astronauta 1 se pone el traje por el suitport (menos de 10 min) y el 2 queda en la cabina.`, `The PMR parks ${pmrEstac(sig.parada)} m away. Astronaut 1 suits up through the suitport (under 10 min) and Astronaut 2 stays in the cabin.`) + miFq('suitport'),
     [[lg('Salir a caminar ▶', 'Go for the walk ▶'), ir, true], [lg('Dejar la guía', 'Leave the guide'), () => miSalirModo(true)]]);
   else miCard(lg('De vuelta en el PMR', 'Back in the PMR'), miEsc(sig.titulo), lg(`Siguiente tramo: ${miM(sig.L.largo)}, ${miH(sig.L.horas)} de manejo.`, `Next leg: ${miM(sig.L.largo)}, ${miH(sig.L.horas)} of driving.`),
     [[lg('Seguir manejando ▶', 'Keep driving ▶'), ir, true], [lg('Dejar la guía', 'Leave the guide'), () => miSalirModo(true)]]);

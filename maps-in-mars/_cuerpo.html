@@ -346,11 +346,47 @@ async function prepararNube() {
     }
     if (!t && location.protocol === 'file:') setTimeout(() => avisar('Abriste el archivo directo: se ve Cesium Mars. Para el globo completo de Marte (CTX 5 m, terreno propio y HiRISE 25 cm) abrí Maps in Mars con abrir.bat.', 15000), 4000);
   }
-  $('cargando').style.opacity = 0; setTimeout(() => $('cargando').classList.add('oculto'), 500);
-  irA('marte', 0);
-  if (!location.hash) setTimeout(() => irA('gale', 3), 2600);
-  else if (/curiosity|mision/.test(location.hash)) setTimeout(() => irA('hoy', 3), 2600);   // vuelta desde GALE-3D: directo a donde está Curiosity
+  // Pantalla de carga: Marte gira detrás del logo mientras bajan las teselas de todo el planeta y los datos de la misión.
+  // Recién con todo listo frena justo con Gale de frente, se aclara la pantalla y la cámara baja al cráter desde ahí mismo:
+  // así el primer vuelo no arranca con el planeta a medio cargar (antes había saltos y huecos).
+  await introGiro();
+  $('cargando').style.opacity = 0; setTimeout(() => $('cargando').classList.add('oculto'), 950);
+  if (!location.hash) { irA('gale', 3.4); setTimeout(() => window.tutoPreguntar && tutoPreguntar(), 4300); }
+  else if (/curiosity|mision/.test(location.hash)) irA('hoy', 3);   // vuelta desde la escena clásica: directo a donde está Curiosity
 })();
+function introGiro() {
+  const G = viewer.scene.globe, cg = $('cargando'), barra = $('cargaBarra'), msj = $('cargaMsj'), LON_G = 137.8, LAT = -5.4, ALT = 32000000;
+  const vel = 24;                                    // grados por segundo: una vuelta en 15 s
+  let lon = LON_G - 300, ult = performance.now(), pend = 0, maxPend = 1, datos = false, listo = false, freno = null;
+  const t0 = ult, ver = () => viewer.camera.setView({ destination: pos(lon, LAT, ALT) });
+  ver(); cg.classList.add('girando');
+  viewer.entities.show = false;                      // órbitas, naves y carteles aparecen recién al llegar: durante la carga solo Marte
+  const quita = G.tileLoadProgressEvent.addEventListener(n => { pend = n; maxPend = Math.max(maxPend, n); });
+  Promise.resolve(typeof miCargar === 'function' ? miCargar().catch(() => false) : true).then(() => { datos = true; });
+  return new Promise(ok => {
+    const f = () => {
+      const ahora = performance.now(), dt = Math.min(0.05, (ahora - ult) / 1000), t = (ahora - t0) / 1000; ult = ahora;
+      const avance = Math.min(0.98, (1 - pend / maxPend) * 0.7 + Math.min(1, t / 6) * 0.2 + (datos ? 0.1 : 0));
+      if (!listo) {
+        barra.style.width = (avance * 100).toFixed(0) + '%';
+        msj.textContent = IDIOMA === 'en' ? `Loading Mars: terrain and imagery of the whole planet${pend ? ` · ${pend} tiles left` : ''}…` : `Cargando Marte: relieve e imagen de todo el planeta${pend ? ` · faltan ${pend} teselas` : ''}…`;
+        // listo: sin teselas pendientes durante un momento, datos cargados y al menos ~3/4 de vuelta (o 25 s como tope)
+        if ((G.tilesLoaded && pend === 0 && datos && t > 5 && lon > LON_G - 90) || t > 25) {
+          listo = true; barra.style.width = '100%'; msj.textContent = IDIOMA === 'en' ? 'Ready. Heading to Gale crater…' : 'Listo. Vamos al cráter Gale…';
+          // frena con desaceleración constante y queda exactamente en la longitud de Gale
+          const resto = ((LON_G - lon) % 360 + 360) % 360;
+          freno = { lon0: lon, resto, dur: Math.max(0.6, Math.min(2 * resto / vel, 4.5)), t: 0 };
+        }
+      }
+      if (freno) { freno.t = Math.min(freno.dur, freno.t + dt); const u = freno.t / freno.dur; lon = freno.lon0 + freno.resto * (1 - (1 - u) * (1 - u)); }
+      else lon += vel * dt;
+      ver();
+      if (freno && freno.t >= freno.dur) { quita(); viewer.entities.show = true; return ok(); }
+      requestAnimationFrame(f);
+    };
+    requestAnimationFrame(f);
+  });
+}
 const capasImagen = () => MODO === 'globo' ? viewer.imageryLayers : tileset && tileset.imageryLayers;
 async function alturas(cartos) {
   if (MODO === 'globo' && TERRENO) {

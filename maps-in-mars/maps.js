@@ -24,8 +24,8 @@ body.ur-control #miPad{display:flex}
 // ---------- interruptores de arriba: 49 perforaciones · Nuevo recorrido · Misión Curiosity ----------
 {
   const rec = $('miIntRec');
-  rec.innerHTML = `<i></i>${lg('Misión Curiosity', 'Curiosity mission')}`;
-  rec.title = lg('Las rutas planificadas desde la posición de Curiosity hoy (A, B, C, T y expedición sur), con la Base Gale, el PMR y la misión en pareja', 'The planned routes from Curiosity\'s position today (A, B, C, T and southern expedition), with Gale Base, the PMR and the two-person mission');
+  rec.innerHTML = `<i></i>${lg('Nueva misión', 'New mission')}`;
+  rec.title = lg('La misión nueva: las rutas planificadas desde la posición de Curiosity hoy (A, B, C, T y expedición sur), con la Base Gale, el PMR y la misión en pareja', 'The new mission: the planned routes from Curiosity\'s position today (A, B, C, T and southern expedition), with Gale Base, the PMR and the two-person mission');
   rec.insertAdjacentHTML('beforebegin', `<button class="mi-int" id="urIntNuevo" style="--c:${UR_COL.ok}" aria-pressed="false" title="${lg('Armá tu propio recorrido con pines en el mapa: te avisa si pasa por pendientes peligrosas, arena o fuera del terreno con datos', 'Build your own route with pins on the map: it warns you about dangerous slopes, sand or areas without terrain data')}"><i></i>${lg('Nuevo recorrido', 'New route')}</button>`);
   rec.onclick = async () => { const on = rec.getAttribute('aria-pressed') !== 'true'; await miVerRecorrido(on); if (on) miEntrar(); };
   // primer toque: abre el armado; con un recorrido ya armado, el botón lo muestra u oculta
@@ -48,14 +48,24 @@ async function urIrBase() {
   viewer.camera.flyToBoundingSphere(new C.BoundingSphere(pos(b.lon, b.lat, h + 4), 40), { offset: new C.HeadingPitchRange(0.6, -0.42, lejos ? 260 : 150),
     duration: lejos ? 3.2 : 2.2, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 200000, maximumHeight: lejos ? 3000000 : undefined });
 }
-document.querySelector('.rb[data-t="base"]')?.addEventListener('click', () => setTimeout(() => {
-  urIrBase();
-  // tarjeta de la base elegida arriba de la tabla de sitios
-  const c = cont(); if (!c || c.querySelector('#urTBase')) return;
-  c.insertAdjacentHTML('afterbegin', `<div class="tarjeta" id="urTBase"><span class="chip" style="background:#ffcf7a"></span><b>${lg('Base Gale · Zona 2 (elegida)', 'Gale Base · Zone 2 (chosen)')}</b>
-    <div class="sub">${lg('El mapa vuela a la base. Tocá acá para ver sus partes, con ficha y fuente.', 'The map flies to the base. Tap here for its parts, each with a card and source.')} <span class="prov">${lg('propuesta propia', 'our proposal')}</span></div></div>`);
-  $('urTBase').onclick = async () => { if (await miCargar()) { fichaBase(); urIrBase(); } };
-}, 0));
+// El botón "Base" del riel es el análisis de sitios (dónde conviene poner la base); la Base Gale en sí está en la barra de la misión.
+// Vuela a ver todos los sitios juntos y deja arriba una tarjeta que lleva a la Base Gale elegida.
+{
+  const rb = document.querySelector('.rb[data-t="base"]');
+  if (rb) { rb.lastChild.textContent = lg('Sitios', 'Sites'); rb.title = lg('Dónde poner la base: los sitios candidatos en Gale, con agua, pendiente y radiación', 'Where to put the base: the candidate sites in Gale, with water, slope and radiation'); }
+  rb?.addEventListener('click', () => setTimeout(() => {
+    $('cajonTitulo').textContent = lg('Sitios para la base', 'Sites for the base');
+    if (typeof SITIOS !== 'undefined' && SITIOS.length) {
+      let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; for (const s of SITIOS) { x0 = Math.min(x0, s.lon); x1 = Math.max(x1, s.lon); y0 = Math.min(y0, s.lat); y1 = Math.max(y1, s.lat); }
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, r = Math.max(4000, miDist(x0, y0, x1, y1) * 0.6);
+      viewer.camera.flyToBoundingSphere(new C.BoundingSphere(pos(cx, cy, -4300), r), { offset: new C.HeadingPitchRange(0.2, -0.75, r * 2.6), duration: 2.4, easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 1500000, maximumHeight: 3000000 });
+    }
+    const c = cont(); if (!c || c.querySelector('#urTBase')) return;
+    c.insertAdjacentHTML('afterbegin', `<div class="tarjeta" id="urTBase"><span class="chip" style="background:#ffcf7a"></span><b>${lg('Base Gale · Zona 2 (elegida)', 'Gale Base · Zone 2 (chosen)')}</b>
+      <div class="sub">${lg('La base de la misión nueva, con sus partes, ficha y fuente. Tocá para ir.', 'The new mission\'s base, with its parts, card and source. Tap to go.')} <span class="prov">${lg('propuesta propia', 'our proposal')}</span></div></div>`);
+    $('urTBase').onclick = async () => { if (await miCargar()) { fichaBase(); urIrBase(); } };
+  }, 0));
+}
 
 // la base se ve en el mapa una vez que se la buscó (y siempre que no se esté haciendo un recorrido)
 {
@@ -385,4 +395,175 @@ function urRecorrer() {
   // ?fps muestra los cuadros por segundo (para medir antes y después)
   if (/[?&]fps\b/.test(location.search)) viewer.scene.debugShowFramesPerSecond = true;
 }
+
+// ==================== tanda 15/11 tarde: fluidez 2, pines del otro lado, cámara libre en los recorridos, botones ====================
+
+// ---------- pines del otro lado del planeta: no se dibujan a través de Marte ----------
+// Los pines van "sin prueba de profundidad" para que el relieve cercano no los tape; el costo era que, desde lejos (el tour),
+// se veían también los del otro lado del planeta. Ahora, si un pin queda detrás del horizonte, vuelve a tener prueba de profundidad
+// y el globo lo tapa (mismo criterio que los topónimos en marte.js).
+{
+  const R0 = MARS.radii.x - 9000, esfera = new C.Ellipsoid(R0, R0, MARS.radii.z - 9000), vistos = new WeakSet(), lista = [];
+  const props = ['billboard', 'label', 'point'];
+  const juntar = () => {
+    const t = viewer.clock.currentTime, cols = [viewer.entities]; for (let i = 0; i < viewer.dataSources.length; i++) cols.push(viewer.dataSources.get(i).entities);
+    for (const col of cols) for (const e of col.values) {
+      if (vistos.has(e) || !e.position) continue;
+      const g = props.filter(k => e[k] && e[k].disableDepthTestDistance?.getValue?.(t) === Infinity); if (!g.length) continue;
+      const p = e.position.getValue(t); if (!p) continue;
+      vistos.add(e); lista.push({ e, g, p, vis: true });
+    }
+  };
+  let t0 = 0, n = 0;
+  viewer.scene.preRender.addEventListener(() => {
+    const t = performance.now(); if (t - t0 < 180) return; t0 = t;
+    if (n++ % 15 === 0) juntar();
+    const oc = new C.EllipsoidalOccluder(esfera, viewer.camera.positionWC);
+    for (const it of lista) { const v = oc.isPointVisible(it.p); if (v === it.vis) continue; it.vis = v; for (const k of it.g) it.e[k].disableDepthTestDistance = v ? Number.POSITIVE_INFINITY : 0; }
+  });
+}
+
+// ---------- líneas pegadas al suelo con menos vértices ----------
+// Las rutas tienen un punto cada 1–5 m (más de 15.000 en total) y cada línea pegada al suelo se dibuja como un volumen:
+// es de lo que más pesa al mover la cámara. Para dibujar se simplifican (Douglas-Peucker, 0,8 m de tolerancia); los datos no cambian.
+function urSimplificar(ps, tol = 0.8) {
+  if (!ps || ps.length < 60) return ps;
+  const keep = new Uint8Array(ps.length); keep[0] = keep[ps.length - 1] = 1; const pila = [[0, ps.length - 1]], d = new C.Cartesian3(), q = new C.Cartesian3();
+  while (pila.length) {
+    const [a, b] = pila.pop(); if (b <= a + 1) continue;
+    C.Cartesian3.subtract(ps[b], ps[a], d); const L2 = C.Cartesian3.magnitudeSquared(d) || 1; let mx = -1, k = -1;
+    for (let i = a + 1; i < b; i++) { C.Cartesian3.subtract(ps[i], ps[a], q); const u = Math.max(0, Math.min(1, C.Cartesian3.dot(q, d) / L2));
+      const dx = q.x - d.x * u, dy = q.y - d.y * u, dz = q.z - d.z * u, e = dx * dx + dy * dy + dz * dz; if (e > mx) { mx = e; k = i; } }
+    if (mx > tol * tol) { keep[k] = 1; pila.push([a, k], [k, b]); }
+  }
+  return ps.filter((_, i) => keep[i]);
+}
+function urAliviar(col) {
+  const t = viewer.clock.currentTime;
+  for (const e of col.values) { const pl = e.polyline; if (!pl || pl._urSimple || !pl.clampToGround?.getValue?.(t)) continue;
+    const ps = pl.positions?.getValue?.(t); if (!ps || ps.length < 60) continue;
+    pl._urSimple = true; pl.positions = urSimplificar(ps); }
+}
+{
+  const capa0 = miCapa; miCapa = function () { capa0(); if (MI.ds) urAliviar(MI.ds.entities); };
+  if (typeof pmrCapa === 'function') { const g0 = pmrCapa; pmrCapa = function (...a) { const r = g0(...a); if (MI.ds) urAliviar(MI.ds.entities); return r; }; }
+  setTimeout(() => urAliviar(viewer.entities), 5000);
+  if (MI.ds) urAliviar(MI.ds.entities);
+}
+
+// ---------- calidad automática: si la PC no llega, baja el antialias y después la resolución ----------
+// Mide el tiempo de cada cuadro; si durante 2 s el 75 % de los cuadros tarda más de 28 ms (menos de ~35 cuadros por segundo),
+// baja un escalón. Si va sobrado (menos de 14 ms) durante 8 s, sube. Se puede fijar en Ajustes.
+const CAL = { nivel: 0, modo: 'auto', base: { msaa: viewer.scene.msaaSamples, res: viewer.resolutionScale } };
+try { CAL.modo = localStorage.getItem('mimCalidad') || 'auto'; } catch {}
+function calAplicar(n) {
+  n = Math.max(0, Math.min(3, n)); if (n === CAL.nivel && CAL.aplicado) return; CAL.nivel = n; CAL.aplicado = true;
+  viewer.scene.msaaSamples = n === 0 ? CAL.base.msaa : n === 1 ? Math.min(2, CAL.base.msaa) : 1;
+  viewer.resolutionScale = n >= 3 ? CAL.base.res * 0.8 : CAL.base.res;
+}
+{
+  const tiempos = []; let ult = performance.now(), malo = 0, bueno = 0, revis = performance.now();
+  viewer.scene.postRender.addEventListener(() => {
+    const t = performance.now(); tiempos.push(t - ult); ult = t; if (tiempos.length > 240) tiempos.shift();
+    if (CAL.modo !== 'auto' || t - revis < 1000 || document.hidden) return; revis = t;
+    const ult2 = tiempos.slice(-120).sort((a, b) => a - b), p75 = ult2[Math.floor(ult2.length * 0.75)] || 0;
+    if (p75 > 28) { malo++; bueno = 0; } else if (p75 < 14) { bueno++; malo = 0; } else { malo = 0; bueno = 0; }
+    if (malo >= 2) { malo = 0; calAplicar(CAL.nivel + 1); }
+    if (bueno >= 8 && CAL.nivel > 0) { bueno = 0; calAplicar(CAL.nivel - 1); }
+  });
+  if (CAL.modo === 'alta') calAplicar(0); else if (CAL.modo === 'fluida') calAplicar(2);
+}
+
+// ---------- cámara libre durante los recorridos: rueda para alejarse, arrastrar para girar ----------
+const ZC = { z: 1, zObj: 1, dh: 0, dp: 0, usado: false };
+const _urArr = new C.Cartesian3();
+function zcReset() { Object.assign(ZC, { z: 1, zObj: 1, dh: 0, dp: 0, usado: false }); }
+{
+  const cam0 = miCamara;
+  miCamara = function (dt, objetivo, rumbo, m) {
+    if (m.vista === 'ojos' || !ZC.usado) return cam0(dt, objetivo, rumbo, m);
+    const cam = viewer.camera, k = Math.min(1, dt * 2.4);
+    ZC.z += (ZC.zObj - ZC.z) * Math.min(1, dt * 6);
+    MI.cam.h += angDif(rumbo + ZC.dh - MI.cam.h) * k;
+    if (MI.fov0 && cam.frustum.fov !== MI.fov0) cam.frustum.fov = MI.fov0;
+    MARS.geodeticSurfaceNormal(objetivo, _urArr);
+    const T = C.Cartesian3.add(objetivo, C.Cartesian3.multiplyByScalar(_urArr, m.trip ? 2.0 : m.rover ? 1.4 : 1.1, new C.Cartesian3()), new C.Cartesian3());
+    // cuanto más lejos, más desde arriba (para ver el recorrido entero), más lo que se haya inclinado con el mouse
+    const pDef = Math.max(-1.45, Math.min(-0.05, (m.rover ? -0.24 : -0.2) - Math.min(0.95, Math.max(0, Math.log2(ZC.z)) * 0.16) + ZC.dp));
+    MI.cam.p += (pDef - MI.cam.p) * Math.min(1, dt * 3);
+    cam.lookAt(T, new C.HeadingPitchRange(MI.cam.h, MI.cam.p, MI.cam.r * ZC.z));
+    const cg = cam.positionCartographic, suelo = alturaSuelo(C.Math.toDegrees(cg.longitude), C.Math.toDegrees(Math.atan(Math.tan(cg.latitude) * (B * B) / (A * A))), null);
+    if (cg.height < suelo + 2) ZC.dp = Math.max(-1.2, ZC.dp - 0.03);
+  };
+  const enModo = () => MI.modo && MI.siguiendo && !MI.modo.fin;
+  const cv = viewer.canvas;
+  cv.addEventListener('wheel', e => {
+    if (!enModo()) return; e.preventDefault();
+    const m = MI.modo;
+    if (m.vista === 'ojos') { if (e.deltaY > 0) document.querySelector('#miVistas [data-v=detras]')?.click(); return; }
+    ZC.usado = true; const zMax = 14000 / Math.max(1, MI.cam.r);
+    ZC.zObj = Math.max(0.45, Math.min(zMax, ZC.zObj * Math.exp(e.deltaY * 0.0016)));
+  }, { passive: false });
+  let arr = null;
+  cv.addEventListener('pointerdown', e => { if (!enModo() || MI.modo.vista === 'ojos') return; arr = { x: e.clientX, y: e.clientY, mov: false }; });
+  addEventListener('pointermove', e => {
+    if (!arr || !enModo()) return; const dx = e.clientX - arr.x, dy = e.clientY - arr.y;
+    if (!arr.mov && Math.hypot(dx, dy) < 5) return; arr.mov = true; ZC.usado = true;
+    ZC.dh -= dx * 0.006; ZC.dp = Math.max(-1.1, Math.min(0.15, ZC.dp - dy * 0.004)); arr.x = e.clientX; arr.y = e.clientY;
+  });
+  addEventListener('pointerup', () => { arr = null; });
+  cv.addEventListener('dblclick', e => { if (!enModo()) return; e.preventDefault(); zcReset(); });
+  // ayuda chica en el reproductor
+  document.querySelector('#miPlay .cab')?.insertAdjacentHTML('afterend', `<div id="urCamTip" style="font-size:11.5px;color:var(--suave);margin:-2px 0 6px">🖱 ${lg('Rueda: alejarte para ver todo el recorrido · arrastrar: girar · doble clic: volver', 'Wheel: zoom out to see the whole route · drag: orbit · double-click: reset')}</div>`);
+  const modo0 = miModo; miModo = function (...a) { zcReset(); return modo0(...a); };
+}
+
+// ---------- "49 perforaciones" lleva a donde están; "Misión Curiosity" (arriba a la derecha) es lo hecho hasta hoy ----------
+function urEncuadreRecorrido(dur = 2.6) {
+  if (typeof RC === 'undefined' || !RC.length) return;
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; for (const p of RC) { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, r = miDist(x0, y0, x1, y1) / 2;
+  viewer.camera.flyToBoundingSphere(new C.BoundingSphere(pos(cx, cy, -4200), r), { offset: new C.HeadingPitchRange(0.15, -0.95, r * 2.5), duration: dur,
+    easingFunction: C.EasingFunction.CUBIC_IN_OUT, pitchAdjustHeight: 1500000, maximumHeight: 3000000 });
+}
+{
+  const bp = $('miIntPozos');
+  bp.onclick = () => { const on = bp.getAttribute('aria-pressed') !== 'true'; if (MI.modo) miSalirModo(false); miVerPozos(on); if (on) urEncuadreRecorrido(); };
+  bp.title = lg('El recorrido real de Curiosity desde 2012 y sus 49 perforaciones, cada una con su hallazgo y fuente', 'Curiosity\'s real traverse since 2012 and its 49 drill holes, each with its finding and source');
+  const b = $('bMision');
+  if (b) {
+    b.title = lg('Lo que hizo Curiosity hasta hoy: el recorrido desde el aterrizaje (2012), las 49 perforaciones y la línea de tiempo', 'What Curiosity has done so far: the traverse since landing (2012), the 49 drill holes and the timeline');
+    const sp = b.querySelector('span'); if (sp) sp.innerHTML = lg(`<b>Misión Curiosity · hasta hoy</b><small>2012 → sol ${typeof RS !== 'undefined' && RS.length ? RS[RS.length - 1] : 5070} · recorrido y 49 perforaciones</small>`, `<b>Curiosity mission · so far</b><small>2012 → sol ${typeof RS !== 'undefined' && RS.length ? RS[RS.length - 1] : 5070} · traverse and 49 drill holes</small>`);
+    const ir = async e => { e?.preventDefault?.(); if (MI.modo) miSalirModo(false); if (MI.verRec) await miVerRecorrido(false); miVerPozos(true); urEncuadreRecorrido(3);
+      if (typeof abrirLinea === 'function') setTimeout(() => abrirLinea(), 900); };
+    b.onclick = ir; b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') ir(e); };
+  }
+}
+
+// ---------- Ajustes (antes "Motor"): presentación, tutorial, calidad e idioma, y el motor abajo ----------
+{
+  const rb = document.querySelector('.rb[data-t="motor"]');
+  if (rb) { rb.id = 'rAjustes'; rb.lastChild.textContent = lg('Ajustes', 'Settings'); rb.title = lg('Ajustes: presentación, tutorial, calidad, idioma y motor del globo', 'Settings: intro, tutorial, quality, language and globe engine');
+    rb.querySelector('svg').innerHTML = '<path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7 7 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.49.42l-.36 2.54a7.3 7.3 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.61.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.3.61.22l2.39-.96c.5.38 1.05.7 1.63.94l.36 2.54c.05.24.25.42.49.42h3.84c.24 0 .45-.18.49-.42l.36-2.54a7.3 7.3 0 0 0 1.63-.94l2.39.96c.22.08.48 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z"/>'; }
+  const vm0 = vistaMotor;
+  vistaMotor = function () {
+    vm0();
+    $('cajonTitulo').textContent = lg('Ajustes', 'Settings');
+    const c = cont(), op = (v, t) => `<option value="${v}" ${CAL.modo === v ? 'selected' : ''}>${t}</option>`;
+    c.insertAdjacentHTML('afterbegin', `<h2>${lg('Presentación y tutorial', 'Intro and tutorial')}</h2>
+      <div class="tarjeta" id="ajTuto" style="cursor:pointer"><b>${lg('Ver el tutorial', 'Show the tutorial')}</b><div class="sub">${lg('Las partes principales de Maps in Mars, una por una (1 minuto).', 'The main parts of Maps in Mars, one by one (1 minute).')}</div></div>
+      <div class="tarjeta" id="ajPres" style="cursor:pointer"><b>${lg('Empezar la presentación desde cero', 'Restart the intro from scratch')}</b><div class="sub">${lg('Vuelve a cargar: Marte gira mientras carga, llega a Gale y pregunta si querés el tutorial.', 'Reloads: Mars spins while loading, flies to Gale and asks whether you want the tutorial.')}</div></div>
+      <h2>${lg('Calidad de imagen', 'Image quality')}</h2>
+      <div class="fila"><span>${lg('Calidad', 'Quality')}</span><select id="ajCal">${op('auto', lg('Automática (recomendada)', 'Automatic (recommended)'))}${op('alta', lg('Alta', 'High'))}${op('fluida', lg('Fluida (PC con poca placa de video)', 'Smooth (low-end graphics)'))}</select></div>
+      <p class="sub">${lg('La automática baja el suavizado de bordes y, si hace falta, la resolución cuando la PC no llega a unos 35 cuadros por segundo, y los vuelve a subir cuando sobra.', 'Automatic lowers edge smoothing and, if needed, resolution when the computer cannot keep about 35 frames per second, and raises them back when there is room.')}</p>
+      <h2>${lg('Idioma', 'Language')}</h2>
+      <div class="fila"><span>${lg('Idioma', 'Language')}</span><span class="seg"><button data-aji="en" class="${IDIOMA === 'en' ? 'on' : ''}">English</button><button data-aji="es" class="${IDIOMA === 'es' ? 'on' : ''}">Español</button></span></div>
+      <h2>${lg('Motor del globo', 'Globe engine')}</h2>`);
+    $('ajTuto').onclick = () => { if (window.cerrarCajon) cerrarCajon(); setTimeout(() => window.tutoEmpezar?.(), 300); };
+    $('ajPres').onclick = () => { try { localStorage.removeItem('mimTutorial'); sessionStorage.setItem('mimPresentacion', '1'); } catch {} location.hash = ''; location.reload(); };
+    $('ajCal').onchange = e => { CAL.modo = e.target.value; try { localStorage.setItem('mimCalidad', CAL.modo); } catch {} if (CAL.modo === 'alta') calAplicar(0); else if (CAL.modo === 'fluida') calAplicar(2); };
+    c.querySelectorAll('[data-aji]').forEach(b => b.onclick = () => { if (b.dataset.aji !== IDIOMA) cambiarIdioma(b.dataset.aji); });
+  };
+}
+
 window.__maps = { UR, abrir: urAbrir, base: urIrBase, control: urControl, analizar: urAnalizar };

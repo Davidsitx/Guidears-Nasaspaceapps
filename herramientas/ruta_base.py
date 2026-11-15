@@ -46,6 +46,9 @@ def calcular(T, ini_ll, fin_ll, par):
     a_ll = lambda c, f: (lonW + math.degrees((c + .5) * CS / R), latN - math.degrees((f + .5) * CS / R))
     lim = par['pendiente_max_deg']
     costo = np.where(PEND > lim, np.inf, 1 + (PEND / 10) ** 2 + np.where(ARENA, 6, 0))
+    # cerca del borde del terreno con datos se cobra más (como en maps-in-mars/pmr.js): sin eso la ruta se pegaba al borde oeste
+    ff, cc = np.mgrid[0:H, 0:W]; dB = np.minimum(np.minimum(cc, W - 1 - cc), np.minimum(ff, H - 1 - ff))
+    costo = costo + np.where(dB < 30, 4 * (1 - dB / 30), 0)
 
     def celda(ll):
         c, f = a_celda(*ll)
