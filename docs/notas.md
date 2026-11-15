@@ -2,6 +2,26 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada (2) · Compañero (con Claude) · GALE EARTH: CAPAS DE MINERALES Y RADIACIÓN, RELOJ EN VIVO, POZOS Y FUENTES
+- **Expedición fuera de Gale Earth:** la sigue otro compañero. El código quedó en `gale-earth/para-companero/expedicion/` (ver su README); las capas siguen en `capas/expedicion/`.
+- **Sin "Abrir en el celular" ni QR:** se borraron el botón, la ventana y la librería que se bajaba de internet. El diseño para celular (hoja deslizable) sigue.
+- **Pozos que no abrían (John Klein, Cumberland, Windjana):** el círculo del sitio de base Bradbury, dibujado sobre el suelo, se quedaba con el clic. Ahora la selección mira todo lo que hay bajo el dedo, le da prioridad a los pozos y, si el toque cae a menos de 22 px de un pin, toma el más cercano.
+- **Capa de radiación con día y noche** (Capas → Análisis): 0,64 mSv/día (RAD) × (1 ± 0,025) × (1 − 0,25 × cielo tapado).
+  - La variación de ~5 % entre día y noche la midió RAD, con más dosis de día (Rafkin et al. 2014; Guo et al. 2015).
+  - El cielo tapado se recalculó a 20 m para toda el área de 33 × 57 km.
+  - Reemplaza a `dosis_color.png`, que usaba 0,67 mSv/día.
+- **Minerales:**
+  - Desde órbita: indicadores CRISM de `data/mineralogia/crism_contexto` (de David) como capas de color sobre la travesía (arcillas, sulfatos, agua, hematita, olivino, piroxeno). Son percentiles relativos, no abundancias.
+  - En los pozos: "Color de los pozos" ahora también pinta por arcillas, sulfatos, hematita y material amorfo medidos por CheMin.
+  - Script: `herramientas/capas_minerales_radiacion.py`.
+- **Reloj EN VIVO** (Órbitas): hora UTC, año marciano, Ls y estación en Gale. Usa el algoritmo Mars24 de NASA (Allison y McEwen 2000) y los años desde 1955 (Clancy et al. 2000); comprobado con el aterrizaje de Curiosity (Ls 150,7 del año 31). La Biblioteca de clima suma "Hoy en Gale" y una tabla año por año.
+- **Fuentes:** no se menciona más el Drive. Cada pozo trae "Fuentes oficiales" con enlaces visibles:
+  - la ficha del pozo en la base de mineralogía y geoquímica de Gale (NASA, equipo CheMin) y su DOI;
+  - NASA PDS Geosciences;
+  - la foto de los pozos de NASA;
+  - la foto cruda del sol en el servidor de NASA;
+  - las entradas del blog de Curiosity.
+
 ## 2026-11-15 madrugada · Compañero (con Claude) · EXPEDICIÓN: ARENA, ROVER DE MARTE, TRAJE, CLIMA, TORMENTA Y COMUNICACIÓN
 - **Arena (indicio):** `herramientas/themis_noche.py` lee por rangos la ventana de Gale del mosaico **THEMIS Night IR** de Mars Odyssey (USGS, 100 m, cualitativo de 8 bits). Arma `capas/expedicion/themis_noche.png` y el percentil de "frío de noche" por celda.
   - Validación: el recorrido real de Curiosity va por terreno tibio (mediana en el percentil 21) y **nunca pisó el 10% más frío**.

@@ -357,7 +357,8 @@ def main():
         agregar_tmah(pozos)
         agregar_blog(pozos)
         limpiar_faltas(pozos)
-        json.dump({"version": 1, "origen": "Drive: Marte/Perforaciones Datos Crudos", "pozos": pozos, "temas_html": doc},
+        doc = doc.replace("que abre la carpeta de Drive", "que abre la copia local de los datos de NASA")
+        json.dump({"version": 1, "origen": "NASA PDS (CheMin, APXS, SAM), base de mineralogía y geoquímica del cráter Gale (doi:10.48484/JN48-YW52), blog y fotos crudas de NASA", "pozos": pozos, "temas_html": doc},
                   f, ensure_ascii=False, separators=(",", ":"))
     print(f"{len(pozos)} pozos · {os.path.getsize(SALIDA_JSON) // 1024} KB · miniaturas en capas/pozos/")
     sin = [p["nombre"] for p in pozos if not p["chemin"]]
