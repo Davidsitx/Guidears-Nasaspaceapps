@@ -71,7 +71,7 @@ def main():
     print('THEMIS', W, H, '· nombres', len(nombres), 'descartados', descartados)
 
 
-if __name__ == '__main__' and '--altitud' not in sys.argv and '--local' not in sys.argv:
+if __name__ == '__main__' and not {'--altitud', '--local', '--pendiente'} & set(sys.argv):
     main()
 
 
@@ -154,3 +154,45 @@ if __name__ == '__main__' and '--local' in sys.argv:
 
 if __name__ == '__main__' and '--altitud' in sys.argv:
     altitud(sys.argv[sys.argv.index('--altitud') + 1])
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 5) Zonas prohibidas por pendiente en TODO Marte (capas/global/pendiente_{oeste,este}.png), con los mismos colores y
+#    límites que la capa fina de Gale (capas/gale_5m/capas.json → parametros). Sale de nuestras teselas HRSC-MOLA,
+#    nivel 7 (≈ 1,3 km por píxel). Ojo: a esa escala la pendiente se SUBESTIMA (una ladera de 30° de 200 m queda
+#    promediada con el llano), así que solo marca las laderas grandes: paredes de cráteres, Valles Marineris, escarpes.
+#    Para no perder las laderas finas se reduce a la mitad tomando la clase más restrictiva de cada bloque de 2×2.
+#    Uso: python capas_globales.py --pendiente RUTA/terreno_marte_global_n0-7.zip
+def pendiente_global(zip_global, nivel=7):
+    par = json.load(open(os.path.join(AQUI, 'capas', 'gale_5m', 'capas.json'), encoding='utf-8'))['parametros']
+    la, lr = par['pendiente_astronauta'], par['pendiente_rover']
+    z = zipfile.ZipFile(zip_global); nx, ny = 2 ** (nivel + 1), 2 ** nivel
+    H = np.zeros((ny * 64, nx * 64), np.float32)
+    for x in range(nx):
+        for y in range(ny):
+            b = z.read(f'{nivel}/{x}/{y}.bin'); mn, esc = struct.unpack('<ff', b[:8])
+            H[y * 64:(y + 1) * 64, x * 64:(x + 1) * 64] = (np.frombuffer(b[8:], '<u2').reshape(65, 65).astype(np.float32) * esc + mn)[:64, :64]
+    filas, cols = H.shape
+    lat = np.radians(90 - (np.arange(filas) + .5) * 180 / filas)
+    dy = np.pi * R_ / filas; dx = np.maximum(2 * np.pi * R_ / cols * np.cos(lat), 50.0)
+    P = np.degrees(np.arctan(np.hypot(np.gradient(H, axis=1) / dx[:, None], np.gradient(H, axis=0) / dy)))
+    del H
+    # clase: 0 nada, 1 precaución, 2 solo rover, 3 solo astronauta, 4 los dos (mismo orden de gravedad que gale_datos.py)
+    k = np.zeros(P.shape, np.uint8); m = min(la, lr)
+    k[(P >= m - 5) & (P < m)] = 1; k[(P >= lr) & (P < la)] = 2; k[(P >= la) & (P < lr)] = 3; k[(P >= la) & (P >= lr)] = 4
+    k = k.reshape(filas // 2, 2, cols // 2, 2).max(axis=(1, 3))
+    pal = np.array([[0, 0, 0, 0], [240, 200, 60, 110], [229, 83, 75, 150], [242, 140, 56, 150], [142, 68, 173, 170]], np.uint8)
+    rgba = pal[k]; W = rgba.shape[1]
+    for nom, parte in (('oeste', rgba[:, :W // 2]), ('este', rgba[:, W // 2:])):
+        Image.fromarray(parte, 'RGBA').save(os.path.join(SAL, f'pendiente_{nom}.png'), optimize=True)
+    meta = json.load(open(os.path.join(SAL, 'global.json'), encoding='utf-8'))
+    meta['pendiente'] = dict(oeste='pendiente_oeste.png', este='pendiente_este.png', esquema='geodetica', metros_por_pixel=round(2 * dy),
+                             limites=dict(astronauta=la, rover=lr),
+                             fuente='Pendiente calculada (cálculo propio) del relieve HRSC-MOLA Blended DEM 200 m (USGS Astrogeology), teselas del globo nivel 7 (~1,3 km/píxel).',
+                             porcentaje={c: round(float((k == i).mean() * 100), 3) for i, c in enumerate(['nada', 'precaucion', 'solo_rover', 'solo_astronauta', 'ambos'])})
+    json.dump(meta, open(os.path.join(SAL, 'global.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print('pendiente', rgba.shape, meta['pendiente']['porcentaje'])
+
+
+if __name__ == '__main__' and '--pendiente' in sys.argv:
+    pendiente_global(sys.argv[sys.argv.index('--pendiente') + 1])

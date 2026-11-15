@@ -73,7 +73,7 @@ async function mgNombres(on) {
         fillColor: C.Color.fromCssColorString(grande ? '#ffffff' : '#f2e8dc'), outlineColor: C.Color.BLACK, outlineWidth: 4,
         style: C.LabelStyle.FILL_AND_OUTLINE, horizontalOrigin: C.HorizontalOrigin.CENTER, verticalOrigin: C.VerticalOrigin.CENTER,
         distanceDisplayCondition: new C.DistanceDisplayCondition(0, lejos), heightReference: C.HeightReference.CLAMP_TO_GROUND, eyeOffset: new C.Cartesian3(0, 0, -2000),
-        disableDepthTestDistance: 60000 }) });   // pegados al suelo: el planeta tapa los que quedan detrás del horizonte
+        disableDepthTestDistance: 0 }) });   // pegados al suelo y con prueba de profundidad: el relieve tapa los que quedan detrás de un cerro o del horizonte
     }
     // altura aproximada de montes y llanuras grandes, leída del relieve del globo
     const conAltura = etiquetas.filter(e => e.d >= 150 && /\b(Mons|Montes|Planitia|Planum|Tholus|Patera)\b/.test(e.n));

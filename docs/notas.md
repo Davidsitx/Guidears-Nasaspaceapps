@@ -2,11 +2,21 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (4) · Compañero (con Claude) · ZONAS PROHIBIDAS EN TODO MARTE, BORDES SUAVES Y ARREGLOS
+- Hecho (gale-earth/):
+  - "Zonas prohibidas por pendiente" ahora cubre todo Marte, igual que la altitud. Fuera de Gale sale de nuestras teselas HRSC-MOLA nivel 7 (~1,3 km/píxel), reducidas a ~2,6 km tomando la clase más severa: capas/global/pendiente_{oeste,este}.png, generadas con `herramientas/capas_globales.py --pendiente`. Es cálculo propio. A esa escala la pendiente se subestima y solo marca laderas grandes (paredes de cráteres, Valles Marineris, escarpes). En Gale sigue arriba la capa fina de 5 m.
+  - Ortofoto 1 m y HiRISE se funden con CTX en el borde de su caja (1,8 km y 350 m) y alrededor de los huecos. Ya no se ven como rectángulos pegados encima.
+  - La cámara ya no atraviesa el suelo: antes de cada cuadro se la sube si quedó a menos de 15 m del terreno (con el teclado se colaba).
+  - Los topónimos de la IAU tienen prueba de profundidad: un cerro tapa los que quedan detrás y ya no flotan en el cielo.
+  - Se quitaron los atajos de colores debajo del buscador (repetían Explorar).
+  - Arreglos de estilo: los botones "Escala" se veían blancos; los enlaces de fuentes eran azul oscuro sobre negro; la regla CSS de .fuentesOf estaba rota.
+- Sobre "fronteras": Marte no tiene fronteras políticas. La división oficial es la de los 30 cuadrángulos de USGS (MC-1 a MC-30; Gale está en MC-23 Aeolis). Queda como posible capa si se decide.
+
 ## 2026-11-15 mañana (3) · Compañero (con Claude) · PESTAÑA MOTOR, SIN CLAVES, NITIDEZ Y LUNAS REALES
 - Hecho (gale-earth/):
   - Nueva pestaña **Motor** en el riel, debajo de Capas. Tiene dos tarjetas: "Marte completo (recomendado)" y "Cesium Mars (respaldo)". Ahí también quedaron el color de la imagen CTX y HiRISE.
   - Se quitó todo lo de claves de Cesium ion: el campo, los botones y el mensaje de error que pedía una clave. Cesium Mars queda como respaldo de emergencia con la clave de evaluación que trae Cesium: el jurado no tiene que poner nada.
-  - Nitidez en compu: Cesium dibujaba a la resolución "recomendada" del navegador (en pantallas de alta densidad, la mitad) y ahora dibuja a la resolución real, con tope en DPR 2. maximumScreenSpaceError pasó de 2 a 1,5. En celular no cambia nada.
+  - Nitidez: Cesium dibujaba a la resolución "recomendada" del navegador (en pantallas de alta densidad, la mitad) y ahora dibuja a la resolución real, con tope en DPR 2. maximumScreenSpaceError pasó de 2 a 1,5. Gale Earth es para compu, no para celular.
   - Fobos y Deimos con textura global real de NASA 3D Resources (capas/lunas/*.jpg, 2048×1024). Se dibujan como primitiva que sigue a la entidad, porque Cesium no aplica imágenes a un elipsoide de entidad en movimiento. Con file:// queda el color liso.
   - Se quitó la sección Mars 3D Home de la pestaña Base (después va algo genérico).
 - Decidido: CTX ya se pide a su resolución nativa (nivel 12 ≈ 5 m/px). Los niveles 13–15 del servicio fallan en Gale, así que la mejora viene del dibujado, no de pedir más zoom.

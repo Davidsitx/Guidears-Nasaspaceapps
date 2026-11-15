@@ -99,3 +99,4 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
 | Texturas globales de Fobos y Deimos (lunas del globo) | NASA 3D Resources, "Images and Textures/Mars - Phobos" y "Mars - Deimos" (github.com/nasa/NASA-3D-Resources, sin copyright); reescaladas a 2048×1024 |
+| Zonas prohibidas por pendiente en todo Marte (cálculo propio) | HRSC-MOLA Blended DEM 200 m (USGS Astrogeology), teselas del globo nivel 7; límites de pendiente de data/parametros.json |

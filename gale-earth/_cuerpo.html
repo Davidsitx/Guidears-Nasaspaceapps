@@ -215,8 +215,32 @@ class CTXColor extends C.UrlTemplateImageryProvider {
       if (V && w > 0) { const f = L0 / (VL || 1); r = r * (1 - w) + Math.min(255, V[i] * f) * w; gg = gg * (1 - w) + Math.min(255, V[i + 1] * f) * w; b = b * (1 - w) + Math.min(255, V[i + 2] * f) * w; }
       a[i] = r; a[i + 1] = gg; a[i + 2] = b; a[i + 3] = 255;
     }
+    if (this.caja) suavizarBordes(a, x, y, l, this.caja, this.ancho);
     t.putImageData(d, 0, 0); return c;
   }
+}
+// Bordes suaves para las fotos locales (ortofoto 1 m, HiRISE 25 cm): en vez de un rectángulo con corte seco sobre CTX,
+// la foto se funde en `ancho` grados hacia el borde de su caja y en `r` píxeles alrededor de los huecos sin foto.
+function suavizarBordes(a, x, y, l, caja, ancho, r = 24) {
+  const N = 512, d = 180 / 2 ** l, lon0 = -180 + x * d, lat0 = 90 - y * d, paso = d / N;
+  let huecos = false; const M = new Float32Array(N * N);
+  for (let i = 0; i < N * N; i++) { M[i] = a[i * 4 + 3] > 0 ? 1 : 0; if (!M[i]) huecos = true; }
+  let B = null;
+  if (huecos) {   // promedio en una ventana de (2r+1)² (dos pasadas): cerca de un hueco baja de 1 a 0,5 en el borde
+    const T = new Float32Array(N * N); B = new Float32Array(N * N);
+    for (let py = 0; py < N; py++) { let s = 0; const f = py * N;
+      for (let k = -r; k <= r; k++) s += M[f + Math.min(N - 1, Math.max(0, k))];
+      for (let px = 0; px < N; px++) { T[f + px] = s / (2 * r + 1); s += M[f + Math.min(N - 1, px + r + 1)] - M[f + Math.max(0, px - r)]; } }
+    for (let px = 0; px < N; px++) { let s = 0;
+      for (let k = -r; k <= r; k++) s += T[Math.min(N - 1, Math.max(0, k)) * N + px];
+      for (let py = 0; py < N; py++) { B[py * N + px] = s / (2 * r + 1); s += T[Math.min(N - 1, py + r + 1) * N + px] - T[Math.max(0, py - r) * N + px]; } }
+  }
+  for (let py = 0, i = 0; py < N; py++) { const lat = lat0 - (py + 0.5) * paso, gy = Math.min(lat - caja[1], caja[3] - lat);
+    for (let px = 0; px < N; px++, i++) { if (!M[i]) continue;
+      const lon = lon0 + (px + 0.5) * paso;
+      let f = Math.max(0, Math.min(1, Math.min(lon - caja[0], caja[2] - lon, gy) / ancho));
+      if (B) f *= Math.max(0, Math.min(1, (B[i] - 0.5) * 2));
+      a[i * 4 + 3] = Math.round(a[i * 4 + 3] * f * f * (3 - 2 * f)); } }
 }
 // Proveedor de imagen que reintenta las teselas que fallan por red (en vez de dejarlas borrosas).
 class ConReintentos extends C.UrlTemplateImageryProvider {
@@ -246,6 +270,7 @@ class HiRISEColor extends ConReintentos {
       const L0 = Math.round(0.3 * a[i] + 0.59 * a[i + 1] + 0.11 * a[i + 2]), w = sat >= 14 ? 0.5 : 0.5 + 0.5 * (14 - sat) / 14;
       a[i] = a[i] * (1 - w) + LUT[L0 * 3] * w; a[i + 1] = a[i + 1] * (1 - w) + LUT[L0 * 3 + 1] * w; a[i + 2] = a[i + 2] * (1 - w) + LUT[L0 * 3 + 2] * w;
     }
+    if (this.caja) suavizarBordes(a, x, y, l, this.caja, this.ancho, 12);
     t.putImageData(d, 0, 0); return c;
   }
 }
@@ -267,10 +292,12 @@ function crearImagenes(t) {
     url: 'teselas/orto1m/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512, minimumLevel: 9, maximumLevel: 14,
     rectangle: C.Rectangle.fromDegrees(137.0938, geodetica(-5.2495), 137.8530, geodetica(-4.0686)),
     credit: 'Ortofoto MSL Gale 1 m: NASA/JPL/University of Arizona (HiRISE), mosaico USGS Astrogeology' }, 'color', 0.3, true));
+  if (CAPAS_BASE.orto) Object.assign(CAPAS_BASE.orto.imageryProvider, { caja: [137.0938, -5.2495, 137.8530, -4.0686], ancho: 0.03 });   // ~1,8 km de fundido
   CAPAS_BASE.hirise = viewer.imageryLayers.addImageryProvider(new HiRISEColor({
     url: 'teselas/hirise/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512,
     minimumLevel: 9, maximumLevel: 16, rectangle: C.Rectangle.fromDegrees(137.3267, geodetica(-4.8756), 137.4786, geodetica(-4.5551)),
     credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }));
+  Object.assign(CAPAS_BASE.hirise.imageryProvider, { caja: [137.3267, -4.8756, 137.4786, -4.5551], ancho: 0.006 });   // ~350 m de fundido
 }
 // Teselas en la nube: si la página está publicada (https) y nube.json dice dónde están, un service worker (sw.js)
 // las saca de los .zip guardados en Cloudflare R2. Con servir.py (abrir.bat) se usan las de la PC.
@@ -505,7 +532,7 @@ $('vAyuda').onclick = () => $('ayuda').classList.remove('oculto');
     const t = `×${String(NIV[k]).replace('.', ',')}`; $('vRelieve').title = `Relieve ${t}${NIV[k] === 1 ? ' (escala real)' : ' (realzado)'}`;
     $('relBadge').textContent = t; $('relBadge').classList.toggle('oculto', NIV[k] === 1);
     if ($('exag')) $('exag').value = String(NIV[k]); }; }
-$('vMarte').onclick = () => irA('marte'); $('vGale').onclick = () => { abrir('explorar'); fichaGale(); }; $('vRec').onclick = () => irA('rec'); $('vHoy').onclick = () => irA('hoy');
+
 
 // ---------- fecha marciana: longitud solar (Ls) y año marciano ----------
 // Ls: algoritmo Mars24 de NASA GISS (Allison y McEwen 2000, Planet. Space Sci. 48:215). Año marciano: el año 1 empezó
@@ -556,6 +583,16 @@ capas.borde.push(viewer.entities.add({ position: pos(nBorde[0], nBorde[1]),
   ctl.minimumZoomDistance = 20;
   ctl.maximumZoomDistance = 4.0e7;
   ctl.enableCollisionDetection = true;
+  // El control de Cesium solo frena el mouse; con el teclado (W/S/Q/E) o donde el relieve fino aún no cargó la cámara
+  // podía quedar bajo el suelo. Antes de cada cuadro se la sube si quedó a menos de 15 m del terreno.
+  const cg = new C.Cartographic();
+  viewer.scene.preRender.addEventListener(sc => {
+    const cam = sc.camera; if (!C.Matrix4.equals(cam.transform, C.Matrix4.IDENTITY)) return;
+    if (!C.Cartographic.fromCartesian(cam.positionWC, MARS, cg) || cg.height > 80000) return;
+    const h = sc.globe.getHeight(cg); if (h === undefined) return;
+    const suelo = Math.max(h, h * (sc.verticalExaggeration || 1)) + 15;
+    if (cg.height < suelo) cam.setView({ destination: C.Cartesian3.fromRadians(cg.longitude, cg.latitude, suelo, MARS), orientation: { heading: cam.heading, pitch: cam.pitch, roll: cam.roll } });
+  });
   ctl.inertiaSpin = 0.85; ctl.inertiaTranslate = 0.85; ctl.inertiaZoom = 0.7;
   ctl.tiltEventTypes = [T.MIDDLE_DRAG, T.PINCH, { eventType: T.LEFT_DRAG, modifier: K.SHIFT }, { eventType: T.LEFT_DRAG, modifier: K.CTRL }];
   ctl.lookEventTypes = [{ eventType: T.LEFT_DRAG, modifier: K.ALT }];
@@ -799,15 +836,20 @@ const VIS = { recorrido: true, pozos: true, etiquetas: true, orbitas: true, base
 // Necesitan abrirse por http (abrir.bat / abrir.sh): desde file:// el navegador no deja usarlas en WebGL.
 const ANALISIS = [
   ['orto_color', 'Foto HiRISE coloreada por altura', 'Brillo de la foto HiRISE (25 cm, reducida) con el color de la altura. Donde no hay foto se usa el sombreado.', 0.85],
-  ['zonas_prohibidas', 'Zonas prohibidas por pendiente', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite).', 0.9],
+  ['zonas_prohibidas', 'Zonas prohibidas por pendiente (todo Marte)', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite). En la zona de Curiosity se calcula con el relieve de 1 m (a 5 m); en el resto de Marte con el de 200 m a ~2,6 km por píxel, que subestima la pendiente: solo marca laderas grandes (paredes de cráteres, cañones, escarpes).', 0.9],
   ['dosis', 'Radiación en superficie (día / noche)', 'Dosis de rayos cósmicos medida por RAD, corregida por el cielo que tapa el relieve. Rojo = más dosis, azul = menos. De noche la presión del aire sube y la dosis baja cerca de un 5 % (RAD).', 0.5],
 ];
-const CAPA_A = {};
+const CAPA_A = {}, CAPA_AG = {};   // CAPA_AG: versión de todo Marte, debajo de la fina
 let HORARIO_RAD = 'dia';
 async function capaAnalisis(id, on, alfa) {
   if (!D.capas5m || !capasImagen()) return avisar('Las capas de análisis necesitan el terreno 3D cargado.');
   if (on && !CAPA_A[id]) {
     try {
+      if (id === 'zonas_prohibidas' && !CAPA_AG[id]) {
+        const g = (await mgMeta()).pendiente; CAPA_AG[id] = [];
+        if (g) for (const [arch, o, e] of [[g.oeste, -180, 0], [g.este, 0, 180]])
+          CAPA_AG[id].push(capasImagen().addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/global/' + arch, { rectangle: C.Rectangle.fromDegrees(o, -90, e, 90) })));
+      }
       const r = D.capas5m.rect_geodetico;
       const prov = await C.SingleTileImageryProvider.fromUrl(`capas/gale_5m/${id === 'dosis' ? 'dosis_' + HORARIO_RAD : id}.png`, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) });
       CAPA_A[id] = capasImagen().addImageryProvider(prov);
@@ -816,6 +858,7 @@ async function capaAnalisis(id, on, alfa) {
     }
   }
   if (CAPA_A[id]) { CAPA_A[id].show = on; CAPA_A[id].alpha = alfa; }
+  for (const L of CAPA_AG[id] || []) { L.show = on; L.alpha = alfa; }
 }
 async function cambiarHorarioRad(h) {
   HORARIO_RAD = h; const L = CAPA_A.dosis;
@@ -871,7 +914,7 @@ function vistaCapas() {
   cont().querySelectorAll('[data-c]').forEach(el => el.onchange = () => { VIS[el.dataset.c] = el.checked; for (const e of capas[el.dataset.c]) e.show = el.checked; if (el.dataset.c === 'base' && zonaEZ) zonaEZ.show = el.checked; });
   const alfaDe = k => +cont().querySelector(`[data-o="${k}"]`).value;
   cont().querySelectorAll('[data-a]').forEach(el => el.onchange = () => capaAnalisis(el.dataset.a, el.checked, alfaDe(el.dataset.a)));
-  cont().querySelectorAll('[data-o]').forEach(el => el.oninput = () => { const L = CAPA_A[el.dataset.o]; if (L) L.alpha = +el.value; });
+  cont().querySelectorAll('[data-o]').forEach(el => el.oninput = () => { const L = CAPA_A[el.dataset.o]; if (L) L.alpha = +el.value; for (const G of CAPA_AG[el.dataset.o] || []) G.alpha = +el.value; });
   const ley = () => { const e = ESCALAS[colorPor]; $('leyColor').innerHTML = e ? `${e.n}: de 0 (oscuro) a ${fmt(e.max)} ${e.u} (claro). Gris = sin dato.` : ''; };
   $('colorPor').value = colorPor; ley();
   $('colorPor').onchange = async e => { colorPor = e.target.value; if (ESCALAS[colorPor] && ESCALAS[colorPor].campo.startsWith('ch_')) await cargarCheminPozos(); repintar(); ley(); };

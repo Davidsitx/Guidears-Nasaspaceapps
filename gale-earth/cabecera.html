@@ -61,9 +61,7 @@ svg.i{width:22px;height:22px;fill:currentColor;flex:none}
 #resultados .r b{display:block;font-weight:500}
 #resultados .r small{color:var(--suave);font-size:12px}
 #resultados .nada{padding:12px 14px;color:var(--suave)}
-#lugares{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;width:calc(100vw - var(--riel) - 90px);max-width:720px}
 body.cajonAbierto #busca{display:none}
-#lugares::-webkit-scrollbar{display:none}
 .chipb{flex:none;display:flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:16px;border:1px solid #ffffff1a;background:var(--sup);color:var(--texto);cursor:pointer;box-shadow:var(--sombra);font-size:13px;white-space:nowrap}
 .chipb:hover{background:var(--sup2)}
 .chipb i{width:9px;height:9px;border-radius:50%;display:inline-block}
@@ -79,8 +77,8 @@ body.cajonAbierto #busca{display:none}
 #cerrarCajon:hover{background:#ffffff12;color:var(--texto)}
 #asa{display:none}
 #reloj{margin:0 14px 6px;background:var(--sup2);border-radius:12px;padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-#reloj .seg button{background:none;border:1px solid var(--linea);color:var(--suave);border-radius:8px;padding:3px 8px;cursor:pointer;font-size:11px}
-#reloj .seg button.on{background:var(--acento);color:#111;border-color:var(--acento)}
+#reloj .seg button,.panel .seg button,#contenido .seg button{background:none;border:1px solid var(--linea);color:var(--suave);border-radius:8px;padding:3px 8px;cursor:pointer;font-size:11px}
+#reloj .seg button.on,.panel .seg button.on,#contenido .seg button.on{background:var(--acento);color:#111;border-color:var(--acento)}
 #ahora{font-weight:700;letter-spacing:.04em}#ahora.vivo{color:#ff5d5d;border-color:#ff5d5d55}
 #contenido{overflow:auto;padding:4px 18px 18px;flex:1;-webkit-overflow-scrolling:touch}
 
@@ -259,9 +257,7 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
   .rb{width:auto;flex:1;padding:6px 0;font-size:10.5px}
   #busca{left:10px;right:10px;width:auto;max-width:none;top:calc(10px + var(--sup-seg))}
   #cajaBusca{height:44px}
-  #lugares{width:auto}
   body.cajonAbierto #busca{display:block}
-  body.cajonAbierto #lugares{display:none}
   #cajon{left:0;right:0;width:auto;max-width:none;top:auto;bottom:calc(58px + var(--inf-seg));height:min(62vh,560px);border-radius:18px 18px 0 0;border-bottom:0}
   #cajon.cerrado{transform:translateY(40px)}
   #cajon.chico{height:150px}
@@ -285,7 +281,8 @@ body.lineaAbierta #aviso{bottom:auto;top:80px}
   #fuentesBox{bottom:calc(88px + var(--inf-seg))}
   #aviso{bottom:calc(92px + var(--inf-seg))}
 }
-body.cajonAbierto @media (max-width:760px){body.cajonAbierto .fuentesOf{margin:10px 0 4px;padding:9px 11px;border:1px solid var(--linea);border-radius:10px;font-size:12px;color:var(--suave)}.fuentesOf b{color:var(--texto);font-size:12.5px}.fuentesOf ul{margin:5px 0 0;padding-left:16px}.fuentesOf li{margin:3px 0}.fuentesOf a{color:var(--acento);word-break:break-all}
+.fuentesOf{margin:10px 0 4px;padding:9px 11px;border:1px solid var(--linea);border-radius:10px;font-size:12px;color:var(--suave)}.fuentesOf b{color:var(--texto);font-size:12.5px}.fuentesOf ul{margin:5px 0 0;padding-left:16px}.fuentesOf li{margin:3px 0}.fuentesOf a{color:var(--acento);word-break:break-all}
+#contenido a{color:var(--acento)}
 </style>
 </head>
 <body>
@@ -315,12 +312,6 @@ body.cajonAbierto @media (max-width:760px){body.cajonAbierto .fuentesOf{margin:1
     <button id="limpiarQ" class="oculto" title="Borrar"><svg class="i" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
   </div>
   <div id="resultados" class="oculto"></div>
-  <div id="lugares">
-    <button class="chipb" id="vGale"><i style="background:#ff9f43"></i>Cráter Gale</button>
-    <button class="chipb" id="vRec"><i style="background:#4fa3d9"></i>Recorrido de Curiosity</button>
-    <button class="chipb" id="vHoy"><i style="background:#e5534b"></i>Curiosity hoy</button>
-    <button class="chipb" id="vMarte"><i style="background:#c46a3c"></i>Marte entero</button>
-  </div>
 </div>
 
 <aside id="cajon" class="cerrado" aria-label="Información">
