@@ -5,7 +5,7 @@
    "type": "Feature",
    "properties": {
     "id": "T",
-    "nombre": "T · GX-3 de la Base Gale a la zona de hoy",
+    "nombre": "T · PMR de la Base Gale a la zona de hoy",
     "tipo": "tripulado",
     "color": "#b06bff",
     "largo": 14108.6,
@@ -23,7 +23,7 @@
     "celdasArena": 238,
     "desdeBase": true,
     "metodo": "A* sobre el terreno de contexto de 12 m (pendiente ≤ límite, arena probable penalizada), suavizado y remuestreado cada 5 m; energía = (manejo + cabina)/velocidad·distancia + masa·g·subida/eficiencia. Cálculo propio.",
-    "fuente": "Terreno: data/terreno/travesia_sur (equipo, 14/11; coincide con el DEM USGS de Gale). Parámetros del GX-3: data/parametros.json (vehiculo_tripulado), supuestos con fuente (SEV de NASA y rover presurizado del Mars Architecture Team)."
+    "fuente": "Terreno: data/terreno/travesia_sur (equipo, 14/11; coincide con el DEM USGS de Gale). Parámetros del PMR: data/parametros.json (vehiculo_tripulado), supuestos con fuente (SEV de NASA y rover presurizado del Mars Architecture Team)."
    },
    "geometry": {
     "type": "LineString",

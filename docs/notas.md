@@ -2,6 +2,26 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 tarde · David (con Claude) · PMR, GUÍA DE LA EXPEDICIÓN, VISOR + PANTALLA, INTERRUPTORES, WIKI Y LOGO
+- **Pidió David:** tomar como referencia la lámina y la guía de estilo (ahora en `docs/desarrollo/guia-de-estilo.md` y `docs/img/estilo/lamina_estilo.html`) para los pines; no tocar la columna izquierda ni los controles de abajo a la derecha; sí las barras de arriba y abajo.
+- **Hizo (todo en `gale-earth/mision.js` y el archivo nuevo `gale-earth/pmr.js`; `_ensamblar.py` suma los dos):**
+  - **Interruptores arriba**, a la derecha del buscador: **"49 perforaciones"** y **"Recorrido nuevo"** (nuestras rutas A, B, C, T, expedición y sus paradas). Los dos arrancan **apagados**. El de perforaciones queda sincronizado con la casilla de Capas; el recorrido real de Curiosity sigue en Capas.
+  - **Pines con la forma de la lámina:** círculo de 34 px con borde #1b1210 de 3 px, aro claro, código corto y palito al suelo. Las 49 perforaciones siguen con el color de zona (o el mineral elegido en Capas); se envuelve `repintar()` sin cambiar el código del compañero.
+  - **GX-3 → PMR (rover presurizado).** Renombrado en la escena, las herramientas (`ruta_base.py` → `data/rutas/ruta_base_pmr.geojson`) y Gale Earth. Ficha con la descripción de la misión que mandó David, tanques de agua que **no** son refugio de tormenta (paredes ~1 g/cm²; un refugio necesita ~20 g/cm²) e instrumentos (sismómetro y magnetómetro, con InSight como fuente).
+  - **Guía de la expedición (`pmr.js`):** rutas más seguras calculadas **en el navegador** con A* sobre `datos/terreno_pmr.png` (celdas de 12 m; lo genera `herramientas/terreno_pmr.py`).
+    - **Recomendada:** John Klein, Windjana, Buckskin, Mary Anning, Tapo Caparo y Valle de la Luna, más una estación magnética y una sísmica en los dos tramos más largos (llano < 8°, sin arena), termina en Curiosity hoy (muestras) y vuelve al hábitat. Hoy da 36,7 km en el PMR, 2,3 km a pie, 11 h 29 min, ~300 µSv y 25 % de batería.
+    - **Armar mi guía:** perforaciones (lista con buscador) y puntos tocados en el mapa (con perforar, sismómetro o magnetómetro), ordenados por la travesía, siempre con Curiosity hoy al final y vuelta opcional.
+    - **Ir a una perforación:** cualquiera de las 49, desde donde esté el PMR.
+    - En cada parada el PMR estaciona a ~130 m y uno sale a pie por el suitport mientras el otro queda en la cabina. A pie: perforar 2 m (taladro portátil, como Apolo), instalar el instrumento o tomar muestras (45 min, supuesto).
+    - Cada tramo muestra la ruta más segura, la pendiente, la dosis acumulada, el tiempo al refugio (a pie: volver al PMR; en el PMR: al hábitat) y el motivo científico.
+  - **Manejo libre:** W A S D o flechas (o los botones), Shift ×10; no pasa pendientes de más de 20°, va a la mitad en arena y avisa. El PMR queda donde lo dejaste.
+  - **Misión en pareja sin cartas encimadas:** el que camina usa el **visor del casco** (arriba a la izquierda, monoespaciado cian como en la guía) y el que queda en el PMR ve todo en la **pantalla del PMR** (derecha, sin tapar los controles de Gale Earth): minimapa con relieve, tramo, pendiente, dosis, refugio, batería, motivo científico y comunicaciones. La tarjeta y el reproductor se centran en el espacio libre. En el celular la pantalla va detrás de un botón.
+  - **"Biblioteca" → "Wiki"** en la columna (solo el nombre). Botón **"Abrir en otra pantalla"** en el panel: abre `index.html?wiki=…` en otra pestaña, solo con la ficha, sin globo ni barras. La portada de la Wiki suma "Misión: nuestra propuesta".
+  - **Todo en EN y ES:** textos de la misión con `lg('es', 'en')`; los de `datos/mision.json` (fichas, paradas, fuentes) se traducen con el diccionario nuevo `datos/idioma_en_mision.json`, que `_ensamblar.py` suma al de Gale Earth.
+  - **Logo nuevo** en `gale-earth/capas/logo/` (todos los tamaños y el favicon).
+- **Cambió en compartido:** `data/parametros.json` → `vehiculo_tripulado.perfil` dice PMR en vez de GX-3.
+- **Falta:** probar en el celular real la pantalla del PMR y el manejo libre con botones; que el compañero revise las paradas recomendadas y los 130 m de estacionamiento.
+
 ## 2026-11-15 mañana (2) · David (con Claude) · ROVER TRIPULADO GX-3 EN LA BASE GALE
 - **Decidió (David):** un rover nuevo para las misiones tripuladas, aparte de Curiosity y del GX-2 (que quedan como están). Vive en la Base Gale y puede hacer lo mismo que los otros.
 - **Hizo:**
