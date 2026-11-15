@@ -48,7 +48,7 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 
 ## Estado al 14 de noviembre de 2026
 - La escena suma toda la travesía de Curiosity (aterrizaje → hoy): terreno de contexto, recorrido real, 49 perforaciones con ficha y viaje por soles. Ver **docs/travesia.md**.
-- 37 de las 49 fichas de perforaciones están "a verificar": no presentarlas como dato hasta revisarlas contra su fuente.
+- Las 49 fichas de perforaciones de la escena usan la Biblioteca de Gale Earth: hallazgo con fuente, CheMin, APXS y foto (15/11). Antes había 37 "a verificar".
 - Unión con Gale Earth (`gale-earth/`, todo Marte en CesiumJS): botón "Misión Curiosity · 3D" → escena3d, y "Marte completo ↗" de vuelta. `index.html` de la raíz entra por Gale Earth. Solo navegación: la lógica de la misión no cambia.
 - Expedición sur (E1–E5, más allá de A4), perforación simulada (muestra ficticia, marcada como tal), clima según la fecha (Ls, REMS, Aeolus 2028) y círculos "?" con la fuente. Ver docs/notas.md y docs/paradas.md.
 

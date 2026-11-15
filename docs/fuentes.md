@@ -89,6 +89,9 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 
 En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).
 
+| Distancia total de Curiosity: más de 38,07 km (23,65 millas) al 12/10/2026 | NASA Science, blog de Perseverance, 12/10/2026, "NASA's Perseverance Sets Off-World Record for Total Distance Driven" (science.nasa.gov) |
+| Fichas de las 49 perforaciones en la escena (hallazgo, CheMin, APXS, SAM, fotos, agua en minerales) | Biblioteca de Gale Earth (`gale-earth/datos/biblioteca.json`, del compañero), que sale del PDS (CheMin, APXS, SAM), la base ODR (Bristow y Lafuente, doi:10.48484/JN48-YW52), artículos y el blog de Curiosity; fotos crudas NASA/JPL-Caltech/MSSS |
+
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
 | Relieve de todo Marte (fondo de la escena: alrededores de Gale y el planeta) | MOLA MEGDR 16 píxeles/grado, megt90n000eb.img (MGS MOLA, Smith et al. 2003, NASA PDS Geosciences Node). Copia pública: github.com/benbrittain/Barsoom (data/MEGDR). Control: −4509 m en el sitio de aterrizaje (publicado −4501 m); contra el DEM de la travesía, +5 ± 41 m |
 | Color de todo Marte (fondo de la escena) | Viking MDIM 2.1 en color (NASA/USGS, Mars Trek), `gale-earth/capas/viking_color_8k.jpg` (2,6 km/píxel), con realce de color propio |

@@ -33,6 +33,47 @@ RAIZ = os.path.dirname(AQUI)
 SIN_DATOS = -9999.0
 
 
+def sumar_biblioteca(lista):
+    """Suma a cada perforación lo de la Biblioteca de Gale Earth (gale-earth/datos/biblioteca.json, del compañero):
+    hallazgo con su fuente, minerales de CheMin, química de APXS, cantidad de experimentos SAM, agua en minerales
+    (cálculo del equipo), novedades del blog, lo que falta publicar y una foto chica del sol de la perforación."""
+    import io, unicodedata
+    ruta = os.path.join(RAIZ, "gale-earth", "datos", "biblioteca.json")
+    if not os.path.exists(ruta):
+        return
+    nrm = lambda t: unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode().lower().replace(" ", "")
+    bib = {nrm(x["nombre"]): x for x in leer_json(ruta)["pozos"]}
+    try:
+        from PIL import Image
+    except ImportError:
+        Image = None
+    n = fotos = 0
+    for p in lista:
+        x = bib.get(nrm(p["nombre"]))
+        if not x:
+            continue
+        ch = (x.get("chemin") or [None])[0]
+        ap = x.get("apxs") or {}
+        b = {"hallazgo": x.get("hallazgo"), "tecnico": x.get("tecnico"), "fuente": x.get("fuente_hallazgo"),
+             "formacion": x.get("formacion"), "roca": x.get("roca"), "agua": x.get("agua_kg_t"), "co2": x.get("co2_kg_t"),
+             "chemin": {"sol": ch.get("sol"), "min": [[m[0], m[1]] for m in sorted([m for m in (ch.get("minerales") or []) if m[1] is not None], key=lambda m: -m[1])[:6]],
+                        "arcillas": ch.get("arcillas"), "amorfo": ch.get("amorfo")} if ch else None,
+             "apxs": {"sol": ap.get("sol"), "producto": ap.get("producto"),
+                      "ox": {k: v[0] for k, v in (ap.get("ox") or {}).items() if k in ("SiO2", "FeO", "MgO", "CaO", "Al2O3", "SO3", "Na2O", "Cl")}} if ap.get("ox") else None,
+             "sam": len(x.get("sam") or []), "odr": (x.get("odr") or {}).get("url"), "fotos_total": x.get("fotos_total"),
+             "blog": [{"fecha": e.get("fecha"), "texto": e.get("texto"), "url": e.get("url")} for e in (x.get("blog") or [])][:2],
+             "falta": [t.split(":")[0] for t in (x.get("falta") or [])]}
+        f0 = (x.get("fotos") or [None])[0]
+        if f0:
+            b["foto_url"], b["foto_cam"] = f0.get("url"), f0.get("camara")
+            img = os.path.join(RAIZ, "gale-earth", f0.get("src", ""))
+            if Image and os.path.exists(img):
+                im = Image.open(img).convert("RGB"); im.thumbnail((440, 440)); buf = io.BytesIO(); im.save(buf, "JPEG", quality=70, optimize=True)
+                b["foto"] = b64(buf.getvalue()); fotos += 1
+        p["bib"] = b; n += 1
+    print(f"perforaciones: {n} de {len(lista)} con la Biblioteca de Gale Earth ({fotos} fotos{'' if Image else '; sin Pillow no hay fotos'})")
+
+
 def b64(datos: bytes) -> str:
     return base64.b64encode(datos).decode("ascii")
 
@@ -207,6 +248,7 @@ def main():
         if os.path.exists(p_poz):
             g = leer_json(p_poz)
             pozos = {"nota": g.get("nota", ""), "lista": [dict(f["properties"], lon=f["geometry"]["coordinates"][0], lat=f["geometry"]["coordinates"][1]) for f in g["features"]]}
+            sumar_biblioteca(pozos["lista"])
         # expedición sur (herramientas/expedicion.py): puntos nuevos más allá de A4 y CRISM del contexto para la perforación simulada
         p_exp = os.path.join(RAIZ, "data", "rutas", "expedicion_sur.geojson")
         if os.path.exists(p_exp):
@@ -269,6 +311,14 @@ def main():
             json.dump(datos["globo"], f, ensure_ascii=False, separators=(",", ":"))
         print(f"{ruta_globo}: {os.path.getsize(ruta_globo) / 1e6:.1f} MB (la página lo pide al abrir)")
         datos["globo"] = "globo.json"
+    if a.globo_aparte and datos.get("pozos"):                                  # las fotos de las perforaciones también van aparte (tope de 16 MB por archivo)
+        fotos = {str(i): p["bib"].pop("foto") for i, p in enumerate(datos["pozos"]["lista"]) if (p.get("bib") or {}).get("foto")}
+        if fotos:
+            ruta_f = os.path.join(os.path.dirname(os.path.abspath(a.salida)), "fotos_pozos.json")
+            with open(ruta_f, "w", encoding="utf-8") as f:
+                json.dump(fotos, f, separators=(",", ":"))
+            print(f"{ruta_f}: {os.path.getsize(ruta_f) / 1e6:.1f} MB (la página lo pide al abrir)")
+            datos["pozos"]["fotos"] = "fotos_pozos.json"
     json_datos = json.dumps(datos, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     html = (plantilla
             .replace("/*__THREE__*/", three)

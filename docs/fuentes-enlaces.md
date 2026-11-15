@@ -4,6 +4,11 @@ Generado con `python herramientas/listar_fuentes.py` a partir de `FUENTES_URL` e
 
 | Clave | Qué respalda | Enlace |
 | --- | --- | --- |
+| `odometria` | NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos | https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/ |
+| `biblioteca` | Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR | https://galecrater.samples.odr.io/ |
+| `odr` | NASA/ODR: Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 | https://doi.org/10.48484/JN48-YW52 |
+| `pdsApxs` | NASA PDS Geosciences: APXS de MSL (óxidos y trazas) | https://pds-geosciences.wustl.edu/missions/msl/apxs.htm |
+| `mahli` | NASA: imágenes crudas de Curiosity (MAHLI), NASA/JPL-Caltech/MSSS | https://mars.nasa.gov/msl/multimedia/raw-images/ |
 | `jplMov` | JPL: movilidad de Curiosity. Aguanta 45° sin volcar; la protección de fallas lo frena antes de 30° | https://webarchive.library.unt.edu/eot2008/20090512223236/http://mars.jpl.nasa.gov/msl/mission/technology/planetarymobility |
 | `rec31` | Space.com: Curiosity sube su pendiente récord, 31° (Greenheugh, marzo de 2020) | https://www.space.com/mars-rover-curiosity-steepest-hill-selfie-photo.html |
 | `jpl2020` | JPL (2020): tendencias de movilidad de Curiosity, inclinación máxima de 25,3° en 7 años | https://www-robotics.jpl.nasa.gov/media/documents/2020-mobility-trending.pdf |

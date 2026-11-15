@@ -41,6 +41,15 @@ Es la fusión de dos trabajos del equipo:
   ficha, con Anterior / Siguiente), **Caminar como astronauta** (ruta B), **Seguir al rover** (ruta A), viaje y expedición;
   **Rutas** y **Escena** abren una ventanita con sus controles. Panel izquierdo en apartados plegables; a la derecha, "Datos
   en vivo" en tres grupos plegables (rover, astronauta, entorno).
+- **Entrada animada:** al elegir en la portada, Marte se corre al centro con Gale en el medio y la cámara baja desde el planeta
+  (vuelo en escala logarítmica) hasta la travesía y la zona. **← Atrás** (arriba a la izquierda y en la expedición) vuelve a
+  "¿Cómo la querés recorrer?". Lo seleccionado (modo activo, Visor, Ojos, Autonomía, vistas) queda marcado.
+- **Rutas → Poner destino:** pin sobre el terreno; ruta del rover y del astronauta desde donde están, con avisos de pendiente
+  y arena en el destino, a menos de 20 m y en el camino; cartel al acercarse a un destino riesgoso.
+- **Expedición:** arranca en 4 min; **Manejar a mano** maneja el rover o el astronauta sobre el terreno de 12 m, con aviso en
+  vivo de la pendiente donde está y la que viene (8–40 m).
+- **Perforaciones:** cada ficha suma lo de la Biblioteca de Gale Earth (`gale-earth/datos/biblioteca.json`): hallazgo con fuente,
+  foto MAHLI, minerales (CheMin), química (APXS), agua en minerales y datos crudos. `armar.py` hace la foto chica con Pillow.
 - **Primera persona con dos vistas** (botón "Vista" o tecla B): *ojos* (casco, balanceo de la cabeza al caminar,
   partículas de polvo en el aire) y *detrás* (cámara que sigue al astronauta o al rover). Arrastrar o flechas: mirar
   alrededor; doble toque: centrar. Transición suave al entrar.

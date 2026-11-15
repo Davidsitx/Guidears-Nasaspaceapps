@@ -2,6 +2,24 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada · David (con Claude) · UNIÓN CON GALE EARTH Y AJUSTES DE USO (rama `david/union-gale-earth`)
+- **Fusión:** la rama tiene todo `companero/gale-earth-rutas` (expedición de 20 km, Hugging Face, REMS, SAM revisado, pozos nuevos). Solo hubo conflicto en `docs/notas.md` (quedaron las dos) y en `gale-earth/index.html`, que se rearmó con `_ensamblar.py` y `armar.py`. El botón "Misión Curiosity · 3D" sigue.
+- **Entrada desde la portada:** al elegir, Marte se corre al centro con Gale en el medio, la portada se funde con el planeta 3D y la cámara baja en escala logarítmica hasta la travesía y después a la zona. La interfaz aparece al llegar.
+- **"← Atrás"** arriba a la izquierda (y en la expedición): sale del modo y vuelve a "¿Cómo la querés recorrer?" de esa zona.
+- **Seleccionado visible:** Visor, Ojos, Autonomía, Rover/Astronauta, vistas y el modo activo de la barra de abajo quedan marcados. Antes el estilo de Visor y Ojos lo tapaba otra regla.
+- **Expedición:** arranca en 4 min (se elige 1, 2, 4 u 8 min). **"Manejar a mano"** maneja el rover o el astronauta desde donde está, sobre el terreno de 12 m. Va acelerado ×150 (rover) o ×12 (astronauta), pero el tiempo, los soles y la dosis se cuentan reales. Un aviso en vivo marca la pendiente donde está y la que viene a 8–40 m contra el límite (20°), y si el astronauta queda a más de 30 min del rover.
+- **Rutas → "Poner destino":** se toca el terreno y se calcula la ruta del rover y la del astronauta (ida y vuelta) desde donde están. Avisa si el destino cae en pendiente sobre el límite o en arena, si hay peligro a menos de 20 m y cuánto del camino pisa ladera o arena. Tiene "Ir (autonomía)" y "A pie, en primera persona". Al acercarse a un destino riesgoso sale un cartel. "Marcar paradas" sigue, dentro de "Varias paradas".
+- **Avisos al manejar libre:** lo que viene adelante se mira hasta 30 m y sale como cartel a 14 m o menos, ya no solo como pastilla.
+- **Fichas de las 49 perforaciones con la Biblioteca de Gale Earth** (`gale-earth/datos/biblioteca.json`):
+  - hallazgo con su fuente y foto MAHLI del sol (enlace al original);
+  - minerales de CheMin y química de APXS (PDS/ODR);
+  - agua en minerales (kg/t, cálculo del compañero, marcado);
+  - blog, ficha ODR y lo que falta publicar en el PDS.
+  Ya no queda ninguna "a verificar". `armar.py` arma la foto chica con Pillow; sin Pillow, la ficha sale sin foto.
+- **+38 km:** Curiosity lleva más de 38,07 km (NASA, 12/10/2026). La línea del mapa mide 37,7 km porque une posiciones informadas; se aclara en el panel.
+- **Versión publicada:** `--globo-aparte` también separa las fotos de las perforaciones (`fotos_pozos.json`).
+
+
 ## 2026-11-15 madrugada · Compañero (con Claude) · EXPEDICIÓN: ARENA, ROVER DE MARTE, TRAJE, CLIMA, TORMENTA Y COMUNICACIÓN
 - **Arena (indicio):** `herramientas/themis_noche.py` lee por rangos la ventana de Gale del mosaico **THEMIS Night IR** de Mars Odyssey (USGS, 100 m, cualitativo de 8 bits). Arma `capas/expedicion/themis_noche.png` y el percentil de "frío de noche" por celda.
   - Validación: el recorrido real de Curiosity va por terreno tibio (mediana en el percentil 21) y **nunca pisó el 10% más frío**.
