@@ -6,6 +6,7 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 
 | Dato | Fuente |
 | --- | --- |
+| Íconos de la barra del planificador (Maps in Mars) | Google, Material Icons (licencia Apache 2.0), github.com/google/material-design-icons: mismos trazos que el riel izquierdo |
 | Recorrido de Curiosity (PLACES, hasta sol 4868) | PDS Geosciences Node, MSL PLACES, localized_interp.csv |
 | Modelo de elevación orbital (hasta sol 3958) | PDS Geosciences Node, MSL PLACES, msl_orbital_dem.img |
 | Modelo de elevación de Gale de 1 m | USGS Astrogeology, MSL Gale Merged DEM 1 m v3 (Calef y Parker, 2016). Recorte de la zona del sol 5070 en `data/terreno/sol5070/` (herramientas/recortar_terreno.py) |
