@@ -1,0 +1,4 @@
+{
+ "teselas": "https://huggingface.co/datasets/ChuchuTEA/gale-earth-teselas/resolve/main/",
+ "nota": "Teselas publicadas en el dataset público de Hugging Face ChuchuTEA/gale-earth-teselas (subidas con subir_hf.bat). El lector sw.js pide solo los bytes de cada tesela. Con abrir.bat se usan primero las teselas de la PC."
+}

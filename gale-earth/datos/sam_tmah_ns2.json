@@ -1,0 +1,192 @@
+[
+ {
+  "eid": "25828",
+  "sol": 4798,
+  "tipo": "tmah",
+  "paso": "paso 2: evaporación del reactivo",
+  "picos_gc": [
+   [
+    "Peak1",
+    1530000000.0,
+    213
+   ],
+   [
+    "Peak2",
+    1770000000.0,
+    297
+   ],
+   [
+    "Peak3",
+    906000000.0,
+    386
+   ],
+   [
+    "Peak4",
+    3370000000.0,
+    456
+   ],
+   [
+    "Peak5",
+    7040000000.0,
+    733
+   ],
+   [
+    "Peak6",
+    5190000.0,
+    1533
+   ],
+   [
+    "Peak7",
+    39900000.0,
+    1553
+   ],
+   [
+    "Peak8",
+    2810000.0,
+    2690
+   ],
+   [
+    "Peak9",
+    16500000.0,
+    1772
+   ]
+  ],
+  "cromatograma": "https://pds-geosciences.wustl.edu/msl/msl-m-sam-2-rdr-l0-v1/mslsam_1xxx/data/eid25828/level2/sm25828f4798rdr2__sder_gc__species_1.jpg",
+  "estado": "confirmado",
+  "conf_por": "blog de Curiosity (soles 4798-4803): TMAH sobre Nevado Sajama2",
+  "gases": {},
+  "picos": {},
+  "tls": {},
+  "dudoso": []
+ },
+ {
+  "eid": "25829",
+  "sol": 4800,
+  "tipo": "tmah",
+  "paso": "paso 3: calentamiento medio",
+  "picos_gc": [
+   [
+    "Peak1",
+    4790000000.0,
+    101
+   ],
+   [
+    "Peak2",
+    2040000000.0,
+    148
+   ],
+   [
+    "Peak3",
+    204000000.0,
+    193
+   ],
+   [
+    "Peak4",
+    1050000000.0,
+    406
+   ],
+   [
+    "Peak5",
+    1610000000.0,
+    490
+   ],
+   [
+    "Peak6",
+    2650000000.0,
+    632
+   ],
+   [
+    "Peak7",
+    1590000000.0,
+    775
+   ],
+   [
+    "Peak8",
+    2840000000.0,
+    936
+   ],
+   [
+    "Peak9",
+    1500000000.0,
+    1214
+   ],
+   [
+    "Peak10",
+    207000000.0,
+    1276
+   ],
+   [
+    "Peak11",
+    232000000.0,
+    1393
+   ],
+   [
+    "Peak12",
+    180000000.0,
+    1577
+   ],
+   [
+    "Peak13",
+    826000000.0,
+    1652
+   ],
+   [
+    "Peak14",
+    541000000.0,
+    1720
+   ],
+   [
+    "Peak15",
+    982000000.0,
+    2349
+   ],
+   [
+    "Peak16",
+    3040000000.0,
+    2507
+   ]
+  ],
+  "cromatograma": "https://pds-geosciences.wustl.edu/msl/msl-m-sam-2-rdr-l0-v1/mslsam_1xxx/data/eid25829/level2/sm25829f4800rdr2__sder_gc__species_1.jpg",
+  "estado": "confirmado",
+  "conf_por": "blog de Curiosity (soles 4798-4803): TMAH sobre Nevado Sajama2",
+  "gases": {},
+  "picos": {},
+  "tls": {},
+  "dudoso": []
+ },
+ {
+  "eid": "25830",
+  "sol": 4802,
+  "tipo": "tmah",
+  "paso": "paso 4: calentamiento completo",
+  "picos_gc": [
+   [
+    "Peak1",
+    30400000.0,
+    1583
+   ],
+   [
+    "Peak2",
+    31100000.0,
+    1918
+   ],
+   [
+    "Peak3",
+    799000000.0,
+    2046
+   ],
+   [
+    "Peak4",
+    30400000.0,
+    2132
+   ]
+  ],
+  "cromatograma": "https://pds-geosciences.wustl.edu/msl/msl-m-sam-2-rdr-l0-v1/mslsam_1xxx/data/eid25830/level2/sm25830f4802rdr2__sder_gc__species_1.jpg",
+  "estado": "confirmado",
+  "conf_por": "blog de Curiosity (soles 4798-4803): TMAH sobre Nevado Sajama2",
+  "gases": {},
+  "picos": {},
+  "tls": {},
+  "dudoso": []
+ }
+]

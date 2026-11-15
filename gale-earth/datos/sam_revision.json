@@ -1,0 +1,353 @@
+{
+ "fuente": "Notas de nivel 2 de SAM (frase 'designated XX') y nombre de cada corrida en el registro de mensajes de nivel 0 (Data Directory), NASA PDS Geosciences, msl-m-sam-2-rdr-l0-v1, consultado 2026-11-14. Abreviaturas de muestra según Sutter et al. 2017 (JGR Planets 122) y notas PDS.",
+ "experimentos": {
+  "25083": {
+   "corrida": "25083-SS_ega_gc_tls_drill",
+   "clase": "probable",
+   "motivo": "corrida de muestra sólida en los soles posteriores a la perforación, sin designación publicada"
+  },
+  "25133": {
+   "corrida": "25133-SS_ega_tls_icV1054_SOL394",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB6"
+  },
+  "25145": {
+   "corrida": "25145-SS_ega_gc_tls_ic_SOL421",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)"
+  },
+  "25173": {
+   "corrida": "25173-SS_comb_lowT_SOL555",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB-8"
+  },
+  "25174": {
+   "corrida": "25174-SS_comb_two_step_SOL556",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB-8"
+  },
+  "25175": {
+   "corrida": "",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB-8"
+  },
+  "25188": {
+   "corrida": "25188-SS_gc1_ega_SOL602",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)"
+  },
+  "25202": {
+   "corrida": "25202-SS_ng_evol_py2_SOL653",
+   "clase": "probable",
+   "motivo": "corrida de muestra sólida en los soles posteriores a la perforación, sin designación publicada"
+  },
+  "25208": {
+   "corrida": "25208-SS_ng_WJ_reheat_SOL685",
+   "clase": "designado",
+   "muestra": "Windjana",
+   "designacion": "WJ (nombre de la corrida)"
+  },
+  "25219": {
+   "corrida": "25219-SS_ng_WJ_doggie_SOL763",
+   "clase": "designado",
+   "muestra": "Windjana",
+   "designacion": "WJ (nombre de la corrida)"
+  },
+  "25223": {
+   "corrida": "25223-SS_ega_blank_gc5_CH1_SOL769",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)"
+  },
+  "25230": {
+   "corrida": "25230-SS_od_sol1_SOL820",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB"
+  },
+  "25231": {
+   "corrida": "25231-SS_od_sol2_SOL823",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB"
+  },
+  "25235": {
+   "corrida": "25235-SS_OD_BLANK_part1_sol837",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)",
+   "designacion": "OD1"
+  },
+  "25236": {
+   "corrida": "25236-SS_OD_BLANK_part2_sol837",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)",
+   "designacion": "OD2"
+  },
+  "25314": {
+   "corrida": "25314-SS_ega_gc4_notls_SOL1171",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)",
+   "designacion": "GH"
+  },
+  "25327": {
+   "corrida": "25327-SS_ega_nogc_tls_SOL1224",
+   "clase": "designado",
+   "muestra": "Gobabeb (arena de duna, pala)",
+   "designacion": "GB1"
+  },
+  "25333": {
+   "corrida": "25333-SS_ega_nogc_tls_SOL1237",
+   "clase": "designado",
+   "muestra": "Gobabeb (arena de duna, pala)",
+   "designacion": "GB2"
+  },
+  "25341": {
+   "corrida": "25341-SS_cal_cup_gc4_clean_SOL1286",
+   "clase": "sin_muestra",
+   "motivo": "limpieza/calibración de la copa (sin muestra)"
+  },
+  "25362": {
+   "corrida": "25362-SS_ng_stepped_1_SOL1429",
+   "clase": "probable",
+   "motivo": "corrida de muestra sólida en los soles posteriores a la perforación, sin designación publicada"
+  },
+  "25363": {
+   "corrida": "25363-SS_ng_stepped_2_SOL1430",
+   "clase": "probable",
+   "motivo": "corrida de muestra sólida en los soles posteriores a la perforación, sin designación publicada"
+  },
+  "25386": {
+   "corrida": "25386-SS_OD_part1_SOL1543",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB"
+  },
+  "25387": {
+   "corrida": "25387-SS_OD_part2_SOL1546",
+   "clase": "designado",
+   "muestra": "Cumberland",
+   "designacion": "CB"
+  },
+  "25392": {
+   "corrida": "25392-SS_OD_part1_SOL1591",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)",
+   "designacion": "CB"
+  },
+  "25393": {
+   "corrida": "25393-SS_OD_part2_SOL1593",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)",
+   "designacion": "CB"
+  },
+  "25395": {
+   "corrida": "25395-AS_qms_only_SOL1599",
+   "clase": "sin_muestra",
+   "motivo": "medición de la atmósfera (sin muestra sólida)"
+  },
+  "25402": {
+   "corrida": "25402-SS_ega_gc1_4_notls_SOL1652",
+   "clase": "designado",
+   "muestra": "Ogunquit Beach (arena, pala)",
+   "designacion": "OG1"
+  },
+  "25412": {
+   "corrida": "25412-SS_gc_col1_4_tls_part1_SOL1722",
+   "clase": "designado",
+   "muestra": "Quela",
+   "designacion": "QL1"
+  },
+  "25413": {
+   "corrida": "25413-SS_gc_col1_4_tls_part2_SOL1723",
+   "clase": "designado",
+   "muestra": "Quela",
+   "designacion": "parte 2 de QL1 (25412)"
+  },
+  "25439": {
+   "corrida": "25439-SS_ega_gc_col1_4V3711_SOL1861",
+   "clase": "designado",
+   "muestra": "Ogunquit Beach (arena, pala)",
+   "designacion": "OG2"
+  },
+  "25446": {
+   "corrida": "25446-SS_ega_gc_col1_4V3711_SOL1883",
+   "clase": "designado",
+   "muestra": "Ogunquit Beach (arena, pala)",
+   "designacion": "OG3"
+  },
+  "25457": {
+   "corrida": "25457-SS_deriv_col1_4_cup69_SOL1909",
+   "clase": "designado",
+   "muestra": "Ogunquit Beach (arena, pala)",
+   "designacion": "OG_DER"
+  },
+  "25495": {
+   "corrida": "25495-SS_ng_evol_pyro2_SOL2159",
+   "clase": "probable",
+   "motivo": "corrida de muestra sólida en los soles posteriores a la perforación, sin designación publicada"
+  },
+  "25518": {
+   "corrida": "25518-SS_col4_ext_elution_SOL2398",
+   "clase": "probable",
+   "motivo": "corrida de muestra sólida en los soles posteriores a la perforación, sin designación publicada"
+  },
+  "25538": {
+   "corrida": "25538-SS_ega_nogc_tls_SOL2531",
+   "clase": "designado",
+   "muestra": "Glen Etive",
+   "designacion": "GE3"
+  },
+  "25544": {
+   "corrida": "25544-SS_deriv_col1_4_cup67_SOL2540",
+   "clase": "designado",
+   "muestra": "Glen Etive",
+   "designacion": "GE_DER"
+  },
+  "25546": {
+   "corrida": "25546-Extended_Elution_Analysis_Glen_Etive_2_SOL2542",
+   "clase": "designado",
+   "muestra": "Glen Etive 2",
+   "designacion": "nombre de la corrida"
+  },
+  "25548": {
+   "corrida": "25548-SS_col1_4_follow_gcms_SOL2547",
+   "clase": "designado",
+   "muestra": "Glen Etive",
+   "designacion": "continuación de GE_DER (25544)"
+  },
+  "25608": {
+   "corrida": "25608-SS_full_deriv_col1_2_cup61_SOL2879",
+   "clase": "designado",
+   "muestra": "Mary Anning",
+   "designacion": "MA_TMAH"
+  },
+  "25613": {
+   "corrida": "25613-SS_full_deriv_col1_2_cup65_SOL2885",
+   "clase": "designado",
+   "muestra": "Mary Anning",
+   "designacion": "MA_DER"
+  },
+  "25672": {
+   "corrida": "25672-SS_OD_part1_SOL3307",
+   "clase": "designado",
+   "muestra": "Rock Hall",
+   "designacion": "RH"
+  },
+  "25673": {
+   "corrida": "25673-SS_OD_part2_SOL3310",
+   "clase": "designado",
+   "muestra": "Rock Hall",
+   "designacion": "parte 2 de RH (25672)"
+  },
+  "25689": {
+   "corrida": "25689-SS_ega_gc5_tls_SOL3487",
+   "clase": "sin_muestra",
+   "motivo": "blanco del instrumento (corrida sin muestra)"
+  },
+  "25695": {
+   "corrida": "25695-SS_ega_nogc_tls_SOL3525",
+   "clase": "designado",
+   "muestra": "Avanavero",
+   "designacion": "AV"
+  },
+  "25705": {
+   "corrida": "25705-SS_ega_nogc_tls_SOL3619",
+   "clase": "designado",
+   "muestra": "Canaima",
+   "designacion": "CA1"
+  },
+  "25708": {
+   "corrida": "25708-SS_ega_gc5_notls_SOL3623",
+   "clase": "designado",
+   "muestra": "Canaima",
+   "designacion": "CA2"
+  },
+  "25719": {
+   "corrida": "25719-SS_ega_nogc_tls_SOL3760",
+   "clase": "designado",
+   "muestra": "Tapo Caparo",
+   "designacion": "TC1"
+  },
+  "25723": {
+   "corrida": "25723-SS_ega_gc2_notls_SOL3766",
+   "clase": "designado",
+   "muestra": "Tapo Caparo",
+   "designacion": "TC2"
+  },
+  "25729": {
+   "corrida": "25729-SS_ega_nogc_tls_SOL3830",
+   "clase": "designado",
+   "muestra": "Ubajara",
+   "designacion": "UB"
+  },
+  "25743": {
+   "corrida": "25743-SS_ega_nogc_tls_SOL3989",
+   "clase": "designado",
+   "muestra": "Sequoia",
+   "designacion": "SQ1"
+  },
+  "25746": {
+   "corrida": "25746-SS_ega_gc2_notls_SOL3995",
+   "clase": "designado",
+   "muestra": "Sequoia",
+   "designacion": "SQ2"
+  },
+  "25759": {
+   "corrida": "25759-SS_ega_nogc_tls_SOL4114",
+   "clase": "designado",
+   "muestra": "Mineral King",
+   "designacion": "MK"
+  },
+  "25771": {
+   "corrida": "25771-SS_ega_nogc_tls_SOL4226",
+   "clase": "designado",
+   "muestra": "Mammoth Lakes",
+   "designacion": "ML1"
+  },
+  "25774": {
+   "corrida": "25774-SS_ega_gc2_notls_SOL4231",
+   "clase": "designado",
+   "muestra": "Mammoth Lakes",
+   "designacion": "ML2"
+  },
+  "25779": {
+   "corrida": "25779-SS_ega_nogc_tls_SOL4270",
+   "clase": "designado",
+   "muestra": "Kings Canyon",
+   "designacion": "KC1"
+  },
+  "25782": {
+   "corrida": "25782-SS_ega_gc2_notls_SOL4275",
+   "clase": "designado",
+   "muestra": "Kings Canyon",
+   "designacion": "KC2"
+  },
+  "25809": {
+   "corrida": "25809-SS_ega_nogc_tls_SOL4699",
+   "clase": "designado",
+   "muestra": "Valle de la Luna",
+   "designacion": "VL1"
+  },
+  "25811": {
+   "corrida": "25811-SS_ega_gc6_notls_SOL4704",
+   "clase": "designado",
+   "muestra": "Valle de la Luna",
+   "designacion": "VL2"
+  },
+  "25815": {
+   "corrida": "25815-SS_ega_nogc_tls_SOL4725",
+   "clase": "designado",
+   "muestra": "Nevado Sajama",
+   "designacion": "NS1"
+  },
+  "25817": {
+   "corrida": "25817-SS_ega_gc6_notls_SOL4736",
+   "clase": "designado",
+   "muestra": "Nevado Sajama",
+   "designacion": "NS2"
+  }
+ }
+}

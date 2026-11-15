@@ -19,7 +19,7 @@ function claseEv(e) { return e.tipo === 'geologia' ? 'geo' : e.gale ? 'gale' : (
 
 async function abrirLinea(idEvento) {
   try { await cargarLinea(); } catch (e) { return avisar(location.protocol === 'file:' ? 'La línea de tiempo necesita abrir Gale Earth con abrir.bat / servir.py (el navegador bloquea leer archivos desde file://).' : e.message, 9000); }
-  if (esCelB()) cerrarCajon();
+  cerrarCajon();
   document.body.classList.add('lineaAbierta'); $('linea').classList.remove('oculto');
   pintarBarra();
   const k = idEvento ? LT.ev.findIndex(e => e.id === idEvento) : LT.ev.findIndex(e => e.hoy);
@@ -96,7 +96,7 @@ $('lPlay').onclick = () => {
   LT.play = setInterval(() => { if (LT.i >= LT.ev.length - 1) return pararPlay(); elegirEv(LT.i + 1, true); }, 4500);
 };
 $('lCerrar').onclick = cerrarLinea;
-$('bLinea').onclick = () => $('linea').classList.contains('oculto') ? abrirLinea() : cerrarLinea();
+$('rHistoria').onclick = () => $('linea').classList.contains('oculto') ? abrirLinea() : cerrarLinea();
 addEventListener('keydown', e => {
   if ($('linea').classList.contains('oculto') || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { pararPlay(); elegirEv(LT.i + (e.key === 'ArrowRight' ? 1 : -1), true); e.preventDefault(); e.stopImmediatePropagation(); }

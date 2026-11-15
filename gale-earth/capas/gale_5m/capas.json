@@ -26,11 +26,24 @@
  "parametros": {
   "pendiente_astronauta": 20,
   "pendiente_rover": 20,
-  "dosis_superficie": 0.67,
+  "dosis_superficie": 0.64,
   "blindaje": 0.25
  },
  "elev_min": -4625.818359375,
  "elev_max": -322.5602722167969,
  "dosis_min": 0.5211215019226074,
- "dosis_max": 0.6700000166893005
+ "dosis_max": 0.6700000166893005,
+ "radiacion": {
+  "min": 0.495,
+  "max": 0.656,
+  "unidad": "mSv/día",
+  "dia_media": 0.644,
+  "noche_media": 0.613,
+  "formula": "0,64 mSv/día (RAD) × (1 ± 0,025 día/noche) × (1 − 0,25 × cielo tapado)",
+  "fuentes": [
+   "Hassler et al. 2014, Science 343:1244797 (RAD, 0,64 mSv/día)",
+   "Rafkin et al. 2014, JGR Planets 119:1345 (variación día/noche ~5 % de pico a pico, más dosis de día)",
+   "Guo et al. 2015, ApJ 810:24 (≈15 µGy/día de pico a pico sobre ~220)"
+  ]
+ }
 }

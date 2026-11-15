@@ -1,0 +1,390 @@
+{
+ "fuente": "NASA PDS Geosciences, msl-m-apxs-4_5-rdr-v1 (productos RWP, óxidos en % en peso; Ni, Zn y Br pasados a ppm), datos hasta el sol 4842. Asignación al pozo: blog de Curiosity cuando lo dice; si no, la primera medición después de perforar (probable).",
+ "pozos": {
+  "40": {
+   "fuente": "NASA PDS, APXS RDR nivel 5 (óxidos)",
+   "producto": "apb_762910996rwp41161060660_______p1",
+   "sol": 4116,
+   "objetivo": null,
+   "ox": {
+    "Na2O": [
+     6.31,
+     0.2
+    ],
+    "MgO": [
+     9.09,
+     0.25
+    ],
+    "Al2O3": [
+     5.93,
+     0.19
+    ],
+    "SiO2": [
+     29.3,
+     0.32
+    ],
+    "P2O5": [
+     0.92,
+     0.07
+    ],
+    "SO3": [
+     15.59,
+     0.22
+    ],
+    "Cl": [
+     4.2,
+     0.07
+    ],
+    "K2O": [
+     0.49,
+     0.02
+    ],
+    "CaO": [
+     6.88,
+     0.07
+    ],
+    "TiO2": [
+     0.69,
+     0.05
+    ],
+    "Cr2O3": [
+     0.35,
+     0.03
+    ],
+    "MnO": [
+     0.35,
+     0.03
+    ],
+    "FeO": [
+     19.55,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     498,
+     35
+    ],
+    "Zn": [
+     960,
+     30
+    ],
+    "Br": [
+     154,
+     10
+    ]
+   },
+   "asignacion": "probable",
+   "motivo": "primera medición de APXS después de perforar (sol 4116); PDS no publica el nombre del objetivo",
+   "url_blog": null
+  },
+  "43": {
+   "fuente": "NASA PDS, APXS RDR nivel 5 (óxidos)",
+   "producto": "apb_803040891rwp45681161944_______p1",
+   "sol": 4568,
+   "objetivo": null,
+   "ox": {
+    "Na2O": [
+     2.38,
+     0.14
+    ],
+    "MgO": [
+     5.32,
+     0.17
+    ],
+    "Al2O3": [
+     8.25,
+     0.19
+    ],
+    "SiO2": [
+     43.17,
+     0.54
+    ],
+    "P2O5": [
+     1.01,
+     0.07
+    ],
+    "SO3": [
+     6.38,
+     0.1
+    ],
+    "Cl": [
+     0.57,
+     0.02
+    ],
+    "K2O": [
+     0.71,
+     0.02
+    ],
+    "CaO": [
+     5.87,
+     0.07
+    ],
+    "TiO2": [
+     1.08,
+     0.03
+    ],
+    "Cr2O3": [
+     0.42,
+     0.03
+    ],
+    "MnO": [
+     0.15,
+     0.01
+    ],
+    "FeO": [
+     24.41,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     923,
+     50
+    ],
+    "Zn": [
+     906,
+     30
+    ],
+    "Br": [
+     88,
+     5
+    ]
+   },
+   "asignacion": "probable",
+   "motivo": "primera medición de APXS después de perforar (sol 4568); PDS no publica el nombre del objetivo",
+   "url_blog": null
+  },
+  "44": {
+   "fuente": "NASA PDS, APXS RDR nivel 5 (óxidos)",
+   "producto": "apb_815291021rwp47061191722_______p1",
+   "sol": 4706,
+   "objetivo": null,
+   "ox": {
+    "Na2O": [
+     2.12,
+     0.14
+    ],
+    "MgO": [
+     11.3,
+     0.25
+    ],
+    "Al2O3": [
+     7.08,
+     0.19
+    ],
+    "SiO2": [
+     36.37,
+     0.43
+    ],
+    "P2O5": [
+     0.79,
+     0.05
+    ],
+    "SO3": [
+     16.13,
+     0.17
+    ],
+    "Cl": [
+     0.35,
+     0.02
+    ],
+    "K2O": [
+     0.58,
+     0.02
+    ],
+    "CaO": [
+     4.87,
+     0.06
+    ],
+    "TiO2": [
+     0.84,
+     0.03
+    ],
+    "Cr2O3": [
+     0.36,
+     0.01
+    ],
+    "MnO": [
+     0.25,
+     0.01
+    ],
+    "FeO": [
+     18.66,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     686,
+     35
+    ],
+    "Zn": [
+     968,
+     30
+    ],
+    "Br": [
+     255,
+     10
+    ]
+   },
+   "asignacion": "probable",
+   "motivo": "primera medición de APXS después de perforar (sol 4706); PDS no publica el nombre del objetivo",
+   "url_blog": null
+  },
+  "45": {
+   "fuente": "NASA PDS, APXS RDR nivel 5 (óxidos)",
+   "producto": "apb_816180959rwp47161200082_______p1",
+   "sol": 4716,
+   "objetivo": null,
+   "ox": {
+    "Na2O": [
+     2.77,
+     0.14
+    ],
+    "MgO": [
+     6.14,
+     0.17
+    ],
+    "Al2O3": [
+     7.41,
+     0.19
+    ],
+    "SiO2": [
+     40.28,
+     0.43
+    ],
+    "P2O5": [
+     0.92,
+     0.05
+    ],
+    "SO3": [
+     11.88,
+     0.17
+    ],
+    "Cl": [
+     2.98,
+     0.05
+    ],
+    "K2O": [
+     0.66,
+     0.02
+    ],
+    "CaO": [
+     7.61,
+     0.08
+    ],
+    "TiO2": [
+     0.79,
+     0.03
+    ],
+    "Cr2O3": [
+     0.34,
+     0.03
+    ],
+    "MnO": [
+     0.18,
+     0.01
+    ],
+    "FeO": [
+     17.78,
+     0.2
+    ]
+   },
+   "tr": {
+    "Ni": [
+     603,
+     35
+    ],
+    "Zn": [
+     474,
+     15
+    ],
+    "Br": [
+     529,
+     20
+    ]
+   },
+   "asignacion": "confirmado por el blog",
+   "motivo": "APXS sobre la roca Nevado Sajama limpiada con el cepillo, antes de perforar (blog de Curiosity, soles 4716-4722)",
+   "url_blog": "https://science.nasa.gov/solar-system/curiosity-blog-sols-4716-4722-drilling-success-at-nevado-sajama"
+  },
+  "46": {
+   "fuente": "NASA PDS, APXS RDR nivel 5 (óxidos)",
+   "producto": "apb_823903257rwp48031200574_______p1",
+   "sol": 4803,
+   "objetivo": null,
+   "ox": {
+    "Na2O": [
+     2.55,
+     0.14
+    ],
+    "MgO": [
+     6.32,
+     0.17
+    ],
+    "Al2O3": [
+     7.52,
+     0.19
+    ],
+    "SiO2": [
+     39.76,
+     0.43
+    ],
+    "P2O5": [
+     0.9,
+     0.05
+    ],
+    "SO3": [
+     9.29,
+     0.12
+    ],
+    "Cl": [
+     0.75,
+     0.03
+    ],
+    "K2O": [
+     0.63,
+     0.02
+    ],
+    "CaO": [
+     6.51,
+     0.07
+    ],
+    "TiO2": [
+     0.93,
+     0.05
+    ],
+    "Cr2O3": [
+     0.41,
+     0.03
+    ],
+    "MnO": [
+     0.17,
+     0.03
+    ],
+    "FeO": [
+     23.89,
+     0.26
+    ]
+   },
+   "tr": {
+    "Ni": [
+     882,
+     45
+    ],
+    "Zn": [
+     606,
+     20
+    ],
+    "Br": [
+     129,
+     10
+    ]
+   },
+   "asignacion": "confirmado por el blog",
+   "motivo": "APXS sobre el polvo de perforación de Nevado Sajama2 (blog de Curiosity, soles 4798-4803)",
+   "url_blog": "https://science.nasa.gov/blog/curiosity-blog-sols-4798-4803-back-for-more-science/"
+  }
+ }
+}
