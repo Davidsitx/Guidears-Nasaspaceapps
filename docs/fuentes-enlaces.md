@@ -4,6 +4,15 @@ Generado con `python herramientas/listar_fuentes.py` a partir de `FUENTES_URL` e
 
 | Clave | Qué respalda | Enlace |
 | --- | --- | --- |
+| `iceHome` | NASA Langley (2016): Mars Ice Home, hábitat inflable con una cáscara de agua congelada como blindaje contra los rayos cósmicos, que deja pasar luz | https://phys.org/news/2016-12-nasa-ice-house-mars.html |
+| `fsp` | NASA Glenn: Fission Surface Power, reactor de al menos 40 kW por 10 años y menos de 6 t, para la Luna y adaptable a Marte | https://www.nasa.gov/centers-and-facilities/glenn/nasas-fission-surface-power-project-energizes-lunar-exploration |
+| `moxie` | NASA (2023): MOXIE, en Perseverance, produjo 122 g de oxígeno del CO₂ de Marte en 16 corridas, hasta 12 g por hora | https://phys.org/news/2023-09-nasa-oxygen-generating-moxie-mars-mission.html |
+| `exoDrill` | ESA Exploration Science: el taladro de Rosalind Franklin llega a 2 m con la mecha y tres barras de extensión de unos 50 cm, y toma muestras cada 50 cm | https://explorationscience.esa.int/?p=2323 |
+| `exoDrillTest` | ESA (2021): prueba en la Tierra a 1,7 m; el taladro avanza entre 0,3 y 30 mm por minuto según el suelo y trabaja con menos de 100 W | https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Exploration/ExoMars/First_deep_drilling_success_for_ExoMars |
+| `curDrill` | NASA: primera perforación de Curiosity (John Klein, sol 182), agujero de 1,6 cm de ancho y 6,4 cm de profundidad | https://science.nasa.gov/resource/curiositys-first-sample-drilling |
+| `ingenuity` | NASA: Ingenuity hizo 72 vuelos, unos 128,8 minutos en el aire y 17 km recorridos | https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/ |
+| `mmrtg` | NASA: el MMRTG da unos 110 W eléctricos al empezar la misión | https://science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf |
+| `suitport` | NASA JSC (2012): suitports, el traje queda acoplado afuera; la preparación de una salida pasa de horas a menos de 30 minutos y el polvo no entra | https://ntrs.nasa.gov/citations/20120018014 |
 | `jplApprox` | NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte | https://ssd.jpl.nasa.gov/planets/approx_pos.html |
 | `odometria` | NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos | https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/ |
 | `biblioteca` | Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR | https://galecrater.samples.odr.io/ |

@@ -203,8 +203,8 @@ with sync_playwright() as p:
 Antes de subir, conviene revisar dos cosas más:
 
 ```bash
-# sintaxis de cada <script> de plantilla.html
-python3 -c "import re,subprocess;s=open('escena3d/plantilla.html',encoding='utf-8').read();[print(i,subprocess.run(['node','--check','/dev/stdin'],input=sc,capture_output=True,text=True).returncode) for i,sc in enumerate(re.findall(r'<script(?![^>]*src)[^>]*>(.*?)</script>',s,re.S)) if len(sc)>50]"
+# sintaxis de cada <script> de plantilla.html (node --check no lee de una tubería: va por archivo temporal)
+python3 -c "import re,subprocess;s=open('escena3d/plantilla.html',encoding='utf-8').read();[print(i,(open('/tmp/chk.mjs','w').write(sc),subprocess.run(['node','--check','/tmp/chk.mjs'],capture_output=True,text=True).returncode)[1]) for i,sc in enumerate(re.findall(r'<script(?![^>]*src)[^>]*>(.*?)</script>',s,re.S)) if len(sc)>50]"
 # cada $('id') del código existe en el HTML (un id que falta rompe la carga con "Cannot read properties of null")
 grep -o "\$('[a-zA-Z0-9-]*')" escena3d/plantilla.html | sort -u | sed "s/\$('//; s/')//" | while read id; do grep -q "id=\"$id\"" escena3d/plantilla.html || echo "falta $id"; done
 ```

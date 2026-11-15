@@ -2,6 +2,19 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 madrugada (3) · David (con Claude) · BASE GALE Y ROVER GX-2 EN LA ESCENA (rama `david/union-gale-earth`)
+- **Base Gale** (modelo 3D en la zona de hoy, marcador "BG"; inspirada en las fotos de domos geodésicos y módulos con túneles que trajo David).
+  - **Lugar elegido con los datos:** círculo de 26 m donde el 95 % del suelo está bajo 8° y nada pasa de 12°, casi sin arena, a más de 20 m de las rutas y a menos de 750 m de Curiosity. Gana el de menos pendiente y desnivel, con más cielo tapado. Quedó a 719 m de Curiosity, con pendiente media de 3,4° y 9 % de cielo tapado. Cálculo propio sobre la grilla de 2 m.
+  - **Partes**, cada una con ficha y fuente al tocarla: hábitat geodésico, túneles, laboratorio, esclusa con suitports, invernadero, campo solar, reactor de fisión con cerco y cable, antena, estación meteorológica, planta de oxígeno (tipo MOXIE), tanque de agua, garaje del rover, luces y plataforma.
+  - También aparece en la wiki ("Base Gale"), y los mensajes de la misión en pareja salen de "Base Gale".
+- **Rover GX-2** (versión nueva para las próximas excavaciones; diseño propio, el ER-6 de fable-rover.vercel.app fue solo inspiración visual: no tiene licencia y no se copió nada).
+  - **Dónde:** Escena → Rover: Curiosity o GX-2 · nuevo. Toma la posición, el rumbo y la inclinación del rover de la escena, así que rutas, expedición y manejo siguen igual.
+  - **Sistemas:** seis ruedas de 80 cm con balancín articulado; taladro de 2 m con la mecha y tres barras de 50 cm (como Rosalind Franklin, ESA); dron explorador (como Ingenuity); MMRTG y alas solares; mástil con LiDAR que gira y cámaras; cámara de suelo y focos.
+  - **Acciones:** Alas, Dron (sale 30 m adelante a 10 m del suelo y vuelve) y Perforar 2 m (muestra simulada al final). Tocar el rover abre su ficha; también está en la wiki.
+  - Los números con fuente están en la ficha; lo propio (tamaño, ruedas, LiDAR) dice "supuesto" o "propuesta del equipo".
+- Arreglado: la página no terminaba de cargar porque la base usaba una variable de otro bloque (`R is not defined`). Ahora `BASE.radio`.
+- Falta: ver `docs/desarrollo/pendientes.md` (ítems 13 a 15).
+
 ## 2026-11-15 madrugada (2) · Compañero (con Claude) · GALE EARTH: CAPAS DE MINERALES Y RADIACIÓN, RELOJ EN VIVO, POZOS Y FUENTES
 - **Expedición fuera de Gale Earth:** la sigue otro compañero. El código quedó en `gale-earth/para-companero/expedicion/` (ver su README); las capas siguen en `capas/expedicion/`.
 - **Sin "Abrir en el celular" ni QR:** se borraron el botón, la ventana y la librería que se bajaba de internet. El diseño para celular (hoja deslizable) sigue.

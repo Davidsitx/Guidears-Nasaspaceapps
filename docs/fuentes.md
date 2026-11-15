@@ -98,6 +98,16 @@ En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENT
 
 | Demora de la luz Tierra–Marte (misión en pareja y wiki) | NASA JPL Solar System Dynamics, "Approximate Positions of the Planets" (elementos de Standish, 1800–2050); cálculo propio de la distancia y del tiempo de la luz |
 
+| Base Gale: hábitat con blindaje de hielo (idea) | NASA Langley 2016, Mars Ice Home (phys.org/news/2016-12-nasa-ice-house-mars.html) |
+| Base Gale: reactor de fisión de al menos 40 kW | NASA Glenn, Fission Surface Power (nasa.gov/centers-and-facilities/glenn/nasas-fission-surface-power-project-energizes-lunar-exploration) |
+| Base Gale: oxígeno del CO₂ (122 g en 16 corridas, hasta 12 g/h) | NASA 2023, MOXIE (phys.org/news/2023-09-nasa-oxygen-generating-moxie-mars-mission.html) |
+| Base Gale: suitports (salida en menos de 30 min, sin polvo adentro) | NASA JSC 2012, NTRS 20120018014 |
+| Rover GX-2: taladro de 2 m, tres barras de ~50 cm, muestras cada 50 cm | ESA Exploration Science, ExoMars Rosalind Franklin (explorationscience.esa.int/?p=2323) |
+| Rover GX-2: avance de 0,3 a 30 mm/min, menos de 100 W, prueba a 1,7 m | ESA 2021, "First deep drilling success for ExoMars" (esa.int) |
+| Curiosity perfora 6,4 cm | NASA, "Curiosity's First Sample Drilling" (science.nasa.gov/resource/curiositys-first-sample-drilling) |
+| Rover GX-2: dron (72 vuelos, ~128,8 min, 17 km) | NASA, Ingenuity Mars Helicopter (science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/) |
+| Rover GX-2: MMRTG de ~110 W al empezar | NASA, hoja técnica del MMRTG (science.nasa.gov/wp-content/uploads/2024/02/mmrtg-factsheet-updated-5-18-20-1.pdf) |
+
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
 | Relieve de todo Marte (fondo de la escena: alrededores de Gale y el planeta) | MOLA MEGDR 16 píxeles/grado, megt90n000eb.img (MGS MOLA, Smith et al. 2003, NASA PDS Geosciences Node). Copia pública: github.com/benbrittain/Barsoom (data/MEGDR). Control: −4509 m en el sitio de aterrizaje (publicado −4501 m); contra el DEM de la travesía, +5 ± 41 m |
 | Color de todo Marte (fondo de la escena) | Viking MDIM 2.1 en color (NASA/USGS, Mars Trek), `gale-earth/capas/viking_color_8k.jpg` (2,6 km/píxel), con realce de color propio |

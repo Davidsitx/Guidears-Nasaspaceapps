@@ -125,7 +125,7 @@ Al elegir, el globo se corre al centro con Gale en el medio, la portada se funde
 ![Wiki](capturas/07_wiki.jpg)
 
 - Pantalla completa con el mismo fondo que la portada: buscador arriba, secciones a la izquierda y contenido a la derecha.
-- **Secciones:** Por qué Gale · Paradas de hoy · Perforaciones · Expedición sur · Clima y estaciones · Rover y astronauta · Comunicaciones · Fuentes.
+- **Secciones:** Por qué Gale · Paradas de hoy · Perforaciones · Expedición sur · Clima y estaciones · Rover y astronauta · Comunicaciones · Base Gale · Rover GX-2 · Fuentes.
 - **Buscador:** filtra las secciones, cuenta las coincidencias y las resalta (`<mark>`).
 - **Perforaciones:** lista por campaña. Al tocar una, se ve la ficha completa dentro de la wiki, con "← Todas las perforaciones".
 - Los botones que llevan a la escena ("Ver en 3D", "Caminar hasta acá", "Viajar hasta acá") cierran la wiki.
@@ -136,3 +136,19 @@ Al elegir, el globo se corre al centro con Gale en el medio, la portada se funde
 - **Globo de Marte en CesiumJS:** órbitas (MRO, Odyssey, Mars Express, TGO, Hope), Fobos y Deimos, base, Biblioteca de los 49 pozos, línea de tiempo y expedición de 20 km.
 - **Desde la portada:** sin hash arranca en el espacio (`irA('marte')`) y a los 2,6 s vuela a la vista del cráter (`irA('gale')`).
 - **Vuelta:** su botón "Misión Curiosity · 3D" vuelve a la escena (`#desde-gale-earth`), que baja desde lo alto hasta la zona de hoy.
+
+## 8. Base Gale y rover GX-2 (próximas excavaciones)
+
+![Base Gale](capturas/08_base_gale.jpg)
+
+- **Base Gale:** está en la zona de hoy, con el marcador "BG". El lugar sale de los datos (llano, sin arena, cerca de Curiosity y lejos de las rutas). Cada parte se toca y abre su ficha con fuente:
+  - hábitat, túneles, laboratorio y esclusa con suitports;
+  - invernadero, campo solar, reactor, antena y estación meteorológica;
+  - planta de oxígeno, agua, garaje, luces y plataforma.
+- **Código:** bloque `const BASE` (elección del lugar) y `if (BASE) { … }` (modelos) en `plantilla.html`. Las partes van con `parte(clave, objeto)` y sus textos están en `PARTES_BASE`.
+
+![Rover GX-2](capturas/09_rover_gx2.jpg)
+
+- **Rover GX-2:** en Escena → Rover se elige entre Curiosity y GX-2. Copia la posición, el rumbo y la inclinación del rover de la escena (`RN.seguir()` en el bucle), así que todo lo demás sigue igual.
+- **Acciones:** Alas, Dron y Perforar 2 m. Tocarlo abre la ficha (`htmlGX`), que también está en la wiki.
+- **Código:** `RN` en `plantilla.html`; las funciones son `rnActivar`, `rnPerforar`, `rnDron` y `rnBoton`.
