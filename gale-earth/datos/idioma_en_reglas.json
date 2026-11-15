@@ -1,0 +1,226 @@
+[
+ [
+  "APXS: ODR no publica química APXS para este pozo\\.",
+  "APXS: ODR does not publish APXS chemistry for this drill hole."
+ ],
+ [
+  "APXS: ODR usa (\\S+) con valores algo distintos a nuestras filas PDS \\(otra versión de calibración; diferencia ([\\d.,]+)\\)\\)\\. Se conservan ambos; la referencia es la tabla del PDS supplement\\.",
+  "APXS: ODR uses $1 with slightly different values from our PDS rows (another calibration version; difference $2). Both are kept; the reference is the PDS supplement table."
+ ],
+ [
+  "APXS: el PDS publicó la química hasta el sol (\\d+) \\(marzo de (\\d+)\\); este pozo es posterior y sale en la próxima entrega\\.",
+  "APXS: the PDS published chemistry up to sol $1 (March $2); this drill hole is later and comes in the next release."
+ ],
+ [
+  "APXS: el análisis que ODR asigna al pozo es idéntico a una fila que ya teníamos del PDS \\((sol [^)]*)\\)\\. No se duplicó\\.",
+  "APXS: the analysis ODR assigns to this drill hole is identical to a PDS row we already had ($1). Not duplicated."
+ ],
+ [
+  "CheMin: ODR no lista archivo de minerales para este pozo; el del PDS que ya teníamos sigue siendo la fuente\\.",
+  "CheMin: ODR lists no mineral file for this drill hole; the PDS one we already had remains the source."
+ ],
+ [
+  "CheMin: el PDS tiene los datos crudos hasta el sol (\\d+) y la mineralogía publicada es anterior; este pozo sale en una próxima entrega\\.",
+  "CheMin: the PDS has raw data up to sol $1 and the published mineralogy is older; this drill hole comes in an upcoming release."
+ ],
+ [
+  "CheMin: los (\\d+) archivo\\(s\\) de minerales que lista ODR ya estaban en Datos Crudos/CheMin \\(sin duplicar\\)\\.",
+  "CheMin: the $1 mineral file(s) listed by ODR were already in Datos Crudos/CheMin (not duplicated)."
+ ],
+ [
+  "SAM: no hay experimentos de SAM sobre muestras sólidas publicados en el PDS entre este pozo y el siguiente \\(no todas las muestras van a SAM, y los más nuevos todavía no se liberaron\\)\\.",
+  "SAM: no SAM solid-sample experiments are published in the PDS between this drill hole and the next (not every sample goes to SAM, and the newest are not released yet)."
+ ],
+ [
+  "SAM: ODR confirma (\\d+) experimento\\(s\\) que ya teníamos",
+  "SAM: ODR confirms $1 experiment(s) we already had"
+ ],
+ [
+  "SAM: ODR no lista experimentos SAM propios de este pozo",
+  "SAM: ODR lists no SAM experiments of this drill hole"
+ ],
+ [
+  "agrega (\\d+) que nuestra ventana de soles no había asignado",
+  "adds $1 that our sol window had not assigned"
+ ],
+ [
+  "(\\d+) de los nuestros son de otra muestra según ODR",
+  "$1 of ours belong to another sample according to ODR"
+ ],
+ [
+  ", separados en el zip",
+  ", kept apart in the zip"
+ ],
+ [
+  "(\\d+) siguen sin confirmar",
+  "$1 still unconfirmed"
+ ],
+ [
+  ": pueden ser de este pozo, de calibración o de atmósfera\\.",
+  ": they may be from this drill hole, calibration or the atmosphere."
+ ],
+ [
+  "\\(arena, pala\\)",
+  "(sand, scoop)"
+ ],
+ [
+  "\\(arena de duna, pala\\)",
+  "(dune sand, scoop)"
+ ],
+ [
+  "^de otra muestra: ",
+  "from another sample: "
+ ],
+ [
+  "^PDS: designación ",
+  "PDS: designation "
+ ],
+ [
+  "^confirmado · PDS: designación ",
+  "confirmed · PDS: designation "
+ ],
+ [
+  "^confirmado · ODR$",
+  "confirmed · ODR"
+ ],
+ [
+  "parte (\\d+) de ",
+  "part $1 of "
+ ],
+ [
+  "continuación de ",
+  "continuation of "
+ ],
+ [
+  "\\(nombre de la corrida\\)",
+  "(run name)"
+ ],
+ [
+  "^nombre de la corrida$",
+  "run name"
+ ],
+ [
+  "^blanco del instrumento \\(corrida sin muestra\\)$",
+  "instrument blank (run without sample)"
+ ],
+ [
+  "^limpieza/calibración de la copa \\(sin muestra\\)$",
+  "cup cleaning/calibration (no sample)"
+ ],
+ [
+  "^medición de la atmósfera \\(sin muestra sólida\\)$",
+  "atmosphere measurement (no solid sample)"
+ ],
+ [
+  "^corrida de muestra sólida en los soles posteriores a la perforación, sin designación publicada$",
+  "solid-sample run in the sols after drilling, with no published designation"
+ ],
+ [
+  "^NUEVO: química APXS de la muestra del pozo \\((\\S+)\\), sacada de ODR\\. Nuestro PDS llegaba hasta el sol (\\d+) y no la tenía\\. Está en Datos Crudos/APXS/apxs_oxidos_y_trazas_ODR\\.csv\\.$",
+  "NEW: APXS chemistry of the drill-hole sample ($1), taken from ODR. Our PDS copy reached sol $2 and did not have it. It is in Datos Crudos/APXS/apxs_oxidos_y_trazas_ODR.csv."
+ ],
+ [
+  "^\\(blancos del instrumento, limpieza de copa o atmósfera\\): ",
+  "(instrument blanks, cup cleaning or atmosphere): "
+ ],
+ [
+  "blanco del instrumento \\(corrida sin muestra\\)",
+  "instrument blank (run without sample)"
+ ],
+ [
+  "limpieza/calibración de la copa \\(sin muestra\\)",
+  "cup cleaning/calibration (no sample)"
+ ],
+ [
+  "medición de la atmósfera \\(sin muestra sólida\\)",
+  "atmosphere measurement (no solid sample)"
+ ],
+ [
+  "^Error en la fuente: ODR muestra (.*), valor imposible \\(probable error de tipeo en la base\\)\\. No se usa en cálculos\\.$",
+  "Error in the source: ODR shows $1, an impossible value (probably a typo in the database). Not used in calculations."
+ ],
+ [
+  "^⚠ (.*): la cantidad no es físicamente posible para una porción de ~(\\d+) mg \\(supuesto\\); posible error de unidades en la tabla de PDS\\. No se usa en los cálculos\\.$",
+  "⚠ $1: the amount is not physically possible for a ~$2 mg portion (assumption); possible unit error in the PDS table. Not used in calculations."
+ ],
+ [
+  "^Análisis del sol (\\d+) ·$",
+  "Analysis of sol $1 ·"
+ ],
+ [
+  "^· experimento (\\d+) · pirólisis$",
+  "· experiment $1 · pyrolysis"
+ ],
+ [
+  "^· experimento (\\d+) · combustión$",
+  "· experiment $1 · combustion"
+ ],
+ [
+  "^· experimento (\\d+) · derivatización$",
+  "· experiment $1 · derivatization"
+ ],
+ [
+  " · objetivo$",
+  " · target"
+ ],
+ [
+  "^NASA PDS, tabla APXS supplement \\(ds01\\)",
+  "NASA PDS, APXS supplement table (ds01)"
+ ],
+ [
+  "^ODR \\(muestra entregada al laboratorio del rover\\)",
+  "ODR (sample delivered to the rover's laboratory)"
+ ],
+ [
+  "^NASA, blog del (\\d+) de marzo de (\\d+)",
+  "NASA, blog of March $1, $2"
+ ],
+ [
+  "^NASA, blog soles (\\S+) y (\\S+)",
+  "NASA, blog sols $1 and $2"
+ ],
+ [
+  "^NASA, blog soles (\\S+)",
+  "NASA, blog sols $1"
+ ],
+ [
+  "\\(Bristow y Lafuente\\)",
+  "(Bristow and Lafuente)"
+ ],
+ [
+  "^starkeyíta ",
+  "starkeyite "
+ ],
+ [
+  "^akaganeíta ",
+  "akaganeite "
+ ],
+ [
+  "^confirmado · blog de Curiosity \\(soles ([^)]*)\\): TMAH sobre (.*)$",
+  "confirmed · Curiosity blog (sols $1): TMAH on $2"
+ ],
+ [
+  "designation nombre de la corrida",
+  "designation run name"
+ ],
+ [
+  "^paso (\\d+): evaporación del reactivo\\.",
+  "step $1: reagent evaporation."
+ ],
+ [
+  "^paso (\\d+): calentamiento medio\\.",
+  "step $1: medium heating."
+ ],
+ [
+  "^paso (\\d+): calentamiento completo\\.",
+  "step $1: full heating."
+ ],
+ [
+  " Picos del cromatógrafo \\(área en cuentas/s², tiempo en s\\); PDS todavía no publica qué molécula es cada pico\\.$",
+  " Chromatograph peaks (area in counts/s², time in s); the PDS does not yet say which molecule each peak is."
+ ],
+ [
+  "^· experimento (\\d+) · química húmeda con TMAH$",
+  "· experiment $1 · TMAH wet chemistry"
+ ]
+]

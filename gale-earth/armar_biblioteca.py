@@ -205,6 +205,23 @@ def aplicar_apxs_pds(pozos, ruta=os.path.join(AQUI, "datos", "apxs_pds.json")):
             p["falta"] = [f for f in p["falta"] if not f.startswith("APXS")]
 
 
+def aplicar_apxs_rdr(pozos, ruta=os.path.join(AQUI, "datos", "apxs_rdr_correcciones.json")):
+    """Reemplaza la química APXS por la del producto RDR oficial del PDS, con su objetivo real (verificado el 15/11/2026).
+    Hace falta porque la tabla de cada carpeta marcaba como 'del pozo' mediciones de rocas vecinas (Greenhorn tenía la de Big Sky)."""
+    if not os.path.exists(ruta):
+        return
+    cor = json.load(open(ruta, encoding="utf-8"))["pozos"]
+    for p in pozos:
+        a = cor.get(str(p.get("n")))
+        if a:
+            p["apxs"] = a
+    ruta2 = os.path.join(AQUI, "datos", "hallazgos_verificados.json")
+    if os.path.exists(ruta2):
+        txt = json.load(open(ruta2, encoding="utf-8"))["pozos"]
+        for p in pozos:
+            p.update(txt.get(str(p.get("n")), {}))
+
+
 def limpiar_faltas(pozos):
     """Quita avisos viejos de 'falta' que ya se resolvieron (clima REMS y radiación RAD están en la Biblioteca)."""
     for p in pozos:
@@ -354,6 +371,7 @@ def main():
     with open(SALIDA_JSON, "w", encoding="utf-8") as f:
         revisar_sam(pozos)
         aplicar_apxs_pds(pozos)
+        aplicar_apxs_rdr(pozos)
         agregar_tmah(pozos)
         agregar_blog(pozos)
         limpiar_faltas(pozos)
