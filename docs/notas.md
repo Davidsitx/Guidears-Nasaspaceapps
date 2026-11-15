@@ -2,6 +2,13 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (2) · Compañero (con Claude) · UNA SOLA CAPA DE ALTITUD Y NOMBRES SIEMPRE A LA VISTA
+- "Relieve en color (llanuras → montañas)" y "Colores de altitud" eran lo mismo con distinta escala y resolución. Ahora son una sola casilla, **Colores de altitud**, con un selector de escala:
+  - **Marte entero** (por defecto): la misma rampa de −8,2 a +21,2 km en todo el planeta. En el área de Curiosity se ve con el DEM USGS de 1 m (`capas/gale_5m/relieve_mola.webp`, 15 m/px).
+  - **Zona de Curiosity:** la imagen anterior con más contraste (`relieve_color.png`).
+- La capa global es más viva: opacidad 0,85 (antes 0,6), con sombreado de relieve y un control de opacidad.
+- **Topónimos de la IAU prendidos desde el inicio;** se pueden apagar en Capas. Van pegados al suelo, así que el planeta tapa los que quedan detrás del horizonte (antes "Elysium Mons" se veía desde Gale).
+
 ## 2026-11-15 mañana · Compañero (con Claude) · THEMIS SIN RAYAS EN LOS POLOS
 - Las rayas negras cerca de los polos eran franjas sin datos del mosaico THEMIS de USGS, que vienen pintadas de negro. Ahora son transparentes: las franjas THEMIS pasaron de .jpg a .webp con canal alfa.
 - El mosaico THEMIS llega solo hasta ±65°. Más allá se ve la foto de fondo, y el borde se esfuma en los últimos 3° para que no parezca un casquete.

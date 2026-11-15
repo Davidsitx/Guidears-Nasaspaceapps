@@ -785,7 +785,6 @@ const VIS = { recorrido: true, pozos: true, etiquetas: true, orbitas: true, base
 // Se generan con herramientas/gale_datos.py a partir del DEM de 1 m y el mosaico HiRISE de 25 cm (USGS/NASA).
 // Necesitan abrirse por http (abrir.bat / abrir.sh): desde file:// el navegador no deja usarlas en WebGL.
 const ANALISIS = [
-  ['relieve_color', 'Relieve en color (llanuras → montañas)', 'Falso color por altura con sombreado: azul = llanuras bajas, verde-amarillo = laderas, rojo-blanco = Monte Sharp.', 0.75],
   ['orto_color', 'Foto HiRISE coloreada por altura', 'Brillo de la foto HiRISE (25 cm, reducida) con el color de la altura. Donde no hay foto se usa el sombreado.', 0.85],
   ['zonas_prohibidas', 'Zonas prohibidas por pendiente', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite).', 0.9],
   ['dosis', 'Radiación en superficie (día / noche)', 'Dosis de rayos cósmicos medida por RAD, corregida por el cielo que tapa el relieve. Rojo = más dosis, azul = menos. De noche la presión del aire sube y la dosis baja cerca de un 5 % (RAD).', 0.5],

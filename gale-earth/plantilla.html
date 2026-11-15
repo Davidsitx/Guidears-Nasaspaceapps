@@ -1161,7 +1161,6 @@ const VIS = { recorrido: true, pozos: true, etiquetas: true, orbitas: true, base
 // Se generan con herramientas/gale_datos.py a partir del DEM de 1 m y el mosaico HiRISE de 25 cm (USGS/NASA).
 // Necesitan abrirse por http (abrir.bat / abrir.sh): desde file:// el navegador no deja usarlas en WebGL.
 const ANALISIS = [
-  ['relieve_color', 'Relieve en color (llanuras → montañas)', 'Falso color por altura con sombreado: azul = llanuras bajas, verde-amarillo = laderas, rojo-blanco = Monte Sharp.', 0.75],
   ['orto_color', 'Foto HiRISE coloreada por altura', 'Brillo de la foto HiRISE (25 cm, reducida) con el color de la altura. Donde no hay foto se usa el sombreado.', 0.85],
   ['zonas_prohibidas', 'Zonas prohibidas por pendiente', 'Violeta: prohibida para astronauta y rover. Rojo: solo rover. Naranja: solo astronauta. Amarillo: precaución (5° bajo el límite).', 0.9],
   ['dosis', 'Radiación en superficie (día / noche)', 'Dosis de rayos cósmicos medida por RAD, corregida por el cielo que tapa el relieve. Rojo = más dosis, azul = menos. De noche la presión del aire sube y la dosis baja cerca de un 5 % (RAD).', 0.5],
@@ -1871,7 +1870,7 @@ addEventListener('keydown', e => {
 // ==================== Capas de todo Marte ====================
 // Colores de altitud (relieve MOLA/HRSC del propio globo), infrarrojo nocturno THEMIS, topónimos de la IAU,
 // lugares de aterrizaje y día/noche en este momento. Datos en capas/global/ (herramientas/capas_globales.py).
-const MG = { meta: null, rampa: false, themis: [], nombres: null, aterrizajes: null, noche: null, nocheT: 0, vis: {} };
+const MG = { meta: null, rampa: false, local: null, escala: 'marte', alfa: 0.85, themis: [], nombres: null, aterrizajes: null, noche: null, nocheT: 0, vis: {} };
 
 async function mgMeta() { if (!MG.meta) MG.meta = await (await fetch('capas/global/global.json')).json(); return MG.meta; }
 const mgError = () => avisar(location.protocol === 'file:' ? 'Para ver las capas de todo Marte abrí Gale Earth con abrir.bat (o desde la página publicada).' : 'No se pudo cargar la capa.', 9000);
@@ -1884,17 +1883,32 @@ async function mgRampa(on) {
     try { const a = (await mgMeta()).altitud, capas = capasImagen(); if (!capas) return; MG.rampa = [];
       for (const [arch, o, e] of [[a.oeste, -180, 0], [a.este, 0, 180]]) {   // filas en latitud geodética: van directo al rectángulo
         const L = capas.addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/global/' + arch, { rectangle: C.Rectangle.fromDegrees(o, -90, e, 90) }));
-        L.alpha = 0.6; MG.rampa.push(L); }
+        MG.rampa.push(L); }
     } catch { MG.rampa = false; return mgError(); }
   }
-  if (MG.rampa) for (const L of MG.rampa) L.show = on;
+  if (MG.rampa) for (const L of MG.rampa) { L.show = on; L.alpha = MG.alfa; }
+  await mgRampaLocal();
+}
+// detalle fino en el área de Curiosity (DEM USGS de 1 m llevado a 5 m): con la escala de todo Marte o con más contraste
+async function mgRampaLocal() {
+  const r = D.capas5m && D.capas5m.rect_geodetico, capas = capasImagen(); if (!r || !capas) return;
+  const arch = MG.escala === 'marte' ? 'relieve_mola.webp' : 'relieve_color.png';
+  if (MG.local && MG.local.arch !== arch) { capas.remove(MG.local, true); MG.local = null; }
+  if (MG.vis.rampa && !MG.local) {
+    try { MG.local = capas.addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/gale_5m/' + arch, { rectangle: C.Rectangle.fromDegrees(r[0], r[1], r[2], r[3]) })); MG.local.arch = arch; }
+    catch { return; }
+  }
+  if (MG.local) { MG.local.show = !!MG.vis.rampa; MG.local.alpha = Math.min(1, MG.alfa + 0.1); }
 }
 function mgLeyendaRampa() {
+  if (MG.escala === 'zona') return `<div class="sub" style="margin:2px 0 6px"><div style="height:10px;border-radius:5px;background:linear-gradient(90deg,#2b3a8c,#2f8fd0,#46c08a,#e3d35a,#e0703a,#f4ece6)"></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px"><span>−4,6 km</span><span>zona de Curiosity</span><span>−0,3 km</span></div>
+    Más contraste solo en el área de Curiosity (DEM USGS de 1 m): azul = llanuras bajas del cráter, amarillo = laderas, blanco = Monte Sharp. Afuera sigue la escala de todo Marte. <span class="tag">medido</span></div>`;
   const lo = RAMPA.cortes[0][0], hi = RAMPA.cortes.at(-1)[0];
   const g = `linear-gradient(90deg,${RAMPA.cortes.map(([h, c]) => `${c} ${((h - lo) / (hi - lo) * 100).toFixed(1)}%`).join(',')})`;
   return `<div class="sub" style="margin:2px 0 6px"><div style="height:10px;border-radius:5px;background:${g}"></div>
     <div style="display:flex;justify-content:space-between;font-size:11px"><span>−8,2 km</span><span>0</span><span>+5</span><span>+12</span><span>+21,2 km</span></div>
-    Altura sobre el nivel de referencia de Marte (datum MOLA). Relieve HRSC-MOLA de 200 m (USGS), que combina el altímetro láser MOLA de Mars Global Surveyor (NASA, 1996–2001) con la cámara HRSC de Mars Express (ESA). <span class="tag">medido</span></div>`;
+    Altura sobre el nivel de referencia de Marte (datum MOLA), con los mismos colores en todo el planeta; en el área de Curiosity se ve con el detalle del DEM de 1 m del USGS. Relieve global HRSC-MOLA de 200 m (USGS), que combina el altímetro láser MOLA de Mars Global Surveyor (NASA, 1996–2001) con la cámara HRSC de Mars Express (ESA). <span class="tag">medido</span></div>`;
 }
 // Las teselas guardan la altura sobre el elipsoide de Cesium; para hablar en "datum MOLA" se vuelve a la esfera de 3396,19 km.
 function alturaMola(h, latc) { const p = latc * Math.PI / 180, r = A * B / Math.sqrt((B * Math.cos(p)) ** 2 + (A * Math.sin(p)) ** 2); return h - (3396190 - r); }
@@ -1917,17 +1931,18 @@ async function mgNombres(on) {
   MG.vis.nombres = on;
   if (on && !MG.nombres) {
     let lista; try { lista = await (await fetch('capas/global/toponimos.json')).json(); } catch { return mgError(); }
-    MG.nombres = viewer.scene.primitives.add(new C.LabelCollection());
+    MG.nombres = viewer.scene.primitives.add(new C.LabelCollection({ scene: viewer.scene }));
     const etiquetas = [];
     for (const [n, lon, lat, d] of lista) {
       if (/(^|\s)Gale$/.test(n)) continue;                     // Gale ya tiene su propio cartel
       const grande = d >= 1000, medio = d >= 200;
       const lejos = Math.min(2.6e7, Math.max(1.5e5, d * 5000));  // los grandes se ven desde lejos; los chicos al acercarse
-      etiquetas.push({ n, d, lon, lat, l: MG.nombres.add({ position: pos(lon, lat, 4000), text: n,
+      etiquetas.push({ n, d, lon, lat, l: MG.nombres.add({ position: pos(lon, lat, 0), text: n,
         font: grande ? '600 15px system-ui' : medio ? '500 13px system-ui' : '12px system-ui',
         fillColor: C.Color.fromCssColorString(grande ? '#ffffff' : '#f2e8dc'), outlineColor: C.Color.BLACK, outlineWidth: 4,
         style: C.LabelStyle.FILL_AND_OUTLINE, horizontalOrigin: C.HorizontalOrigin.CENTER, verticalOrigin: C.VerticalOrigin.CENTER,
-        distanceDisplayCondition: new C.DistanceDisplayCondition(0, lejos), disableDepthTestDistance: 3e6, heightReference: C.HeightReference.NONE }) });
+        distanceDisplayCondition: new C.DistanceDisplayCondition(0, lejos), heightReference: C.HeightReference.CLAMP_TO_GROUND, eyeOffset: new C.Cartesian3(0, 0, -2000),
+        disableDepthTestDistance: 60000 }) });   // pegados al suelo: el planeta tapa los que quedan detrás del horizonte
     }
     // altura aproximada de montes y llanuras grandes, leída del relieve del globo
     const conAltura = etiquetas.filter(e => e.d >= 150 && /\b(Mons|Montes|Planitia|Planum|Tholus|Patera)\b/.test(e.n));
@@ -1991,7 +2006,10 @@ viewer.clock.onTick.addEventListener(() => { if (!MG.vis.noche) return; const t 
 function mgSeccionCapas() {
   const f = (k, t, d) => `<label class="fila"><span>${t}</span><input type="checkbox" data-mg="${k}" ${MG.vis[k] ? 'checked' : ''}></label>${d ? `<div class="sub">${d}</div>` : ''}`;
   return `<h2>Todo Marte</h2>
-    ${f('rampa', 'Colores de altitud', '')}${mgLeyendaRampa()}
+    ${f('rampa', 'Colores de altitud', '')}
+    <div class="fila"><span>Escala</span><span class="seg" id="mgEsc"><button data-e="marte" class="${MG.escala === 'marte' ? 'on' : ''}">Marte entero</button><button data-e="zona" class="${MG.escala === 'zona' ? 'on' : ''}">Zona de Curiosity</button></span></div>
+    <div class="fila"><span>Opacidad</span><input type="range" id="mgAlfa" min="0.2" max="1" step="0.05" value="${MG.alfa}" style="width:140px"></div>
+    <div id="mgLey">${mgLeyendaRampa()}</div>
     ${f('themis', 'Infrarrojo nocturno (THEMIS)', 'Cómo se ve Marte de noche con la cámara térmica de la sonda Mars Odyssey (NASA): claro = más tibio (roca, costras), oscuro = más frío (polvo, arena fina). De 65°S a 65°N. <span class="tag">medido · cualitativo</span>')}
     ${f('nombres', 'Topónimos (IAU)', 'Los nombres oficiales de montes, llanuras, valles y cráteres aprobados por la Unión Astronómica Internacional. Los más grandes se ven de lejos; los chicos, al acercarse. Entre paréntesis, la altura aproximada en el centro de montes y llanuras grandes (datum MOLA; la cumbre o el fondo pueden estar más arriba o más abajo).')}
     ${f('aterrizajes', 'Lugares de aterrizaje (Misiones)', 'Las misiones que llegaron a la superficie, con los datos de la pestaña Historia.')}
@@ -1999,8 +2017,14 @@ function mgSeccionCapas() {
     <p class="fuente">Relieve: ${url('https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m', 'USGS, HRSC-MOLA Blended DEM 200 m')}. THEMIS: ${url('https://astrogeology.usgs.gov/search/map/themis_night_ir_controlled_mosaics_100m_v2', 'USGS, THEMIS Night IR Controlled Mosaics')}. Nombres: ${url('https://planetarynames.wr.usgs.gov/', 'planetarynames.wr.usgs.gov')} (IAU/USGS). Día y noche: algoritmo Mars24 de NASA (${url('https://www.giss.nasa.gov/tools/mars24/', 'giss.nasa.gov/tools/mars24')}).</p>`;
 }
 function mgEnganchar() {
+  cont().querySelectorAll('#mgEsc button').forEach(b => b.onclick = async () => { MG.escala = b.dataset.e; cont().querySelectorAll('#mgEsc button').forEach(x => x.classList.toggle('on', x === b)); $('mgLey').innerHTML = mgLeyendaRampa(); await mgRampaLocal(); });
+  if ($('mgAlfa')) $('mgAlfa').oninput = e => { MG.alfa = +e.target.value; if (MG.rampa) for (const L of MG.rampa) L.alpha = MG.alfa; if (MG.local) MG.local.alpha = Math.min(1, MG.alfa + 0.1); };
   cont().querySelectorAll('[data-mg]').forEach(el => el.onchange = () => ({ rampa: mgRampa, themis: mgThemis, nombres: mgNombres, aterrizajes: mgAterrizajes, noche: mgNoche })[el.dataset.mg](el.checked));
 }
+
+// Los nombres oficiales se muestran desde el inicio (se pueden apagar en Capas → Todo Marte).
+MG.vis.nombres = true;
+setTimeout(() => { if (MG.vis.nombres && location.protocol.startsWith('http')) mgNombres(true); }, 3500);
 abrir('explorar', false);
 const h = location.hash.match(/pozo-(\d+)/); if (h) setTimeout(() => fichaPozo(NUM[+h[1] - 1], true), 3500);
 window.__gale = { viewer, POZOS, SITIOS, O, kepler, subpunto, proximoPaso };

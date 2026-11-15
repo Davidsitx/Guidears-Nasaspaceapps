@@ -71,7 +71,7 @@ def main():
     print('THEMIS', W, H, '· nombres', len(nombres), 'descartados', descartados)
 
 
-if __name__ == '__main__' and '--altitud' not in sys.argv:
+if __name__ == '__main__' and '--altitud' not in sys.argv and '--local' not in sys.argv:
     main()
 
 
@@ -101,11 +101,7 @@ def altitud(zip_global, nivel=5):
     r_ell = A_ * B_ / np.sqrt((B_ * np.cos(latc)) ** 2 + (A_ * np.sin(latc)) ** 2)
     H = H - (R_ - r_ell)[:, None]                                      # altura sobre la esfera (≈ datum MOLA)
     xs = [p[0] for p in RAMPA]; cols = np.array([p[1] for p in RAMPA], np.float32)
-    rgb = np.stack([np.interp(H, xs, cols[:, k]) for k in range(3)], -1)
-    # sombreado suave para que se lea el relieve
-    gy, gx = np.gradient(H, 5000.0)
-    luz = np.clip(0.75 + 0.25 * (-gx * 0.7 + gy * 0.7) / np.sqrt(1 + gx ** 2 + gy ** 2) * 6, 0.45, 1.15)
-    rgb = np.clip(rgb * luz[..., None], 0, 255).astype(np.uint8)
+    rgb = colorear(H, 5000.0 / 4)   # sombreado exagerado ×4 para que se lea el relieve a escala de planeta
     W = rgb.shape[1]
     Image.fromarray(rgb[:, :W // 2]).save(os.path.join(SAL, 'altitud_oeste.jpg'), quality=85, optimize=True)
     Image.fromarray(rgb[:, W // 2:]).save(os.path.join(SAL, 'altitud_este.jpg'), quality=85, optimize=True)
@@ -118,6 +114,42 @@ def altitud(zip_global, nivel=5):
                                hellas=H[int((90 + 45) / 180 * H.shape[0]), int((180 + 67) / 360 * W)]).items()})
     json.dump(meta, open(os.path.join(SAL, 'global.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('altitud', rgb.shape, meta['altitud']['comprobacion'], 'min/max', round(float(H.min())), round(float(H.max())))
+
+
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 4) La misma escala de colores en el área de Curiosity, con el DEM fino del USGS (MSL Gale DEM Mosaic 1 m, llevado a
+#    5 m y resumido a 15 m): capas/gale_5m/relieve_mola.webp. Así "Colores de altitud" es una sola capa con los mismos
+#    colores adentro y afuera; adentro solo se ve más detalle.
+#    Uso: python capas_globales.py --local RUTA/msl_5m
+def sombreado(H, paso):
+    gy, gx = np.gradient(H, paso)
+    az, al = np.radians(315), np.radians(40)                     # luz desde el noroeste, 40° de altura
+    pend = np.arctan(np.hypot(gx, gy)); asp = np.arctan2(-gx, gy)
+    s = np.sin(al) * np.cos(pend) + np.cos(al) * np.sin(pend) * np.cos(az - asp)
+    return np.clip(0.55 + 0.6 * s, 0.55, 1.18)
+
+
+def colorear(H, paso):
+    xs = [p[0] for p in RAMPA]; cols = np.array([p[1] for p in RAMPA], np.float32)
+    rgb = np.stack([np.interp(H, xs, cols[:, k]) for k in range(3)], -1)
+    return np.clip(rgb * sombreado(H, paso)[..., None], 0, 255).astype(np.uint8)
+
+
+def relieve_local(base5m, K=3):
+    m5 = json.load(open(os.path.join(AQUI, 'capas', 'gale_5m', 'capas.json'), encoding='utf-8')); cp = m5['caja_planetocentrica']
+    z5 = np.load(base5m + '.npy', mmap_mode='r'); x0, y0, dx, dy = map(float, open(base5m + '.txt').read().split())
+    c0 = int(round((cp['lon_oeste'] - x0) / dx)); f0 = int(round((cp['lat_norte'] - y0) / dy))
+    H, W = cp['alto'] // K, cp['ancho'] // K
+    z = np.nanmean(np.asarray(z5[f0:f0 + H * K, c0:c0 + W * K], np.float32).reshape(H, K, W, K), axis=(1, 3))
+    val = np.isfinite(z); rgb = colorear(np.where(val, z, np.nanmean(z)), 5.0 * K)
+    Image.fromarray(np.dstack([rgb, np.where(val, 255, 0).astype(np.uint8)]), 'RGBA').save(os.path.join(AQUI, 'capas', 'gale_5m', 'relieve_mola.webp'), quality=85, method=6)
+    print('relieve local', rgb.shape, 'alturas', round(float(np.nanmin(z))), round(float(np.nanmax(z))))
+
+
+if __name__ == '__main__' and '--local' in sys.argv:
+    relieve_local(sys.argv[sys.argv.index('--local') + 1])
 
 
 if __name__ == '__main__' and '--altitud' in sys.argv:
