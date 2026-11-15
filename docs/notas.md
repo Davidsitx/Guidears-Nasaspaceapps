@@ -2,6 +2,33 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (12) · Compañero (con Claude) · VERIFICACIÓN DE LOS 59 HALLAZGOS DE POZOS + QUÍMICA APXS CORREGIDA + BIBLIOTECA EN INGLÉS
+- **Los 37 "a verificar" de `data/curiosity/perforaciones_hallazgos.json` (David) quedaron verificados.**
+  - Cada uno tiene ahora `verificado: true`, la fecha y su fuente concreta (artículo con DOI o página de NASA).
+  - Textos corregidos:
+    - Quela: el sitio de la medición de RAD quedó confirmado (butte M12, soles 1456-1467; el pozo es del sol 1464).
+    - Aberlady y Kilmarie: no tienen "el récord de arcillas"; el máximo de los 49 es Glen Etive 1, con 34 %.
+    - Glen Etive 1: unidad de arcillas fracturada.
+    - Mary Anning 3: se suma el resultado TMAH publicado en abril de 2026.
+    - Mineral King: es roca de capas **oscuras**, no clara.
+  - **David:** hay que volver a armar la escena para que desaparezca el cartel "a verificar":
+    1. `python herramientas/travesia_datos.py`
+    2. `python escena3d/armar.py`
+- **Los 22 hallazgos de la Biblioteca citados con artículo también están verificados.** Cambios:
+  - fuentes más precisas: Thorpe 2022, Rudolph 2022, Bennett 2023, Chipera 2023 (Canaima, en lugar de "Bristow y Chipera, AHED") y Williams 2026;
+  - Edinburgh: 7 % de esmectita, no 10 %;
+  - Rock Hall: Cl 2,3 %;
+  - Stoer: "más hematita de los 49" en lugar de "más óxido de hierro de la misión".
+- **Error de datos encontrado y corregido: química APXS cruzada en la Biblioteca.**
+  - Greenhorn mostraba la química de Big Sky; Oudam, la de Okoruso; Nevado Sajama, la de Tesoro del Pangal.
+  - Ahora los 27 pozos con diferencias toman el producto RDR oficial del PDS, y el objetivo sale del registro de actividades del PDS (`extras/msl_apxs_activities_*.csv`).
+  - Los textos ya traían los valores correctos (por ejemplo, Buckskin 73,7 % de SiO2 y Greenhorn 11,9 % de SO3).
+  - Para que no vuelva a pasar, `armar_biblioteca.py` aplica `datos/apxs_rdr_correcciones.json` y `datos/hallazgos_verificados.json`.
+- **Biblioteca en inglés:** las fichas de pozo seguían con títulos y notas en castellano.
+  - Se agregaron unas 60 entradas al diccionario.
+  - `idioma.js` ahora tiene reglas por frase para los textos que se repiten con distintos números (`datos/idioma_en_reglas.json`, que `_ensamblar.py` inyecta en la página).
+- Copiado a la PC y rearmado.
+
 ## 2026-11-15 mañana (11) · Compañero (con Claude) · AUDITORÍA DE GALE EARTH (ERRORES, FUENTES, ACTUALIDAD)
 - Informe completo: `docs/auditoria_gale_earth_2026-11-15.pdf`.
 - Barrido automático por 150 pantallas: 0 errores de JavaScript.

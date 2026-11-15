@@ -3,12 +3,17 @@
 // datos/idioma_en.json (frase en castellano → frase en inglés). Los números se sacan antes de buscar ({n}) y se
 // vuelven a poner en el mismo orden, así una misma frase sirve para todos los pozos y fechas.
 const DIC_EN = /*__IDIOMA_EN__*/{};
+const REGLAS_EN = /*__REGLAS_EN__*/[];
 const NUM_RE = /(?<![\w])[-−+]?\d[\d.,]*(?:e[-+]?\d+)?/g;
 function trad(s) {
   if (IDIOMA === 'es' || !s) return s;
   const lim = s.replace(/\s+/g, ' ').trim(); if (!lim) return s;
   const nums = [], k = lim.replace(NUM_RE, m => { nums.push(m); return '{n}'; });
-  const en = DIC_EN[k]; if (en == null) return s;
+  const en = DIC_EN[k];
+  if (en == null) {   // frases que se repiten con nombres y números distintos (fichas de la Biblioteca)
+    let o = lim; for (const [a, b] of REGLAS_EN) o = o.replace(new RegExp(a, 'g'), b);
+    return o === lim ? s : s.match(/^\s*/)[0] + o + s.match(/\s*$/)[0];
+  }
   let i = 0; const out = en.replace(/\{n\}/g, () => nums[i++] ?? '');
   return s.match(/^\s*/)[0] + out + s.match(/\s*$/)[0];
 }
