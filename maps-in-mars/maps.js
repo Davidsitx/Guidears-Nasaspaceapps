@@ -688,3 +688,43 @@ if (typeof mgNoche === 'function') { const mn0 = mgNoche; mgNoche = async functi
     .observe(document.body, { attributes: true, attributeFilter: ['class'] });
 }
 window.__maps = { UR, abrir: urAbrir, base: urIrBase, control: urControl, analizar: urAnalizar };
+
+// ==================== pantallas de cualquier tamaño ====================
+// En notebooks (1366 × 768 con la barra del navegador quedan ~650 px de alto) el riel no entraba y Ajustes, el idioma,
+// Ayuda y Pantalla quedaban abajo, fuera de la vista; con el planificador abierto, su barra y los botones de la derecha
+// se salían por arriba. Se compacta según el alto y el ancho disponibles. Probado de 1024 × 600 a 1920 × 940.
+document.head.insertAdjacentHTML('beforeend', `<style id="urTamanos">
+@media (min-width:761px){
+  #riel{overflow-y:auto;scrollbar-width:none}#riel::-webkit-scrollbar{display:none}   /* último recurso: nunca queda nada inaccesible */
+}
+@media (min-width:761px) and (max-height:900px){
+  #riel{gap:0;padding-top:calc(6px + var(--sup-seg));padding-bottom:6px}
+  #riel .logo{width:38px;height:38px;margin:0 0 6px;flex:none}
+  #riel .rb{padding:4px 0 3px;gap:1px;font-size:10px;flex:none}
+  #riel .rb svg.i{height:24px;padding:2px 12px}
+  #idiomaSel{margin-bottom:3px;flex:none}
+  #controles{gap:7px;bottom:38px}
+  #controles .cb{width:36px;height:36px}#brujula{width:40px!important;height:40px!important}
+  #plBarra{padding:4px 3px}
+  #plBarra .plMas{display:grid!important;grid-template-columns:repeat(2,40px);gap:2px;justify-items:center}
+  #plBarra:not(.abierta) .plMas{display:none!important}
+  #plBarra .plMas hr{grid-column:1/-1;width:60px}
+  #plBarra button{width:40px;height:30px}
+  #plBarra button[data-tip]:hover::after{right:auto;left:auto;right:calc(100% + 8px)}
+}
+@media (min-width:761px) and (max-height:680px){
+  #riel .rb{font-size:0;gap:0;padding:3px 0}       /* solo íconos: el nombre aparece al pasar el mouse (title) */
+  #riel .logo{width:32px;height:32px;margin-bottom:4px}
+  #controles{gap:6px}
+  #vRelieve{display:none}
+}
+@media (min-width:761px) and (max-height:560px){
+  #riel .logo,#rPantalla{display:none}
+  #controles .grupo{display:none}
+}
+@media (min-width:761px) and (max-width:1200px){
+  #bMision small{display:none}
+  body #miArriba,body.cajonAbierto:not(.hoja) #miArriba{top:calc(66px + var(--sup-seg));left:calc(var(--riel) + 12px)}
+  body.cajonAbierto:not(.hoja) #miArriba{left:calc(var(--riel) + 436px)}
+}
+</style>`);
