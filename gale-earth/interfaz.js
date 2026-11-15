@@ -204,3 +204,12 @@
   // Al rotar el celular o cambiar el tamaño, se ajusta el estado de la hoja.
   addEventListener('resize', () => document.body.classList.toggle('hoja', esCel() && !cajon.classList.contains('cerrado')));
 }
+
+// ---------- unión con GALE-3D: el botón lleva a la misión de Curiosity en 3D (../escena3d/index.html) ----------
+// Funciona abierto desde el repo (doble clic), con servir.py (sirve también /escena3d/) y en GitHub Pages.
+function entrarMision() {
+  try { irA('hoy'); } catch (e) {}
+  setTimeout(() => $('transicion').classList.add('on'), 1500);
+  setTimeout(() => { location.href = '../escena3d/index.html#desde-gale-earth'; }, 2200);
+}
+$('bMision').onclick = e => { e.preventDefault(); entrarMision(); };   // sin Cesium (sin internet) el enlace funciona igual

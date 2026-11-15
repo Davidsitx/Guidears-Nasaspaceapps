@@ -32,8 +32,8 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 | Dosis en el viaje (1,84 mSv/día; misión de referencia ~1,01 Sv) | RAD en crucero (Zeitlin et al. 2013), citado con Hassler et al. 2014 |
 | Duración de una salida con traje (hasta 8 h, 6 ± 2 h) | NASA EVA-EXP-0075 (NTRS 20200001071); NTRS 20210000827 |
 | Aviso ante tormentas solares (10 a 30 min; mínimo 30 min) | Parker et al., NASA Helio2050 (NTRS 20210014156). Base de nuestra regla "a no más de 30 min de un refugio" (supuesto) |
-| Terreno y color de toda la travesía (4 m y 3 m) | Archivos del equipo del 14/11 (`travesia_sur_*.tif`). La elevación coincide con el DEM USGS de Gale (Calef y Parker 2016). **Origen exacto del mosaico de color: a confirmar** |
-| Recorrido completo y 49 perforaciones (posición, sol, altura) | GeoPackage del equipo del 14/11 (`curiosity_recorrido_y_pozos.gpkg`). **Origen exacto: a confirmar** |
+| Terreno y color de toda la travesía (4 m y 3 m) | Archivos del compañero del 14/11 (`travesia_sur_*.tif`), recortados con GDAL (`gdal_translate -projwin` sobre `/vsicurl/`). **Elevación:** USGS MSL_Gale_DEM_Mosaic_1m_v3 (Calef y Parker 2016), remuestreado a 4 m. **Color:** mosaico HiRISE a color de Gale de USGS/ASC, `https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/Mars/MSL/MSL_Gale_HiRISE-LRGB_78quads_sharp_cog.tif`, remuestreado a 3 m. Se recortó a la franja con color real (norte −270000 a −289000 m); fuera de ella no hay color. Dunas muy oscuras guardadas como 0 en el mosaico |
+| Recorrido completo y 49 perforaciones (posición, sol, altura) | GeoPackage del compañero del 14/11 (`curiosity_recorrido_y_pozos.gpkg`). **Recorrido:** NASA, mapa en vivo de Curiosity, `https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_traverse.json` (hasta sol 5073). **Posición de cada pozo:** último punto de `MSL_waypoints.json` en el sol de la perforación o antes; es donde estaba estacionado el rover, no el pozo exacto (error de pocos metros). **Nombres y soles de los pozos:** lista del equipo; 1 a 42 según PIA26403 (NASA/JPL-Caltech/MSSS, 2024), 43 a 49 según el blog de Curiosity |
 | Qué es una perforación y qué se analiza (pozo de 16 mm; CheMin y SAM); pozo 42, Kings Canyon | NASA/JPL-Caltech/MSSS, PIA26403, "Curiosity's 42 Drill Holes" (27/8/2024) |
 | Lutita de lago en Yellowknife Bay (pozos 1 y 2) | Vaniman et al. 2014, Science |
 | Siderita en la unidad de sulfatos (pozos 36 a 39) | Tutolo et al. 2025, Science, doi:10.1126/science.ado9966 |
@@ -93,4 +93,12 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 
 En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).
 
+| Distancia total de Curiosity: más de 38,07 km (23,65 millas) al 12/10/2026 | NASA Science, blog de Perseverance, 12/10/2026, "NASA's Perseverance Sets Off-World Record for Total Distance Driven" (science.nasa.gov) |
+| Fichas de las 49 perforaciones en la escena (hallazgo, CheMin, APXS, SAM, fotos, agua en minerales) | Biblioteca de Gale Earth (`gale-earth/datos/biblioteca.json`, del compañero), que sale del PDS (CheMin, APXS, SAM), la base ODR (Bristow y Lafuente, doi:10.48484/JN48-YW52), artículos y el blog de Curiosity; fotos crudas NASA/JPL-Caltech/MSSS |
+
+| Demora de la luz Tierra–Marte (misión en pareja y wiki) | NASA JPL Solar System Dynamics, "Approximate Positions of the Planets" (elementos de Standish, 1800–2050); cálculo propio de la distancia y del tiempo de la luz |
+
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
+| Relieve de todo Marte (fondo de la escena: alrededores de Gale y el planeta) | MOLA MEGDR 16 píxeles/grado, megt90n000eb.img (MGS MOLA, Smith et al. 2003, NASA PDS Geosciences Node). Copia pública: github.com/benbrittain/Barsoom (data/MEGDR). Control: −4509 m en el sitio de aterrizaje (publicado −4501 m); contra el DEM de la travesía, +5 ± 41 m |
+| Color de todo Marte (fondo de la escena) | Viking MDIM 2.1 en color (NASA/USGS, Mars Trek), `gale-earth/capas/viking_color_8k.jpg` (2,6 km/píxel), con realce de color propio |
+| Imagen CTX alrededor de Gale (fondo de la escena, ~40 m cerca y ~330-650 m en la región) | Mosaico global CTX de 5 m (NASA/JPL/MSSS; Murray Lab, Caltech), servicio NASA–Esri astro.arcgis.com/arcgis/rest/services/OnMars/CTX (el mismo que usa Gale Earth). Se baja con `herramientas/bajar_ctx.py` o en vivo; el color sale del Viking |

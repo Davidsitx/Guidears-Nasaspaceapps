@@ -1,0 +1,45 @@
+{
+ "region": {
+  "lon_oeste": 127.0,
+  "lon_este": 148.0,
+  "lat_norte": 5.0,
+  "lat_sur": -16.0,
+  "paso": 0.0625,
+  "viking_px": [
+   6822,
+   1889,
+   7289,
+   2356
+  ],
+  "viking_caja": {
+   "oeste": 126.99000000000001,
+   "este": 148.005,
+   "norte": 4.9950000000000045,
+   "sur": -16.019999999999996
+  },
+  "ancho": 337,
+  "alto": 337
+ },
+ "global_": {
+  "paso": 1,
+  "ancho": 361,
+  "alto": 181,
+  "lon_oeste": 0,
+  "lat_norte": 90
+ },
+ "codificacion": "altura_m = R*256 + G - 10000 (sobre el areoide MOLA)",
+ "ganancia_color": [
+  1.3849999904632568,
+  1.4170000553131104,
+  1.1859999895095825
+ ],
+ "control_mola_menos_dem_travesia_m": {
+  "media": 5.4,
+  "desvio": 41.2
+ },
+ "fuentes": [
+  "MOLA MEGDR 16 ppd, megt90n000eb.img (Smith et al. 2003; NASA PDS Geosciences Node). Copia: github.com/benbrittain/Barsoom",
+  "Viking MDIM 2.1 color (NASA/USGS, Mars Trek), gale-earth/capas/viking_color_8k.jpg"
+ ],
+ "nota": "Fondo visual de la escena: ~3,7 km por vértice cerca de Gale y 1° en el resto del planeta. La ganancia de color iguala el tono del Viking al mosaico de la travesía."
+}

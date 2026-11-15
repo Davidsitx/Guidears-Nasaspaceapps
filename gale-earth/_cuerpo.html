@@ -312,6 +312,7 @@ async function prepararNube() {
   $('cargando').style.opacity = 0; setTimeout(() => $('cargando').classList.add('oculto'), 500);
   irA('marte', 0);
   if (!location.hash) setTimeout(() => irA('gale', 3), 2600);
+  else if (/curiosity|mision/.test(location.hash)) setTimeout(() => irA('hoy', 3), 2600);   // vuelta desde GALE-3D: directo a donde está Curiosity
 })();
 const capasImagen = () => MODO === 'globo' ? viewer.imageryLayers : tileset && tileset.imageryLayers;
 async function alturas(cartos) {
@@ -737,8 +738,10 @@ function fichaSitio(id) {
     <div class="astro"><b>A favor</b><ul>${s.pros.map(x => `<li>${x}</li>`).join('')}</ul></div>
     <div class="tarjeta" style="cursor:default"><b>En contra</b><ul style="margin:4px 0 0;padding-left:18px">${s.contras.map(x => `<li>${x}</li>`).join('')}</ul></div>
     <p class="sub">El círculo amarillo grande es una zona de exploración de 100 km de radio alrededor del sitio, la escala con la que NASA planteó la exploración humana desde una base.</p>
+    ${s.id === 'vallegrande' ? '<button class="btn prim" id="aMision" style="margin:8px 0">Entrar a la misión en 3D →</button>' : ''}
     <p class="fuente">${s.fuente}</p>`;
   $('volver').onclick = vistaBase;
+  if ($('aMision')) $('aMision').onclick = entrarMision;
 }
 
 function vistaOrbitas() {

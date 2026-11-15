@@ -21,6 +21,8 @@ Este archivo lo leen los asistentes Claude de los dos integrantes del equipo. Ma
 
 Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/notas.md** (traspasos) y **docs/tareas.md**.
 
+**Para desarrollar la escena o sumar pantallas: leer primero `docs/desarrollo/`** (guía de producto, estilo visual, arquitectura, pantallas con capturas y pendientes con criterio de aceptación). Todo lo nuevo sigue ese estilo.
+
 ## Cómo trabajamos con git
 - Cada uno en su rama (`david/...`, `companero/...`). PRs chicos, fusionar a `main` cada 1 o 2 horas.
 - Al terminar algo: nota arriba de todo en `docs/notas.md` (qué hizo, qué falta, qué decidió).
@@ -48,8 +50,14 @@ Interfaces entre áreas: **docs/contrato.md**. Antes de empezar, leer **docs/not
 
 ## Estado al 14 de noviembre de 2026
 - La escena suma toda la travesía de Curiosity (aterrizaje → hoy): terreno de contexto, recorrido real, 49 perforaciones con ficha y viaje por soles. Ver **docs/travesia.md**.
-- 37 de las 49 fichas de perforaciones están "a verificar": no presentarlas como dato hasta revisarlas contra su fuente.
+- Las 49 fichas de perforaciones de la escena usan la Biblioteca de Gale Earth: hallazgo con fuente, CheMin, APXS y foto (15/11). Antes había 37 "a verificar".
+- Unión con Gale Earth (`gale-earth/`, todo Marte en CesiumJS): botón "Misión Curiosity · 3D" → escena3d, y "Marte completo ↗" de vuelta. `index.html` de la raíz entra por Gale Earth. Solo navegación: la lógica de la misión no cambia.
 - Expedición sur (E1–E5, más allá de A4), perforación simulada (muestra ficticia, marcada como tal), clima según la fecha (Ls, REMS, Aeolus 2028) y círculos "?" con la fuente. Ver docs/notas.md y docs/paradas.md.
+
+## Estado al 15 de noviembre de 2026
+- Portada en tres pasos con cuatro entradas: **Mars Earth** (Gale Earth en el espacio, con foco en Gale), **Recorrido en Marte**, **Mundo abierto** e **Información / wiki**.
+- Dos visualizaciones principales: **Misión en pareja** (cámara del Astronauta 1, visor del Astronauta 2, mensajes de la base y de la Tierra con la demora real de la luz) y **Rover y astronauta**.
+- Rama `david/union-gale-earth` (PR #5): ya incluye la rama del compañero (#6). Guía completa en `docs/desarrollo/`.
 
 ## Parámetros provisorios (reemplazar con fuentes)
 - Pendiente máxima rover: 20° (Curiosity en el boxwork: 99% de posiciones bajo 17,4°, máximo 22,8°; en agosto de 2026 llegó a 24°).

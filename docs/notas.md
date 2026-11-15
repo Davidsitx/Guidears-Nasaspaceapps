@@ -22,6 +22,45 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
   - la foto cruda del sol en el servidor de NASA;
   - las entradas del blog de Curiosity.
 
+## 2026-11-15 madrugada (2) · David (con Claude) · NUEVA MIRADA: CUATRO ENTRADAS, MISIÓN EN PAREJA, WIKI Y GUÍA DE DESARROLLO (rama `david/union-gale-earth`)
+- **Portada en tres pasos.**
+  - Inicio → **Entrada** → Recorrido.
+  - Entradas: **Mars Earth**, **Recorrido en Marte**, **Mundo abierto** e **Información / wiki**.
+  - Mars Earth abre Gale Earth sin hash: arranca en el espacio y vuela al cráter Gale. Si Gale Earth no está al lado, va a "Marte completo" de la escena.
+- **Misión en pareja (visualización principal 1).**
+  - La pantalla grande es la cámara del casco del Astronauta 1. El Astronauta 2 camina 6 m adelante, a la vista.
+  - A la derecha, el **visor del Astronauta 2**: minimapa, próxima parada, suelo, radiación y refugio.
+  - Abajo, **comunicaciones con las bases**:
+    - base · rover (al instante): paradas, pendiente adelante, dosis, tiempo afuera y cierre;
+    - control en la Tierra: con "enviado hace N min" según la **demora real de la luz** (`demoraLuz`, elementos de JPL; da 10,9 min el 15/11/2026);
+    - respuestas rápidas: Llegamos, Pedir pronóstico, Necesitamos ayuda.
+  - Botón "En pareja" en la barra.
+- **Mundo abierto:** con el astronauta, con el rover o con cámara libre y destinos con pin.
+- **Wiki:** pantalla completa con buscador.
+  - Secciones: por qué Gale, paradas, 49 perforaciones (ficha completa dentro de la wiki), expedición, clima, límites del rover y del astronauta, comunicaciones y fuentes.
+  - Se abre desde la portada o con "Info" en la barra.
+- **Guía de desarrollo en `docs/desarrollo/`:** README (producto, mapa, comandos, reglas), estilo visual, arquitectura (código, recetas, pruebas), pantallas con capturas y pendientes con criterio de aceptación. `CLAUDE.md` apunta ahí.
+- **Arreglado:** quedaban referencias a tarjetas viejas de la portada (`ay-viaje`, `ay-expe`) que cortaban la carga. La guía tiene un control para que no vuelva a pasar.
+
+
+## 2026-11-15 madrugada · David (con Claude) · UNIÓN CON GALE EARTH Y AJUSTES DE USO (rama `david/union-gale-earth`)
+- **Fusión:** la rama tiene todo `companero/gale-earth-rutas` (expedición de 20 km, Hugging Face, REMS, SAM revisado, pozos nuevos). Solo hubo conflicto en `docs/notas.md` (quedaron las dos) y en `gale-earth/index.html`, que se rearmó con `_ensamblar.py` y `armar.py`. El botón "Misión Curiosity · 3D" sigue.
+- **Entrada desde la portada:** al elegir, Marte se corre al centro con Gale en el medio, la portada se funde con el planeta 3D y la cámara baja en escala logarítmica hasta la travesía y después a la zona. La interfaz aparece al llegar.
+- **"← Atrás"** arriba a la izquierda (y en la expedición): sale del modo y vuelve a "¿Cómo la querés recorrer?" de esa zona.
+- **Seleccionado visible:** Visor, Ojos, Autonomía, Rover/Astronauta, vistas y el modo activo de la barra de abajo quedan marcados. Antes el estilo de Visor y Ojos lo tapaba otra regla.
+- **Expedición:** arranca en 4 min (se elige 1, 2, 4 u 8 min). **"Manejar a mano"** maneja el rover o el astronauta desde donde está, sobre el terreno de 12 m. Va acelerado ×150 (rover) o ×12 (astronauta), pero el tiempo, los soles y la dosis se cuentan reales. Un aviso en vivo marca la pendiente donde está y la que viene a 8–40 m contra el límite (20°), y si el astronauta queda a más de 30 min del rover.
+- **Rutas → "Poner destino":** se toca el terreno y se calcula la ruta del rover y la del astronauta (ida y vuelta) desde donde están. Avisa si el destino cae en pendiente sobre el límite o en arena, si hay peligro a menos de 20 m y cuánto del camino pisa ladera o arena. Tiene "Ir (autonomía)" y "A pie, en primera persona". Al acercarse a un destino riesgoso sale un cartel. "Marcar paradas" sigue, dentro de "Varias paradas".
+- **Avisos al manejar libre:** lo que viene adelante se mira hasta 30 m y sale como cartel a 14 m o menos, ya no solo como pastilla.
+- **Fichas de las 49 perforaciones con la Biblioteca de Gale Earth** (`gale-earth/datos/biblioteca.json`):
+  - hallazgo con su fuente y foto MAHLI del sol (enlace al original);
+  - minerales de CheMin y química de APXS (PDS/ODR);
+  - agua en minerales (kg/t, cálculo del compañero, marcado);
+  - blog, ficha ODR y lo que falta publicar en el PDS.
+  Ya no queda ninguna "a verificar". `armar.py` arma la foto chica con Pillow; sin Pillow, la ficha sale sin foto.
+- **+38 km:** Curiosity lleva más de 38,07 km (NASA, 12/10/2026). La línea del mapa mide 37,7 km porque une posiciones informadas; se aclara en el panel.
+- **Versión publicada:** `--globo-aparte` también separa las fotos de las perforaciones (`fotos_pozos.json`).
+
+
 ## 2026-11-15 madrugada · Compañero (con Claude) · EXPEDICIÓN: ARENA, ROVER DE MARTE, TRAJE, CLIMA, TORMENTA Y COMUNICACIÓN
 - **Arena (indicio):** `herramientas/themis_noche.py` lee por rangos la ventana de Gale del mosaico **THEMIS Night IR** de Mars Odyssey (USGS, 100 m, cualitativo de 8 bits). Arma `capas/expedicion/themis_noche.png` y el percentil de "frío de noche" por celda.
   - Validación: el recorrido real de Curiosity va por terreno tibio (mediana en el percentil 21) y **nunca pisó el 10% más frío**.
@@ -42,6 +81,13 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
   - el lugar con más cielo tapado a ≤ 10 min a pie.
 - **Comunicación:** línea de vista entre astronauta y rover sobre el relieve de 20 m más la curvatura de Marte. Las antenas a 2 y 3 m son supuesto. Da minutos sin línea de vista por parada y un aviso en vivo.
 - **Arreglado:** el panel de la simulación ya no se redibuja entero, así que los botones responden.
+
+## 2026-11-14 noche · David (con Claude) · REDISEÑO DE LA INTERFAZ (rama `david/union-gale-earth`)
+- **Portada nueva:** lo primero que se ve tapa la escena (que carga detrás). Tres pasos: inicio con Marte girado hacia Gale (proyección del mosaico Viking), "¿Qué zona querés prospectar?" (zona de hoy, travesía 2012 → hoy, expedición sur, Marte completo, Gale Earth) y "¿Cómo la querés recorrer?" según la zona. El botón "Inicio" de la barra vuelve a abrirla. Desde Gale Earth (`#desde-gale-earth`) no aparece.
+- **Panel izquierdo en apartados plegables**, todos cerrados al abrir y con un valor corto en el encabezado: capa sobre el terreno · travesía 2012 → hoy (con "Viajar del aterrizaje a hoy") · por qué explorar Gale y perforaciones · expedición sur · clima según la fecha (salida, Aeolus 2028, personas en Marte y datos de Curiosity, cada uno plegable) · **Paradas** (botón naranja) · rutas · perfil de elevación · calidad · fuentes.
+- **Barra de abajo:** una sola fila centrada con los modos (recorrido guiado, caminar, seguir al rover, viaje, expedición) y tres botones que abren una ventanita: Rutas (marcar, calcular, borrar), Escena (cámara, hora, estación, velocidad, teclas) e Inicio. Los avisos salen arriba, al centro.
+- **Derecha:** "Datos en vivo" en tres grupos plegables (rover, astronauta, entorno) con un resumen cuando están cerrados; el del astronauta se abre solo cuando baja del rover. Debajo, brújula y centrar juntos, y los botones de manejo en una columna del mismo ancho.
+- Solo cambia la presentación: los modos, rutas, cálculos y fuentes son los mismos (mismos ids y funciones).
 
 ## 2026-11-14 noche (4) · Compañero (con Claude) · GALE EARTH: EXPEDICIÓN CON RUTAS SEGURAS (20 km)
 - **Pestaña nueva "Expedición"** en Gale Earth. Es un círculo de 20 km alrededor de Curiosity: se elige el inicio del rover presurizado y una o varias muestras (tocando el mapa, al azar o un pozo). Calcula:
@@ -85,6 +131,36 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
 - **SAM revisado con las notas de PDS:** 79 experimentos confirmados (antes 51), 6 probables, 8 de arenas (Gobabeb, Ogunquit Beach) y 11 que no son muestra (blancos, calibración, atmósfera). Los valores imposibles para una porción de ~45 mg (supuesto) se marcan ⚠: Mojave 2 y Telegraph Peak (HCl, NO, H₂S), un HCl de Cumberland y el H₂O de Glen Etive (error de tabla).
 - Línea de tiempo: nuevo evento, la tormenta solar de mayo de 2024 en Gale.
 - **Para David:** la escena usa 0,64 mSv/día. Los +50 % hacia el mínimo solar y el efecto de la presión pueden servir para la capa de radiación.
+
+## 2026-11-14 tarde (5) · David (con Claude) · IMAGEN DE MARTE MÁS NÍTIDA (rama `david/union-gale-earth`)
+- El globo pasó de colores por vértice (1° ≈ 59 km) a **texturas de imagen**: Viking en todo Marte (~2,6 km/píxel) y en la región de Gale.
+- **CTX alrededor de Gale** (el mismo servicio de Gale Earth): ~40 m/píxel cerca de la travesía y ~330 m en la región, coloreado con Viking. Dos maneras: en vivo si hay internet, o dentro del archivo corriendo `python herramientas/bajar_ctx.py` y `python escena3d/armar.py` en una PC con internet (desde acá no se puede bajar: el servicio está bloqueado en este entorno). Probado con teselas de prueba: se cargan, se colorean y se ubican bien.
+- **Pendiente para David:** correr `bajar_ctx.py`, rearmar y subir `data/terreno/globo/ctx_*.jpg`.
+
+## 2026-11-14 tarde (4) · David (con Claude) · GLOBO DE MARTE EN LA ESCENA (rama `david/union-gale-earth`)
+- **Ya no queda gris a los costados:** alrededor de la travesía hay relieve MOLA y color Viking sobre la esfera de Marte, hasta el horizonte. Desde muy alto el cielo se vuelve negro y se ve el planeta entero (botón "Marte completo"; "Gale Earth ↗" abre la app del compañero).
+- Datos: `data/terreno/globo/` (~0,5 MB), armados con `herramientas/globo.py` desde MOLA MEGDR 16 ppd y el Viking 8k de `gale-earth/capas/`. MOLA coincide con el DEM de la travesía (+5 ± 41 m).
+- Es fondo visual: no toca rutas, alertas ni cálculos. El color tiene realce (tono, contraste y saturación) para que combine con el mosaico de la travesía: está dicho en la leyenda con su "?".
+- Límite: el fondo es de ~3,7 km por punto (MOLA). Con el relieve de 200 m del compañero (`terreno_gale_n8-15.zip` en el Drive) se vería más detallado cerca de Gale.
+
+## 2026-11-14 tarde (3) · David (con Claude) · UNIÓN GALE EARTH ↔ GALE-3D (rama `david/union-gale-earth`)
+- **Qué se hizo:** navegación de ida y vuelta, sin tocar la lógica de ninguna de las dos apps. Gale Earth (todo Marte) tiene el botón **"Misión Curiosity · 3D"** (y "Entrar a la misión en 3D" en la ficha de Valle Grande); GALE-3D tiene **"Marte completo ↗"** en la barra de vistas. Al entrar a la misión hay un descenso desde lo alto hasta la zona de hoy.
+- **Para el compañero (tu carpeta):** cambié `gale-earth/cabecera.html` (botón y estilo), `interfaz.js` (función `entrarMision`), `_cuerpo.html` (vuelo directo con `#curiosity` y botón en la ficha de Valle Grande) y `servir.py` (sirve también `/escena3d/` y `/gale-earth/`). Rearmé con `_ensamblar.py` y `armar.py`. Revisalo en el PR.
+- **Entrada del proyecto:** `index.html` en la raíz redirige a Gale Earth (sirve para GitHub Pages).
+- **Ojo (para el compañero):** `gale-earth/capas/gale_5m/capas.json` calcula la dosis con 0,67 mSv/día; el valor medido por RAD es 0,64 (Hassler et al. 2014, ver CLAUDE.md).
+- Probado con `servir.py`: Gale Earth → misión → Marte completo, ida y vuelta.
+- Prueba final en celular (390 px): la barra de abajo de la misión ahora es una sola fila que se desliza, los mensajes salen como aviso breve y las vistas usan nombres cortos (Marte, Travesía, Hoy) debajo de Panel/Datos. Sin internet, Gale Earth no carga Cesium, pero el botón a la misión funciona igual (es un enlace).
+
+## 2026-11-14 noche · Compañero (con Claude) · LICENCIA Y ORIGEN DE LOS DATOS DE LA TRAVESÍA
+- **`LICENSE` agregado** (texto oficial de Apache 2.0, bajado de apache.org). La sección "License" del README ya está completa, con las licencias de terceros: three.js (MIT), CesiumJS (Apache 2.0) y d3-celestial (BSD).
+- **Resuelto el pendiente 1 de David** (de dónde salen el mosaico de color y el GeoPackage). Está en `docs/fuentes.md` y en `data/README.md`, con los comandos para volver a bajarlos:
+  - Color: mosaico HiRISE LRGB de USGS/ASC (`MSL_Gale_HiRISE-LRGB_78quads_sharp_cog.tif`).
+  - Elevación: DEM USGS de 1 m remuestreado a 4 m.
+  - Recorrido: `MSL_traverse.json` de NASA.
+  - Pozos: `MSL_waypoints.json`. Es la posición del rover estacionado, no la del pozo exacto.
+- **Gale Earth, dosis corregida a 0,64 mSv/día** (lo marcó David). En `gale-earth/capas/gale_5m/capas.json` se reescalaron `dosis_superficie`, `dosis_min` y `dosis_max` (× 0,64/0,67). La dosis es lineal en ese valor, así que el PNG de colores no cambia. **No rearmé `gale-earth/index.html`** para no chocar con `david/union-gale-earth`, que también lo modifica. Después de unir las dos ramas, correr `python _ensamblar.py` y `python armar.py` en `gale-earth/`. Al volver a procesar con `gale_datos.py`, ya toma 0,64 de `data/parametros.json`.
+- README: corregido "CRX" por "CTX" y ordenada la lista de fuentes. El resto del README sigue mezclado en castellano: se pasa al inglés mañana.
+- Sigue faltando: unir `david/union-gale-earth` a main (decide David), activar GitHub Pages y decidir qué hacemos con las teselas de Gale Earth. Propuesta: GALE-3D como demo principal y Gale Earth con menos capas.
 
 ## 2026-11-14 tarde (2) · David (con Claude) · QA: FUENTES "?", CINTA AL PISO, CARTELES, E1–E5, VISOR AL MANEJAR
 - **"?" en cada ítem:** capas, leyendas, fichas de paradas y perforaciones, panel derecho, clima, expedición y "¿Por qué perforar en Gale?". Al tocarlo se abre una ventanita con la fuente y "Abrir la fuente". Lista completa de enlaces: `docs/fuentes-enlaces.md` (`herramientas/listar_fuentes.py`).

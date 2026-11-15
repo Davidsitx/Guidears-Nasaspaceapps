@@ -4,6 +4,12 @@ Generado con `python herramientas/listar_fuentes.py` a partir de `FUENTES_URL` e
 
 | Clave | Qué respalda | Enlace |
 | --- | --- | --- |
+| `jplApprox` | NASA JPL SSD: posiciones aproximadas de los planetas (elementos de Standish, 1800–2050); con ellas calculamos la demora de la luz Tierra–Marte | https://ssd.jpl.nasa.gov/planets/approx_pos.html |
+| `odometria` | NASA (12/10/2026): Curiosity lleva más de 38,07 km (23,65 millas) recorridos | https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/ |
+| `biblioteca` | Biblioteca de Gale Earth (equipo): fichas de los 49 pozos con CheMin, APXS y SAM del PDS y la base ODR | https://galecrater.samples.odr.io/ |
+| `odr` | NASA/ODR: Gale Crater Mineralogy and Geochemistry Database (Bristow y Lafuente), doi:10.48484/JN48-YW52 | https://doi.org/10.48484/JN48-YW52 |
+| `pdsApxs` | NASA PDS Geosciences: APXS de MSL (óxidos y trazas) | https://pds-geosciences.wustl.edu/missions/msl/apxs.htm |
+| `mahli` | NASA: imágenes crudas de Curiosity (MAHLI), NASA/JPL-Caltech/MSSS | https://mars.nasa.gov/msl/multimedia/raw-images/ |
 | `jplMov` | JPL: movilidad de Curiosity. Aguanta 45° sin volcar; la protección de fallas lo frena antes de 30° | https://webarchive.library.unt.edu/eot2008/20090512223236/http://mars.jpl.nasa.gov/msl/mission/technology/planetarymobility |
 | `rec31` | Space.com: Curiosity sube su pendiente récord, 31° (Greenheugh, marzo de 2020) | https://www.space.com/mars-rover-curiosity-steepest-hill-selfie-photo.html |
 | `jpl2020` | JPL (2020): tendencias de movilidad de Curiosity, inclinación máxima de 25,3° en 7 años | https://www-robotics.jpl.nasa.gov/media/documents/2020-mobility-trending.pdf |
@@ -34,6 +40,8 @@ Generado con `python herramientas/listar_fuentes.py` a partir de `FUENTES_URL` e
 | `remsPds` | PDS Atmospheres Node: datos de REMS (presión, temperatura, viento, humedad, UV) | https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems.html |
 | `an` | PDS Analyst's Notebook: datos de Curiosity por sol, lugar e instrumento | https://an.rsl.wustl.edu/ |
 | `pdsGeo` | PDS Geosciences Node: archivo de la misión MSL | https://pds-geosciences.wustl.edu/missions/msl/ |
+| `mola` | MOLA MEGDR 16 píxeles/grado (MGS, Smith et al. 2003, NASA PDS): relieve de todo Marte. Copia pública usada para la escena | https://github.com/benbrittain/Barsoom/tree/HEAD/data/MEGDR |
+| `viking` | Viking MDIM 2.1 en color (NASA/USGS), servido por Mars Trek: color de todo Marte a ~2,6 km/píxel | https://trek.nasa.gov/mars/ |
 | `vaniman` | Vaniman et al. 2014 (Science): mineralogía de la lutita de Yellowknife Bay (pozos John Klein y Cumberland) | https://doi.org/10.1126/science.1243480 |
 | `sheppard` | Sheppard et al. 2021 (JGR Planets): en el Monte Sharp, arcillas abajo y sulfatos encima, vistos con CRISM | https://doi.org/10.1029/2020JE006372 |
 | `tutolo` | Tutolo et al. 2025 (Science): siderita en la unidad de sulfatos | https://doi.org/10.1126/science.ado9966 |

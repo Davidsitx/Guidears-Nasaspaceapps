@@ -33,6 +33,47 @@ RAIZ = os.path.dirname(AQUI)
 SIN_DATOS = -9999.0
 
 
+def sumar_biblioteca(lista):
+    """Suma a cada perforación lo de la Biblioteca de Gale Earth (gale-earth/datos/biblioteca.json, del compañero):
+    hallazgo con su fuente, minerales de CheMin, química de APXS, cantidad de experimentos SAM, agua en minerales
+    (cálculo del equipo), novedades del blog, lo que falta publicar y una foto chica del sol de la perforación."""
+    import io, unicodedata
+    ruta = os.path.join(RAIZ, "gale-earth", "datos", "biblioteca.json")
+    if not os.path.exists(ruta):
+        return
+    nrm = lambda t: unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode().lower().replace(" ", "")
+    bib = {nrm(x["nombre"]): x for x in leer_json(ruta)["pozos"]}
+    try:
+        from PIL import Image
+    except ImportError:
+        Image = None
+    n = fotos = 0
+    for p in lista:
+        x = bib.get(nrm(p["nombre"]))
+        if not x:
+            continue
+        ch = (x.get("chemin") or [None])[0]
+        ap = x.get("apxs") or {}
+        b = {"hallazgo": x.get("hallazgo"), "tecnico": x.get("tecnico"), "fuente": x.get("fuente_hallazgo"),
+             "formacion": x.get("formacion"), "roca": x.get("roca"), "agua": x.get("agua_kg_t"), "co2": x.get("co2_kg_t"),
+             "chemin": {"sol": ch.get("sol"), "min": [[m[0], m[1]] for m in sorted([m for m in (ch.get("minerales") or []) if m[1] is not None], key=lambda m: -m[1])[:6]],
+                        "arcillas": ch.get("arcillas"), "amorfo": ch.get("amorfo")} if ch else None,
+             "apxs": {"sol": ap.get("sol"), "producto": ap.get("producto"),
+                      "ox": {k: v[0] for k, v in (ap.get("ox") or {}).items() if k in ("SiO2", "FeO", "MgO", "CaO", "Al2O3", "SO3", "Na2O", "Cl")}} if ap.get("ox") else None,
+             "sam": len(x.get("sam") or []), "odr": (x.get("odr") or {}).get("url"), "fotos_total": x.get("fotos_total"),
+             "blog": [{"fecha": e.get("fecha"), "texto": e.get("texto"), "url": e.get("url")} for e in (x.get("blog") or [])][:2],
+             "falta": [t.split(":")[0] for t in (x.get("falta") or [])]}
+        f0 = (x.get("fotos") or [None])[0]
+        if f0:
+            b["foto_url"], b["foto_cam"] = f0.get("url"), f0.get("camara")
+            img = os.path.join(RAIZ, "gale-earth", f0.get("src", ""))
+            if Image and os.path.exists(img):
+                im = Image.open(img).convert("RGB"); im.thumbnail((440, 440)); buf = io.BytesIO(); im.save(buf, "JPEG", quality=70, optimize=True)
+                b["foto"] = b64(buf.getvalue()); fotos += 1
+        p["bib"] = b; n += 1
+    print(f"perforaciones: {n} de {len(lista)} con la Biblioteca de Gale Earth ({fotos} fotos{'' if Image else '; sin Pillow no hay fotos'})")
+
+
 def b64(datos: bytes) -> str:
     return base64.b64encode(datos).decode("ascii")
 
@@ -80,6 +121,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--zona", default="sol5070")
     ap.add_argument("--salida", default=None, help="default: escena3d/index.html (sol5070) o escena3d/index_<zona>.html")
+    ap.add_argument("--globo-aparte", action="store_true", help="deja el globo de fondo en globo.json al lado de la salida (para publicar en sitios con tope de tamaño por archivo)")
     a = ap.parse_args()
     a.salida = a.salida or os.path.join(AQUI, "index.html" if a.zona == "sol5070" else f"index_{a.zona}.html")
 
@@ -190,7 +232,7 @@ def main():
 
     # contexto: toda la travesía de Curiosity alrededor de la zona (data/terreno/travesia_sur/, herramientas/travesia.py),
     # con el recorrido real y las 49 perforaciones (data/curiosity/, herramientas/travesia_datos.py)
-    contexto = travesia = pozos = expedicion = crism_ctx = None
+    contexto = travesia = pozos = expedicion = crism_ctx = globo = None
     dctx = os.path.join(RAIZ, "data", "terreno", "travesia_sur")
     if a.zona == "sol5070" and os.path.exists(os.path.join(dctx, "meta.json")):
         leer_b64 = lambda n: b64(open(os.path.join(dctx, n), "rb").read())
@@ -206,6 +248,7 @@ def main():
         if os.path.exists(p_poz):
             g = leer_json(p_poz)
             pozos = {"nota": g.get("nota", ""), "lista": [dict(f["properties"], lon=f["geometry"]["coordinates"][0], lat=f["geometry"]["coordinates"][1]) for f in g["features"]]}
+            sumar_biblioteca(pozos["lista"])
         # expedición sur (herramientas/expedicion.py): puntos nuevos más allá de A4 y CRISM del contexto para la perforación simulada
         p_exp = os.path.join(RAIZ, "data", "rutas", "expedicion_sur.geojson")
         if os.path.exists(p_exp):
@@ -214,6 +257,21 @@ def main():
         p_cc = os.path.join(RAIZ, "data", "mineralogia", "crism_contexto.png")
         if os.path.exists(p_cc):
             crism_ctx = {"meta": leer_json(p_cc.replace(".png", ".json")), "png": b64(open(p_cc, "rb").read())}
+        # globo de Marte de fondo (herramientas/globo.py): relieve MOLA y color Viking alrededor de la travesía
+        dg = os.path.join(RAIZ, "data", "terreno", "globo")
+        if os.path.exists(os.path.join(dg, "meta.json")):
+            globo = {"meta": leer_json(os.path.join(dg, "meta.json"))}
+            for n in ("mola_region", "color_region", "mola_global", "color_global"):
+                globo[n] = b64(open(os.path.join(dg, n + ".png"), "rb").read())
+            globo["viking_region"] = b64(open(os.path.join(dg, "viking_region.jpg"), "rb").read())
+            vg = os.path.join(dg, "viking_global.jpg")                                    # color de todo Marte (Viking MDIM 2.1, 4096 × 2048, de herramientas/globo.py)
+            if os.path.exists(vg):
+                globo["viking_global"] = b64(open(vg, "rb").read())
+            if os.path.exists(os.path.join(dg, "ctx.json")):                           # CTX bajado con herramientas/bajar_ctx.py
+                globo["ctx"] = {"meta": leer_json(os.path.join(dg, "ctx.json")),
+                                "cerca": b64(open(os.path.join(dg, "ctx_cerca.jpg"), "rb").read()), "region": b64(open(os.path.join(dg, "ctx_region.jpg"), "rb").read())}
+                print("globo: imagen CTX incluida")
+            print("globo: MOLA + Viking alrededor de Gale y todo Marte")
         print(f"contexto: travesía completa, {len(travesia['puntos']) if travesia else 0} puntos de recorrido, {len(pozos['lista']) if pozos else 0} perforaciones")
 
     datos = {
@@ -223,6 +281,7 @@ def main():
         "pozos": pozos,
         "expedicion": expedicion,
         "crism_ctx": crism_ctx,
+        "globo": globo,
         "crism": crism,
         "capas": capas,
         "meta": meta,
@@ -246,6 +305,20 @@ def main():
     controles = texto(os.path.join(AQUI, "vendor", "OrbitControls.js"))
     plantilla = texto(os.path.join(AQUI, "plantilla.html")).replace("<\\/script", "</script")
 
+    if a.globo_aparte and datos.get("globo"):
+        ruta_globo = os.path.join(os.path.dirname(os.path.abspath(a.salida)), "globo.json")
+        with open(ruta_globo, "w", encoding="utf-8") as f:
+            json.dump(datos["globo"], f, ensure_ascii=False, separators=(",", ":"))
+        print(f"{ruta_globo}: {os.path.getsize(ruta_globo) / 1e6:.1f} MB (la página lo pide al abrir)")
+        datos["globo"] = "globo.json"
+    if a.globo_aparte and datos.get("pozos"):                                  # las fotos de las perforaciones también van aparte (tope de 16 MB por archivo)
+        fotos = {str(i): p["bib"].pop("foto") for i, p in enumerate(datos["pozos"]["lista"]) if (p.get("bib") or {}).get("foto")}
+        if fotos:
+            ruta_f = os.path.join(os.path.dirname(os.path.abspath(a.salida)), "fotos_pozos.json")
+            with open(ruta_f, "w", encoding="utf-8") as f:
+                json.dump(fotos, f, separators=(",", ":"))
+            print(f"{ruta_f}: {os.path.getsize(ruta_f) / 1e6:.1f} MB (la página lo pide al abrir)")
+            datos["pozos"]["fotos"] = "fotos_pozos.json"
     json_datos = json.dumps(datos, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     html = (plantilla
             .replace("/*__THREE__*/", three)

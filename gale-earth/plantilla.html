@@ -251,7 +251,19 @@ body.cajonAbierto #linea{left:calc(var(--riel) + 428px)}
 body.cajonAbierto #cajon.ancho~#linea,body.cajonAbierto:has(#cajon.ancho) #linea{left:calc(var(--riel) + 588px)}
 body.lineaAbierta #aviso{bottom:auto;top:80px}
 /* ── celular: riel abajo, cajón como hoja deslizable ── */
+/* ── unión con GALE-3D: botón a la misión de Curiosity en 3D ── */
+#bMision{text-decoration:none;position:absolute;top:calc(12px + var(--sup-seg));right:12px;z-index:9;display:flex;align-items:center;gap:10px;padding:7px 16px 7px 9px;border-radius:24px;
+  border:1px solid #f28c3880;background:var(--sup);color:var(--texto);cursor:pointer;box-shadow:var(--sombra);font:inherit;text-align:left;transition:background-color .16s ease,border-color .16s ease}
+#bMision:hover{background:var(--sup2);border-color:var(--acento)}
+#bMision svg{width:28px;height:28px;flex:none}
+#bMision b{display:block;font-size:13.5px;font-weight:600;line-height:1.25}
+#bMision small{display:block;color:var(--suave);font-size:11.5px;line-height:1.25}
+#transicion{position:fixed;inset:0;z-index:60;background:#0b0d12;opacity:0;pointer-events:none;transition:opacity .6s ease;display:grid;place-items:center;color:var(--suave);font-size:14px}
+#transicion.on{opacity:1;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){#transicion{transition:none}}
 @media (max-width:760px),(pointer:coarse) and (max-width:900px){
+  #bMision{top:auto;bottom:calc(70px + var(--inf-seg));right:auto;left:10px;padding:6px 12px 6px 8px} #bMision small{display:none}
+  body.hoja #bMision,body.lineaAbierta #bMision{display:none}
   :root{--riel:0px}
   #riel{top:auto;bottom:0;left:0;right:0;width:auto;height:calc(58px + var(--inf-seg));flex-direction:row;justify-content:space-around;padding:0 4px var(--inf-seg);border-right:0;border-top:1px solid #ffffff12}
   #riel .logo,#riel .esp,#riel .solopc{display:none}
@@ -305,6 +317,11 @@ body.cajonAbierto @media (max-width:760px){body.cajonAbierto .fuentesOf{margin:1
   <button class="rb solopc" id="vAyuda" title="Controles y ayuda"><svg class="i" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>Ayuda</button>
   <button class="rb solopc" id="rPantalla" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>Pantalla</button>
 </nav>
+
+<a id="bMision" href="../escena3d/index.html#desde-gale-earth" title="Entrar a la misión: el recorrido de Curiosity en 3D, a escala real, con las rutas del rover y del astronauta">
+  <svg viewBox="0 0 32 32" fill="none" stroke="#f28c38" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="11" width="15" height="6" rx="1.2"/><path d="M12 11V7.5h3M23 13.5l3-2.5"/><circle cx="9" cy="22" r="2.6"/><circle cx="16" cy="22" r="2.6"/><circle cx="23" cy="22" r="2.6"/><path d="M9 17v2.4M16 17v2.4M23 17v2.4"/></svg>
+  <span><b>Misión Curiosity · 3D</b><small>Rutas del rover y del astronauta desde hoy</small></span></a>
+<div id="transicion" aria-hidden="true"><span>Entrando a la misión Curiosity…</span></div>
 
 <div id="busca">
   <div id="cajaBusca">
@@ -688,6 +705,7 @@ async function prepararNube() {
   $('cargando').style.opacity = 0; setTimeout(() => $('cargando').classList.add('oculto'), 500);
   irA('marte', 0);
   if (!location.hash) setTimeout(() => irA('gale', 3), 2600);
+  else if (/curiosity|mision/.test(location.hash)) setTimeout(() => irA('hoy', 3), 2600);   // vuelta desde GALE-3D: directo a donde está Curiosity
 })();
 const capasImagen = () => MODO === 'globo' ? viewer.imageryLayers : tileset && tileset.imageryLayers;
 async function alturas(cartos) {
@@ -1113,8 +1131,10 @@ function fichaSitio(id) {
     <div class="astro"><b>A favor</b><ul>${s.pros.map(x => `<li>${x}</li>`).join('')}</ul></div>
     <div class="tarjeta" style="cursor:default"><b>En contra</b><ul style="margin:4px 0 0;padding-left:18px">${s.contras.map(x => `<li>${x}</li>`).join('')}</ul></div>
     <p class="sub">El círculo amarillo grande es una zona de exploración de 100 km de radio alrededor del sitio, la escala con la que NASA planteó la exploración humana desde una base.</p>
+    ${s.id === 'vallegrande' ? '<button class="btn prim" id="aMision" style="margin:8px 0">Entrar a la misión en 3D →</button>' : ''}
     <p class="fuente">${s.fuente}</p>`;
   $('volver').onclick = vistaBase;
+  if ($('aMision')) $('aMision').onclick = entrarMision;
 }
 
 function vistaOrbitas() {
@@ -1459,6 +1479,15 @@ viewer.scene.preRender.addEventListener(() => {
   // Al rotar el celular o cambiar el tamaño, se ajusta el estado de la hoja.
   addEventListener('resize', () => document.body.classList.toggle('hoja', esCel() && !cajon.classList.contains('cerrado')));
 }
+
+// ---------- unión con GALE-3D: el botón lleva a la misión de Curiosity en 3D (../escena3d/index.html) ----------
+// Funciona abierto desde el repo (doble clic), con servir.py (sirve también /escena3d/) y en GitHub Pages.
+function entrarMision() {
+  try { irA('hoy'); } catch (e) {}
+  setTimeout(() => $('transicion').classList.add('on'), 1500);
+  setTimeout(() => { location.href = '../escena3d/index.html#desde-gale-earth'; }, 2200);
+}
+$('bMision').onclick = e => { e.preventDefault(); entrarMision(); };   // sin Cesium (sin internet) el enlace funciona igual
 // ==================== Biblioteca ====================
 // Toda la información de los pozos (NASA PDS, base de mineralogía de Gale, blog y fotos de NASA), ordenada para consultar:
 // perforaciones (ficha completa), comparar pozos, temas para futuras misiones, fuentes. Lee datos/biblioteca.json,
