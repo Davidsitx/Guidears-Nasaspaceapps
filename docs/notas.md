@@ -17,6 +17,16 @@ Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué dec
 - **Tour:** la calidad automática no cambia nada durante el tour (cambiar el antialias daba un tirón); en el último paso (siguiendo a MRO) se pide menos detalle del suelo; caché de teselas más grande (600) para que no aparezcan a parches al volver a un lugar.
 - **Prueba de flujos (automática, sin errores en consola):** 16 pasos con botones reales: inicio, misión hasta hoy, nueva misión, historia, 49 perforaciones, sitios, planificador, historia encima del planificador, medir, recorrido del planificador con parada, pareja, Wiki (fuentes, análisis, 84 fuentes consultadas) y tutorial de 13 pasos. Ninguna superposición entre barras, botones de la derecha, reproductor y tarjetas. Tour completo de 9 pasos de principio a fin.
 
+## 2026-11-15 noche · David (con Claude) · README: INSTALACIÓN EN INGLÉS Y CASTELLANO
+- `david/union-gale-earth` avanzó hasta `companero/maps-in-mars` (sin conflictos: partía de nuestro último commit). El README describe Maps in Mars (`maps-in-mars/`).
+- **README de la raíz:**
+  - **Probar en línea:** GitHub Pages.
+  - **Instalar en la compu:** requisitos, ZIP o Git, y teselas desde el dataset público de Hugging Face. Los `.zip` están en la raíz del dataset; `snapshot_download` con `local_dir='teselas'` los deja en `maps-in-mars/teselas/`.
+  - **Uso:** arrancar con `abrir.bat` o `servir.py`, lista para comprobar, celulares en el mismo Wi-Fi, túnel de Cloudflare, actualizar.
+  - **Al final:** problemas frecuentes, otras apps del repo y notas para desarrollar.
+  - Va en inglés para el jurado y en castellano abajo. "Contents" quedó al día con las carpetas actuales.
+- **Falta:** fusionar a `main` para que el README y el ZIP de `main` muestren Maps in Mars. Comprobar el comando de Hugging Face en una PC con internet (desde acá no hay acceso a huggingface.co).
+
 ## 2026-11-15 noche · compañero (con Claude) · PLANIFICADOR DE MISIÓN, WIKI TRABAJADA, DÍA Y NOCHE EN VIVO Y ARREGLOS
 - **Planificador de misión (`maps-in-mars/planificador.js`, nuevo; se abre con "Nuevo recorrido"):** barra vertical de herramientas (mano, puntos de ruta, pin con nota, medir, pincel, rectángulo, círculo, borrar, deshacer). Punto 0 = Base Gale; los demás en el orden en que se ponen; tocar una perforación (o elegirla de la lista) la toma como punto. La ruta más segura sale del A* del PMR, tramo por tramo, a pie o en PMR (10 km/h). Muestra distancia, tiempo en marcha y en paradas (paradas de 1 h por defecto, editable por punto; supuesto), velocidad media, dosis (marcha + paradas; sin blindaje del vehículo, cota superior), energía y % de batería, subida/bajada, pendiente máxima, punto más lejano y avisos. Cada punto tiene nota. Pincel cerrado, rectángulo y círculo dan área y medidas.
 - **Proyectos guardados** en el navegador (`localStorage`: siguen al actualizar la app) y exportables/importables como JSON. **Caminos candidatos:** al terminar un recorrido simulado que vuelve a la base, el camino se guarda como candidato a camino seguro, se dibuja en verde y el A* lo prefiere (−30 % de costo, cambio chico en `pmr.js`).
