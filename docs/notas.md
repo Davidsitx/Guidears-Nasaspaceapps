@@ -2,6 +2,13 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mediodía (2) · Compañero (con Claude) · CIERRE DE LO ABIERTO
+- **Base ODR:** desde la PC del compañero no responde, ni directo ni por su DOI (10.48484/JN48-YW52 redirige al mismo sitio). Lo demás de NASA abre bien.
+  - Respaldo agregado: cada ficha de la Wiki con CheMin tiene ahora el botón **"Minerales en el PDS de NASA"**, que abre el archivo oficial de CheMin (`mslcmn_1xxx/data/rdr5/`). Se verificó que los 59 archivos existen.
+- **Nevado Sajama 2:** el PDS todavía no publicó su mineralogía; la última es la de Nevado Sajama (sol 4720). La app está al día.
+- **Jezero:** índices regenerados en la PC (`teselas/nube/manifest.json` ya incluye `terreno_jezero_n10-13.zip` y el rango de Jezero en `meta.json`). Falta que el compañero corra `subir_hf.bat`, porque pide su token.
+- **PR #10** abierto a main: `companero/verificacion-unificada`.
+
 ## 2026-11-15 mediodía · Compañero (con Claude) · UNA SOLA VERDAD PARA LOS 49 POZOS + FUENTES SECUNDARIAS REEMPLAZADAS
 - **Fuente única de los pozos: la Wiki (`gale-earth/datos/biblioteca.json`).**
   - `herramientas/unificar_pozos.py` copia el hallazgo, la fuente y la marca de verificado a:

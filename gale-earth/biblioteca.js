@@ -151,7 +151,7 @@ function bibPozo() {
     <h3>${p.n ? p.n + '. ' : ''}${escB(p.nombre)}</h3>
     <div class="sub">Sol ${p.sol ?? '—'} · ${escB(p.fecha)} (aprox.) · ${escB(p.roca || '—')} · ${p.elev != null ? fmt(p.elev) + ' m' : ''}</div>
     ${p.hallazgo ? `<p>${escB(p.hallazgo)}</p>` : ''}${p.tecnico ? `<p class="sub">${escB(p.tecnico)}</p>` : ''}
-    <div class="btns"><button class="btn prim" id="bMapa">Ver en el mapa</button>${p.odr && p.odr.url ? `<a class="btn" href="${p.odr.url}" target="_blank" rel="noopener">Ficha en la base de mineralogía de Gale (NASA)</a>` : ''}</div>
+    <div class="btns"><button class="btn prim" id="bMapa">Ver en el mapa</button>${p.odr && p.odr.url ? `<a class="btn" href="${p.odr.url}" target="_blank" rel="noopener">Ficha en la base de mineralogía de Gale (NASA)</a>` : ''}${p.chemin.length && p.chemin[0].archivo ? `<a class="btn" href="https://pds-geosciences.wustl.edu/msl/msl-m-chemin-4-rdr-v1/mslcmn_1xxx/data/rdr5/${p.chemin[0].archivo}.csv" target="_blank" rel="noopener" title="Archivo oficial de minerales de CheMin en el PDS de NASA (respaldo si la base ODR no responde)">Minerales en el PDS de NASA</a>` : ''}</div>
     <div class="ind">
       <div><small>Agua en minerales <span class="tag">calculado</span></small><b style="color:var(--agua)">${p.agua_kg_t != null ? fmt(p.agua_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>
       <div><small>CO₂ en carbonatos <span class="tag">calculado</span></small><b style="color:#d9a441">${p.co2_kg_t != null ? fmt(p.co2_kg_t) + ' <small>kg/t</small>' : '—'}</b></div>

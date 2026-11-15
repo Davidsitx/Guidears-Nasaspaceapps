@@ -1110,5 +1110,7 @@
 "Moles liberados al calentar la muestra en el horno de SAM y temperatura del pico (°C). Confirmados: por la base ODR o por la designación de la muestra en las notas de NASA PDS (por ejemplo \"CB6\" = Cumberland).": "Moles released when heating the sample in SAM's oven, and peak temperature (°C). Confirmed: by the ODR database or by the sample designation in the NASA PDS notes (for example \"CB6\" = Cumberland).",
 "starkeyíta": "starkeyite",
 "Ver el cromatograma": "Show the chromatogram",
-"Área": "Area"
+"Área": "Area",
+"Minerales en el PDS de NASA": "Minerals in NASA's PDS",
+"Archivo oficial de minerales de CheMin en el PDS de NASA (respaldo si la base ODR no responde)": "Official CheMin mineral file in NASA's PDS (backup if the ODR database is down)"
 }
