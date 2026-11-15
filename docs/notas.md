@@ -2,6 +2,21 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (5) · Compañero (con Claude) · MANCHAS DE MINERALES, LUGARES CLAVE Y SR-1 FREEDOM
+- Hecho (gale-earth/):
+  - **Minerales vistos desde órbita = manchas con justificación.** `herramientas/manchas_minerales.py` toma el percentil de cada indicador CRISM de `data/mineralogia/crism_contexto.png` (David). Marca la señal más fuerte de la franja (percentil 90 o más) y dibuja el contorno de cada mancha de al menos 0,05 km²: hasta 14 por mineral, 79 en total. Sale en `capas/minerales/manchas.json`.
+    - Cada mancha lista los pozos de Curiosity que caen adentro, con el valor de CheMin.
+    - Si coincide con una unidad publicada, lleva la referencia: Glen Torridon (arcillas, Fraeman 2016 y Milliken 2010), unidad de sulfatos (Milliken 2010) y Vera Rubin (hematita, Fraeman 2013).
+    - Al pasar el mouse aparece un cartel con todo y enlaces. Reemplaza los PNG de percentiles, que quedan sin usar.
+  - **Lugares clave con contorno:** Olympus Mons, Hellas, Jezero, Gusev y Endeavour.
+    - Se calculan con `herramientas/lugares_clave.py` y se guardan en `datos/lugares_clave.json`.
+    - Método igual al borde de Gale: 360 perfiles desde el centro IAU sobre HRSC-MOLA. En los cráteres se toma el punto más convexo entre 0,8 y 1,2 radios; en Olympus, el escarpe basal.
+    - Los diámetros de los contornos dan como los de la IAU: Hellas 2.267 contra 2.299 km, Jezero 48 contra 47,5, Gusev 161 contra 158 y Endeavour 21 contra 21,8.
+    - Están en Explorar, cada uno con su ficha y enlace de NASA. armar.py los embebe (en la PC se parcheó armar.py: es distinto del del repo).
+  - **Línea de tiempo:** SR-1 Freedom (NASA, lanzamiento previsto en diciembre de 2028, llegada en 2029, helicópteros SkyFall). Es de fisión nuclear, no de fusión. La línea de tiempo ahora muestra fechas "año-mes" como "dic 2028".
+  - **Radiación:** se quitó la etiqueta "medido + cálculo". Los botones Día/Noche se leen y, si la capa estaba apagada, la prenden (antes no se veía ningún cambio).
+- Falta: decidir si se suma la capa de los 30 cuadrángulos del USGS (MC-1 a MC-30).
+
 ## 2026-11-15 mañana (4) · Compañero (con Claude) · ZONAS PROHIBIDAS EN TODO MARTE, BORDES SUAVES Y ARREGLOS
 - Hecho (gale-earth/):
   - "Zonas prohibidas por pendiente" ahora cubre todo Marte, igual que la altitud. Fuera de Gale sale de nuestras teselas HRSC-MOLA nivel 7 (~1,3 km/píxel), reducidas a ~2,6 km tomando la clase más severa: capas/global/pendiente_{oeste,este}.png, generadas con `herramientas/capas_globales.py --pendiente`. Es cálculo propio. A esa escala la pendiente se subestima y solo marca laderas grandes (paredes de cráteres, Valles Marineris, escarpes). En Gale sigue arriba la capa fina de 5 m.

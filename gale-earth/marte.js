@@ -66,6 +66,7 @@ async function mgNombres(on) {
     const etiquetas = [];
     for (const [n, lon, lat, d] of lista) {
       if (/(^|\s)Gale$/.test(n)) continue;                     // Gale ya tiene su propio cartel
+      if (typeof LUGARES !== 'undefined' && LUGARES.some(L => L.nombre === n)) continue;   // los lugares clave también
       const grande = d >= 1000, medio = d >= 200;
       const lejos = Math.min(2.6e7, Math.max(1.5e5, d * 5000));  // los grandes se ven desde lejos; los chicos al acercarse
       etiquetas.push({ n, d, lon, lat, l: MG.nombres.add({ position: pos(lon, lat, 0), text: n,

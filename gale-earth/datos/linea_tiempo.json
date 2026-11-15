@@ -536,6 +536,17 @@
    "res": "futuro",
    "txt": "Rover europeo con un taladro de 2 m de profundidad, por debajo de donde llega la radiación.",
    "fuente": "NASA NSSDCA, Chronology of Mars Exploration (nssdc.gsfc.nasa.gov/planetary/chronology_mars.html)"
+  },
+  {
+   "id": "f3",
+   "f": "2028-12",
+   "etq": "2028",
+   "t": "SR-1 Freedom: primera nave con reactor nuclear hacia Marte (previsto)",
+   "ag": "NASA",
+   "tipo": "sobrevuelo",
+   "res": "futuro",
+   "txt": "La primera nave que usa un reactor de fisión nuclear (no fusión) para viajar más allá de la órbita de la Tierra: alimenta motores eléctricos. Llega a Marte en 2029 y suelta SkyFall, con tres helicópteros de la familia de Ingenuity que buscarán agua bajo la superficie y lugares para que aterricen personas.",
+   "fuente": "NASA, misión Space Reactor-1 Freedom (nasa.gov/mission/space-reactor-1-freedom) y hoja informativa \"America Underway in Space on Nuclear Power\" (marzo de 2026)"
   }
  ]
 }
