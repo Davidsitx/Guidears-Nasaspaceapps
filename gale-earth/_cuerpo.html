@@ -298,10 +298,13 @@ function crearImagenes(t) {
     rectangle: C.Rectangle.fromDegrees(137.0938, geodetica(-5.2495), 137.8530, geodetica(-4.0686)),
     credit: 'Ortofoto MSL Gale 1 m: NASA/JPL/University of Arizona (HiRISE), mosaico USGS Astrogeology' }, 'color', 0.3, true));
   if (CAPAS_BASE.orto) Object.assign(CAPAS_BASE.orto.imageryProvider, { caja: [137.0938, -5.2495, 137.8530, -4.0686], ancho: 0.03 });   // ~1,8 km de fundido
-  CAPAS_BASE.hirise = viewer.imageryLayers.addImageryProvider(new HiRISEColor({
+  // HiRISE solo de cerca (teselas de terreno de nivel 15 o más, ~1–2 km de cámara): las fotos tienen sus propias sombras
+  // y franjas de distintas fechas; vistas de lejos parecían losas superpuestas sobre el relieve 3D.
+  CAPAS_BASE.hirise = new C.ImageryLayer(new HiRISEColor({
     url: 'teselas/hirise/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512,
     minimumLevel: 9, maximumLevel: 16, rectangle: C.Rectangle.fromDegrees(137.3267, geodetica(-4.8756), 137.4786, geodetica(-4.5551)),
-    credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }));
+    credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }), { minimumTerrainLevel: 15 });
+  viewer.imageryLayers.add(CAPAS_BASE.hirise);   // (add no devuelve la capa)
   Object.assign(CAPAS_BASE.hirise.imageryProvider, { caja: [137.3267, -4.8756, 137.4786, -4.5551], ancho: 0.006 });   // ~350 m de fundido
 }
 // Teselas en la nube: si la página está publicada (https) y nube.json dice dónde están, un service worker (sw.js)

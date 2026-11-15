@@ -2,6 +2,13 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (9) · Compañero (con Claude) · SE QUITA LA RADIACIÓN GLOBAL; HIRISE SOLO DE CERCA
+- **Se quitó la capa "Radiación en superficie (todo Marte)"** (y su código en `capas_globales.py`). El único detector de radiación que estuvo en la superficie de Marte es RAD, en Curiosity; una capa global sería un modelo, no una medición. Queda solo la capa de radiación de Gale (5 m, día/noche).
+  - Las JPG viejas quedaron en la PC en `Google Mars/_to_delete/`, para borrar a mano.
+- **Tour, escena 6:** ahora dice que RAD es el único detector que hubo en la superficie y suma la tormenta solar del 20/5/2024 (8.100 µGy, ≈39 días de dosis normal, de `datos/radiacion.json`). Esa tormenta ya estaba en la línea de tiempo y en Biblioteca → Clima y radiación.
+- **Losas superpuestas en el vuelo bajo:** se revisó en la PC con el navegador. Las causaba la capa HiRISE 25 cm: sus fotos traen sombras y franjas propias que no coinciden con el relieve 3D. Ahora HiRISE solo aparece de cerca (`minimumTerrainLevel: 15`, cámara a menos de ~1–2 km). Con HiRISE así, la vista del tour queda limpia.
+- Nota: `viewer.imageryLayers.add()` no devuelve la capa (un primer intento rompía el motor "Marte completo"; ya corregido).
+
 ## 2026-11-15 mañana (8) · Compañero (con Claude) · RADIACIÓN EN TODO MARTE, CARTELES DETRÁS DEL PLANETA Y AJUSTES DEL TOUR
 - **Radiación en superficie (todo Marte)**, en Capas → Todo Marte: `capas/global/radiacion_{oeste,este}.jpg`, generadas con `capas_globales.py --radiacion`. Es una ESTIMACIÓN con datos reales:
   - lo que midió RAD en Gale: 0,21 mGy/día = 0,64 mSv/día (Hassler 2014), con la presión media de ese año, 847,5 Pa (REMS, año marciano 31, a -4.520 m);

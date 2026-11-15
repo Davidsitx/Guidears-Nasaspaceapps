@@ -71,7 +71,7 @@ def main():
     print('THEMIS', W, H, '· nombres', len(nombres), 'descartados', descartados)
 
 
-if __name__ == '__main__' and not {'--altitud', '--local', '--pendiente', '--radiacion'} & set(sys.argv):
+if __name__ == '__main__' and not {'--altitud', '--local', '--pendiente'} & set(sys.argv):
     main()
 
 
@@ -196,58 +196,3 @@ def pendiente_global(zip_global, nivel=7):
 
 if __name__ == '__main__' and '--pendiente' in sys.argv:
     pendiente_global(sys.argv[sys.argv.index('--pendiente') + 1])
-
-
-# ---------------------------------------------------------------------------------------------------------------
-# 6) Radiación en superficie en TODO Marte (capas/global/radiacion_{oeste,este}.jpg). Nadie midió la dosis en todo el
-#    planeta: el único detector en la superficie es RAD, en Gale. Esta capa es una ESTIMACIÓN que junta datos reales:
-#      - dosis medida por RAD en Gale: 0,21 mGy/día = 0,64 mSv/día (Hassler et al. 2014, Science 343), ago 2012–jun 2013;
-#      - presión media en Gale ese mismo año: 847,5 Pa (REMS, año marciano 31, datos/clima_rems.json) a -4.520 m
-#        (John Klein, MOLA);
-#      - la atmósfera protege: +250 Pa de presión ≈ -32,5 µGy/día (Guo et al. 2015, ApJ 810, medido por RAD en Gale);
-#      - la presión en cada lugar sale de su altura (relieve HRSC-MOLA, USGS) con la altura de escala de Marte, 11,1 km
-#        (NASA, Mars Fact Sheet).
-#    Supuestos: la relación de Guo se midió entre ~700 y ~950 Pa; aplicarla en cumbres (~100 Pa) o en Hellas (~1.200 Pa)
-#    es una extrapolación lineal; el factor de calidad (Sv/Gy) se toma igual que en Gale; no incluye tormentas solares
-#    ni el ciclo solar (con el Sol tranquilo la dosis sube cerca de un 50 %, Guo et al. 2021). Mismo enfoque que los
-#    mapas de NASA con MOLA (Saganti et al. 2004), pero con nuestra relación empírica en vez de un código de transporte.
-#    Uso: python capas_globales.py --radiacion RUTA/terreno_marte_global_n0-7.zip
-D_GY, D_SV, P_REF, H_REF, K_PA, H_ESC = 210.0, 0.64, 847.5, -4520.0, -32.5 / 250.0, 11100.0
-RAMPA_RAD = [(0.40, (40, 90, 200)), (0.52, (80, 170, 230)), (0.64, (250, 220, 90)), (0.76, (240, 120, 50)), (0.90, (200, 30, 40)), (1.0, (120, 10, 60))]
-
-
-def radiacion_global(zip_global, nivel=6):
-    z = zipfile.ZipFile(zip_global); nx, ny = 2 ** (nivel + 1), 2 ** nivel
-    H = np.zeros((ny * 64, nx * 64), np.float32)
-    for x in range(nx):
-        for y in range(ny):
-            b = z.read(f'{nivel}/{x}/{y}.bin'); mn, esc = struct.unpack('<ff', b[:8])
-            H[y * 64:(y + 1) * 64, x * 64:(x + 1) * 64] = (np.frombuffer(b[8:], '<u2').reshape(65, 65).astype(np.float32) * esc + mn)[:64, :64]
-    latg = 90 - (np.arange(ny * 64) + .5) * 180 / (ny * 64)
-    latc = np.radians(np.degrees(np.arctan(np.tan(np.radians(latg)) * (B_ * B_) / (A_ * A_))))
-    r_ell = A_ * B_ / np.sqrt((B_ * np.cos(latc)) ** 2 + (A_ * np.sin(latc)) ** 2)
-    H = H - (R_ - r_ell)[:, None]                                         # altura sobre la esfera (≈ datum MOLA)
-    p = P_REF * np.exp(-(H - H_REF) / H_ESC)                              # presión media estimada (Pa)
-    gy = D_GY + K_PA * (p - P_REF)                                        # dosis absorbida (µGy/día)
-    sv = D_SV * gy / D_GY                                                 # dosis equivalente (mSv/día)
-    xs = [a for a, _ in RAMPA_RAD]; cols = np.array([c for _, c in RAMPA_RAD], np.float32)
-    rgb = np.stack([np.interp(sv, xs, cols[:, k]) for k in range(3)], -1)
-    paso = 2 * math.pi * R_ / H.shape[1]
-    rgb = np.clip(rgb * sombreado(H, paso / 4)[..., None], 0, 255).astype(np.uint8)
-    W = rgb.shape[1]
-    Image.fromarray(rgb[:, :W // 2]).save(os.path.join(SAL, 'radiacion_oeste.jpg'), quality=85, optimize=True)
-    Image.fromarray(rgb[:, W // 2:]).save(os.path.join(SAL, 'radiacion_este.jpg'), quality=85, optimize=True)
-    def en(lon, lat):
-        return float(sv[int((90 - lat) / 180 * sv.shape[0]), int((lon + 180) / 360 * W)])
-    meta = json.load(open(os.path.join(SAL, 'global.json'), encoding='utf-8'))
-    meta['radiacion'] = dict(oeste='radiacion_oeste.jpg', este='radiacion_este.jpg', esquema='geodetica',
-                             rampa=[[a, '#%02x%02x%02x' % c] for a, c in RAMPA_RAD], unidad='mSv/día',
-                             min=round(float(sv.min()), 3), max=round(float(sv.max()), 3),
-                             ejemplos=dict(gale=round(en(137.4, -4.6), 3), olympus=round(en(-133.8, 18.6), 3), hellas=round(en(67, -45), 3), jezero=round(en(77.5, 18.4), 3)),
-                             parametros=dict(dosis_gale_mGy=D_GY / 1000, dosis_gale_mSv=D_SV, presion_ref_Pa=P_REF, altura_ref_m=H_REF, uGy_por_Pa=K_PA, altura_escala_m=H_ESC))
-    json.dump(meta, open(os.path.join(SAL, 'global.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    print('radiación', rgb.shape, 'min/max', meta['radiacion']['min'], meta['radiacion']['max'], meta['radiacion']['ejemplos'])
-
-
-if __name__ == '__main__' and '--radiacion' in sys.argv:
-    radiacion_global(sys.argv[sys.argv.index('--radiacion') + 1])

@@ -738,10 +738,13 @@ function crearImagenes(t) {
     rectangle: C.Rectangle.fromDegrees(137.0938, geodetica(-5.2495), 137.8530, geodetica(-4.0686)),
     credit: 'Ortofoto MSL Gale 1 m: NASA/JPL/University of Arizona (HiRISE), mosaico USGS Astrogeology' }, 'color', 0.3, true));
   if (CAPAS_BASE.orto) Object.assign(CAPAS_BASE.orto.imageryProvider, { caja: [137.0938, -5.2495, 137.8530, -4.0686], ancho: 0.03 });   // ~1,8 km de fundido
-  CAPAS_BASE.hirise = viewer.imageryLayers.addImageryProvider(new HiRISEColor({
+  // HiRISE solo de cerca (teselas de terreno de nivel 15 o más, ~1–2 km de cámara): las fotos tienen sus propias sombras
+  // y franjas de distintas fechas; vistas de lejos parecían losas superpuestas sobre el relieve 3D.
+  CAPAS_BASE.hirise = new C.ImageryLayer(new HiRISEColor({
     url: 'teselas/hirise/{z}/{y}/{x}.webp', tilingScheme: new EsquemaPC(), tileWidth: 512, tileHeight: 512,
     minimumLevel: 9, maximumLevel: 16, rectangle: C.Rectangle.fromDegrees(137.3267, geodetica(-4.8756), 137.4786, geodetica(-4.5551)),
-    credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }));
+    credit: 'HiRISE 25 cm: NASA/JPL/University of Arizona; mosaico USGS Astrogeology' }), { minimumTerrainLevel: 15 });
+  viewer.imageryLayers.add(CAPAS_BASE.hirise);   // (add no devuelve la capa)
   Object.assign(CAPAS_BASE.hirise.imageryProvider, { caja: [137.3267, -4.8756, 137.4786, -4.5551], ancho: 0.006 });   // ~350 m de fundido
 }
 // Teselas en la nube: si la página está publicada (https) y nube.json dice dónde están, un service worker (sw.js)
@@ -2090,27 +2093,6 @@ async function mgRampa(on) {
   if (MG.rampa) for (const L of MG.rampa) { L.show = on; L.alpha = MG.alfa; }
   await mgRampaLocal();
 }
-// ---- radiación en superficie de todo Marte (estimación: RAD en Gale + presión según la altura; capas_globales.py --radiacion) ----
-async function mgRadiacion(on) {
-  MG.vis.radiacion = on;
-  if (on && !MG.rad) {
-    try { const a = (await mgMeta()).radiacion, capas = capasImagen(); if (!capas || !a) return mgError(); MG.rad = [];
-      for (const [arch, o, e] of [[a.oeste, -180, 0], [a.este, 0, 180]])
-        MG.rad.push(capas.addImageryProvider(await C.SingleTileImageryProvider.fromUrl('capas/global/' + arch, { rectangle: C.Rectangle.fromDegrees(o, -90, e, 90) })));
-    } catch { MG.rad = false; return mgError(); }
-  }
-  if (MG.rad) for (const L of MG.rad) { L.show = on; L.alpha = MG.alfa; }
-  const ley = $('mgLeyRad'); if (ley) ley.innerHTML = on ? mgLeyendaRad() : '';
-}
-function mgLeyendaRad() {
-  const a = MG.meta && MG.meta.radiacion; if (!a) return '';
-  const g = `linear-gradient(90deg,${a.rampa.map(([v, c]) => `${c} ${Math.round((v - a.rampa[0][0]) / (a.rampa[a.rampa.length - 1][0] - a.rampa[0][0]) * 100)}%`).join(',')})`;
-  const x = a.ejemplos, P = a.parametros;
-  return `<div class="sub" style="display:flex;align-items:center;gap:8px"><span>${fmt(a.rampa[0][0], 2)}</span><span style="flex:1;height:10px;border-radius:5px;background:${g}"></span><span>${fmt(a.rampa[a.rampa.length - 1][0], 2)} mSv/día</span></div>
-    <div class="sub">Gale ${fmt(x.gale, 2)} · Jezero ${fmt(x.jezero, 2)} · Hellas ${fmt(x.hellas, 2)} · cumbre del Olympus Mons ${fmt(x.olympus, 2)} mSv/día.</div>
-    <div class="sub">Nadie midió la radiación en todo Marte: el único detector en la superficie es RAD, en Gale. Esta capa la estima con datos reales: lo que midió RAD en Gale (${fmt(P.dosis_gale_mSv, 2)} mSv/día con ${fmt(P.presion_ref_Pa)} Pa), cuánto protege el aire según RAD (250 Pa más ≈ ${fmt(32.5, 1)} µGy/día menos) y la presión de cada lugar según su altura (altura de escala ${fmt(P.altura_escala_m / 1000, 1)} km). Menos aire encima (montañas) = más radiación; fondos de cuencas = menos. Fuera del rango que midió RAD (~700 a 950 Pa) es una extrapolación. No incluye tormentas solares; con el Sol tranquilo la dosis sube cerca de un 50 %. <span class="tag">medido + estimación</span></div>
-    <p class="fuente">${url('https://doi.org/10.1126/science.1244797', 'Hassler et al. 2014, Science (RAD)')}; ${url('https://doi.org/10.1088/0004-637X/810/1/24', 'Guo et al. 2015, ApJ 810 (presión y dosis)')}; presión de Gale: REMS (NASA PDS); altura de escala: ${url('https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html', 'NASA, Mars Fact Sheet')}; relieve: USGS HRSC-MOLA. Mapas globales parecidos con MOLA: Saganti et al. 2004, Space Sci. Rev. 110.</p>`;
-}
 // detalle fino en el área de Curiosity (DEM USGS de 1 m llevado a 5 m): con la escala de todo Marte o con más contraste
 async function mgRampaLocal() {
   const r = D.capas5m && D.capas5m.rect_geodetico, capas = capasImagen(); if (!r || !capas) return;
@@ -2234,8 +2216,6 @@ function mgSeccionCapas() {
     <div class="fila"><span>Escala</span><span class="seg" id="mgEsc"><button data-e="marte" class="${MG.escala === 'marte' ? 'on' : ''}">Marte entero</button><button data-e="zona" class="${MG.escala === 'zona' ? 'on' : ''}">Zona de Curiosity</button></span></div>
     <div class="fila"><span>Opacidad</span><input type="range" id="mgAlfa" min="0.2" max="1" step="0.05" value="${MG.alfa}" style="width:140px"></div>
     <div id="mgLey">${mgLeyendaRampa()}</div>
-    ${f('radiacion', 'Radiación en superficie (todo Marte)', '')}
-    <div id="mgLeyRad">${MG.vis.radiacion ? mgLeyendaRad() : ''}</div>
     ${f('themis', 'Infrarrojo nocturno (THEMIS)', 'Cómo se ve Marte de noche con la cámara térmica de la sonda Mars Odyssey (NASA): claro = más tibio (roca, costras), oscuro = más frío (polvo, arena fina). De 65°S a 65°N. <span class="tag">medido · cualitativo</span>')}
     ${f('nombres', 'Topónimos (IAU)', 'Los nombres oficiales de montes, llanuras, valles y cráteres aprobados por la Unión Astronómica Internacional. Los más grandes se ven de lejos; los chicos, al acercarse. Entre paréntesis, la altura aproximada en el centro de montes y llanuras grandes (datum MOLA; la cumbre o el fondo pueden estar más arriba o más abajo).')}
     ${f('aterrizajes', 'Lugares de aterrizaje (Misiones)', 'Las misiones que llegaron a la superficie, con los datos de la pestaña Historia.')}
@@ -2244,8 +2224,8 @@ function mgSeccionCapas() {
 }
 function mgEnganchar() {
   cont().querySelectorAll('#mgEsc button').forEach(b => b.onclick = async () => { MG.escala = b.dataset.e; cont().querySelectorAll('#mgEsc button').forEach(x => x.classList.toggle('on', x === b)); $('mgLey').innerHTML = mgLeyendaRampa(); await mgRampaLocal(); });
-  if ($('mgAlfa')) $('mgAlfa').oninput = e => { MG.alfa = +e.target.value; if (MG.rampa) for (const L of MG.rampa) L.alpha = MG.alfa; if (MG.rad) for (const L of MG.rad) L.alpha = MG.alfa; if (MG.local) MG.local.alpha = Math.min(1, MG.alfa + 0.1); };
-  cont().querySelectorAll('[data-mg]').forEach(el => el.onchange = () => ({ rampa: mgRampa, radiacion: mgRadiacion, themis: mgThemis, nombres: mgNombres, aterrizajes: mgAterrizajes, noche: mgNoche })[el.dataset.mg](el.checked));
+  if ($('mgAlfa')) $('mgAlfa').oninput = e => { MG.alfa = +e.target.value; if (MG.rampa) for (const L of MG.rampa) L.alpha = MG.alfa; if (MG.local) MG.local.alpha = Math.min(1, MG.alfa + 0.1); };
+  cont().querySelectorAll('[data-mg]').forEach(el => el.onchange = () => ({ rampa: mgRampa, themis: mgThemis, nombres: mgNombres, aterrizajes: mgAterrizajes, noche: mgNoche })[el.dataset.mg](el.checked));
 }
 
 // Carteles del otro lado del planeta: Cesium no siempre los tapa con el globo (dibuja por tramos de distancia y el
@@ -2330,7 +2310,7 @@ async function iniciarTour() {
   const ui = tourUI(); TOUR.activo = true; TOUR.corte = false;
   // estado para dejar todo como estaba
   const antes = { mins: Object.fromEntries(Object.entries(CAPA_M).map(([k, v]) => [k, !!(v[0] && v[0].show)])), dosis: !!(CAPA_A.dosis && CAPA_A.dosis.show),
-    horario: HORARIO_RAD, radG: !!MG.vis.radiacion, exag: viewer.scene.verticalExaggeration, anim: viewer.clock.shouldAnimate };
+    horario: HORARIO_RAD, exag: viewer.scene.verticalExaggeration, anim: viewer.clock.shouldAnimate };
   if (window.cerrarCajon) cerrarCajon();
   const eeAntes = viewer.scene.globe.maximumScreenSpaceError; viewer.scene.globe.maximumScreenSpaceError = Math.max(eeAntes, 2);   // carga más rápido en los vuelos
   document.body.classList.add('enTour'); ui.classList.remove('oculto');
@@ -2382,20 +2362,18 @@ async function iniciarTour() {
     await tIrYGirar(await tCentro(gt.lon, gt.lat), C.Math.toRadians(150), C.Math.toRadians(-48), 4300, 4, 8.5, 40);
     for (const k of ['arcillas', 'hematita', 'sulfatos']) await capaMineral(k, false);
 
-    // 6 · radiación: primero la estimación de todo Marte, después la capa fina de Gale
-    await mgRadiacion(true);
-    tTexto(tx('<b>Radiation</b> is an astronaut\'s invisible enemy. Curiosity\'s RAD is the only detector on the surface; from it and the relief we estimate the whole planet: <b>less air above = more dose</b>. Mountains get more, deep basins less.',
-              'La <b>radiación</b> es el enemigo invisible del astronauta. RAD, en Curiosity, es el único detector en la superficie; con él y el relieve estimamos todo el planeta: <b>menos aire encima = más dosis</b>. Las montañas reciben más; las cuencas profundas, menos.'), paso(6));
-    await tIrYGirar(await tCentro(137.8, -5.4), C.Math.toRadians(0), C.Math.toRadians(-62), 2.6e6, 4.5, 6, 25);
-    await mgRadiacion(false);
+    // 6 · radiación (medida por RAD en Gale) y la tormenta solar de mayo de 2024
     if (HORARIO_RAD !== 'dia') await cambiarHorarioRad('dia');
     await capaAnalisis('dosis', true, 0.55);
-    tTexto(tx('In Gale, RAD measured <b>0.64 mSv per day</b>. Up close, cliffs and buttes block part of the sky and lower the dose.',
-              'En Gale, RAD midió <b>0,64 mSv por día</b>. De cerca, los acantilados tapan parte del cielo y bajan la dosis.'));
+    tTexto(tx('<b>Radiation</b> is an astronaut\'s invisible enemy. Curiosity\'s RAD, the only radiation detector ever on the Martian surface, measured <b>0.64 mSv per day</b> in Gale. Cliffs and buttes block part of the sky and lower the dose.',
+              'La <b>radiación</b> es el enemigo invisible del astronauta. RAD, en Curiosity, el único detector de radiación que estuvo en la superficie de Marte, midió <b>0,64 mSv por día</b> en Gale. Los acantilados tapan parte del cielo y bajan la dosis.'), paso(6));
     await tIrYGirar(await tCentro(137.40, -4.85), C.Math.toRadians(30), C.Math.toRadians(-40), 26000, 4, 6, 18);
     await cambiarHorarioRad('noche');
     tTexto(tx('At night the air is denser and the dose drops about 5 %.', 'De noche el aire es más denso y la dosis baja cerca de un 5 %.'));
     await tEsperar(4200);
+    tTexto(tx('On May 20, 2024 a solar storm hit Mars: RAD measured <b>8,100 µGy in one event</b>, about 39 days of normal dose at once. A crew would need a shielded shelter within reach.',
+              'El 20 de mayo de 2024 una tormenta solar llegó a Marte: RAD midió <b>8.100 µGy en un solo evento</b>, unos 39 días de dosis normal de golpe. Una tripulación necesitaría un refugio con blindaje a mano.'));
+    await tEsperar(6500);
     await capaAnalisis('dosis', false, 0.55);
 
     // 7 · las naves en órbita y cierre
@@ -2419,7 +2397,6 @@ async function iniciarTour() {
   TOUR.corte = false; viewer.trackedEntity = undefined; viewer.camera.lookAtTransform(C.Matrix4.IDENTITY);
   for (const k of ['arcillas', 'hematita', 'sulfatos']) if (CAPA_M[k]) await capaMineral(k, !!antes.mins[k]);
   if (HORARIO_RAD !== antes.horario) await cambiarHorarioRad(antes.horario);
-  if (MG.rad) await mgRadiacion(!!antes.radG);
   if (CAPA_A.dosis) await capaAnalisis('dosis', antes.dosis, CAPA_A.dosis.alpha);
   viewer.scene.globe.maximumScreenSpaceError = eeAntes; viewer.scene.verticalExaggeration = antes.exag; viewer.clock.shouldAnimate = antes.anim;
   ui.classList.remove('on'); $('tNegro').classList.remove('vis'); $('tTitulo').classList.remove('vis'); $('tTexto').classList.remove('vis');

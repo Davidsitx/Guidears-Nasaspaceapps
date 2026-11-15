@@ -67,7 +67,7 @@ async function iniciarTour() {
   const ui = tourUI(); TOUR.activo = true; TOUR.corte = false;
   // estado para dejar todo como estaba
   const antes = { mins: Object.fromEntries(Object.entries(CAPA_M).map(([k, v]) => [k, !!(v[0] && v[0].show)])), dosis: !!(CAPA_A.dosis && CAPA_A.dosis.show),
-    horario: HORARIO_RAD, radG: !!MG.vis.radiacion, exag: viewer.scene.verticalExaggeration, anim: viewer.clock.shouldAnimate };
+    horario: HORARIO_RAD, exag: viewer.scene.verticalExaggeration, anim: viewer.clock.shouldAnimate };
   if (window.cerrarCajon) cerrarCajon();
   const eeAntes = viewer.scene.globe.maximumScreenSpaceError; viewer.scene.globe.maximumScreenSpaceError = Math.max(eeAntes, 2);   // carga más rápido en los vuelos
   document.body.classList.add('enTour'); ui.classList.remove('oculto');
@@ -119,20 +119,18 @@ async function iniciarTour() {
     await tIrYGirar(await tCentro(gt.lon, gt.lat), C.Math.toRadians(150), C.Math.toRadians(-48), 4300, 4, 8.5, 40);
     for (const k of ['arcillas', 'hematita', 'sulfatos']) await capaMineral(k, false);
 
-    // 6 · radiación: primero la estimación de todo Marte, después la capa fina de Gale
-    await mgRadiacion(true);
-    tTexto(tx('<b>Radiation</b> is an astronaut\'s invisible enemy. Curiosity\'s RAD is the only detector on the surface; from it and the relief we estimate the whole planet: <b>less air above = more dose</b>. Mountains get more, deep basins less.',
-              'La <b>radiación</b> es el enemigo invisible del astronauta. RAD, en Curiosity, es el único detector en la superficie; con él y el relieve estimamos todo el planeta: <b>menos aire encima = más dosis</b>. Las montañas reciben más; las cuencas profundas, menos.'), paso(6));
-    await tIrYGirar(await tCentro(137.8, -5.4), C.Math.toRadians(0), C.Math.toRadians(-62), 2.6e6, 4.5, 6, 25);
-    await mgRadiacion(false);
+    // 6 · radiación (medida por RAD en Gale) y la tormenta solar de mayo de 2024
     if (HORARIO_RAD !== 'dia') await cambiarHorarioRad('dia');
     await capaAnalisis('dosis', true, 0.55);
-    tTexto(tx('In Gale, RAD measured <b>0.64 mSv per day</b>. Up close, cliffs and buttes block part of the sky and lower the dose.',
-              'En Gale, RAD midió <b>0,64 mSv por día</b>. De cerca, los acantilados tapan parte del cielo y bajan la dosis.'));
+    tTexto(tx('<b>Radiation</b> is an astronaut\'s invisible enemy. Curiosity\'s RAD, the only radiation detector ever on the Martian surface, measured <b>0.64 mSv per day</b> in Gale. Cliffs and buttes block part of the sky and lower the dose.',
+              'La <b>radiación</b> es el enemigo invisible del astronauta. RAD, en Curiosity, el único detector de radiación que estuvo en la superficie de Marte, midió <b>0,64 mSv por día</b> en Gale. Los acantilados tapan parte del cielo y bajan la dosis.'), paso(6));
     await tIrYGirar(await tCentro(137.40, -4.85), C.Math.toRadians(30), C.Math.toRadians(-40), 26000, 4, 6, 18);
     await cambiarHorarioRad('noche');
     tTexto(tx('At night the air is denser and the dose drops about 5 %.', 'De noche el aire es más denso y la dosis baja cerca de un 5 %.'));
     await tEsperar(4200);
+    tTexto(tx('On May 20, 2024 a solar storm hit Mars: RAD measured <b>8,100 µGy in one event</b>, about 39 days of normal dose at once. A crew would need a shielded shelter within reach.',
+              'El 20 de mayo de 2024 una tormenta solar llegó a Marte: RAD midió <b>8.100 µGy en un solo evento</b>, unos 39 días de dosis normal de golpe. Una tripulación necesitaría un refugio con blindaje a mano.'));
+    await tEsperar(6500);
     await capaAnalisis('dosis', false, 0.55);
 
     // 7 · las naves en órbita y cierre
@@ -156,7 +154,6 @@ async function iniciarTour() {
   TOUR.corte = false; viewer.trackedEntity = undefined; viewer.camera.lookAtTransform(C.Matrix4.IDENTITY);
   for (const k of ['arcillas', 'hematita', 'sulfatos']) if (CAPA_M[k]) await capaMineral(k, !!antes.mins[k]);
   if (HORARIO_RAD !== antes.horario) await cambiarHorarioRad(antes.horario);
-  if (MG.rad) await mgRadiacion(!!antes.radG);
   if (CAPA_A.dosis) await capaAnalisis('dosis', antes.dosis, CAPA_A.dosis.alpha);
   viewer.scene.globe.maximumScreenSpaceError = eeAntes; viewer.scene.verticalExaggeration = antes.exag; viewer.clock.shouldAnimate = antes.anim;
   ui.classList.remove('on'); $('tNegro').classList.remove('vis'); $('tTitulo').classList.remove('vis'); $('tTexto').classList.remove('vis');
