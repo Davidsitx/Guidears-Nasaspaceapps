@@ -98,3 +98,4 @@ Regla: cada fuente nueva se agrega acá con una línea y en el registro completo
 En la escena, cada una tiene su círculo "?" que abre la fuente (registro `FUENTES_URL` en `escena3d/plantilla.html`).
 
 **Todos los enlaces de los círculos "?" están en `docs/fuentes-enlaces.md`** (se regenera con `python herramientas/listar_fuentes.py`).
+| Texturas globales de Fobos y Deimos (lunas del globo) | NASA 3D Resources, "Images and Textures/Mars - Phobos" y "Mars - Deimos" (github.com/nasa/NASA-3D-Resources, sin copyright); reescaladas a 2048×1024 |

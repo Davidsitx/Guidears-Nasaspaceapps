@@ -2,6 +2,16 @@
 
 Al terminar algo, agregar arriba: fecha, quién, qué hizo, qué falta, qué decidió. El otro Claude lee esto al empezar.
 
+## 2026-11-15 mañana (3) · Compañero (con Claude) · PESTAÑA MOTOR, SIN CLAVES, NITIDEZ Y LUNAS REALES
+- Hecho (gale-earth/):
+  - Nueva pestaña **Motor** en el riel, debajo de Capas. Tiene dos tarjetas: "Marte completo (recomendado)" y "Cesium Mars (respaldo)". Ahí también quedaron el color de la imagen CTX y HiRISE.
+  - Se quitó todo lo de claves de Cesium ion: el campo, los botones y el mensaje de error que pedía una clave. Cesium Mars queda como respaldo de emergencia con la clave de evaluación que trae Cesium: el jurado no tiene que poner nada.
+  - Nitidez en compu: Cesium dibujaba a la resolución "recomendada" del navegador (en pantallas de alta densidad, la mitad) y ahora dibuja a la resolución real, con tope en DPR 2. maximumScreenSpaceError pasó de 2 a 1,5. En celular no cambia nada.
+  - Fobos y Deimos con textura global real de NASA 3D Resources (capas/lunas/*.jpg, 2048×1024). Se dibujan como primitiva que sigue a la entidad, porque Cesium no aplica imágenes a un elipsoide de entidad en movimiento. Con file:// queda el color liso.
+  - Se quitó la sección Mars 3D Home de la pestaña Base (después va algo genérico).
+- Decidido: CTX ya se pide a su resolución nativa (nivel 12 ≈ 5 m/px). Los niveles 13–15 del servicio fallan en Gale, así que la mejora viene del dibujado, no de pedir más zoom.
+- Falta: probar en la PC de presentación cuánto rinde con la resolución completa. Si va lento, volver a maximumScreenSpaceError 2.
+
 ## 2026-11-15 mañana (2) · Compañero (con Claude) · UNA SOLA CAPA DE ALTITUD Y NOMBRES SIEMPRE A LA VISTA
 - "Relieve en color (llanuras → montañas)" y "Colores de altitud" eran lo mismo con distinta escala y resolución. Ahora son una sola casilla, **Colores de altitud**, con un selector de escala:
   - **Marte entero** (por defecto): la misma rampa de −8,2 a +21,2 km en todo el planeta. En el área de Curiosity se ve con el DEM USGS de 1 m (`capas/gale_5m/relieve_mola.webp`, 15 m/px).
